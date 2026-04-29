@@ -114,7 +114,7 @@
         const menus = [
             { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
             { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
-            { id: 'seserahan', icon: 'fa-gift', label: 'Seserahan' }, // <-- SESERAHAN DITAMBAHKAN
+            { id: 'seserahan', icon: 'fa-gift', label: 'Seserahan' },
             { id: 'wedding_list', icon: 'fa-users', label: 'Wedding List' },
             { id: 'catering', icon: 'fa-utensils', label: 'Catering' },
             { id: 'vendor', icon: 'fa-store', label: 'Vendor List' },
@@ -131,10 +131,17 @@
         let appData = { totalBudget: 0, items: {} };
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
 
-        // Filter state untuk Seserahan
+        // Filter state untuk Seserahan Status
         window.seserahanFilter = 'semua';
         window.setSeserahanFilter = function(f) {
             window.seserahanFilter = f;
+            renderTable('seserahan');
+        }
+
+        // Filter state untuk Seserahan Kategori
+        window.seserahanCategoryFilter = 'all';
+        window.setSeserahanCategory = function(cat) {
+            window.seserahanCategoryFilter = cat;
             renderTable('seserahan');
         }
 
@@ -319,16 +326,18 @@
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kesiapan</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="belum">🔴 Belum Siap</option><option value="sudah">✅ Sudah Siap</option></select></div>
                     <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Deskripsi Detail</label><textarea id="inputDeskripsi" rows="2" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>
                 `;
-            } else if (categoryId === 'seserahan') { // <-- FORM SESERAHAN
+            } else if (categoryId === 'seserahan') { 
                 formInner = `
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Item</label><input type="text" id="inputNamaItem" placeholder="Contoh: Cincin Emas, Tas Wanita" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label>
                         <select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
-                            <option value="perhiasan">💍 Perhiasan</option>
-                            <option value="pakaian">👗 Pakaian & Sepatu</option>
-                            <option value="makeup">💄 Make Up / Skincare</option>
-                            <option value="makanan">🍎 Makanan / Buah</option>
-                            <option value="lainnya">📦 Lainnya</option>
+                                <option value="ibadah">🕌 Ibadah</option>
+                                <option value="perhiasan">💍 Perhiasan</option>
+                                <option value="makeup">💄 Makeup</option>
+                                <option value="skincare">🧴 Skincare</option>
+                                <option value="bathbody">🛁 Bath & Body</option>
+                                <option value="fashion">👗 Fashion</option>
+                                <option value="lainnya">📦 Lainnya</option>
                         </select>
                     </div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah</label><input type="number" id="inputJumlah" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
@@ -415,7 +424,7 @@
                     status: document.getElementById('inputStatus').value,
                     tanggalUpdate: new Date().toISOString()
                 };
-            } else if (categoryId === 'seserahan') { // <-- MAPPER SESERAHAN
+            } else if (categoryId === 'seserahan') { 
                 const h = Number(document.getElementById('inputHarga').value || 0);
                 const j = Number(document.getElementById('inputJumlah').value || 1);
                 itemData = {
@@ -512,19 +521,34 @@
                 });
                 const progress = totalItems === 0 ? 0 : Math.round((countDibungkus / totalItems) * 100);
 
-                // Filter Data
+                // Filter Data by Status & Category
                 let filteredData = data;
+                
                 if (window.seserahanFilter !== 'semua') {
-                    filteredData = data.filter(i => i.status === window.seserahanFilter);
+                    filteredData = filteredData.filter(i => i.status === window.seserahanFilter);
+                }
+                if (window.seserahanCategoryFilter !== 'all') {
+                    filteredData = filteredData.filter(i => i.kategori === window.seserahanCategoryFilter);
                 }
 
                 // Pengelompokan Kategori
-                const grouped = { 'perhiasan': [], 'pakaian': [], 'makeup': [], 'makanan': [], 'lainnya': [] };
+                const grouped = {
+                    'ibadah': [],
+                    'perhiasan': [],
+                    'makeup': [],
+                    'skincare': [],
+                    'bathbody': [],
+                    'fashion': [],
+                    'lainnya': []
+                };
+
                 const catInfo = {
+                    'ibadah': { label: 'Ibadah', icon: 'fa-mosque', color: 'text-emerald-600', bg: 'bg-emerald-50' },
                     'perhiasan': { label: 'Perhiasan', icon: 'fa-ring', color: 'text-amber-500', bg: 'bg-amber-50' },
-                    'pakaian': { label: 'Pakaian & Sepatu', icon: 'fa-shirt', color: 'text-pink-500', bg: 'bg-pink-50' },
-                    'makeup': { label: 'Make Up & Skincare', icon: 'fa-pump-soap', color: 'text-rose-500', bg: 'bg-rose-50' },
-                    'makanan': { label: 'Makanan & Buah', icon: 'fa-apple-whole', color: 'text-orange-500', bg: 'bg-orange-50' },
+                    'makeup': { label: 'Makeup', icon: 'fa-paint-brush', color: 'text-pink-500', bg: 'bg-pink-50' },
+                    'skincare': { label: 'Skincare', icon: 'fa-face-smile', color: 'text-rose-500', bg: 'bg-rose-50' },
+                    'bathbody': { label: 'Bath & Body', icon: 'fa-soap', color: 'text-blue-500', bg: 'bg-blue-50' },
+                    'fashion': { label: 'Fashion', icon: 'fa-shirt', color: 'text-purple-500', bg: 'bg-purple-50' },
                     'lainnya': { label: 'Lainnya', icon: 'fa-box-open', color: 'text-gray-500', bg: 'bg-gray-50' }
                 };
 
@@ -552,16 +576,35 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
-                        <button onclick="setSeserahanFilter('semua')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='semua' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}">Semua</button>
-                        <button onclick="setSeserahanFilter('belum')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='belum' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-500 border-gray-200 hover:border-red-200'}">🔴 Belum Dibeli</button>
-                        <button onclick="setSeserahanFilter('dibeli')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibeli' ? 'bg-yellow-50 text-yellow-600 border-yellow-200' : 'bg-white text-gray-500 border-gray-200 hover:border-yellow-200'}">🟡 Sudah Dibeli</button>
-                        <button onclick="setSeserahanFilter('dibungkus')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibungkus' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-500 border-gray-200 hover:border-green-200'}">🟢 Sudah Dibungkus</button>
+                    <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="mb-5">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-list-check mr-1"></i> Filter Berdasarkan Status</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setSeserahanFilter('semua')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='semua' ? 'bg-gray-800 text-white border-gray-800 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}">Semua Status</button>
+                                <button onclick="setSeserahanFilter('belum')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='belum' ? 'bg-red-50 text-red-600 border-red-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-red-200'}">🔴 Belum Dibeli</button>
+                                <button onclick="setSeserahanFilter('dibeli')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibeli' ? 'bg-yellow-50 text-yellow-600 border-yellow-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-yellow-200'}">🟡 Sudah Dibeli</button>
+                                <button onclick="setSeserahanFilter('dibungkus')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibungkus' ? 'bg-green-50 text-green-600 border-green-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-green-200'}">🟢 Sudah Dibungkus</button>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-5 border-t border-gray-100">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-layer-group mr-1"></i> Filter Berdasarkan Kategori</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setSeserahanCategory('all')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='all' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Semua Kategori</button>
+                                <button onclick="setSeserahanCategory('ibadah')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='ibadah' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-emerald-200'}">🕌 Ibadah</button>
+                                <button onclick="setSeserahanCategory('perhiasan')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='perhiasan' ? 'bg-amber-50 text-amber-500 border-amber-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-amber-200'}">💍 Perhiasan</button>
+                                <button onclick="setSeserahanCategory('makeup')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='makeup' ? 'bg-pink-50 text-pink-500 border-pink-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-pink-200'}">💄 Makeup</button>
+                                <button onclick="setSeserahanCategory('skincare')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='skincare' ? 'bg-rose-50 text-rose-500 border-rose-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-rose-200'}">🧴 Skincare</button>
+                                <button onclick="setSeserahanCategory('bathbody')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='bathbody' ? 'bg-blue-50 text-blue-500 border-blue-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-blue-200'}">🛁 Bath & Body</button>
+                                <button onclick="setSeserahanCategory('fashion')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='fashion' ? 'bg-purple-50 text-purple-500 border-purple-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-purple-200'}">👗 Fashion</button>
+                                <button onclick="setSeserahanCategory('lainnya')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='lainnya' ? 'bg-gray-50 text-gray-600 border-gray-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}">📦 Lainnya</button>
+                            </div>
+                        </div>
                     </div>
                 `;
 
                 if (filteredData.length === 0) {
-                    htmlOut += getEmptyStateHTML('fa-gift', window.seserahanFilter === 'semua' ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter ini.');
+                    htmlOut += getEmptyStateHTML('fa-gift', (window.seserahanFilter === 'semua' && window.seserahanCategoryFilter === 'all') ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter yang dipilih.');
                 } else {
                     htmlOut += `<div class="space-y-8">`;
                     // Render per Kategori
@@ -844,7 +887,7 @@
             if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; document.getElementById('inputNilai').value = item.nilai;
                 document.getElementById('inputDeskripsi').value = item.deskripsi; document.getElementById('inputStatus').value = item.status;
-            } else if (categoryId === 'seserahan') { // <-- MAPPER EDIT SESERAHAN
+            } else if (categoryId === 'seserahan') { 
                 document.getElementById('inputNamaItem').value = item.namaItem; document.getElementById('inputKategori').value = item.kategori;
                 document.getElementById('inputJumlah').value = item.jumlah; document.getElementById('inputHarga').value = item.harga;
                 document.getElementById('inputStatus').value = item.status; document.getElementById('inputCatatan').value = item.catatan || '';
