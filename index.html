@@ -341,7 +341,7 @@
                         </select>
                     </div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah</label><input type="number" id="inputJumlah" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga Satuan (Rp)</label><input type="number" id="inputHarga" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga Satuan (Rp)</label><input type="number" id="inputHarga" placeholder="Boleh kosong" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
                         <select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
                             <option value="belum">🔴 Belum Dibeli</option>
@@ -425,14 +425,15 @@
                     tanggalUpdate: new Date().toISOString()
                 };
             } else if (categoryId === 'seserahan') { 
-                const h = Number(document.getElementById('inputHarga').value || 0);
+                const hargaInput = document.getElementById('inputHarga').value;
+                const h = hargaInput ? Number(hargaInput) : null;
                 const j = Number(document.getElementById('inputJumlah').value || 1);
                 itemData = {
                     namaItem: document.getElementById('inputNamaItem').value,
                     kategori: document.getElementById('inputKategori').value,
                     jumlah: j,
                     harga: h,
-                    total: h * j, // Auto calculate
+                    total: h ? h * j : 0, // Auto calculate
                     status: document.getElementById('inputStatus').value,
                     catatan: document.getElementById('inputCatatan').value,
                     tanggalUpdate: new Date().toISOString()
@@ -628,6 +629,17 @@
                                             
                                             <div class="flex justify-between items-start mb-1">
                                                 <h4 class="font-bold text-gray-800 text-lg ml-1">${item.namaItem}</h4>
+                                            <div class="flex gap-1 mt-2">
+                                                ${!item.harga ? `
+                                                    <span class="px-2 py-0.5 text-[10px] rounded-full bg-rose-100 text-rose-500 font-semibold">
+                                                        Harga kosong
+                                                    </span>` : ''}
+
+                                                ${item.status === 'belum' ? `
+                                                    <span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-600 font-semibold">
+                                                        Belum dibeli
+                                                    </span>` : ''}
+                                            </div>
                                                 <span class="px-2 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase rounded border border-gray-100">${item.jumlah} Pcs</span>
                                             </div>
                                             <p class="text-xs text-gray-400 font-medium mb-3 ml-1">${formatRupiah(item.harga)} / pcs <span class="${item.catatan ? 'inline' : 'hidden'}">• ${item.catatan}</span></p>
