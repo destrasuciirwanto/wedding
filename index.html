@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Wedding Planner Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lavender: {
+                            light: '#E6D6FF',
+                            DEFAULT: '#CBA6F7',
+                            dark: '#B084E6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F8F9FA; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E6D6FF; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #CBA6F7; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; pointer-events: none; }
+        .toast {
+            background-color: white; border-left: 5px solid #CBA6F7;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 16px 24px; border-radius: 8px; margin-top: 10px; display: flex;
+            align-items: center; gap: 12px; transform: translateX(100%);
+            animation: slideIn 0.3s forwards, fadeOut 0.3s forwards 2.7s;
+            pointer-events: auto;
+        }
+        @keyframes slideIn { to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
+        
+        .sticky-note { background: #FFFCE8; border: 1px solid #F2EFC2; box-shadow: 2px 4px 10px rgba(0,0,0,0.03); }
+        
+        /* Custom styling for seserahan dropdown to hide default arrow in some browsers */
+        .status-select { text-align-last: center; }
+    </style>
+</head>
+<body class="text-gray-800 flex h-screen overflow-hidden">
+
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="w-64 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.04)] flex flex-col transition-transform duration-300 z-30 absolute lg:relative h-full -translate-x-full lg:translate-x-0">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-lavender-dark tracking-wide">
+                <i class="fa-solid fa-ring mr-2"></i>DESTARA
+            </h1>
+            <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-lavender">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4" id="sidebar-menu"></div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 flex justify-between items-center z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-lavender transition">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
+                    MD
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 md:p-8" id="main-content"></main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // CONFIG FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIvPy_2z1-BpKjAxUE-0VHhELqx3DHepM",
+            authDomain: "desara-9027a.firebaseapp.com",
+            projectId: "desara-9027a",
+            storageBucket: "desara-9027a.firebasestorage.app",
+            messagingSenderId: "865899813290",
+            appId: "1:865899813290:web:05453a36ef1608d40b73d3"        
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Menu System
+        const menus = [
+            { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
+            { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
+            { id: 'seserahan', icon: 'fa-gift', label: 'Seserahan' }, // <-- SESERAHAN DITAMBAHKAN
+            { id: 'wedding_list', icon: 'fa-users', label: 'Wedding List' },
+            { id: 'catering', icon: 'fa-utensils', label: 'Catering' },
+            { id: 'vendor', icon: 'fa-store', label: 'Vendor List' },
+            { id: 'timeline', icon: 'fa-clock', label: 'Timeline / Rundown' },
+            { id: 'checklist', icon: 'fa-list-check', label: 'Checklist Persiapan' },
+            { id: 'notes', icon: 'fa-sticky-note', label: 'Notes / Catatan' },
+            { id: 'venue', icon: 'fa-building', label: 'Venue' },
+            { id: 'attire', icon: 'fa-tshirt', label: 'Attire & MUA' },
+            { id: 'dekor', icon: 'fa-leaf', label: 'Dekorasi' }
+        ];
+
+        let activeMenu = 'dashboard';
+        let editId = null;
+        let appData = { totalBudget: 0, items: {} };
+        menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
+
+        // Filter state untuk Seserahan
+        window.seserahanFilter = 'semua';
+        window.setSeserahanFilter = function(f) {
+            window.seserahanFilter = f;
+            renderTable('seserahan');
+        }
+
+        // --- 1. CORE DATA FUNCTIONS ---
+        window.loadData = async function(categoryId) {
+            const snapshot = await getDocs(collection(db, categoryId));
+            let data = [];
+            snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
+            appData.items[categoryId] = data;
+            renderTable(categoryId);
+        };
+
+        async function loadAllData() {
+            for (const menu of menus) {
+                if (menu.id !== 'dashboard') {
+                    const snapshot = await getDocs(collection(db, menu.id));
+                    let data = [];
+                    snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
+                    appData.items[menu.id] = data;
+                }
+            }
+        }
+
+        async function loadBudget() {
+            const docRef = doc(db, "settings", "budget");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) { appData.totalBudget = docSnap.data().totalBudget || 0; }
+        }
+
+        window.initApp = async function() {
+            renderSidebar();
+            document.getElementById('main-content').innerHTML = `<div class="flex flex-col items-center justify-center h-full text-lavender"><i class="fa-solid fa-spinner fa-spin text-4xl mb-4"></i><p class="font-medium text-gray-500">Memuat Sistem...</p></div>`;
+            await loadBudget();
+            await loadAllData(); 
+            renderContent();
+        }
+
+        // --- 2. UTILS ---
+        window.toggleSidebar = function() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        }
+
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check text-green-500':'fa-circle-xmark text-red-500'} text-xl"></i> <p class="text-sm font-medium">${message}</p>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function getEmptyStateHTML(icon, message) {
+            return `<div class="py-16 text-center text-gray-400 fade-in flex flex-col items-center">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4"><i class="fa-solid ${icon} text-3xl text-gray-300"></i></div>
+                <p class="text-sm font-medium">${message}</p>
+                <p class="text-xs text-gray-400 mt-1">Yuk, mulai tambahkan data pertamamu!</p>
+            </div>`;
+        }
+
+        // --- 3. NAVIGATION & LAYOUT ---
+        function renderSidebar() {
+            const sidebarHtml = menus.map(menu => `
+                <a href="#" onclick="changeMenu('${menu.id}')" class="flex items-center px-6 py-3 my-1 mx-3 rounded-xl transition-all duration-200 text-sm font-medium ${activeMenu === menu.id ? 'bg-lavender text-white shadow-md shadow-lavender/30' : 'text-gray-500 hover:bg-lavender-light hover:text-lavender-dark'}">
+                    <i class="fa-solid ${menu.icon} w-6 text-lg"></i><span>${menu.label}</span>
+                </a>
+            `).join('');
+            document.getElementById('sidebar-menu').innerHTML = sidebarHtml;
+        }
+
+        window.changeMenu = async function(menuId) {
+            activeMenu = menuId;
+            editId = null;
+            document.getElementById('page-title').innerText = menus.find(m => m.id === menuId).label;
+            renderSidebar();
+            await renderContent();
+            if(window.innerWidth < 1024) toggleSidebar(); 
+        }
+
+        window.renderContent = async function() {
+            const mainContent = document.getElementById('main-content');
+            if (activeMenu === 'dashboard') {
+                await loadAllData(); 
+                mainContent.innerHTML = getDashboardHTML();
+            } else {
+                mainContent.innerHTML = getCategoryHTML(activeMenu);
+                await loadData(activeMenu); 
+            }
+        }
+
+        // --- 4. QUICK INLINE UPDATE ---
+        window.quickUpdate = async function(categoryId, id, field, value) {
+            try {
+                await updateDoc(doc(db, categoryId, id), { [field]: value });
+                await loadData(categoryId); 
+                showToast('Status berhasil diupdate!');
+            } catch (error) {
+                showToast('Gagal update status!', 'error');
+            }
+        }
+
+        // --- 5. DASHBOARD & FORMS ---
+        function getDashboardHTML() {
+            let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
+            Object.keys(appData.items).forEach(key => {
+                appData.items[key].forEach(item => {
+                    totalPengeluaran += Number(item.nilai || item.total || item.biaya || 0);
+                    totalItems++;
+                    if(item.status === 'Selesai' || item.status === 'sudah' || item.status === 'dibungkus' || item.status === 'deal' || item.statusPembayaran === 'lunas') itemsSelesai++;
+                });
+            });
+            const sisaBudget = appData.totalBudget - totalPengeluaran;
+            const progress = totalItems === 0 ? 0 : Math.round((itemsSelesai / totalItems) * 100);
+
+            return `
+                <div class="fade-in space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 class="text-sm text-gray-500 font-medium">Total Anggaran Pernikahan</h3>
+                            <p class="text-2xl font-bold text-gray-800">${formatRupiah(appData.totalBudget)}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="number" id="budgetInput" placeholder="Set Budget Baru" class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-lavender w-48 text-sm">
+                            <button onclick="updateBudget()" class="bg-lavender text-white px-4 py-2 rounded-lg hover:bg-lavender-dark transition shadow-sm font-medium text-sm">Update</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-red-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                            <div class="relative z-10">
+                                <p class="text-sm text-gray-500 font-medium mb-1">Total Pengeluaran / Estimasi</p>
+                                <h4 class="text-xl font-bold text-gray-800">${formatRupiah(totalPengeluaran)}</h4>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 ${sisaBudget < 0 ? 'bg-red-50' : 'bg-green-50'} rounded-full group-hover:scale-110 transition-transform"></div>
+                            <div class="relative z-10">
+                                <p class="text-sm text-gray-500 font-medium mb-1">Sisa Anggaran</p>
+                                <h4 class="text-xl font-bold ${sisaBudget < 0 ? 'text-red-500' : 'text-gray-800'}">${formatRupiah(sisaBudget)}</h4>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-lavender-light opacity-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                            <div class="relative z-10">
+                                <p class="text-sm text-gray-500 font-medium mb-1">Total Item Tercatat</p>
+                                <h4 class="text-xl font-bold text-gray-800">${totalItems} <span class="text-sm font-normal text-gray-500">Items</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-end mb-2">
+                            <div><h3 class="text-sm text-gray-500 font-bold uppercase">Progress Sistem Keseluruhan</h3></div>
+                            <span class="text-2xl font-bold text-lavender-dark">${progress}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3"><div class="bg-lavender h-3 rounded-full transition-all duration-1000" style="width: ${progress}%"></div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.updateBudget = async function() {
+            const val = document.getElementById('budgetInput').value;
+            if(val) {
+                appData.totalBudget = parseInt(val);
+                await setDoc(doc(db, "settings", "budget"), { totalBudget: appData.totalBudget });
+                renderContent(); showToast('Budget diperbarui!');
+            }
+        }
+
+        function getCategoryHTML(categoryId) {
+            const menuLabel = menus.find(m => m.id === categoryId).label;
+            let formInner = '';
+            
+            if (categoryId === 'mahar') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Mahar</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nilai (Rp)</label><input type="number" id="inputNilai" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kesiapan</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="belum">🔴 Belum Siap</option><option value="sudah">✅ Sudah Siap</option></select></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Deskripsi Detail</label><textarea id="inputDeskripsi" rows="2" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>
+                `;
+            } else if (categoryId === 'seserahan') { // <-- FORM SESERAHAN
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Item</label><input type="text" id="inputNamaItem" placeholder="Contoh: Cincin Emas, Tas Wanita" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label>
+                        <select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
+                            <option value="perhiasan">💍 Perhiasan</option>
+                            <option value="pakaian">👗 Pakaian & Sepatu</option>
+                            <option value="makeup">💄 Make Up / Skincare</option>
+                            <option value="makanan">🍎 Makanan / Buah</option>
+                            <option value="lainnya">📦 Lainnya</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah</label><input type="number" id="inputJumlah" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga Satuan (Rp)</label><input type="number" id="inputHarga" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                        <select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
+                            <option value="belum">🔴 Belum Dibeli</option>
+                            <option value="dibeli">🟡 Sudah Dibeli</option>
+                            <option value="dibungkus">🟢 Sudah Dibungkus</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Catatan</label><input type="text" id="inputCatatan" placeholder="Catatan tambahan (Opsional)" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                `;
+            } else if (categoryId === 'wedding_list') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Tamu / Undangan</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Orang (Pax)</label><input type="number" id="inputJumlahOrang" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label><select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="keluarga">Keluarga</option><option value="teman">Teman</option><option value="kantor">Kantor / Rekan Kerja</option></select></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kehadiran</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pending">⏳ Pending (Menunggu)</option><option value="hadir">✅ Hadir</option><option value="tidak hadir">❌ Tidak Hadir</option></select></div>
+                `;
+            } else if (categoryId === 'catering') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Vendor</label><input type="text" id="inputVendor" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Paket Menu</label><input type="text" id="inputPaket" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga per Pax (Rp)</label><input type="number" id="inputHargaPerPax" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Pax Pesanan</label><input type="number" id="inputJumlahPax" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Status Pembayaran</label><select id="inputStatusBayar" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="dp">🟡 DP (Down Payment)</option><option value="lunas">🟢 Lunas</option></select></div>
+                `;
+            } else if (categoryId === 'checklist') {
+                formInner = `<div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Apa yang harus dipersiapkan?</label><input type="text" id="inputTugas" placeholder="Contoh: Cetak Undangan 500 pcs" required class="w-full px-4 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender shadow-sm"></div>`;
+            } else if (categoryId === 'timeline') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Jam (Contoh: 08:00)</label><input type="time" id="inputJam" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">PIC (Penanggung Jawab)</label><input type="text" id="inputPic" placeholder="Contoh: WO / Nama Saudara" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Kegiatan</label><input type="text" id="inputKegiatan" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                `;
+            } else if (categoryId === 'vendor') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Vendor</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori Jasa (Dekor, MUA, dll)</label><input type="text" id="inputKategori" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Kontak / Sosmed</label><input type="text" id="inputKontak" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kerjasama</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="belum">⚪ Belum Deal (Masih Cari-cari)</option><option value="deal">✅ Sudah Deal</option></select></div>
+                `;
+            } else if (categoryId === 'notes') {
+                formInner = `<div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan Bebas</label><textarea id="inputIsi" rows="4" placeholder="Tuliskan catatan penting, inspirasi, atau ide..." required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>`;
+            } else {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Biaya (Rp)</label><input type="number" id="inputBiaya" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                `;
+            }
+
+            return `
+                <div class="fade-in space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4" id="form-title">Tambah Data ${menuLabel}</h3>
+                        <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${formInner}
+                            <div class="md:col-span-2 flex justify-end gap-2 mt-2 pt-4 border-t border-gray-50">
+                                <button type="button" onclick="resetForm()" class="px-5 py-2 text-sm text-gray-500 hover:bg-gray-100 rounded-xl transition">Batal</button>
+                                <button type="submit" id="btnSubmit" class="px-5 py-2 text-sm bg-lavender text-white rounded-xl shadow-md hover:bg-lavender-dark transition font-medium"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="dynamic-list-container"></div>
+                </div>
+            `;
+        }
+
+        // --- 6. SUBMIT DATA & MAPPER ---
+        window.handleFormSubmit = async function(e, categoryId) {
+            e.preventDefault();
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...`;
+            btnSubmit.disabled = true;
+            
+            let itemData = {};
+
+            if (categoryId === 'mahar') {
+                itemData = {
+                    nama: document.getElementById('inputNama').value,
+                    deskripsi: document.getElementById('inputDeskripsi').value,
+                    nilai: Number(document.getElementById('inputNilai').value || 0),
+                    status: document.getElementById('inputStatus').value,
+                    tanggalUpdate: new Date().toISOString()
+                };
+            } else if (categoryId === 'seserahan') { // <-- MAPPER SESERAHAN
+                const h = Number(document.getElementById('inputHarga').value || 0);
+                const j = Number(document.getElementById('inputJumlah').value || 1);
+                itemData = {
+                    namaItem: document.getElementById('inputNamaItem').value,
+                    kategori: document.getElementById('inputKategori').value,
+                    jumlah: j,
+                    harga: h,
+                    total: h * j, // Auto calculate
+                    status: document.getElementById('inputStatus').value,
+                    catatan: document.getElementById('inputCatatan').value,
+                    tanggalUpdate: new Date().toISOString()
+                };
+            } else if (categoryId === 'wedding_list') {
+                itemData = {
+                    nama: document.getElementById('inputNama').value,
+                    kategori: document.getElementById('inputKategori').value,
+                    status: document.getElementById('inputStatus').value,
+                    jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1)
+                };
+            } else if (categoryId === 'catering') {
+                const h = Number(document.getElementById('inputHargaPerPax').value || 0);
+                const p = Number(document.getElementById('inputJumlahPax').value || 0);
+                itemData = {
+                    vendor: document.getElementById('inputVendor').value,
+                    paket: document.getElementById('inputPaket').value,
+                    hargaPerPax: h,
+                    jumlahPax: p,
+                    total: h * p,
+                    statusBayar: document.getElementById('inputStatusBayar').value
+                };
+            } else if (categoryId === 'checklist') {
+                itemData = {
+                    tugas: document.getElementById('inputTugas').value,
+                    status: false,
+                    createdAt: new Date().toISOString()
+                };
+            } else if (categoryId === 'timeline') {
+                itemData = {
+                    jam: document.getElementById('inputJam').value,
+                    kegiatan: document.getElementById('inputKegiatan').value,
+                    pic: document.getElementById('inputPic').value
+                };
+            } else if (categoryId === 'vendor') {
+                itemData = {
+                    nama: document.getElementById('inputNama').value,
+                    kategori: document.getElementById('inputKategori').value,
+                    kontak: document.getElementById('inputKontak').value,
+                    status: document.getElementById('inputStatus').value
+                };
+            } else if (categoryId === 'notes') {
+                itemData = {
+                    isi: document.getElementById('inputIsi').value,
+                    tanggal: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
+                };
+            } else {
+                itemData = {
+                    nama: document.getElementById('inputNama').value,
+                    biaya: Number(document.getElementById('inputBiaya').value || 0)
+                };
+            }
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, categoryId, editId), itemData);
+                    showToast('Data berhasil diperbarui!');
+                } else {
+                    await addDoc(collection(db, categoryId), itemData);
+                    showToast('Berhasil menambahkan data!');
+                }
+                resetForm();
+                await loadData(categoryId); 
+            } catch (error) { showToast('Gagal menyimpan!', 'error'); } 
+            finally { btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`; btnSubmit.disabled = false; }
+        }
+
+        // --- 7. DYNAMIC TABLE & SYSTEM UI RENDERER ---
+        window.renderTable = function(categoryId) {
+            const container = document.getElementById('dynamic-list-container');
+            if(!container) return; 
+            
+            let data = appData.items[categoryId] || [];
+            let htmlOut = '';
+
+            // --- 1. SESERAHAN SYSTEM ---
+            if (categoryId === 'seserahan') {
+                let totalBiaya = 0;
+                let totalItems = data.length;
+                let countDibungkus = 0;
+
+                // Hitung Global
+                data.forEach(item => {
+                    totalBiaya += item.total || 0;
+                    if (item.status === 'dibungkus') countDibungkus++;
+                });
+                const progress = totalItems === 0 ? 0 : Math.round((countDibungkus / totalItems) * 100);
+
+                // Filter Data
+                let filteredData = data;
+                if (window.seserahanFilter !== 'semua') {
+                    filteredData = data.filter(i => i.status === window.seserahanFilter);
+                }
+
+                // Pengelompokan Kategori
+                const grouped = { 'perhiasan': [], 'pakaian': [], 'makeup': [], 'makanan': [], 'lainnya': [] };
+                const catInfo = {
+                    'perhiasan': { label: 'Perhiasan', icon: 'fa-ring', color: 'text-amber-500', bg: 'bg-amber-50' },
+                    'pakaian': { label: 'Pakaian & Sepatu', icon: 'fa-shirt', color: 'text-pink-500', bg: 'bg-pink-50' },
+                    'makeup': { label: 'Make Up & Skincare', icon: 'fa-pump-soap', color: 'text-rose-500', bg: 'bg-rose-50' },
+                    'makanan': { label: 'Makanan & Buah', icon: 'fa-apple-whole', color: 'text-orange-500', bg: 'bg-orange-50' },
+                    'lainnya': { label: 'Lainnya', icon: 'fa-box-open', color: 'text-gray-500', bg: 'bg-gray-50' }
+                };
+
+                filteredData.forEach(item => {
+                    if (grouped[item.kategori]) grouped[item.kategori].push(item);
+                    else grouped['lainnya'].push(item);
+                });
+
+                htmlOut += `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Biaya Seserahan</p>
+                            <h2 class="text-3xl font-black text-lavender-dark">${formatRupiah(totalBiaya)}</h2>
+                        </div>
+                        <div class="flex-1 max-w-sm">
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-gray-500">Progress Pembungkusan</span>
+                                <span class="text-green-600">${countDibungkus} dari ${totalItems} Selesai (${progress}%)</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-3 border border-gray-200">
+                                <div class="bg-green-400 h-full rounded-full transition-all duration-700 relative overflow-hidden" style="width: ${progress}%">
+                                    <div class="absolute inset-0 bg-white/20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 20px);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
+                        <button onclick="setSeserahanFilter('semua')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='semua' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}">Semua</button>
+                        <button onclick="setSeserahanFilter('belum')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='belum' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white text-gray-500 border-gray-200 hover:border-red-200'}">🔴 Belum Dibeli</button>
+                        <button onclick="setSeserahanFilter('dibeli')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibeli' ? 'bg-yellow-50 text-yellow-600 border-yellow-200' : 'bg-white text-gray-500 border-gray-200 hover:border-yellow-200'}">🟡 Sudah Dibeli</button>
+                        <button onclick="setSeserahanFilter('dibungkus')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanFilter==='dibungkus' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-500 border-gray-200 hover:border-green-200'}">🟢 Sudah Dibungkus</button>
+                    </div>
+                `;
+
+                if (filteredData.length === 0) {
+                    htmlOut += getEmptyStateHTML('fa-gift', window.seserahanFilter === 'semua' ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter ini.');
+                } else {
+                    htmlOut += `<div class="space-y-8">`;
+                    // Render per Kategori
+                    Object.keys(grouped).forEach(catKey => {
+                        const items = grouped[catKey];
+                        if (items.length === 0) return; // Skip empty groups
+                        
+                        const info = catInfo[catKey];
+                        htmlOut += `
+                            <div>
+                                <h3 class="font-black text-gray-700 text-lg mb-4 flex items-center gap-2"><div class="w-8 h-8 rounded-lg flex items-center justify-center ${info.bg} ${info.color}"><i class="fa-solid ${info.icon} text-sm"></i></div> ${info.label}</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    ${items.map(item => {
+                                        let statusColor = item.status === 'dibungkus' ? 'bg-green-100 text-green-700 border-green-200' : 
+                                                          item.status === 'dibeli' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 
+                                                          'bg-red-100 text-red-600 border-red-200';
+                                        
+                                        return `
+                                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition relative group overflow-hidden">
+                                            <div class="absolute top-0 left-0 w-1.5 h-full ${item.status==='dibungkus'?'bg-green-400':item.status==='dibeli'?'bg-yellow-400':'bg-red-400'}"></div>
+                                            
+                                            <div class="flex justify-between items-start mb-1">
+                                                <h4 class="font-bold text-gray-800 text-lg ml-1">${item.namaItem}</h4>
+                                                <span class="px-2 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase rounded border border-gray-100">${item.jumlah} Pcs</span>
+                                            </div>
+                                            <p class="text-xs text-gray-400 font-medium mb-3 ml-1">${formatRupiah(item.harga)} / pcs <span class="${item.catatan ? 'inline' : 'hidden'}">• ${item.catatan}</span></p>
+                                            
+                                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100 mt-2">
+                                                <div><p class="text-[10px] font-bold text-gray-400 uppercase">Total Harga</p><p class="font-black text-lavender-dark text-sm">${formatRupiah(item.total)}</p></div>
+                                                
+                                                <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="status-select px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer transition ${statusColor}">
+                                                    <option value="belum" ${item.status==='belum'?'selected':''} class="text-red-600 font-bold">🔴 Belum Dibeli</option>
+                                                    <option value="dibeli" ${item.status==='dibeli'?'selected':''} class="text-yellow-600 font-bold">🟡 Sudah Dibeli</option>
+                                                    <option value="dibungkus" ${item.status==='dibungkus'?'selected':''} class="text-green-700 font-bold">🟢 Dibungkus</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="absolute top-3 right-3 space-x-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition bg-white/90 rounded-md backdrop-blur-sm p-1">
+                                                <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:text-lavender rounded"><i class="fa-solid fa-pen text-xs"></i></button>
+                                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-300 hover:text-red-500 rounded"><i class="fa-solid fa-trash text-xs"></i></button>
+                                            </div>
+                                        </div>`
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    htmlOut += `</div>`;
+                }
+            }
+            // --- END SESERAHAN SYSTEM ---
+
+            // --- 2. MAHAR SYSTEM ---
+            else if (categoryId === 'mahar') {
+                const total = data.length;
+                const ready = data.filter(i => i.status === 'sudah').length;
+                const progress = total === 0 ? 0 : Math.round((ready / total) * 100);
+                
+                htmlOut = `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                        <div class="flex justify-between text-sm mb-2"><span class="font-medium text-gray-600">Progress Mahar</span><span class="text-green-600 font-bold">${ready} dari ${total} Siap (${progress}%)</span></div>
+                        <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-green-400 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${data.map(item => `
+                            <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between group relative overflow-hidden transition hover:shadow-md hover:border-lavender/50">
+                                ${item.status === 'sudah' ? '<div class="absolute top-0 left-0 w-1.5 h-full bg-green-400"></div>' : '<div class="absolute top-0 left-0 w-1.5 h-full bg-red-400"></div>'}
+                                <div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-gray-800 text-lg">${item.nama}</h4>
+                                        <span class="px-2 py-1 text-[10px] rounded-full font-bold uppercase tracking-wide ${item.status === 'sudah' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${item.status}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 line-clamp-2">${item.deskripsi || '-'}</p>
+                                    <div class="mt-3 inline-block px-3 py-1 bg-gray-50 rounded-lg border border-gray-100">
+                                        <p class="font-bold text-lavender-dark text-sm">${formatRupiah(item.nilai)}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
+                                    <label class="flex items-center gap-2 cursor-pointer group/label">
+                                        <input type="checkbox" onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.checked ? 'sudah' : 'belum')" ${item.status === 'sudah' ? 'checked' : ''} class="w-4 h-4 text-green-500 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+                                        <span class="text-xs font-semibold ${item.status === 'sudah' ? 'text-green-600' : 'text-gray-400'} transition group-hover/label:text-gray-700">Tandai Sudah Siap</span>
+                                    </label>
+                                    <div class="space-x-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition">
+                                        <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:bg-gray-50 hover:text-lavender rounded"><i class="fa-solid fa-pen text-xs"></i></button>
+                                        <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-300 hover:bg-red-50 hover:text-red-500 rounded"><i class="fa-solid fa-trash text-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') || getEmptyStateHTML('fa-gem', 'Belum ada list mahar.')}
+                    </div>`;
+                    
+            } else if (categoryId === 'wedding_list') {
+                const totalUndangan = data.length;
+                const hadir = data.filter(i => i.status === 'hadir').length;
+                const paxHadir = data.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
+                
+                htmlOut = `
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Undangan</p><p class="text-3xl font-black text-gray-700">${totalUndangan}</p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-green-100 bg-green-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-green-600 font-semibold uppercase mb-1">Tamu Hadir</p><p class="text-3xl font-black text-green-600">${hadir}</p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax (Hadir)</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Tamu & Kategori</th><th class="px-6 py-4 font-semibold text-center">Pax</th><th class="px-6 py-4 font-semibold">Ubah Status Inline</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead>
+                            <tbody class="divide-y divide-gray-100">
+                                ${data.map(item => `
+                                    <tr class="hover:bg-gray-50/50 transition">
+                                        <td class="px-6 py-4">
+                                            <p class="font-bold text-gray-800 text-base">${item.nama}</p>
+                                            <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-[10px] font-medium uppercase tracking-wide">${item.kategori}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center font-bold text-gray-600"><i class="fa-solid fa-user-group text-gray-300 mr-1 text-xs"></i> ${item.jumlahOrang}</td>
+                                        <td class="px-6 py-4">
+                                            <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border-2 outline-none cursor-pointer transition ${item.status==='hadir'?'bg-green-50 text-green-700 border-green-200': item.status==='tidak hadir'?'bg-red-50 text-red-700 border-red-200':'bg-yellow-50 text-yellow-700 border-yellow-200'}">
+                                                <option value="pending" ${item.status==='pending'?'selected':''}>⏳ Pending</option>
+                                                <option value="hadir" ${item.status==='hadir'?'selected':''}>✅ Hadir</option>
+                                                <option value="tidak hadir" ${item.status==='tidak hadir'?'selected':''}>❌ Tidak</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-2"><i class="fa-solid fa-pen"></i></button>
+                                            <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                `).join('') || `<tr><td colspan="4">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu undangan.')}</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>`;
+
+            } else if (categoryId === 'catering') {
+                let grandTotal = 0;
+                htmlOut = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Vendor & Paket</th><th class="px-6 py-4 font-semibold text-right">Per Pax</th><th class="px-6 py-4 font-semibold text-center">Jml Pax</th><th class="px-6 py-4 font-semibold text-right">Total Subtotal</th><th class="px-6 py-4 font-semibold">Status Bayar</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead>
+                            <tbody class="divide-y divide-gray-100">
+                                ${data.map(item => {
+                                    grandTotal += item.total || 0;
+                                    return `
+                                    <tr class="hover:bg-gray-50/50 transition">
+                                        <td class="px-6 py-4"><p class="font-bold text-gray-800 text-base">${item.vendor}</p><p class="text-xs text-gray-500 font-medium">${item.paket}</p></td>
+                                        <td class="px-6 py-4 text-right text-gray-500">${formatRupiah(item.hargaPerPax)}</td>
+                                        <td class="px-6 py-4 text-center font-bold text-gray-600 bg-gray-50/50">× ${item.jumlahPax}</td>
+                                        <td class="px-6 py-4 text-right font-black text-lavender-dark text-base">${formatRupiah(item.total)}</td>
+                                        <td class="px-6 py-4">
+                                            <select onchange="quickUpdate('${categoryId}', '${item.id}', 'statusBayar', this.value)" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer ${item.statusBayar==='lunas'?'bg-green-100 text-green-700 border-green-200':'bg-yellow-100 text-yellow-700 border-yellow-200'}">
+                                                <option value="dp" ${item.statusBayar==='dp'?'selected':''}>DP</option>
+                                                <option value="lunas" ${item.statusBayar==='lunas'?'selected':''}>LUNAS</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>`
+                                }).join('') || `<tr><td colspan="6">${getEmptyStateHTML('fa-utensils', 'Belum ada pesanan catering.')}</td></tr>`}
+                            </tbody>
+                            ${data.length > 0 ? `<tfoot class="bg-lavender-light/20 border-t border-lavender-light/50 font-bold text-gray-800"><tr><td colspan="3" class="px-6 py-5 text-right uppercase text-xs tracking-wider text-gray-500">Estimasi Grand Total Biaya Catering</td><td colspan="3" class="px-6 py-5 text-2xl text-lavender-dark">${formatRupiah(grandTotal)}</td></tr></tfoot>` : ''}
+                        </table>
+                    </div>`;
+
+            } else if (categoryId === 'checklist') {
+                const total = data.length;
+                const done = data.filter(i => i.status).length;
+                const progress = total === 0 ? 0 : Math.round((done / total) * 100);
+                
+                htmlOut = `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                        <div class="flex justify-between items-end mb-2"><div><h3 class="text-sm text-gray-500 font-bold uppercase tracking-wide">Progress Persiapan</h3></div><span class="text-2xl font-black text-lavender-dark">${progress}%</span></div>
+                        <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden border border-gray-200"><div class="bg-lavender h-full rounded-full transition-all duration-700 relative overflow-hidden" style="width: ${progress}%"><div class="absolute inset-0 bg-white/20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px);"></div></div></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+                        <ul class="divide-y divide-gray-100">
+                            ${data.map(item => `
+                                <li class="p-4 hover:bg-gray-50 flex justify-between items-center group transition">
+                                    <label class="flex items-center gap-4 cursor-pointer flex-1 py-1">
+                                        <input type="checkbox" onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.checked)" ${item.status ? 'checked' : ''} class="w-6 h-6 text-lavender rounded-lg border-gray-300 focus:ring-lavender cursor-pointer transition-all">
+                                        <span class="font-medium text-base ${item.status ? 'text-gray-400 line-through decoration-2 decoration-gray-300' : 'text-gray-700'} transition-all">${item.tugas}</span>
+                                    </label>
+                                    <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                                </li>
+                            `).join('') || getEmptyStateHTML('fa-list-check', 'Tugas checklist masih kosong.')}
+                        </ul>
+                    </div>`;
+
+            } else if (categoryId === 'timeline') {
+                data.sort((a, b) => (a.jam || '00:00').localeCompare(b.jam || '00:00'));
+                htmlOut = `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <div class="relative border-l-2 border-dashed border-lavender-light ml-4 space-y-8">
+                        ${data.map((item, index) => `
+                            <div class="relative pl-8 group fade-in" style="animation-delay: ${index * 0.1}s">
+                                <div class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-white border-4 border-lavender z-10 shadow-sm"></div>
+                                <div class="bg-gray-50 border border-gray-100 hover:border-lavender/50 hover:bg-lavender/5 p-5 rounded-xl transition shadow-sm relative">
+                                    <div class="absolute -left-3 top-4 w-3 h-3 bg-gray-50 border-t border-l border-gray-100 rotate-45 group-hover:bg-lavender/5 group-hover:border-lavender/50 transition"></div>
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <span class="font-black text-xl text-lavender-dark tracking-wide"><i class="fa-regular fa-clock text-base text-lavender-dark/50 mr-1"></i> ${item.jam}</span>
+                                            <h4 class="font-bold text-gray-800 text-lg mt-1">${item.kegiatan}</h4>
+                                            <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-white rounded-lg border border-gray-200 text-xs font-semibold text-gray-500">
+                                                <i class="fa-solid fa-user-tie text-lavender text-sm"></i> PIC: <span class="text-gray-700">${item.pic}</span>
+                                            </div>
+                                        </div>
+                                        <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-gray-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 p-2"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') || getEmptyStateHTML('fa-clock', 'Timeline acara belum dibuat.')}
+                    </div>
+                </div>`;
+
+            } else if (categoryId === 'vendor') {
+                htmlOut = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    ${data.map(item => `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative group transition hover:-translate-y-1 hover:shadow-md">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-lavender block mb-2"><i class="fa-solid fa-tag mr-1"></i> ${item.kategori}</span>
+                            <h4 class="font-black text-xl text-gray-800 mb-4">${item.nama}</h4>
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-600 mb-6 bg-gray-50 p-2 rounded-lg border border-gray-100"><i class="fa-brands fa-whatsapp text-green-500 text-lg"></i> ${item.kontak}</div>
+                            <div class="flex justify-between items-center border-t border-gray-50 pt-4">
+                                <label class="flex items-center gap-2 cursor-pointer bg-white">
+                                    <div class="relative">
+                                        <input type="checkbox" onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.checked ? 'deal' : 'belum')" ${item.status === 'deal' ? 'checked' : ''} class="sr-only">
+                                        <div class="block w-10 h-6 rounded-full transition-colors ${item.status === 'deal' ? 'bg-green-400' : 'bg-gray-300'}"></div>
+                                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${item.status === 'deal' ? 'transform translate-x-4' : ''}"></div>
+                                    </div>
+                                    <span class="text-xs font-bold uppercase ${item.status === 'deal' ? 'text-green-600' : 'text-gray-400'}">Sudah Deal</span>
+                                </label>
+                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-2 text-gray-300 hover:text-red-500"><i class="fa-solid fa-trash text-sm"></i></button>
+                            </div>
+                        </div>
+                    `).join('') || `<div class="col-span-3">${getEmptyStateHTML('fa-store', 'Belum ada data vendor di list.')}</div>`}
+                </div>`;
+
+            } else if (categoryId === 'notes') {
+                htmlOut = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    ${data.map(item => `
+                        <div class="sticky-note rounded-bl-3xl shadow-md p-6 relative group transform hover:-rotate-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
+                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-red-400/20 rounded-full flex items-center justify-center"><div class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div></div>
+                            <p class="text-gray-800 font-medium whitespace-pre-wrap text-sm leading-relaxed mt-2">${item.isi}</p>
+                            <div class="flex justify-between items-end mt-6 text-[10px] text-gray-400 font-semibold border-t border-[#F2EFC2] pt-2">
+                                <span>${item.tanggal}</span>
+                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-400 hover:text-red-600 opacity-100 md:opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash text-sm"></i></button>
+                            </div>
+                        </div>
+                    `).join('') || `<div class="col-span-4">${getEmptyStateHTML('fa-sticky-note', 'Belum ada catatan yang ditulis.')}</div>`}
+                </div>`;
+                
+            } else {
+                // FALLBACK
+                htmlOut = `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Item</th><th class="px-6 py-4 font-semibold">Biaya</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead><tbody class="divide-y divide-gray-100">
+                        ${data.map(item => `<tr class="hover:bg-gray-50"><td class="px-6 py-4 font-bold text-gray-800">${item.nama}</td><td class="px-6 py-4 font-medium text-gray-600">${formatRupiah(item.biaya)}</td><td class="px-6 py-4 text-right"><button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="3">${getEmptyStateHTML('fa-box', 'Belum ada data.')}</td></tr>`}
+                    </tbody></table>
+                </div>`;
+            }
+
+            container.innerHTML = htmlOut;
+        }
+
+        // --- 8. DELETE & EDIT HANDLER ---
+        window.deleteItem = async function(id, categoryId) {
+            if(confirm('Apakah kamu yakin ingin menghapus data ini?')) {
+                try {
+                    await deleteDoc(doc(db, categoryId, id));
+                    await loadData(categoryId); 
+                    showToast('Data dihapus!', 'success');
+                } catch (error) { showToast('Gagal menghapus!', 'error'); }
+            }
+        }
+
+        window.editItem = function(id, categoryId) {
+            const item = appData.items[categoryId].find(i => i.id === id);
+            if(!item) return;
+
+            editId = id;
+            document.getElementById('form-title').innerText = 'Edit Data';
+            document.getElementById('btnSubmit').innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Data';
+            
+            // Map values back to inputs
+            if(categoryId === 'mahar') {
+                document.getElementById('inputNama').value = item.nama; document.getElementById('inputNilai').value = item.nilai;
+                document.getElementById('inputDeskripsi').value = item.deskripsi; document.getElementById('inputStatus').value = item.status;
+            } else if (categoryId === 'seserahan') { // <-- MAPPER EDIT SESERAHAN
+                document.getElementById('inputNamaItem').value = item.namaItem; document.getElementById('inputKategori').value = item.kategori;
+                document.getElementById('inputJumlah').value = item.jumlah; document.getElementById('inputHarga').value = item.harga;
+                document.getElementById('inputStatus').value = item.status; document.getElementById('inputCatatan').value = item.catatan || '';
+            } else if(categoryId === 'wedding_list') {
+                document.getElementById('inputNama').value = item.nama; document.getElementById('inputJumlahOrang').value = item.jumlahOrang;
+                document.getElementById('inputKategori').value = item.kategori; document.getElementById('inputStatus').value = item.status;
+            }
+            document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.resetForm = function() {
+            editId = null;
+            document.getElementById('itemForm').reset();
+            document.getElementById('form-title').innerText = `Tambah Data ${menus.find(m => m.id === activeMenu).label}`;
+            document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
