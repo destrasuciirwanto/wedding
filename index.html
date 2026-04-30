@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- TAMBAHAN BARU: CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -56,14 +55,12 @@
         .sticky-note { background: #FFFCE8; border: 1px solid #F2EFC2; box-shadow: 2px 4px 10px rgba(0,0,0,0.03); }
         .status-select { text-align-last: center; }
         
-        /* Background khusus untuk area login */
         .login-bg {
             background-color: #F8F9FA;
             background-image: radial-gradient(#CBA6F7 0.5px, transparent 0.5px);
             background-size: 20px 20px;
         }
 
-        /* TAMBAHAN BARU: ANIMASI SHIMMER EMAS */
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 100%; }
@@ -147,7 +144,6 @@
                     <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
-                    <!-- TOGGLE HIDE MONEY -->
                     <button onclick="toggleHideMoney()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-lavender hover:bg-lavender-light transition" title="Sembunyikan / Tampilkan Uang">
                         <i id="toggle-eye-icon" class="fa-solid fa-eye"></i>
                     </button>
@@ -167,20 +163,14 @@
 
     <div id="toast-container"></div>
 
-    <!-- UI UPGRADE: PASSWORD MODAL -->
     <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
-        <!-- BACKDROP -->
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-        <!-- MODAL BOX -->
         <div class="relative bg-white rounded-3xl shadow-2xl w-[90%] max-w-sm p-6 fade-in scale-95 animate-[fadeIn_0.2s_ease-out_forwards]">
-            
-            <!-- ICON -->
             <div class="w-14 h-14 bg-lavender-light rounded-2xl flex items-center justify-center mx-auto mb-4 text-lavender-dark text-xl shadow-inner">
                 <i class="fa-solid fa-lock"></i>
             </div>
 
-            <!-- TITLE -->
             <h3 class="text-center text-lg font-bold text-gray-800 mb-1">
                 Akses Data Finansial
             </h3>
@@ -189,7 +179,6 @@
                 Masukkan password untuk membuka data
             </p>
 
-            <!-- INPUT -->
             <input 
                 type="password" 
                 id="password-input"
@@ -197,7 +186,6 @@
                 placeholder="••••••••"
             >
 
-            <!-- BUTTON -->
             <div class="flex gap-2 mt-5">
                 <button onclick="closePasswordModal()" 
                     class="flex-1 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
@@ -232,34 +220,27 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- HARGA EMAS GLOBAL & KURS ---
         window.goldPrice = 0;
         window.usdToIdr = 16000;
         
-        // TAMBAHAN BARU: VARIABEL UNTUK CHART & HISTORY
         window.goldHistory = window.goldHistory || [];
         window.prevGoldPrice = 0;
         window.goldChartInstance = null;
 
         async function fetchGoldAndKurs() {
             try {
-                // ambil harga emas (USD per ounce)
                 const goldRes = await fetch('https://api.gold-api.com/price/XAU');
                 const goldData = await goldRes.json();
 
-                // ambil kurs USD → IDR
                 const kursRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
                 const kursData = await kursRes.json();
 
                 window.usdToIdr = kursData.rates.IDR;
 
-                // convert ounce → gram
                 const pricePerGramUSD = goldData.price / 31.1035;
 
-                // convert ke rupiah
                 const newGoldPrice = Math.round(pricePerGramUSD * window.usdToIdr);
                 
-                // TAMBAHAN BARU: HISTORY & TREND
                 window.prevGoldPrice = window.goldPrice || newGoldPrice;
                 window.goldPrice = newGoldPrice;
 
@@ -268,36 +249,27 @@
                     window.goldHistory.shift();
                 }
 
-                console.log('Gold & Kurs updated:', {
-                    gold: window.goldPrice,
-                    kurs: window.usdToIdr
-                });
-
             } catch (err) {
                 console.error('Fetch gold/kurs failed', err);
             }
         }
 
-        // --- SISTEM LOGIN & PROTEKSI PADA SINGLE PAGE ---
         const pageLoader = document.getElementById('page-loader');
         const loginUI = document.getElementById('login-ui');
         const dashboardUI = document.getElementById('dashboard-ui');
         
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Berhasil Login -> Tampilkan Dashboard
                 loginUI.classList.add('hidden');
                 loginUI.classList.remove('flex');
                 dashboardUI.classList.remove('hidden');
                 pageLoader.style.display = 'none';
 
-                // Set inisial ke profile icon
                 const emailInitials = user.email.substring(0, 2).toUpperCase();
                 document.getElementById('user-profile').innerText = emailInitials;
 
                 await initApp();
             } else {
-                // Belum Login -> Tampilkan Form Login
                 dashboardUI.classList.add('hidden');
                 pageLoader.classList.add('opacity-0');
                 
@@ -309,7 +281,6 @@
             }
         });
 
-        // Event Listener Login Submit
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btnLogin = document.getElementById('btn-login');
@@ -337,7 +308,6 @@
             }
         });
 
-        // Event Listener Logout
         document.getElementById('btn-logout').addEventListener('click', async () => {
             if(confirm('Apakah Anda yakin ingin keluar dari dashboard?')) {
                 try {
@@ -348,9 +318,6 @@
             }
         });
 
-        // ==========================================================
-        // SISTEM DASHBOARD (DATA & UI LOGIC)
-        // ==========================================================
         const menus = [
             { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
             { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
@@ -371,11 +338,9 @@
         let appData = { totalBudget: 0, items: {} };
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
 
-        // --- FITUR PRIVACY (HIDE MONEY) ---
         const savedHide = localStorage.getItem('hideMoney');
         window.isHideMoney = savedHide === 'true';
 
-        // Pastikan icon matanya sinkron saat halaman dimuat pertama kali
         setTimeout(() => {
             const icon = document.getElementById('toggle-eye-icon');
             if(icon){
@@ -386,16 +351,12 @@
         }, 100);
         
         window.toggleHideMoney = function() {
-            // Jika saat ini TERSEMBUNYI → mau dibuka → butuh password via modal HTML
             if (window.isHideMoney === true) {
                 document.getElementById('password-modal').classList.remove('hidden');
                 document.getElementById('password-input').value = '';
-                // Focus ke input setelah modal muncul agar user bisa langsung ketik
                 setTimeout(() => document.getElementById('password-input').focus(), 100);
                 return;
             }
-
-            // Jika kondisi sekarang = TERBUKA → langsung ditutup (TANPA PASSWORD)
             window.executeToggleMoney();
         }
 
@@ -414,25 +375,17 @@
         }
 
         window.executeToggleMoney = function() {
-            // Toggle state
             window.isHideMoney = !window.isHideMoney;
-            
-            // Simpan ke localStorage agar tidak reset saat refresh
             localStorage.setItem('hideMoney', window.isHideMoney);
-
-            // update icon
             const icon = document.getElementById('toggle-eye-icon');
             if(icon){
                 icon.className = window.isHideMoney 
                     ? 'fa-solid fa-eye-slash' 
                     : 'fa-solid fa-eye';
             }
-
-            // re-render semua tampilan
             renderContent();
         }
 
-        // --- TOGGLE TIPE MAHAR ---
         window.toggleMaharType = function() {
             const tipeInput = document.getElementById('inputTipeMahar');
             if(!tipeInput) return;
@@ -452,28 +405,45 @@
             }
         }
 
-        // Filter state untuk Seserahan Status
+        window.toggleChecklistBiaya = function() {
+            const val = document.getElementById('inputButuhBiaya').value;
+            const wrapper = document.getElementById('biayaWrapper');
+            if(wrapper) {
+                if (val === 'ya') {
+                    wrapper.classList.remove('hidden');
+                } else {
+                    wrapper.classList.add('hidden');
+                }
+            }
+        }
+
+        window.hitungTotalChecklist = function() {
+            const harga = Number(document.getElementById('inputBiaya').value || 0);
+            const qty = Number(document.getElementById('inputQty').value || 0);
+
+            const total = harga * qty;
+
+            document.getElementById('totalPreview').innerText = formatRupiah(total);
+        }
+
         window.seserahanFilter = 'semua';
         window.setSeserahanFilter = function(f) {
             window.seserahanFilter = f;
             renderTable('seserahan');
         }
 
-        // Filter state untuk Seserahan Kategori
         window.seserahanCategoryFilter = 'all';
         window.setSeserahanCategory = function(cat) {
             window.seserahanCategoryFilter = cat;
             renderTable('seserahan');
         }
 
-        // --- FILTER DOORPRIZE ---
         window.doorprizeFilter = 'all';
         window.setDoorprizeFilter = function(f) {
             window.doorprizeFilter = f;
             renderTable('doorprize');
         }
 
-        // --- TAMBAHAN FILTER & SORTING WEDDING LIST ---
         window.weddingFilter = 'all';
         window.setWeddingFilter = function(f) {
             window.weddingFilter = f;
@@ -492,10 +462,7 @@
             renderTable('wedding_list');
         }
 
-        window.weddingSort = {
-            field: null,
-            direction: 'asc'
-        };
+        window.weddingSort = { field: null, direction: 'asc' };
         window.setWeddingSort = function(field) {
             if (window.weddingSort.field === field) {
                 window.weddingSort.direction = window.weddingSort.direction === 'asc' ? 'desc' : 'asc';
@@ -506,14 +473,11 @@
             renderTable('wedding_list');
         }
 
-        // --- LOGIC UNTUK TIPE UNDANGAN (FISIK/DIGITAL) ---
-        window.selectedUndanganType = 'fisik'; // Default value
-        
+        window.selectedUndanganType = 'fisik'; 
         window.handleUndanganType = function(type) {
             const fisik = document.getElementById('undanganFisik');
             const digital = document.getElementById('undanganDigital');
             
-            // Cek jika elemen ada di DOM
             if(!fisik || !digital) return;
 
             if (type === 'fisik') {
@@ -558,12 +522,11 @@
             
             await loadBudget();
             await loadAllData(); 
-            
             await fetchGoldAndKurs(); 
             
             setInterval(async () => {
                 await fetchGoldAndKurs();
-                renderContent(); // Murni render ulang UI saat harga emas baru tiba (TIDAK melakukan Write/updateDoc)
+                renderContent(); 
             }, 60 * 60 * 1000);
 
             renderContent();
@@ -585,7 +548,6 @@
             }).format(number);
         }
 
-        // TAMBAHAN BARU: FORMAT USD HELPER
         window.formatUSD = function(number) {
             if (window.isHideMoney) return '$ ----';
             return '$' + Number(number).toLocaleString('en-US', {
@@ -594,7 +556,6 @@
             });
         }
 
-        // TAMBAHAN BARU: RENDER CHART EMAS
         window.renderGoldChart = function() {
             const ctx = document.getElementById('goldChart');
             if (!ctx) return;
@@ -665,7 +626,6 @@
             if (activeMenu === 'dashboard') {
                 await loadAllData(); 
                 mainContent.innerHTML = getDashboardHTML();
-                // TAMBAHAN BARU: RENDER CHART SETELAH HTML INJECTED
                 setTimeout(window.renderGoldChart, 100);
             } else {
                 mainContent.innerHTML = getCategoryHTML(activeMenu);
@@ -686,28 +646,25 @@
         function getDashboardHTML() {
             let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
             Object.keys(appData.items).forEach(key => {
-
             if (key === 'mahar' || key === 'seserahan') return;
-
             appData.items[key].forEach(item => {
-                    // Update rumus totalPengeluaran agar mencakup sudahDibayar untuk vendor
                     if (key === 'vendor') {
-                    totalPengeluaran += Number(item.sudahDibayar || 0);
+                        totalPengeluaran += Number(item.sudahDibayar || 0);
+                    } else if (key === 'checklist') {
+                        totalPengeluaran += Number(item.total || item.biaya || 0);
                     } else {
-                    totalPengeluaran += Number(item.nilai || item.total || item.biaya || 0);
+                        totalPengeluaran += Number(item.nilai || item.total || item.biaya || 0);
                     }
                     totalItems++;
-                    if(item.status === 'Selesai' || item.status === 'sudah' || item.status === 'dibungkus' || item.status === 'deal' || item.statusPembayaran === 'lunas') itemsSelesai++;
+                    if(item.status === 'Selesai' || item.status === 'sudah' || item.status === 'dibungkus' || item.status === 'deal' || item.statusPembayaran === 'lunas' || item.status === true) itemsSelesai++;
                 });
             });
             const sisaBudget = appData.totalBudget - totalPengeluaran;
             const progress = totalItems === 0 ? 0 : Math.round((itemsSelesai / totalItems) * 100);
 
-            // --- KALKULASI MAHAR ---
             const maharItems = appData.items['mahar'] || [];
             const totalMahar = maharItems.reduce((sum, i) => {
                 let currentVal = i.nilai || 0;
-                // Kalkulasi Dinamis Murni Frontend
                 if (i.tipe === 'gold' && i.gram) {
                     currentVal = i.gram * window.goldPrice;
                 }
@@ -718,7 +675,6 @@
                 .filter(i => i.status === 'sudah')
                 .reduce((sum, i) => {
                     let currentVal = i.nilai || 0;
-                    // Kalkulasi Dinamis Murni Frontend
                     if (i.tipe === 'gold' && i.gram) {
                         currentVal = i.gram * window.goldPrice;
                     }
@@ -728,7 +684,6 @@
             const sisaMahar = totalMahar - maharSelesai;
             const totalItemMahar = maharItems.length;
 
-            // --- KALKULASI SESERAHAN ---
             const seserahanItems = appData.items['seserahan'] || [];
             const totalSeserahan = seserahanItems.reduce((sum, i) => sum + (i.total || 0), 0);
             const seserahanSelesai = seserahanItems
@@ -737,7 +692,6 @@
             const sisaSeserahan = totalSeserahan - seserahanSelesai;
             const totalItemSeserahan = seserahanItems.length;
 
-            // TAMBAHAN BARU: GOLD TREND LOGIC
             const isUp = window.goldPrice >= (window.prevGoldPrice || window.goldPrice);
 
             return `
@@ -776,34 +730,29 @@
                         </div>
                     </div>
 
-                    <!-- UI TAMBAHAN BARU: ANGGARAN MAHAR -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
                         <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">
                             Anggaran Mahar
                         </h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <!-- TOTAL MAHAR -->
                             <div class="bg-purple-50 border border-purple-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-purple-600 font-semibold mb-1">Total Mahar</p>
                                 <p class="text-lg font-bold text-purple-700">
                                     ${formatRupiah(totalMahar)}
                                 </p>
                             </div>
-                            <!-- SUDAH SIAP -->
                             <div class="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-green-600 font-semibold mb-1">Sudah Siap</p>
                                 <p class="text-lg font-bold text-green-700">
                                     ${formatRupiah(maharSelesai)}
                                 </p>
                             </div>
-                            <!-- SISA -->
                             <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-yellow-600 font-semibold mb-1">Sisa Mahar</p>
                                 <p class="text-lg font-bold text-yellow-700">
                                     ${formatRupiah(sisaMahar)}
                                 </p>
                             </div>
-                            <!-- TOTAL ITEM -->
                             <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-gray-500 font-semibold mb-1">Total Item</p>
                                 <p class="text-lg font-bold text-gray-700">
@@ -813,7 +762,6 @@
                         </div>
                     </div>
 
-                    <!-- ANGGARAN SESERAHAN -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
                         <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">
                             Anggaran Seserahan
@@ -846,54 +794,32 @@
                         </div>
                     </div>
 
-                    <!-- TAMBAHAN BARU: PREMIUM GOLD CARD -->
                     <div class="relative p-6 rounded-2xl border border-yellow-200 bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50 shadow-md overflow-hidden mb-6 mt-6">
-
-                        <!-- SHIMMER -->
                         <div class="absolute inset-0 overflow-hidden">
                             <div class="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
                         </div>
-
-                        <!-- DECOR -->
                         <div class="absolute -top-6 -right-6 w-28 h-28 bg-yellow-300 opacity-20 rounded-full blur-2xl"></div>
                         <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-yellow-200 opacity-20 rounded-full blur-2xl"></div>
 
-                        <!-- CONTENT -->
                         <div class="relative z-10">
-
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <p class="text-xs font-bold text-yellow-700 uppercase">
-                                        Harga Emas Hari Ini
-                                    </p>
-
+                                    <p class="text-xs font-bold text-yellow-700 uppercase">Harga Emas Hari Ini</p>
                                     <h2 class="text-xl font-bold text-yellow-800 flex items-center gap-2 mt-1">
-                                        <i class="fa-solid fa-coins"></i>
-                                        1 Gram Emas
+                                        <i class="fa-solid fa-coins"></i> 1 Gram Emas
                                     </h2>
                                 </div>
-
                                 <div class="text-right">
-                                    <p class="text-lg font-bold text-gray-800">
-                                        ${formatRupiah(window.goldPrice)}
-                                    </p>
-
-                                    <p class="text-sm text-gray-500">
-                                        ${window.formatUSD(window.goldPrice / window.usdToIdr)}
-                                    </p>
-
-                                    <!-- TREND -->
+                                    <p class="text-lg font-bold text-gray-800">${formatRupiah(window.goldPrice)}</p>
+                                    <p class="text-sm text-gray-500">${window.formatUSD(window.goldPrice / window.usdToIdr)}</p>
                                     <span class="text-xs font-bold ${isUp ? 'text-green-600' : 'text-red-500'}">
                                         ${isUp ? '▲ Naik' : '▼ Turun'}
                                     </span>
                                 </div>
                             </div>
-
-                            <!-- CHART -->
                             <div class="mt-4 relative z-20">
                                 <canvas id="goldChart" height="50"></canvas>
                             </div>
-
                         </div>
                     </div>
 
@@ -924,7 +850,6 @@
             if (categoryId === 'mahar') {
                 formInner = `
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Mahar</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Tipe Mahar</label>
                         <select id="inputTipeMahar" onchange="toggleMaharType()" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender">
@@ -932,15 +857,12 @@
                             <option value="gold">Gold (Emas)</option>
                         </select>
                     </div>
-
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Nilai (Rp)</label><input type="number" id="inputNilai" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    
                     <div id="goldInputWrapper" class="hidden">
                         <label class="block text-xs font-medium text-gray-500 mb-1">Gram Emas</label>
                         <input type="number" id="inputGram" placeholder="Contoh: 10" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
                         <p class="text-[10px] text-yellow-600 mt-1 font-semibold"><i class="fa-solid fa-coins"></i> Harga mengikuti emas saat ini</p>
                     </div>
-
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kesiapan</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="belum">🔴 Belum Siap</option><option value="sudah">✅ Sudah Siap</option></select></div>
                     <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Deskripsi Detail</label><textarea id="inputDeskripsi" rows="2" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>
                 `;
@@ -998,8 +920,58 @@
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Pax Pesanan</label><input type="number" id="inputJumlahPax" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Status Pembayaran</label><select id="inputStatusBayar" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="dp">🟡 DP (Down Payment)</option><option value="lunas">🟢 Lunas</option></select></div>
                 `;
+            } else if (categoryId === 'attire') {
+                formInner = `
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Item</label><input type="text" id="inputNama" placeholder="Contoh: Gaun Pengantin, Jas, Makeup" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label>
+                        <select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender">
+                            <option value="Attire">Attire</option>
+                            <option value="MUA">MUA</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga (Rp)</label><input type="number" id="inputHarga" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Qty (Jumlah)</label><input type="number" id="inputQty" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan (Opsional)</label><textarea id="inputCatatan" rows="2" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>
+                `;
             } else if (categoryId === 'checklist') {
-                formInner = `<div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Apa yang harus dipersiapkan?</label><input type="text" id="inputTugas" placeholder="Contoh: Cetak Undangan 500 pcs" required class="w-full px-4 py-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender shadow-sm"></div>`;
+                formInner = `
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Tugas</label>
+                        <input type="text" id="inputTugas" placeholder="Contoh: Cetak Undangan 500 pcs" required class="w-full px-4 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-lavender outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Butuh Biaya?</label>
+                        <select id="inputButuhBiaya" onchange="toggleChecklistBiaya()" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:ring-2 focus:ring-lavender outline-none">
+                            <option value="tidak">Tidak</option>
+                            <option value="ya">Ya</option>
+                        </select>
+                    </div>
+
+                    <div id="biayaWrapper" class="hidden">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Harga per Satuan (Rp)</label>
+                        <input type="number" id="inputBiaya" oninput="hitungTotalChecklist()" class="w-full px-4 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-lavender outline-none">
+
+                        <label class="block text-xs font-medium text-gray-500 mb-1 mt-2">Jumlah</label>
+                        <input type="number" id="inputQty" value="1" min="1" oninput="hitungTotalChecklist()" class="w-full px-4 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-lavender outline-none">
+
+                        <p class="text-xs text-lavender mt-2 font-semibold">
+                            Total: <span id="totalPreview">Rp 0</span>
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Satuan</label>
+                        <select id="inputSatuan" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:ring-2 focus:ring-lavender outline-none">
+                            <option value="pcs">pcs</option>
+                            <option value="buah">buah</option>
+                            <option value="orang">orang</option>
+                            <option value="paket">paket</option>
+                            <option value="lainnya">lainnya</option>
+                        </select>
+                    </div>
+                `;
             } else if (categoryId === 'timeline') {
                 formInner = `
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jam (Contoh: 08:00)</label><input type="time" id="inputJam" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
@@ -1122,7 +1094,7 @@
                     pihak: document.getElementById('inputPihak').value,
                     status: document.getElementById('inputStatus').value,
                     jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1),
-                    tipeUndangan: window.selectedUndanganType || 'fisik' // Menyimpan tipe undangan ke db
+                    tipeUndangan: window.selectedUndanganType || 'fisik' 
                 };
             } else if (categoryId === 'catering') {
                 const h = Number(document.getElementById('inputHargaPerPax').value || 0);
@@ -1135,11 +1107,30 @@
                     total: h * p,
                     statusBayar: document.getElementById('inputStatusBayar').value
                 };
+            } else if (categoryId === 'attire') {
+                const harga = Number(document.getElementById('inputHarga').value || 0);
+                const qty = Number(document.getElementById('inputQty').value || 1);
+                itemData = {
+                    nama: document.getElementById('inputNama').value,
+                    kategori: document.getElementById('inputKategori').value,
+                    harga: harga,
+                    qty: qty,
+                    total: harga * qty,
+                    catatan: document.getElementById('inputCatatan').value
+                };
             } else if (categoryId === 'checklist') {
+                const harga = Number(document.getElementById('inputBiaya').value || 0);
+                const qty = Number(document.getElementById('inputQty').value || 0);
+
                 itemData = {
                     tugas: document.getElementById('inputTugas').value,
-                    status: false,
-                    createdAt: new Date().toISOString()
+                    status: editId ? appData.items[categoryId].find(i => i.id === editId).status : false,
+                    butuhBiaya: document.getElementById('inputButuhBiaya').value,
+                    biaya: document.getElementById('inputButuhBiaya').value === 'ya' ? harga : 0,
+                    qty: document.getElementById('inputButuhBiaya').value === 'ya' ? qty : 0,
+                    total: document.getElementById('inputButuhBiaya').value === 'ya' ? harga * qty : 0,
+                    satuan: document.getElementById('inputSatuan').value,
+                    createdAt: editId ? appData.items[categoryId].find(i => i.id === editId).createdAt : new Date().toISOString()
                 };
             } else if (categoryId === 'timeline') {
                 itemData = {
@@ -1158,7 +1149,6 @@
                     statusPembayaran: 'belum'
                 };
 
-                // Logic Penentuan Status Pembayaran Otomatis
                 if (itemData.sudahDibayar === 0) {
                     itemData.statusPembayaran = 'belum';
                 } else if (itemData.sudahDibayar < itemData.totalHarga) {
@@ -1413,7 +1403,6 @@
             } else if (categoryId === 'wedding_list') {
                 let filteredData = data;
 
-                // Terapkan Filter Logic
                 if (window.weddingFilter !== 'all') {
                     filteredData = filteredData.filter(i => i.kategori === window.weddingFilter);
                 }
@@ -1424,7 +1413,6 @@
                     filteredData = filteredData.filter(i => i.tipeUndangan === window.weddingTipeFilter);
                 }
 
-                // Terapkan Sorting Logic (Copy Array Agar Aman)
                 filteredData = [...filteredData]; 
                 if (window.weddingSort.field) {
                     filteredData.sort((a, b) => {
@@ -1452,13 +1440,11 @@
                     });
                 }
 
-                // Kalkulasi Stats 
                 const totalUndangan = filteredData.length;
                 const totalPax = filteredData.reduce((sum, i) => sum + (i.jumlahOrang || 1), 0); 
                 const hadir = filteredData.filter(i => i.status === 'hadir').length;
                 const paxHadir = filteredData.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
                 
-                // Kalkulasi Tipe Undangan
                 const totalFisik = filteredData.filter(i => i.tipeUndangan === 'fisik').length;
                 const totalDigital = filteredData.filter(i => i.tipeUndangan === 'digital').length;
                 
@@ -1585,12 +1571,52 @@
                             ${data.length > 0 ? `<tfoot class="bg-lavender-light/20 border-t border-lavender-light/50 font-bold text-gray-800"><tr><td colspan="3" class="px-6 py-5 text-right uppercase text-xs tracking-wider text-gray-500">Estimasi Grand Total Biaya Catering</td><td colspan="3" class="px-6 py-5 text-2xl text-lavender-dark">${formatRupiah(grandTotal)}</td></tr></tfoot>` : ''}
                         </table>
                     </div>`;
+                    
+            } else if (categoryId === 'attire') {
+                let grandTotal = 0;
+                htmlOut = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${data.map(item => {
+                            grandTotal += item.total || 0;
+                            return `
+                            <div class="p-4 rounded-xl border bg-white shadow-sm relative group hover:border-lavender transition">
+                                <div class="absolute top-2 right-2 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition bg-white/80 rounded p-1">
+                                    <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:text-lavender"><i class="fa-solid fa-pen text-xs"></i></button>
+                                    <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-300 hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                                </div>
+                                <div class="flex justify-between items-start">
+                                    <!-- LEFT -->
+                                    <div class="pr-12">
+                                        <h3 class="font-semibold text-gray-800">${item.nama}</h3>
+                                        <p class="text-xs text-gray-400 mt-1">${item.vendor 
+                                            ? `${item.kategori} • ${item.vendor}` 
+                                            : `${item.kategori}`
+                                        }</p>
+                                        <div class="mt-2 text-sm text-gray-600 font-medium">${item.qty} × ${formatRupiah(item.harga)}</div>
+                                        ${item.catatan ? `<p class="text-[10px] text-gray-500 mt-2 bg-gray-50 p-1.5 rounded">${item.catatan}</p>` : ''}
+                                    </div>
+                                    <!-- RIGHT -->
+                                    <div class="text-right flex-shrink-0">
+                                        <p class="text-xs text-gray-400 uppercase tracking-wide">Total</p>
+                                        <p class="text-sm font-bold text-lavender-dark">${formatRupiah(item.total)}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }).join('') || `<div class="col-span-2">${getEmptyStateHTML('fa-shirt', 'Belum ada data Attire & MUA.')}</div>`}
+                    </div>
+                    ${data.length > 0 ? `
+                    <div class="mt-6 bg-lavender-light/20 border border-lavender-light/50 rounded-xl p-5 flex justify-between items-center">
+                        <span class="font-bold text-gray-600 uppercase text-xs tracking-wider">Estimasi Grand Total Attire & MUA</span>
+                        <span class="text-2xl font-black text-lavender-dark">${formatRupiah(grandTotal)}</span>
+                    </div>` : ''}
+                `;
 
             } else if (categoryId === 'checklist') {
                 const total = data.length;
                 const done = data.filter(i => i.status).length;
                 const progress = total === 0 ? 0 : Math.round((done / total) * 100);
                 
+                // UPDATE: IMPLEMENTASI UI CARD VISUAL CHECKLIST DAN EFEK HOVER
                 htmlOut = `
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
                         <div class="flex justify-between items-end mb-2"><div><h3 class="text-sm text-gray-500 font-bold uppercase tracking-wide">Progress Persiapan</h3></div><span class="text-2xl font-black text-lavender-dark">${progress}%</span></div>
@@ -1599,12 +1625,52 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
                         <ul class="divide-y divide-gray-100">
                             ${data.map(item => `
-                                <li class="p-4 hover:bg-gray-50 flex justify-between items-center group transition">
-                                    <label class="flex items-center gap-4 cursor-pointer flex-1 py-1">
-                                        <input type="checkbox" onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.checked)" ${item.status ? 'checked' : ''} class="w-6 h-6 text-lavender rounded-lg border-gray-300 focus:ring-lavender cursor-pointer transition-all">
-                                        <span class="font-medium text-base ${item.status ? 'text-gray-400 line-through decoration-2 decoration-gray-300' : 'text-gray-700'} transition-all">${item.tugas}</span>
+                                <li class="p-4 hover:bg-white hover:shadow-md hover:-translate-y-[1px] flex justify-between items-center group transition-all relative">
+                                    <label class="flex items-start gap-4 cursor-pointer flex-1 py-1 w-full">
+                                        <input type="checkbox" onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.checked)" ${item.status ? 'checked' : ''} class="w-6 h-6 mt-0.5 text-lavender rounded-lg border-gray-300 focus:ring-lavender cursor-pointer transition-all flex-shrink-0">
+                                        <div class="flex flex-col w-full pr-4 overflow-hidden">
+                                            <span class="font-medium text-base ${item.status ? 'text-gray-400 line-through decoration-2 decoration-gray-300' : 'text-gray-700'} transition-all">${item.tugas}</span>
+                                            
+                                            <div class="mt-1 w-full max-w-sm">
+                                                ${(item.total > 0) ? `
+                                                    <div class="mt-2 p-3 rounded-xl bg-gradient-to-r from-lavender-light/40 to-white border border-lavender/30">
+                                                        <div class="flex items-center justify-between">
+                                                            <!-- LEFT -->
+                                                            <div>
+                                                                <p class="text-[10px] uppercase text-gray-400 tracking-wider mb-1">
+                                                                    Breakdown Biaya
+                                                                </p>
+                                                                <div class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">
+                                                                        ${item.qty} ${item.satuan}
+                                                                    </span>
+                                                                    <i class="fa-solid fa-x text-[10px] text-gray-400"></i>
+                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">
+                                                                        ${formatRupiah(item.biaya)}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <!-- RIGHT TOTAL -->
+                                                            <div class="text-right">
+                                                                <p class="text-[10px] text-gray-400 uppercase">Total</p>
+                                                                <p class="text-sm font-bold text-lavender-dark">
+                                                                    ${formatRupiah(item.total)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- LINE VISUAL -->
+                                                        <div class="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                            <div class="h-full bg-gradient-to-r from-lavender to-lavender-dark w-full"></div>
+                                                        </div>
+                                                    </div>
+                                                ` : (item.butuhBiaya === 'ya' && item.biaya > 0 ? `<div class="flex gap-2 items-center mt-1"><span class="text-xs font-semibold px-2 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200">${formatRupiah(item.biaya)}</span><span class="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-0.5 rounded border border-gray-100">${item.satuan || 'pcs'}</span></div>` : '')}
+                                            </div>
+                                        </div>
                                     </label>
-                                    <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                                    <div class="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-4 top-4 bg-white/80 p-1 rounded-lg backdrop-blur-sm">
+                                        <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-2"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
                                 </li>
                             `).join('') || getEmptyStateHTML('fa-list-check', 'Tugas checklist masih kosong.')}
                         </ul>
@@ -1645,7 +1711,6 @@
                         return `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative group transition hover:-translate-y-1 hover:shadow-md">
                             
-                            <!-- TAMBAHAN BARU: TOMBOL EDIT & DELETE -->
                             <div class="absolute top-3 right-3 flex gap-1 bg-white/90 rounded-md p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition z-10">
                                 <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:text-lavender">
                                     <i class="fa-solid fa-pen text-xs"></i>
@@ -1823,7 +1888,7 @@
                     document.getElementById('inputTipeMahar').value = item.tipe || 'manual';
                     document.getElementById('inputNilai').value = item.nilai || 0;
                     document.getElementById('inputGram').value = item.gram || 0;
-                    toggleMaharType(); // Update UI langsung
+                    toggleMaharType(); 
                 } else {
                     document.getElementById('inputNilai').value = item.nilai;
                 }
@@ -1839,7 +1904,6 @@
                 if(document.getElementById('inputPihak')) {
                     document.getElementById('inputPihak').value = item.pihak || 'pria';
                 }
-                // Update checkbox form saat edit
                 handleUndanganType(item.tipeUndangan || 'fisik');
             } else if (categoryId === 'vendor') {
                 document.getElementById('inputNama').value = item.nama;
@@ -1848,6 +1912,12 @@
                 document.getElementById('inputStatus').value = item.status;
                 document.getElementById('inputTotalHarga').value = item.totalHarga || 0;
                 document.getElementById('inputDibayar').value = item.sudahDibayar || 0;
+            } else if (categoryId === 'attire') {
+                document.getElementById('inputNama').value = item.nama;
+                document.getElementById('inputKategori').value = item.kategori;
+                document.getElementById('inputHarga').value = item.harga || 0;
+                document.getElementById('inputQty').value = item.qty || 1;
+                document.getElementById('inputCatatan').value = item.catatan || '';
             } else if (categoryId === 'doorprize') {
                 document.getElementById('inputNamaItem').value = item.namaItem || '';
                 document.getElementById('inputJumlah').value = item.jumlah || 1;
@@ -1855,6 +1925,18 @@
                 document.getElementById('inputCatatan').value = item.catatan || '';
                 document.getElementById('inputKategori').value = item.kategori || 'fashion';
                 document.getElementById('inputUtama').checked = item.isUtama || false;
+            } else if (categoryId === 'checklist') {
+                document.getElementById('inputTugas').value = item.tugas || '';
+                document.getElementById('inputButuhBiaya').value = item.butuhBiaya || 'tidak';
+                document.getElementById('inputSatuan').value = item.satuan || 'pcs';
+                document.getElementById('inputQty').value = item.qty || 1;
+
+                toggleChecklistBiaya();
+
+                if (item.butuhBiaya === 'ya') {
+                    document.getElementById('inputBiaya').value = item.biaya || 0;
+                    hitungTotalChecklist(); 
+                }
             }
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1865,14 +1947,19 @@
             document.getElementById('form-title').innerText = `Tambah Data ${menus.find(m => m.id === activeMenu).label}`;
             document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
             
-            // Reset tipe undangan ke fisik
             if (activeMenu === 'wedding_list') {
                 handleUndanganType('fisik');
             }   
-            
-            // Reset mahar UI bila ada
             if (activeMenu === 'mahar') {
                 toggleMaharType();
+            }
+            if (activeMenu === 'checklist') {
+                const inputButuhBiaya = document.getElementById('inputButuhBiaya');
+                if(inputButuhBiaya) {
+                    inputButuhBiaya.value = 'tidak';
+                    toggleChecklistBiaya();
+                }
+                document.getElementById('totalPreview').innerText = 'Rp 0';
             }
         }
     </script>
