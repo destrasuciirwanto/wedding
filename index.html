@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Destara Wedding Dashboard</title>
+    <title>DestAra Wedding Dashboard</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -76,7 +76,7 @@
                     <i class="fa-solid fa-ring"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800 tracking-wide">DESTARA</h1>
-                <p class="text-sm text-gray-400 mt-1">Destara Wedding Dashboard</p>
+                <p class="text-sm text-gray-400 mt-1">DestAra Wedding Dashboard</p>
             </div>
 
             <div id="error-alert" class="hidden mb-5 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-sm">
@@ -537,11 +537,15 @@
             let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
             Object.keys(appData.items).forEach(key => {
 
-            if (key === 'mahar') return;
+            if (key === 'mahar' || key === 'seserahan') return;
 
             appData.items[key].forEach(item => {
                     // Update rumus totalPengeluaran agar mencakup sudahDibayar untuk vendor
-                    totalPengeluaran += Number(item.nilai || item.total || item.biaya || item.sudahDibayar || 0);
+                    if (key === 'vendor') {
+                    totalPengeluaran += Number(item.sudahDibayar || 0);
+                    } else {
+                    totalPengeluaran += Number(item.nilai || item.total || item.biaya || 0);
+                    }
                     totalItems++;
                     if(item.status === 'Selesai' || item.status === 'sudah' || item.status === 'dibungkus' || item.status === 'deal' || item.statusPembayaran === 'lunas') itemsSelesai++;
                 });
@@ -557,6 +561,15 @@
                 .reduce((sum, i) => sum + (i.nilai || 0), 0);
             const sisaMahar = totalMahar - maharSelesai;
             const totalItemMahar = maharItems.length;
+
+            // --- KALKULASI SESERAHAN ---
+            const seserahanItems = appData.items['seserahan'] || [];
+            const totalSeserahan = seserahanItems.reduce((sum, i) => sum + (i.total || 0), 0);
+            const seserahanSelesai = seserahanItems
+                .filter(i => i.status === 'dibungkus')
+                .reduce((sum, i) => sum + (i.total || 0), 0);
+            const sisaSeserahan = totalSeserahan - seserahanSelesai;
+            const totalItemSeserahan = seserahanItems.length;
 
             return `
                 <div class="fade-in space-y-6">
@@ -626,6 +639,39 @@
                                 <p class="text-xs text-gray-500 font-semibold mb-1">Total Item</p>
                                 <p class="text-lg font-bold text-gray-700">
                                     ${totalItemMahar} Item
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ANGGARAN SESERAHAN -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+                        <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">
+                            Anggaran Seserahan
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-pink-50 border border-pink-100 rounded-xl p-4 text-center">
+                                <p class="text-xs text-pink-600 font-semibold mb-1">Total Seserahan</p>
+                                <p class="text-lg font-bold text-pink-700">
+                                    ${formatRupiah(totalSeserahan)}
+                                </p>
+                            </div>
+                            <div class="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
+                                <p class="text-xs text-green-600 font-semibold mb-1">Sudah Dibungkus</p>
+                                <p class="text-lg font-bold text-green-700">
+                                    ${formatRupiah(seserahanSelesai)}
+                                </p>
+                            </div>
+                            <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-center">
+                                <p class="text-xs text-yellow-600 font-semibold mb-1">Sisa Seserahan</p>
+                                <p class="text-lg font-bold text-yellow-700">
+                                    ${formatRupiah(sisaSeserahan)}
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                                <p class="text-xs text-gray-500 font-semibold mb-1">Total Item</p>
+                                <p class="text-lg font-bold text-gray-700">
+                                    ${totalItemSeserahan} Item
                                 </p>
                             </div>
                         </div>
