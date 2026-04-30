@@ -277,7 +277,7 @@
             renderTable('seserahan');
         }
 
-        // --- TAMBAHAN FILTER WEDDING LIST ---
+        // --- TAMBAHAN FILTER & SORTING WEDDING LIST ---
         window.weddingFilter = 'all';
         window.setWeddingFilter = function(f) {
             window.weddingFilter = f;
@@ -288,6 +288,47 @@
         window.setWeddingPihakFilter = function(f) {
             window.weddingPihakFilter = f;
             renderTable('wedding_list');
+        }
+
+        window.weddingTipeFilter = 'all';
+        window.setWeddingTipeFilter = function(filter) {
+            window.weddingTipeFilter = filter;
+            renderTable('wedding_list');
+        }
+
+        window.weddingSort = {
+            field: null,
+            direction: 'asc'
+        };
+        window.setWeddingSort = function(field) {
+            if (window.weddingSort.field === field) {
+                window.weddingSort.direction = window.weddingSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                window.weddingSort.field = field;
+                window.weddingSort.direction = 'asc';
+            }
+            renderTable('wedding_list');
+        }
+
+        // --- LOGIC UNTUK TIPE UNDANGAN (FISIK/DIGITAL) ---
+        window.selectedUndanganType = 'fisik'; // Default value
+        
+        window.handleUndanganType = function(type) {
+            const fisik = document.getElementById('undanganFisik');
+            const digital = document.getElementById('undanganDigital');
+            
+            // Cek jika elemen ada di DOM
+            if(!fisik || !digital) return;
+
+            if (type === 'fisik') {
+                fisik.checked = true;
+                digital.checked = false;
+                window.selectedUndanganType = 'fisik';
+            } else {
+                fisik.checked = false;
+                digital.checked = true;
+                window.selectedUndanganType = 'digital';
+            }
         }
 
         window.loadData = async function(categoryId) {
@@ -497,7 +538,20 @@
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Orang (Pax)</label><input type="number" id="inputJumlahOrang" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label><select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="keluarga">Keluarga</option><option value="teman">Teman</option><option value="kantor">Kantor / Rekan Kerja</option></select></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Pihak</label><select id="inputPihak" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pria">👨 Mempelai Pria</option><option value="wanita">👩 Mempelai Wanita</option></select></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Status Kehadiran</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pending">⏳ Pending (Menunggu)</option><option value="hadir">✅ Hadir</option><option value="tidak hadir">❌ Tidak Hadir</option></select></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kehadiran</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pending">⏳ Pending (Menunggu)</option><option value="hadir">✅ Hadir</option><option value="tidak hadir">❌ Tidak Hadir</option></select></div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Tipe Undangan</label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="undanganFisik" checked onchange="handleUndanganType('fisik')" class="w-4 h-4 text-lavender rounded border-gray-300 focus:ring-lavender transition-all">
+                                <span class="text-sm font-medium text-gray-700">Undangan Fisik</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="undanganDigital" onchange="handleUndanganType('digital')" class="w-4 h-4 text-lavender rounded border-gray-300 focus:ring-lavender transition-all">
+                                <span class="text-sm font-medium text-gray-700">Undangan Digital</span>
+                            </label>
+                        </div>
+                    </div>
                 `;
             } else if (categoryId === 'catering') {
                 formInner = `
@@ -584,7 +638,8 @@
                     kategori: document.getElementById('inputKategori').value,
                     pihak: document.getElementById('inputPihak').value,
                     status: document.getElementById('inputStatus').value,
-                    jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1)
+                    jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1),
+                    tipeUndangan: window.selectedUndanganType || 'fisik' // Menyimpan tipe undangan ke db
                 };
             } else if (categoryId === 'catering') {
                 const h = Number(document.getElementById('inputHargaPerPax').value || 0);
@@ -845,19 +900,56 @@
                 if (window.weddingPihakFilter !== 'all') {
                     filteredData = filteredData.filter(i => i.pihak === window.weddingPihakFilter);
                 }
+                if (window.weddingTipeFilter !== 'all') {
+                    filteredData = filteredData.filter(i => i.tipeUndangan === window.weddingTipeFilter);
+                }
 
-                // Kalkulasi Stats (Berdasarkan data yang sudah difilter agar angka dinamis)
+                // Terapkan Sorting Logic (Copy Array Agar Aman)
+                filteredData = [...filteredData]; 
+                if (window.weddingSort.field) {
+                    filteredData.sort((a, b) => {
+                        let valA = a[window.weddingSort.field];
+                        let valB = b[window.weddingSort.field];
+
+                        if (window.weddingSort.field === 'nama') {
+                            valA = String(valA || '').toLowerCase();
+                            valB = String(valB || '').toLowerCase();
+                        }
+
+                        if (window.weddingSort.field === 'status') {
+                            const rank = {
+                                'hadir': 1,
+                                'pending': 2,
+                                'tidak hadir': 3
+                            };
+                            valA = rank[valA] || 99;
+                            valB = rank[valB] || 99;
+                        }
+
+                        if (valA < valB) return window.weddingSort.direction === 'asc' ? -1 : 1;
+                        if (valA > valB) return window.weddingSort.direction === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                }
+
+                // Kalkulasi Stats 
                 const totalUndangan = filteredData.length;
-                const totalPax = filteredData.reduce((sum, i) => sum + (i.jumlahOrang || 1), 0); // Total pax keseluruhan sesuai request
+                const totalPax = filteredData.reduce((sum, i) => sum + (i.jumlahOrang || 1), 0); 
                 const hadir = filteredData.filter(i => i.status === 'hadir').length;
                 const paxHadir = filteredData.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
                 
+                // Kalkulasi Tipe Undangan
+                const totalFisik = filteredData.filter(i => i.tipeUndangan === 'fisik').length;
+                const totalDigital = filteredData.filter(i => i.tipeUndangan === 'digital').length;
+                
                 htmlOut = `
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
                         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Undangan</p><p class="text-3xl font-black text-gray-700">${totalUndangan}</p></div>
-                        <div class="bg-white p-5 rounded-2xl border border-blue-100 bg-blue-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-blue-600 font-semibold uppercase mb-1">Total Pax</p><p class="text-3xl font-black text-blue-600">${totalPax} <span class="text-sm font-medium">Orang</span></p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-blue-100 bg-blue-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-blue-600 font-semibold uppercase mb-1">Total Pax</p><p class="text-3xl font-black text-blue-600">${totalPax}</p></div>
                         <div class="bg-white p-5 rounded-2xl border border-green-100 bg-green-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-green-600 font-semibold uppercase mb-1">Tamu Hadir</p><p class="text-3xl font-black text-green-600">${hadir}</p></div>
-                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax Hadir</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Pax Hadir</p><p class="text-3xl font-black text-lavender-dark">${paxHadir}</p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-blue-100 shadow-sm flex flex-col items-center justify-center"><p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Undangan Fisik</p><p class="text-3xl font-black text-blue-600">${totalFisik}</p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-purple-100 shadow-sm flex flex-col items-center justify-center"><p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Undangan Digital</p><p class="text-3xl font-black text-purple-600">${totalDigital}</p></div>
                     </div>
 
                     <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
@@ -878,11 +970,38 @@
                                 <button onclick="setWeddingPihakFilter('wanita')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingPihakFilter==='wanita' ? 'bg-pink-50 text-pink-600 border-pink-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-pink-200'}">👩 Mempelai Wanita</button>
                             </div>
                         </div>
+                        <div class="pt-5 mt-5 border-t border-gray-100">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <i class="fa-solid fa-envelope mr-1"></i> Filter Tipe Undangan
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setWeddingTipeFilter('all')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingTipeFilter==='all' ? 'bg-gray-800 text-white border-gray-800 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}">Semua</button>
+                                <button onclick="setWeddingTipeFilter('fisik')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingTipeFilter==='fisik' ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-blue-200'}">📨 Fisik</button>
+                                <button onclick="setWeddingTipeFilter('digital')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingTipeFilter==='digital' ? 'bg-purple-50 text-purple-600 border-purple-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-purple-200'}">📱 Digital</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Tamu & Info</th><th class="px-6 py-4 font-semibold text-center">Pax</th><th class="px-6 py-4 font-semibold">Status</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">
+                                        Nama Tamu & Info
+                                        <button onclick="setWeddingSort('nama')" class="ml-1 text-xs text-gray-400 hover:text-lavender transition-colors"><i class="fa-solid fa-sort"></i></button>
+                                    </th>
+                                    <th class="px-6 py-4 font-semibold text-center">
+                                        Pax
+                                        <button onclick="setWeddingSort('jumlahOrang')" class="ml-1 text-xs text-gray-400 hover:text-lavender transition-colors"><i class="fa-solid fa-sort"></i></button>
+                                    </th>
+                                    <th class="px-6 py-4 font-semibold text-center">Tipe Undangan</th>
+                                    <th class="px-6 py-4 font-semibold">
+                                        Status
+                                        <button onclick="setWeddingSort('status')" class="ml-1 text-xs text-gray-400 hover:text-lavender transition-colors"><i class="fa-solid fa-sort"></i></button>
+                                    </th>
+                                    <th class="px-6 py-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
                             <tbody class="divide-y divide-gray-100">
                                 ${filteredData.map(item => `
                                     <tr class="hover:bg-gray-50/50 transition">
@@ -893,6 +1012,12 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center font-bold text-gray-600"><i class="fa-solid fa-user-group text-gray-300 mr-1 text-xs"></i> ${item.jumlahOrang}</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="px-2 py-1 text-[10px] rounded-full font-bold uppercase tracking-wide border 
+                                                ${item.tipeUndangan === 'fisik' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}">
+                                                ${item.tipeUndangan === 'fisik' ? '<i class="fa-solid fa-envelope mr-1"></i> Fisik' : '<i class="fa-solid fa-mobile-screen mr-1"></i> Digital'}
+                                            </span>
+                                        </td>
                                         <td class="px-6 py-4">
                                             <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border-2 outline-none cursor-pointer transition ${item.status==='hadir'?'bg-green-50 text-green-700 border-green-200': item.status==='tidak hadir'?'bg-red-50 text-red-700 border-red-200':'bg-yellow-50 text-yellow-700 border-yellow-200'}">
                                                 <option value="pending" ${item.status==='pending'?'selected':''}>⏳ Pending</option>
@@ -905,7 +1030,7 @@
                                             <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                                         </td>
                                     </tr>
-                                `).join('') || `<tr><td colspan="4">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
+                                `).join('') || `<tr><td colspan="5">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
                             </tbody>
                         </table>
                     </div>`;
@@ -1071,6 +1196,8 @@
                 if(document.getElementById('inputPihak')) {
                     document.getElementById('inputPihak').value = item.pihak || 'pria';
                 }
+                // Update checkbox form saat edit
+                handleUndanganType(item.tipeUndangan || 'fisik');
             }
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1080,6 +1207,11 @@
             document.getElementById('itemForm').reset();
             document.getElementById('form-title').innerText = `Tambah Data ${menus.find(m => m.id === activeMenu).label}`;
             document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+            
+            // Reset tipe undangan ke fisik
+            if (activeMenu === 'wedding_list') {
+                handleUndanganType('fisik');
+            }
         }
     </script>
 </body>
