@@ -426,6 +426,28 @@
             document.getElementById('totalPreview').innerText = formatRupiah(total);
         }
 
+        // FUNGSI BARU UNTUK DOORPRIZE GOLD LOGAM MULIA
+        window.toggleDoorprizeGold = function() {
+            const kategori = document.getElementById('inputKategori').value;
+            const wrapper = document.getElementById('goldWrapper');
+            const hargaInput = document.getElementById('inputHarga')?.parentElement;
+
+            if (kategori === 'logam_mulia') {
+                if(wrapper) wrapper.classList.remove('hidden');
+                if(hargaInput) hargaInput.classList.add('hidden');
+            } else {
+                if(wrapper) wrapper.classList.add('hidden');
+                if(hargaInput) hargaInput.classList.remove('hidden');
+            }
+        }
+
+        window.hitungGoldDoorprize = function() {
+            const gram = Number(document.getElementById('inputGram').value || 0);
+            const total = gram * window.goldPrice;
+            const preview = document.getElementById('goldPreview');
+            if(preview) preview.innerText = formatRupiah(total);
+        }
+
         window.seserahanFilter = 'semua';
         window.setSeserahanFilter = function(f) {
             window.seserahanFilter = f;
@@ -930,6 +952,7 @@
                             <option value="MUA">MUA</option>
                         </select>
                     </div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Vendor (Opsional)</label><input type="text" id="inputVendor" placeholder="Nama Vendor" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga (Rp)</label><input type="number" id="inputHarga" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Qty (Jumlah)</label><input type="number" id="inputQty" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan (Opsional)</label><textarea id="inputCatatan" rows="2" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></textarea></div>
@@ -997,7 +1020,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label>
-                        <select id="inputKategori" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
+                        <select id="inputKategori" onchange="toggleDoorprizeGold()" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
                             <option value="fashion">Fashion</option>
                             <option value="logam_mulia">Logam Mulia</option>
                             <option value="lainnya">Lainnya</option>
@@ -1007,6 +1030,15 @@
                         <label class="block text-xs font-medium text-gray-500 mb-1">Jumlah</label>
                         <input type="number" id="inputJumlah" value="1" min="1" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
                     </div>
+                    
+                    <div id="goldWrapper" class="hidden">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Berat Emas (gram)</label>
+                        <input type="number" id="inputGram" min="0" step="0.01" oninput="hitungGoldDoorprize()" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
+                        <p class="text-xs text-lavender mt-2 font-semibold">
+                            Estimasi: <span id="goldPreview">Rp 0</span>
+                        </p>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Harga Satuan (Rp)</label>
                         <input type="number" id="inputHarga" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender">
@@ -1113,6 +1145,7 @@
                 itemData = {
                     nama: document.getElementById('inputNama').value,
                     kategori: document.getElementById('inputKategori').value,
+                    vendor: document.getElementById('inputVendor').value,
                     harga: harga,
                     qty: qty,
                     total: harga * qty,
@@ -1163,14 +1196,23 @@
                     tanggal: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
                 };
             } else if (categoryId === 'doorprize') {
-                const h = Number(document.getElementById('inputHarga').value || 0);
+                const kategori = document.getElementById('inputKategori').value;
+                const gramEl = document.getElementById('inputGram');
+                const gram = gramEl ? Number(gramEl.value || 0) : 0;
                 const j = Number(document.getElementById('inputJumlah').value || 1);
+                
+                let h = Number(document.getElementById('inputHarga')?.value || 0);
+
+                if (kategori === 'logam_mulia') {
+                    h = gram * window.goldPrice;
+                }
 
                 itemData = {
                     namaItem: document.getElementById('inputNamaItem').value,
-                    kategori: document.getElementById('inputKategori').value,
+                    kategori: kategori,
                     isUtama: document.getElementById('inputUtama').checked,
                     jumlah: j,
+                    gram: kategori === 'logam_mulia' ? gram : 0,
                     harga: h,
                     total: h * j,
                     catatan: document.getElementById('inputCatatan').value,
@@ -1588,10 +1630,7 @@
                                     <!-- LEFT -->
                                     <div class="pr-12">
                                         <h3 class="font-semibold text-gray-800">${item.nama}</h3>
-                                        <p class="text-xs text-gray-400 mt-1">${item.vendor 
-                                            ? `${item.kategori} • ${item.vendor}` 
-                                            : `${item.kategori}`
-                                        }</p>
+                                        <p class="text-xs text-gray-400 mt-1">${item.kategori} • ${item.vendor || '-'}</p>
                                         <div class="mt-2 text-sm text-gray-600 font-medium">${item.qty} × ${formatRupiah(item.harga)}</div>
                                         ${item.catatan ? `<p class="text-[10px] text-gray-500 mt-2 bg-gray-50 p-1.5 rounded">${item.catatan}</p>` : ''}
                                     </div>
@@ -1765,7 +1804,13 @@
                 
             } else if (categoryId === 'doorprize') {
                 let totalBiaya = 0;
+                
+                // Kalkulasi data realtime saat table dimuat
                 data.forEach(item => {
+                    if (item.kategori === 'logam_mulia' && item.gram) {
+                        item.harga = item.gram * window.goldPrice;
+                        item.total = item.harga * item.jumlah;
+                    }
                     totalBiaya += item.total || 0;
                 });
 
@@ -1811,6 +1856,7 @@
 
                                 <span class="inline-block px-2 py-1 bg-yellow-100 rounded text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-2 border border-yellow-200">🌟 Hadiah Utama</span>
                                 <h3 class="text-xl font-black text-gray-800 mt-1">${item.namaItem}</h3>
+                                ${item.kategori === 'logam_mulia' ? `<p class="text-xs text-yellow-600 font-semibold mt-1"><i class="fa-solid fa-coins mr-1"></i> ${item.gram} gr emas</p>` : ''}
                                 <p class="text-sm text-gray-500 mt-1">${item.catatan || '-'}</p>
                                 
                                 <div class="mt-4 flex justify-between items-center bg-white/80 p-3 rounded-xl border border-yellow-100">
@@ -1838,6 +1884,7 @@
 
                                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">${(item.kategori || 'lainnya').replace('_', ' ')}</span>
                                     <h4 class="font-bold text-gray-800 text-lg">${item.namaItem}</h4>
+                                    ${item.kategori === 'logam_mulia' ? `<p class="text-xs text-yellow-600 font-semibold mt-1"><i class="fa-solid fa-coins mr-1"></i> ${item.gram} gr emas</p>` : ''}
                                     <p class="text-xs text-gray-400 mt-1">${item.catatan || '-'}</p>
 
                                     <div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-50">
@@ -1915,16 +1962,26 @@
             } else if (categoryId === 'attire') {
                 document.getElementById('inputNama').value = item.nama;
                 document.getElementById('inputKategori').value = item.kategori;
+                document.getElementById('inputVendor').value = item.vendor || '';
                 document.getElementById('inputHarga').value = item.harga || 0;
                 document.getElementById('inputQty').value = item.qty || 1;
                 document.getElementById('inputCatatan').value = item.catatan || '';
             } else if (categoryId === 'doorprize') {
                 document.getElementById('inputNamaItem').value = item.namaItem || '';
+                document.getElementById('inputKategori').value = item.kategori || 'fashion';
                 document.getElementById('inputJumlah').value = item.jumlah || 1;
                 document.getElementById('inputHarga').value = item.harga || 0;
                 document.getElementById('inputCatatan').value = item.catatan || '';
-                document.getElementById('inputKategori').value = item.kategori || 'fashion';
                 document.getElementById('inputUtama').checked = item.isUtama || false;
+                
+                // 🔥 PENTING: trigger ulang UI kategori
+                window.toggleDoorprizeGold(); 
+                
+                // 🔥 KHUSUS LOGAM MULIA
+                if (item.kategori === 'logam_mulia') {
+                    document.getElementById('inputGram').value = item.gram || 0;
+                    window.hitungGoldDoorprize(); // Panggil previewnya
+                }
             } else if (categoryId === 'checklist') {
                 document.getElementById('inputTugas').value = item.tugas || '';
                 document.getElementById('inputButuhBiaya').value = item.butuhBiaya || 'tidak';
@@ -1952,6 +2009,11 @@
             }   
             if (activeMenu === 'mahar') {
                 toggleMaharType();
+            }
+            if (activeMenu === 'doorprize') {
+                const cat = document.getElementById('inputKategori');
+                if (cat) cat.value = 'fashion'; // defaultnya
+                window.toggleDoorprizeGold();
             }
             if (activeMenu === 'checklist') {
                 const inputButuhBiaya = document.getElementById('inputButuhBiaya');
