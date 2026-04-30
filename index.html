@@ -848,14 +848,16 @@
 
                 // Kalkulasi Stats (Berdasarkan data yang sudah difilter agar angka dinamis)
                 const totalUndangan = filteredData.length;
+                const totalPax = filteredData.reduce((sum, i) => sum + (i.jumlahOrang || 1), 0); // Total pax keseluruhan sesuai request
                 const hadir = filteredData.filter(i => i.status === 'hadir').length;
                 const paxHadir = filteredData.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
                 
                 htmlOut = `
-                    <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Undangan</p><p class="text-3xl font-black text-gray-700">${totalUndangan}</p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-blue-100 bg-blue-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-blue-600 font-semibold uppercase mb-1">Total Pax</p><p class="text-3xl font-black text-blue-600">${totalPax} <span class="text-sm font-medium">Orang</span></p></div>
                         <div class="bg-white p-5 rounded-2xl border border-green-100 bg-green-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-green-600 font-semibold uppercase mb-1">Tamu Hadir</p><p class="text-3xl font-black text-green-600">${hadir}</p></div>
-                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax Hadir</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
                     </div>
 
                     <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
