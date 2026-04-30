@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- TAMBAHAN BARU: CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         tailwind.config = {
@@ -59,6 +61,15 @@
             background-color: #F8F9FA;
             background-image: radial-gradient(#CBA6F7 0.5px, transparent 0.5px);
             background-size: 20px 20px;
+        }
+
+        /* TAMBAHAN BARU: ANIMASI SHIMMER EMAS */
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .animate-shimmer {
+            animation: shimmer 2.5s infinite;
         }
     </style>
 </head>
@@ -224,6 +235,11 @@
         // --- HARGA EMAS GLOBAL & KURS ---
         window.goldPrice = 0;
         window.usdToIdr = 16000;
+        
+        // TAMBAHAN BARU: VARIABEL UNTUK CHART & HISTORY
+        window.goldHistory = window.goldHistory || [];
+        window.prevGoldPrice = 0;
+        window.goldChartInstance = null;
 
         async function fetchGoldAndKurs() {
             try {
@@ -241,7 +257,16 @@
                 const pricePerGramUSD = goldData.price / 31.1035;
 
                 // convert ke rupiah
-                window.goldPrice = Math.round(pricePerGramUSD * window.usdToIdr);
+                const newGoldPrice = Math.round(pricePerGramUSD * window.usdToIdr);
+                
+                // TAMBAHAN BARU: HISTORY & TREND
+                window.prevGoldPrice = window.goldPrice || newGoldPrice;
+                window.goldPrice = newGoldPrice;
+
+                window.goldHistory.push(window.goldPrice);
+                if (window.goldHistory.length > 20) {
+                    window.goldHistory.shift();
+                }
 
                 console.log('Gold & Kurs updated:', {
                     gold: window.goldPrice,
@@ -560,6 +585,46 @@
             }).format(number);
         }
 
+        // TAMBAHAN BARU: FORMAT USD HELPER
+        window.formatUSD = function(number) {
+            if (window.isHideMoney) return '$ ----';
+            return '$' + Number(number).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // TAMBAHAN BARU: RENDER CHART EMAS
+        window.renderGoldChart = function() {
+            const ctx = document.getElementById('goldChart');
+            if (!ctx) return;
+
+            if (window.goldChartInstance) {
+                window.goldChartInstance.destroy();
+            }
+
+            window.goldChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: window.goldHistory.map((_, i) => i + 1),
+                    datasets: [{
+                        data: window.goldHistory,
+                        borderWidth: 2,
+                        borderColor: '#EAB308',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)'
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } },
+                    maintainAspectRatio: false,
+                    responsive: true
+                }
+            });
+        }
+
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -600,6 +665,8 @@
             if (activeMenu === 'dashboard') {
                 await loadAllData(); 
                 mainContent.innerHTML = getDashboardHTML();
+                // TAMBAHAN BARU: RENDER CHART SETELAH HTML INJECTED
+                setTimeout(window.renderGoldChart, 100);
             } else {
                 mainContent.innerHTML = getCategoryHTML(activeMenu);
                 await loadData(activeMenu); 
@@ -669,6 +736,9 @@
                 .reduce((sum, i) => sum + (i.total || 0), 0);
             const sisaSeserahan = totalSeserahan - seserahanSelesai;
             const totalItemSeserahan = seserahanItems.length;
+
+            // TAMBAHAN BARU: GOLD TREND LOGIC
+            const isUp = window.goldPrice >= (window.prevGoldPrice || window.goldPrice);
 
             return `
                 <div class="fade-in space-y-6">
@@ -773,6 +843,57 @@
                                     ${totalItemSeserahan} Item
                                 </p>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- TAMBAHAN BARU: PREMIUM GOLD CARD -->
+                    <div class="relative p-6 rounded-2xl border border-yellow-200 bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50 shadow-md overflow-hidden mb-6 mt-6">
+
+                        <!-- SHIMMER -->
+                        <div class="absolute inset-0 overflow-hidden">
+                            <div class="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+                        </div>
+
+                        <!-- DECOR -->
+                        <div class="absolute -top-6 -right-6 w-28 h-28 bg-yellow-300 opacity-20 rounded-full blur-2xl"></div>
+                        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-yellow-200 opacity-20 rounded-full blur-2xl"></div>
+
+                        <!-- CONTENT -->
+                        <div class="relative z-10">
+
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs font-bold text-yellow-700 uppercase">
+                                        Harga Emas Hari Ini
+                                    </p>
+
+                                    <h2 class="text-xl font-bold text-yellow-800 flex items-center gap-2 mt-1">
+                                        <i class="fa-solid fa-coins"></i>
+                                        1 Gram Emas
+                                    </h2>
+                                </div>
+
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-800">
+                                        ${formatRupiah(window.goldPrice)}
+                                    </p>
+
+                                    <p class="text-sm text-gray-500">
+                                        ${window.formatUSD(window.goldPrice / window.usdToIdr)}
+                                    </p>
+
+                                    <!-- TREND -->
+                                    <span class="text-xs font-bold ${isUp ? 'text-green-600' : 'text-red-500'}">
+                                        ${isUp ? '▲ Naik' : '▼ Turun'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- CHART -->
+                            <div class="mt-4 relative z-20">
+                                <canvas id="goldChart" height="50"></canvas>
+                            </div>
+
                         </div>
                     </div>
 
@@ -1747,7 +1868,7 @@
             // Reset tipe undangan ke fisik
             if (activeMenu === 'wedding_list') {
                 handleUndanganType('fisik');
-            }
+            }   
             
             // Reset mahar UI bila ada
             if (activeMenu === 'mahar') {
