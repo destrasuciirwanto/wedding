@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -144,6 +144,14 @@
                     <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
+                    
+                    <a href="https://destara.pages.dev/undangan.html?to=Bapak%20Ibu" target="_blank" class="hidden md:flex items-center gap-2 px-4 py-2 bg-lavender text-white rounded-xl font-bold text-sm hover:bg-lavender-dark transition shadow-sm">
+                        <i class="fa-solid fa-eye"></i> Lihat Undangan
+                    </a>
+                    <a href="https://destara.pages.dev/undangan.html?to=Bapak%20Ibu" target="_blank" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-lavender bg-lavender-light hover:bg-lavender hover:text-white transition shadow-sm" title="Lihat Undangan">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+
                     <button onclick="toggleHideMoney()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-lavender hover:bg-lavender-light transition" title="Sembunyikan / Tampilkan Uang">
                         <i id="toggle-eye-icon" class="fa-solid fa-eye"></i>
                     </button>
@@ -426,7 +434,6 @@
             document.getElementById('totalPreview').innerText = formatRupiah(total);
         }
 
-        // FUNGSI BARU UNTUK DOORPRIZE GOLD LOGAM MULIA
         window.toggleDoorprizeGold = function() {
             const kategori = document.getElementById('inputKategori').value;
             const wrapper = document.getElementById('goldWrapper');
@@ -576,6 +583,51 @@
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
+        }
+
+        // ========================================================
+        // FITUR BARU: COPY LINK & KIRIM WHATSAPP UNDANGAN DIGITAL
+        // ========================================================
+        window.copyUndangan = function(nama) {
+            const baseUrl = "https://destara.pages.dev/undangan.html?to=";
+            const link = baseUrl + encodeURIComponent(nama);
+
+            navigator.clipboard.writeText(link).then(() => {
+                if (window.showToast) {
+                    window.showToast("Link undangan berhasil dicopy!");
+                } else {
+                    alert("Link undangan berhasil dicopy!");
+                }
+            }).catch(() => {
+                alert("Gagal menyalin link undangan.");
+            });
+        }
+
+        window.kirimWA = function(nama, nomor) {
+            if (!nomor) {
+                if (window.showToast) {
+                    window.showToast("Nomor HP belum tersedia!", "error");
+                } else {
+                    alert("Nomor HP belum tersedia!");
+                }
+                return;
+            }
+
+            // Mencegah error jika input formatnya mengandung karakter non-angka
+            let nomorWA = nomor.replace(/[^0-9]/g, ''); 
+            // Ubah angka 0 di depan menjadi 62
+            if (nomorWA.startsWith('0')) {
+                nomorWA = '62' + nomorWA.substring(1);
+            }
+
+            const baseUrl = "https://destara.pages.dev/undangan.html?to=";
+            const link = baseUrl + encodeURIComponent(nama);
+
+            const pesan = `Yth. ${nama},\n\nKami mengundang Anda ke acara pernikahan kami.\n\nBerikut link undangan:\n${link}\n\nTerima kasih 🙏`;
+
+            const url = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+
+            window.open(url, '_blank');
         }
 
         window.renderGoldChart = function() {
@@ -916,6 +968,7 @@
             } else if (categoryId === 'wedding_list') {
                 formInner = `
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Tamu / Undangan</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nomor WA Tamu (Opsional)</label><input type="text" id="inputNomorHP" placeholder="Contoh: 08123456789" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Orang (Pax)</label><input type="number" id="inputJumlahOrang" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label><select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="keluarga">Keluarga</option><option value="teman">Teman</option><option value="kantor">Kantor / Rekan Kerja</option></select></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Pihak</label><select id="inputPihak" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pria">👨 Mempelai Pria</option><option value="wanita">👩 Mempelai Wanita</option></select></div>
@@ -1126,7 +1179,8 @@
                     pihak: document.getElementById('inputPihak').value,
                     status: document.getElementById('inputStatus').value,
                     jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1),
-                    tipeUndangan: window.selectedUndanganType || 'fisik' 
+                    tipeUndangan: window.selectedUndanganType || 'fisik',
+                    nomorHP: document.getElementById('inputNomorHP') ? document.getElementById('inputNomorHP').value : ''
                 };
             } else if (categoryId === 'catering') {
                 const h = Number(document.getElementById('inputHargaPerPax').value || 0);
@@ -1573,7 +1627,17 @@
                                                 <option value="tidak hadir" ${item.status==='tidak hadir'?'selected':''}>❌ Tidak</option>
                                             </select>
                                         </td>
-                                        <td class="px-6 py-4 text-right">
+                                        <td class="px-6 py-4 text-right flex justify-end gap-2 items-center">
+                                            ${item.tipeUndangan === 'digital' ? `
+                                            <div class="flex gap-2">
+                                                <button onclick="window.copyUndangan('${(item.nama || '').replace(/'/g, "\\'")}')" class="px-3 py-1 bg-green-100 text-green-600 rounded-lg text-xs font-semibold hover:bg-green-200 transition" title="Copy Link">
+                                                    <i class="fa-solid fa-copy mr-1"></i> Copy Link
+                                                </button>
+                                                <button onclick="window.kirimWA('${(item.nama || '').replace(/'/g, "\\'")}', '${item.nomorHP || ''}')" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-200 transition" title="Kirim WA">
+                                                    <i class="fa-brands fa-whatsapp mr-1"></i> Kirim WA
+                                                </button>
+                                            </div>
+                                            ` : ''}
                                             <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-2"><i class="fa-solid fa-pen"></i></button>
                                             <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                                         </td>
@@ -1655,7 +1719,6 @@
                 const done = data.filter(i => i.status).length;
                 const progress = total === 0 ? 0 : Math.round((done / total) * 100);
                 
-                // UPDATE: IMPLEMENTASI UI CARD VISUAL CHECKLIST DAN EFEK HOVER
                 htmlOut = `
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
                         <div class="flex justify-between items-end mb-2"><div><h3 class="text-sm text-gray-500 font-bold uppercase tracking-wide">Progress Persiapan</h3></div><span class="text-2xl font-black text-lavender-dark">${progress}%</span></div>
@@ -1951,6 +2014,9 @@
                 if(document.getElementById('inputPihak')) {
                     document.getElementById('inputPihak').value = item.pihak || 'pria';
                 }
+                if(document.getElementById('inputNomorHP')) {
+                    document.getElementById('inputNomorHP').value = item.nomorHP || '';
+                }
                 handleUndanganType(item.tipeUndangan || 'fisik');
             } else if (categoryId === 'vendor') {
                 document.getElementById('inputNama').value = item.nama;
@@ -1974,13 +2040,11 @@
                 document.getElementById('inputCatatan').value = item.catatan || '';
                 document.getElementById('inputUtama').checked = item.isUtama || false;
                 
-                // 🔥 PENTING: trigger ulang UI kategori
                 window.toggleDoorprizeGold(); 
                 
-                // 🔥 KHUSUS LOGAM MULIA
                 if (item.kategori === 'logam_mulia') {
                     document.getElementById('inputGram').value = item.gram || 0;
-                    window.hitungGoldDoorprize(); // Panggil previewnya
+                    window.hitungGoldDoorprize(); 
                 }
             } else if (categoryId === 'checklist') {
                 document.getElementById('inputTugas').value = item.tugas || '';
@@ -2012,7 +2076,7 @@
             }
             if (activeMenu === 'doorprize') {
                 const cat = document.getElementById('inputKategori');
-                if (cat) cat.value = 'fashion'; // defaultnya
+                if (cat) cat.value = 'fashion'; 
                 window.toggleDoorprizeGold();
             }
             if (activeMenu === 'checklist') {
