@@ -277,6 +277,19 @@
             renderTable('seserahan');
         }
 
+        // --- TAMBAHAN FILTER WEDDING LIST ---
+        window.weddingFilter = 'all';
+        window.setWeddingFilter = function(f) {
+            window.weddingFilter = f;
+            renderTable('wedding_list');
+        }
+
+        window.weddingPihakFilter = 'all';
+        window.setWeddingPihakFilter = function(f) {
+            window.weddingPihakFilter = f;
+            renderTable('wedding_list');
+        }
+
         window.loadData = async function(categoryId) {
             const snapshot = await getDocs(collection(db, categoryId));
             let data = [];
@@ -483,7 +496,8 @@
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama Tamu / Undangan</label><input type="text" id="inputNama" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah Orang (Pax)</label><input type="number" id="inputJumlahOrang" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Kategori</label><select id="inputKategori" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="keluarga">Keluarga</option><option value="teman">Teman</option><option value="kantor">Kantor / Rekan Kerja</option></select></div>
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kehadiran</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pending">⏳ Pending (Menunggu)</option><option value="hadir">✅ Hadir</option><option value="tidak hadir">❌ Tidak Hadir</option></select></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Pihak</label><select id="inputPihak" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pria">👨 Mempelai Pria</option><option value="wanita">👩 Mempelai Wanita</option></select></div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Status Kehadiran</label><select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none"><option value="pending">⏳ Pending (Menunggu)</option><option value="hadir">✅ Hadir</option><option value="tidak hadir">❌ Tidak Hadir</option></select></div>
                 `;
             } else if (categoryId === 'catering') {
                 formInner = `
@@ -568,6 +582,7 @@
                 itemData = {
                     nama: document.getElementById('inputNama').value,
                     kategori: document.getElementById('inputKategori').value,
+                    pihak: document.getElementById('inputPihak').value,
                     status: document.getElementById('inputStatus').value,
                     jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1)
                 };
@@ -821,25 +836,59 @@
                     </div>`;
                     
             } else if (categoryId === 'wedding_list') {
-                const totalUndangan = data.length;
-                const hadir = data.filter(i => i.status === 'hadir').length;
-                const paxHadir = data.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
+                let filteredData = data;
+
+                // Terapkan Filter Logic
+                if (window.weddingFilter !== 'all') {
+                    filteredData = filteredData.filter(i => i.kategori === window.weddingFilter);
+                }
+                if (window.weddingPihakFilter !== 'all') {
+                    filteredData = filteredData.filter(i => i.pihak === window.weddingPihakFilter);
+                }
+
+                // Kalkulasi Stats (Berdasarkan data yang sudah difilter agar angka dinamis)
+                const totalUndangan = filteredData.length;
+                const hadir = filteredData.filter(i => i.status === 'hadir').length;
+                const paxHadir = filteredData.filter(i => i.status === 'hadir').reduce((sum, i) => sum + (i.jumlahOrang||1), 0);
                 
                 htmlOut = `
                     <div class="grid grid-cols-3 gap-4 mb-6">
                         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Undangan</p><p class="text-3xl font-black text-gray-700">${totalUndangan}</p></div>
                         <div class="bg-white p-5 rounded-2xl border border-green-100 bg-green-50/20 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-green-600 font-semibold uppercase mb-1">Tamu Hadir</p><p class="text-3xl font-black text-green-600">${hadir}</p></div>
-                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax (Hadir)</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
+                        <div class="bg-white p-5 rounded-2xl border border-lavender-light bg-lavender/5 shadow-sm flex flex-col items-center justify-center"><p class="text-xs text-lavender-dark font-semibold uppercase mb-1">Estimasi Pax</p><p class="text-3xl font-black text-lavender-dark">${paxHadir} <span class="text-sm font-medium">Orang</span></p></div>
                     </div>
+
+                    <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="mb-5">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-users mr-1"></i> Filter Berdasarkan Kategori</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setWeddingFilter('all')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingFilter==='all' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Semua</button>
+                                <button onclick="setWeddingFilter('keluarga')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingFilter==='keluarga' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Keluarga</button>
+                                <button onclick="setWeddingFilter('teman')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingFilter==='teman' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Teman</button>
+                                <button onclick="setWeddingFilter('kantor')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingFilter==='kantor' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Kantor</button>
+                            </div>
+                        </div>
+                        <div class="pt-5 border-t border-gray-100">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-venus-mars mr-1"></i> Filter Berdasarkan Pihak</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setWeddingPihakFilter('all')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingPihakFilter==='all' ? 'bg-gray-800 text-white border-gray-800 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}">Semua Pihak</button>
+                                <button onclick="setWeddingPihakFilter('pria')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingPihakFilter==='pria' ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-blue-200'}">👨 Mempelai Pria</button>
+                                <button onclick="setWeddingPihakFilter('wanita')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.weddingPihakFilter==='wanita' ? 'bg-pink-50 text-pink-600 border-pink-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-pink-200'}">👩 Mempelai Wanita</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Tamu & Kategori</th><th class="px-6 py-4 font-semibold text-center">Pax</th><th class="px-6 py-4 font-semibold">Ubah Status Inline</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead>
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Tamu & Info</th><th class="px-6 py-4 font-semibold text-center">Pax</th><th class="px-6 py-4 font-semibold">Status</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead>
                             <tbody class="divide-y divide-gray-100">
-                                ${data.map(item => `
+                                ${filteredData.map(item => `
                                     <tr class="hover:bg-gray-50/50 transition">
                                         <td class="px-6 py-4">
                                             <p class="font-bold text-gray-800 text-base">${item.nama}</p>
-                                            <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-[10px] font-medium uppercase tracking-wide">${item.kategori}</span>
+                                            <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-[10px] font-medium uppercase tracking-wide">
+                                                ${item.kategori} • ${item.pihak === 'wanita' ? 'Wanita' : item.pihak === 'pria' ? 'Pria' : 'Belum diset'}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4 text-center font-bold text-gray-600"><i class="fa-solid fa-user-group text-gray-300 mr-1 text-xs"></i> ${item.jumlahOrang}</td>
                                         <td class="px-6 py-4">
@@ -854,7 +903,7 @@
                                             <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                                         </td>
                                     </tr>
-                                `).join('') || `<tr><td colspan="4">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu undangan.')}</td></tr>`}
+                                `).join('') || `<tr><td colspan="4">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
                             </tbody>
                         </table>
                     </div>`;
@@ -1013,8 +1062,13 @@
                 document.getElementById('inputJumlah').value = item.jumlah; document.getElementById('inputHarga').value = item.harga;
                 document.getElementById('inputStatus').value = item.status; document.getElementById('inputCatatan').value = item.catatan || '';
             } else if(categoryId === 'wedding_list') {
-                document.getElementById('inputNama').value = item.nama; document.getElementById('inputJumlahOrang').value = item.jumlahOrang;
-                document.getElementById('inputKategori').value = item.kategori; document.getElementById('inputStatus').value = item.status;
+                document.getElementById('inputNama').value = item.nama; 
+                document.getElementById('inputJumlahOrang').value = item.jumlahOrang;
+                document.getElementById('inputKategori').value = item.kategori; 
+                document.getElementById('inputStatus').value = item.status;
+                if(document.getElementById('inputPihak')) {
+                    document.getElementById('inputPihak').value = item.pihak || 'pria';
+                }
             }
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
