@@ -39,7 +39,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; pointer-events: none; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; pointer-events: none; }
         .toast {
             background-color: white; border-left: 5px solid #CBA6F7;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -52,50 +52,110 @@
         @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
         
         .sticky-note { background: #FFFCE8; border: 1px solid #F2EFC2; box-shadow: 2px 4px 10px rgba(0,0,0,0.03); }
-        
-        /* Custom styling for seserahan dropdown to hide default arrow in some browsers */
         .status-select { text-align-last: center; }
+        
+        /* Background khusus untuk area login */
+        .login-bg {
+            background-color: #F8F9FA;
+            background-image: radial-gradient(#CBA6F7 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+        }
     </style>
 </head>
-<body class="text-gray-800 flex h-screen overflow-hidden">
+<body class="text-gray-800 flex h-screen overflow-hidden relative">
 
-    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+    <div id="page-loader" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+        <i class="fa-solid fa-ring text-lavender text-4xl mb-3 animate-pulse"></i>
+        <p class="text-sm text-gray-500 font-medium">Memverifikasi akses...</p>
+    </div>
 
-    <aside id="sidebar" class="w-64 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.04)] flex flex-col transition-transform duration-300 z-30 absolute lg:relative h-full -translate-x-full lg:translate-x-0">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-lavender-dark tracking-wide">
-                <i class="fa-solid fa-ring mr-2"></i>DESTARA
-            </h1>
-            <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-lavender">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-        <div class="flex-1 overflow-y-auto py-4" id="sidebar-menu"></div>
-    </aside>
-
-    <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
-        <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 flex justify-between items-center z-10">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-lavender transition">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-                <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
-                    MD
+    <div id="login-ui" class="hidden absolute inset-0 z-40 login-bg items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white max-w-md w-full fade-in">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-lavender-light rounded-2xl flex items-center justify-center mx-auto mb-4 text-lavender-dark text-2xl shadow-inner">
+                    <i class="fa-solid fa-ring"></i>
                 </div>
+                <h1 class="text-2xl font-bold text-gray-800 tracking-wide">DESTARA</h1>
+                <p class="text-sm text-gray-400 mt-1">Premium Wedding Dashboard</p>
             </div>
-        </header>
 
-        <main class="flex-1 overflow-y-auto p-4 md:p-8" id="main-content"></main>
+            <div id="error-alert" class="hidden mb-5 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-sm">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span id="error-message">Email atau password salah.</span>
+            </div>
+
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Akses</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <input type="email" id="login-email" required class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender focus:border-transparent transition-all" placeholder="admin@destara.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kata Sandi</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <input type="password" id="login-password" required class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender focus:border-transparent transition-all" placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" id="btn-login" class="w-full py-3 mt-4 bg-lavender text-white rounded-xl shadow-lg shadow-lavender/30 hover:bg-lavender-dark hover:shadow-lavender/50 transition-all font-semibold flex justify-center items-center gap-2">
+                    <span>Masuk ke Dashboard</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="dashboard-ui" class="hidden w-full h-full flex overflow-hidden relative z-10">
+        <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+        <aside id="sidebar" class="w-64 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.04)] flex flex-col transition-transform duration-300 z-30 absolute lg:relative h-full -translate-x-full lg:translate-x-0">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-lavender-dark tracking-wide">
+                    <i class="fa-solid fa-ring mr-2"></i>DESTARA
+                </h1>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-lavender">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto py-4" id="sidebar-menu"></div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 flex justify-between items-center z-10">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-lavender transition">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="user-profile" class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
+                        MD
+                    </div>
+                    <button id="btn-logout" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition" title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-4 md:p-8" id="main-content"></main>
+        </div>
     </div>
 
     <div id="toast-container"></div>
 
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         // CONFIG FIREBASE
         const firebaseConfig = {
@@ -109,8 +169,81 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Menu System
+        // --- SISTEM LOGIN & PROTEKSI PADA SINGLE PAGE ---
+        const pageLoader = document.getElementById('page-loader');
+        const loginUI = document.getElementById('login-ui');
+        const dashboardUI = document.getElementById('dashboard-ui');
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Berhasil Login -> Tampilkan Dashboard
+                loginUI.classList.add('hidden');
+                loginUI.classList.remove('flex');
+                dashboardUI.classList.remove('hidden');
+                pageLoader.style.display = 'none';
+
+                // Set inisial ke profile icon
+                const emailInitials = user.email.substring(0, 2).toUpperCase();
+                document.getElementById('user-profile').innerText = emailInitials;
+
+                await initApp();
+            } else {
+                // Belum Login -> Tampilkan Form Login
+                dashboardUI.classList.add('hidden');
+                pageLoader.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                    loginUI.classList.remove('hidden');
+                    loginUI.classList.add('flex');
+                }, 300);
+            }
+        });
+
+        // Event Listener Login Submit
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnLogin = document.getElementById('btn-login');
+            const errorAlert = document.getElementById('error-alert');
+            const errorMessage = document.getElementById('error-message');
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const originalBtnText = btnLogin.innerHTML;
+            btnLogin.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Memverifikasi...</span>`;
+            btnLogin.disabled = true;
+            errorAlert.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                btnLogin.innerHTML = originalBtnText;
+                btnLogin.disabled = false;
+                errorAlert.classList.remove('hidden');
+                if(error.code === 'auth/invalid-credential') {
+                    errorMessage.innerText = "Email atau kata sandi tidak cocok.";
+                } else {
+                    errorMessage.innerText = "Terjadi kesalahan. Silakan coba lagi.";
+                }
+            }
+        });
+
+        // Event Listener Logout
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            if(confirm('Apakah Anda yakin ingin keluar dari dashboard?')) {
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    showToast('Gagal logout: ' + error.message, 'error');
+                }
+            }
+        });
+
+        // ==========================================================
+        // SISTEM DASHBOARD (DATA & UI LOGIC)
+        // ==========================================================
         const menus = [
             { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
             { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
@@ -121,7 +254,6 @@
             { id: 'timeline', icon: 'fa-clock', label: 'Timeline / Rundown' },
             { id: 'checklist', icon: 'fa-list-check', label: 'Checklist Persiapan' },
             { id: 'notes', icon: 'fa-sticky-note', label: 'Notes / Catatan' },
-            // { id: 'venue', icon: 'fa-building', label: 'Venue' },
             { id: 'attire', icon: 'fa-tshirt', label: 'Attire & MUA' },
             { id: 'dekor', icon: 'fa-leaf', label: 'Dekorasi' }
         ];
@@ -145,7 +277,6 @@
             renderTable('seserahan');
         }
 
-        // --- 1. CORE DATA FUNCTIONS ---
         window.loadData = async function(categoryId) {
             const snapshot = await getDocs(collection(db, categoryId));
             let data = [];
@@ -179,7 +310,6 @@
             renderContent();
         }
 
-        // --- 2. UTILS ---
         window.toggleSidebar = function() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
             document.getElementById('mobile-overlay').classList.toggle('hidden');
@@ -206,7 +336,6 @@
             </div>`;
         }
 
-        // --- 3. NAVIGATION & LAYOUT ---
         function renderSidebar() {
             const sidebarHtml = menus.map(menu => `
                 <a href="#" onclick="changeMenu('${menu.id}')" class="flex items-center px-6 py-3 my-1 mx-3 rounded-xl transition-all duration-200 text-sm font-medium ${activeMenu === menu.id ? 'bg-lavender text-white shadow-md shadow-lavender/30' : 'text-gray-500 hover:bg-lavender-light hover:text-lavender-dark'}">
@@ -236,7 +365,6 @@
             }
         }
 
-        // --- 4. QUICK INLINE UPDATE ---
         window.quickUpdate = async function(categoryId, id, field, value) {
             try {
                 await updateDoc(doc(db, categoryId, id), { [field]: value });
@@ -247,7 +375,6 @@
             }
         }
 
-        // --- 5. DASHBOARD & FORMS ---
         function getDashboardHTML() {
             let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
             Object.keys(appData.items).forEach(key => {
@@ -407,7 +534,6 @@
             `;
         }
 
-        // --- 6. SUBMIT DATA & MAPPER ---
         window.handleFormSubmit = async function(e, categoryId) {
             e.preventDefault();
             const btnSubmit = document.getElementById('btnSubmit');
@@ -433,7 +559,7 @@
                     kategori: document.getElementById('inputKategori').value,
                     jumlah: j,
                     harga: h,
-                    total: h ? h * j : 0, // Auto calculate
+                    total: h ? h * j : 0,
                     status: document.getElementById('inputStatus').value,
                     catatan: document.getElementById('inputCatatan').value,
                     tanggalUpdate: new Date().toISOString()
@@ -501,7 +627,6 @@
             finally { btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`; btnSubmit.disabled = false; }
         }
 
-        // --- 7. DYNAMIC TABLE & SYSTEM UI RENDERER ---
         window.renderTable = function(categoryId) {
             const container = document.getElementById('dynamic-list-container');
             if(!container) return; 
@@ -509,20 +634,17 @@
             let data = appData.items[categoryId] || [];
             let htmlOut = '';
 
-            // --- 1. SESERAHAN SYSTEM ---
             if (categoryId === 'seserahan') {
                 let totalBiaya = 0;
                 let totalItems = data.length;
                 let countDibungkus = 0;
 
-                // Hitung Global
                 data.forEach(item => {
                     totalBiaya += item.total || 0;
                     if (item.status === 'dibungkus') countDibungkus++;
                 });
                 const progress = totalItems === 0 ? 0 : Math.round((countDibungkus / totalItems) * 100);
 
-                // Filter Data by Status & Category
                 let filteredData = data;
                 
                 if (window.seserahanFilter !== 'semua') {
@@ -532,15 +654,9 @@
                     filteredData = filteredData.filter(i => i.kategori === window.seserahanCategoryFilter);
                 }
 
-                // Pengelompokan Kategori
                 const grouped = {
-                    'ibadah': [],
-                    'perhiasan': [],
-                    'makeup': [],
-                    'skincare': [],
-                    'bathbody': [],
-                    'fashion': [],
-                    'lainnya': []
+                    'ibadah': [], 'perhiasan': [], 'makeup': [], 'skincare': [],
+                    'bathbody': [], 'fashion': [], 'lainnya': []
                 };
 
                 const catInfo = {
@@ -608,10 +724,9 @@
                     htmlOut += getEmptyStateHTML('fa-gift', (window.seserahanFilter === 'semua' && window.seserahanCategoryFilter === 'all') ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter yang dipilih.');
                 } else {
                     htmlOut += `<div class="space-y-8">`;
-                    // Render per Kategori
                     Object.keys(grouped).forEach(catKey => {
                         const items = grouped[catKey];
-                        if (items.length === 0) return; // Skip empty groups
+                        if (items.length === 0) return; 
                         
                         const info = catInfo[catKey];
                         htmlOut += `
@@ -667,9 +782,6 @@
                     htmlOut += `</div>`;
                 }
             }
-            // --- END SESERAHAN SYSTEM ---
-
-            // --- 2. MAHAR SYSTEM ---
             else if (categoryId === 'mahar') {
                 const total = data.length;
                 const ready = data.filter(i => i.status === 'sudah').length;
@@ -864,7 +976,6 @@
                 </div>`;
                 
             } else {
-                // FALLBACK
                 htmlOut = `
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider"><tr><th class="px-6 py-4 font-semibold">Nama Item</th><th class="px-6 py-4 font-semibold">Biaya</th><th class="px-6 py-4 font-semibold text-right">Aksi</th></tr></thead><tbody class="divide-y divide-gray-100">
@@ -876,7 +987,6 @@
             container.innerHTML = htmlOut;
         }
 
-        // --- 8. DELETE & EDIT HANDLER ---
         window.deleteItem = async function(id, categoryId) {
             if(confirm('Apakah kamu yakin ingin menghapus data ini?')) {
                 try {
@@ -895,7 +1005,6 @@
             document.getElementById('form-title').innerText = 'Edit Data';
             document.getElementById('btnSubmit').innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Data';
             
-            // Map values back to inputs
             if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; document.getElementById('inputNilai').value = item.nilai;
                 document.getElementById('inputDeskripsi').value = item.deskripsi; document.getElementById('inputStatus').value = item.status;
@@ -916,8 +1025,6 @@
             document.getElementById('form-title').innerText = `Tambah Data ${menus.find(m => m.id === activeMenu).label}`;
             document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
         }
-
-        window.onload = initApp;
     </script>
 </body>
 </html>
