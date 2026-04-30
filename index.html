@@ -156,6 +156,51 @@
 
     <div id="toast-container"></div>
 
+    <!-- UI UPGRADE: PASSWORD MODAL -->
+    <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+        <!-- BACKDROP -->
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+        <!-- MODAL BOX -->
+        <div class="relative bg-white rounded-3xl shadow-2xl w-[90%] max-w-sm p-6 fade-in scale-95 animate-[fadeIn_0.2s_ease-out_forwards]">
+            
+            <!-- ICON -->
+            <div class="w-14 h-14 bg-lavender-light rounded-2xl flex items-center justify-center mx-auto mb-4 text-lavender-dark text-xl shadow-inner">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+
+            <!-- TITLE -->
+            <h3 class="text-center text-lg font-bold text-gray-800 mb-1">
+                Akses Data Finansial
+            </h3>
+
+            <p class="text-center text-xs text-gray-400 mb-5">
+                Masukkan password untuk membuka data
+            </p>
+
+            <!-- INPUT -->
+            <input 
+                type="password" 
+                id="password-input"
+                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition-all"
+                placeholder="••••••••"
+            >
+
+            <!-- BUTTON -->
+            <div class="flex gap-2 mt-5">
+                <button onclick="closePasswordModal()" 
+                    class="flex-1 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+                    Batal
+                </button>
+
+                <button onclick="submitPassword()" 
+                    class="flex-1 py-2 text-sm bg-lavender text-white rounded-xl shadow-md hover:bg-lavender-dark transition">
+                    Buka
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -272,6 +317,35 @@
         window.isHideMoney = false;
         
         window.toggleHideMoney = function() {
+            // Jika saat ini TERSEMBUNYI → mau dibuka → butuh password via modal HTML
+            if (window.isHideMoney === true) {
+                document.getElementById('password-modal').classList.remove('hidden');
+                document.getElementById('password-input').value = '';
+                // Focus ke input setelah modal muncul agar user bisa langsung ketik
+                setTimeout(() => document.getElementById('password-input').focus(), 100);
+                return;
+            }
+
+            // Jika kondisi sekarang = TERBUKA → langsung ditutup (TANPA PASSWORD)
+            window.executeToggleMoney();
+        }
+
+        window.closePasswordModal = function() {
+            document.getElementById('password-modal').classList.add('hidden');
+        }
+
+        window.submitPassword = function() {
+            const input = document.getElementById('password-input').value;
+            if (input !== "destradanmutiara") {
+                alert("Password salah!");
+                return;
+            }
+            closePasswordModal();
+            window.executeToggleMoney();
+        }
+
+        window.executeToggleMoney = function() {
+            // Toggle state
             window.isHideMoney = !window.isHideMoney;
 
             // update icon
