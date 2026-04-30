@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DestAra Wedding Dashboard</title>
+    <title>Destara Wedding Dashboard</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -76,7 +76,7 @@
                     <i class="fa-solid fa-ring"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800 tracking-wide">DESTARA</h1>
-                <p class="text-sm text-gray-400 mt-1">DestAra Wedding Dashboard</p>
+                <p class="text-sm text-gray-400 mt-1">Destara Wedding Dashboard</p>
             </div>
 
             <div id="error-alert" class="hidden mb-5 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-sm">
@@ -136,6 +136,11 @@
                     <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
+                    <!-- TOGGLE HIDE MONEY -->
+                    <button onclick="toggleHideMoney()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-lavender hover:bg-lavender-light transition" title="Sembunyikan / Tampilkan Uang">
+                        <i id="toggle-eye-icon" class="fa-solid fa-eye"></i>
+                    </button>
+
                     <div id="user-profile" class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
                         MD
                     </div>
@@ -263,6 +268,24 @@
         let appData = { totalBudget: 0, items: {} };
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
 
+        // --- FITUR PRIVACY (HIDE MONEY) ---
+        window.isHideMoney = false;
+        
+        window.toggleHideMoney = function() {
+            window.isHideMoney = !window.isHideMoney;
+
+            // update icon
+            const icon = document.getElementById('toggle-eye-icon');
+            if(icon){
+                icon.className = window.isHideMoney 
+                    ? 'fa-solid fa-eye-slash' 
+                    : 'fa-solid fa-eye';
+            }
+
+            // re-render semua tampilan
+            renderContent();
+        }
+
         // Filter state untuk Seserahan Status
         window.seserahanFilter = 'semua';
         window.setSeserahanFilter = function(f) {
@@ -370,7 +393,14 @@
         }
 
         function formatRupiah(number) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+            if (window.isHideMoney) {
+                return 'Rp ----';
+            }
+            return new Intl.NumberFormat('id-ID', { 
+                style: 'currency', 
+                currency: 'IDR', 
+                minimumFractionDigits: 0 
+            }).format(number);
         }
 
         window.showToast = function(message, type = 'success') {
