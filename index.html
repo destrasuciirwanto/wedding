@@ -202,7 +202,6 @@
             snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
             appData.items['wedding_list'] = data;
             
-            // Auto update UI jika sedang buka menu Wedding List atau Dashboard
             if (activeMenu === 'wedding_list') {
                 renderTable('wedding_list');
             } else if (activeMenu === 'dashboard') {
@@ -430,6 +429,7 @@
         // Filters and Sorts
         window.seserahanFilter = 'semua'; window.setSeserahanFilter = function(f) { window.seserahanFilter = f; renderTable('seserahan'); }
         window.seserahanCategoryFilter = 'all'; window.setSeserahanCategory = function(cat) { window.seserahanCategoryFilter = cat; renderTable('seserahan'); }
+        window.seserahanKadaluarsaFilter = 'semua'; window.setSeserahanKadaluarsaFilter = function(f) { window.seserahanKadaluarsaFilter = f; renderTable('seserahan'); }
         window.doorprizeFilter = 'all'; window.setDoorprizeFilter = function(f) { window.doorprizeFilter = f; renderTable('doorprize'); }
         window.weddingFilter = 'all'; window.setWeddingFilter = function(f) { window.weddingFilter = f; renderTable('wedding_list'); }
         window.weddingPihakFilter = 'all'; window.setWeddingPihakFilter = function(f) { window.weddingPihakFilter = f; renderTable('wedding_list'); }
@@ -875,7 +875,13 @@
                             <option value="dibungkus">🟢 Sudah Dibungkus</option>
                         </select>
                     </div>
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Catatan</label><input type="text" id="inputCatatan" placeholder="Catatan tambahan (Opsional)" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Kadaluarsa</label>
+                        <select id="inputKadaluarsa" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender">
+                            <option value="tidak">Tidak ada kadaluarsa</option>
+                            <option value="ada">Ada kadaluarsa</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan</label><input type="text" id="inputCatatan" placeholder="Catatan tambahan (Opsional)" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                 `;
             } else if (categoryId === 'wedding_list') {
                 formInner = `
@@ -1082,6 +1088,7 @@
                     total: h ? h * j : 0,
                     status: document.getElementById('inputStatus').value,
                     catatan: document.getElementById('inputCatatan').value,
+                    kadaluarsa: document.getElementById('inputKadaluarsa') ? document.getElementById('inputKadaluarsa').value : 'tidak',
                     tanggalUpdate: new Date().toISOString()
                 };
             } else if (categoryId === 'wedding_list') {
@@ -1232,6 +1239,9 @@
                 if (window.seserahanCategoryFilter !== 'all') {
                     filteredData = filteredData.filter(i => i.kategori === window.seserahanCategoryFilter);
                 }
+                if (window.seserahanKadaluarsaFilter !== 'semua') {
+                    filteredData = filteredData.filter(i => (i.kadaluarsa || 'tidak') === window.seserahanKadaluarsaFilter);
+                }
 
                 const grouped = {
                     'ibadah': [], 'perhiasan': [], 'makeup': [], 'skincare': [],
@@ -1296,11 +1306,20 @@
                                 <button onclick="setSeserahanCategory('lainnya')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanCategoryFilter==='lainnya' ? 'bg-gray-50 text-gray-600 border-gray-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}">📦 Lainnya</button>
                             </div>
                         </div>
+
+                        <div class="pt-5 mt-5 border-t border-gray-100">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Filter Status Kadaluarsa</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setSeserahanKadaluarsaFilter('semua')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanKadaluarsaFilter==='semua' ? 'bg-lavender text-white border-lavender shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-lavender'}">Semua</button>
+                                <button onclick="setSeserahanKadaluarsaFilter('ada')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanKadaluarsaFilter==='ada' ? 'bg-red-50 text-red-600 border-red-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-red-200'}">Ada Kadaluarsa</button>
+                                <button onclick="setSeserahanKadaluarsaFilter('tidak')" class="px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${window.seserahanKadaluarsaFilter==='tidak' ? 'bg-green-50 text-green-600 border-green-200 shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-green-200'}">Tidak Ada</button>
+                            </div>
+                        </div>
                     </div>
                 `;
 
                 if (filteredData.length === 0) {
-                    htmlOut += getEmptyStateHTML('fa-gift', (window.seserahanFilter === 'semua' && window.seserahanCategoryFilter === 'all') ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter yang dipilih.');
+                    htmlOut += getEmptyStateHTML('fa-gift', (window.seserahanFilter === 'semua' && window.seserahanCategoryFilter === 'all' && window.seserahanKadaluarsaFilter === 'semua') ? 'Belum ada data seserahan, yuk mulai tambahkan!' : 'Tidak ada data di filter yang dipilih.');
                 } else {
                     htmlOut += `<div class="space-y-8">`;
                     Object.keys(grouped).forEach(catKey => {
@@ -1323,7 +1342,7 @@
                                             
                                             <div class="flex justify-between items-start mb-1">
                                                 <h4 class="font-bold text-gray-800 text-lg ml-1">${item.namaItem}</h4>
-                                            <div class="flex gap-1 mt-2">
+                                            <div class="flex gap-1 mt-2 flex-wrap justify-end">
                                                 ${!item.harga ? `
                                                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-rose-100 text-rose-500 font-semibold">
                                                         Harga kosong
@@ -1333,8 +1352,13 @@
                                                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-600 font-semibold">
                                                         Belum dibeli
                                                     </span>` : ''}
+                                                
+                                                ${item.kadaluarsa === 'ada' ? `
+                                                    <span class="px-2 py-0.5 text-[10px] rounded-full bg-red-50 text-red-500 font-semibold border border-red-100">
+                                                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>Ada Kadaluarsa
+                                                    </span>` : ''}
                                             </div>
-                                                <span class="px-2 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase rounded border border-gray-100">${item.jumlah} Pcs</span>
+                                                <span class="px-2 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase rounded border border-gray-100 mt-2 md:mt-0">${item.jumlah} Pcs</span>
                                             </div>
                                             <p class="text-xs text-gray-400 font-medium mb-3 ml-1">${formatRupiah(item.harga)} / pcs <span class="${item.catatan ? 'inline' : 'hidden'}">• ${item.catatan}</span></p>
                                             
@@ -1889,6 +1913,7 @@
                 document.getElementById('inputNamaItem').value = item.namaItem; document.getElementById('inputKategori').value = item.kategori;
                 document.getElementById('inputJumlah').value = item.jumlah; document.getElementById('inputHarga').value = item.harga;
                 document.getElementById('inputStatus').value = item.status; document.getElementById('inputCatatan').value = item.catatan || '';
+                if(document.getElementById('inputKadaluarsa')) { document.getElementById('inputKadaluarsa').value = item.kadaluarsa || 'tidak'; }
             } else if(categoryId === 'wedding_list') {
                 document.getElementById('inputNama').value = item.nama; 
                 document.getElementById('inputJumlahOrang').value = item.jumlahOrang;
