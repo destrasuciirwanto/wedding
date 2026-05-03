@@ -123,16 +123,14 @@
             --cinematic-dark: #1A1215;
         }
 
-        /* Global Sakura Theme Override */
         body { background: linear-gradient(135deg, var(--bg-sakura) 0%, #FFFFFF 100%) !important; }
-        .bg-light { background-color: transparent !important; } /* Allow gradient to shine through */
-        .text-sage { color: var(--deep-sakura) !important; } /* Shift sage to elegant pink */
+        .bg-light { background-color: transparent !important; } 
+        .text-sage { color: var(--deep-sakura) !important; } 
         .bg-sage { background-color: var(--deep-sakura) !important; }
         .border-t-sage { border-top-color: var(--deep-sakura) !important; }
         .bg-sage\/10 { background-color: rgba(229, 169, 180, 0.1) !important; }
         .timeline-line::before { background: var(--deep-sakura) !important; }
 
-        /* Cinematic Cover Override */
         #cover-screen {
             background-image: url('https://images.unsplash.com/photo-1493119508027-2b584f234d6c?q=80&w=2053&auto=format&fit=crop') !important;
             transition: transform 2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.8s ease, filter 2s ease !important;
@@ -141,23 +139,19 @@
             background: linear-gradient(to bottom, rgba(26, 18, 21, 0.4), rgba(26, 18, 21, 0.8)) !important;
             backdrop-filter: blur(4px) !important;
         }
-        /* Cinematic Opening Effect */
         #cover-screen.cover-hide {
-            transform: scale(1.15) translateY(-5%) !important; /* Zoom in while fading out */
+            transform: scale(1.15) translateY(-5%) !important; 
             opacity: 0 !important;
             filter: blur(15px) !important;
             pointer-events: none;
         }
 
-        /* Cinematic Hero Parallax Override */
         .parallax-bg {
             background-image: url('https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?q=80&w=2070&auto=format&fit=crop') !important;
         }
-        /* PERBAIKAN: Menambahkan .inset-0 agar tidak mengenai tombol scroll */
         #hero > div.absolute.inset-0 {
             background: linear-gradient(to bottom, rgba(26, 18, 21, 0.6) 0%, rgba(26, 18, 21, 0.2) 60%, var(--bg-sakura) 100%) !important;
         }
-        /* Premium Micro-Interactions & Glassmorphism */
         .glass-panel {
             background: rgba(255, 255, 255, 0.65) !important;
             backdrop-filter: blur(16px) !important;
@@ -169,17 +163,15 @@
         .glass-panel:hover {
             transform: translateY(-8px) scale(1.01) !important;
             box-shadow: 0 20px 40px -5px rgba(229, 169, 180, 0.3) !important;
-            border-color: rgba(212, 175, 55, 0.4) !important; /* Soft gold border on hover */
+            border-color: rgba(212, 175, 55, 0.4) !important; 
         }
 
-        /* Button Glow Effects */
         button { transition: all 0.4s ease !important; }
         button:hover {
             text-shadow: 0 0 10px rgba(255,255,255,0.8) !important;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3) !important;
         }
 
-        /* Ambient Glow & Shadow Depth */
         h2.font-serif { text-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .text-gold { text-shadow: 0 0 1px rgba(212,175,55,0.2); }
     </style>
@@ -195,7 +187,6 @@
 
     <!-- 1. COVER SCREEN -->
     <div id="cover-screen" class="fixed inset-0 z-50 flex flex-col justify-center items-center text-center px-6 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2070&auto=format&fit=crop');">
-        <!-- Overlay Gelap -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         
         <div class="relative z-10 text-white flex flex-col items-center">
@@ -215,7 +206,6 @@
 
     <!-- 2. HERO SECTION -->
     <section id="hero" class="relative min-h-screen flex flex-col justify-center items-center text-center parallax-bg px-4">
-        <!-- Gradient Overlay -->
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-light"></div>
         
         <div class="relative z-10 flex flex-col items-center mt-20">
@@ -223,7 +213,6 @@
             <h2 class="font-serif text-5xl md:text-8xl text-white mb-6 font-bold drop-shadow-md" data-aos="zoom-in" data-aos-delay="200">Mutiara & Destra </h2>
             <p class="font-sans text-sm md:text-base text-white tracking-[0.3em] uppercase mb-12" data-aos="fade-up" data-aos-delay="400">04 April 2027</p>
 
-            <!-- Countdown Glassmorphism -->
             <div class="glass-panel rounded-2xl p-6 md:p-8 flex gap-4 md:gap-8 justify-center" data-aos="fade-up" data-aos-delay="600">
                 <div class="text-center w-16 md:w-20">
                     <p id="days" class="font-serif text-3xl md:text-5xl font-semibold text-dark">00</p>
@@ -247,7 +236,6 @@
             </div>
         </div>
 
-        <!-- Scroll Indicator -->
         <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
             <div class="flex flex-col items-center animate-bounce text-dark">
                 <span class="text-xs uppercase tracking-widest mb-2 font-medium text-white">Scroll</span>
@@ -263,7 +251,6 @@
 
     <!-- 3. LOVE STORY (TIMELINE) -->
     <section id="story" class="py-20 px-6 bg-light relative overflow-hidden">
-        <!-- Floating Ornament -->
         <div class="absolute top-10 left-10 text-gold opacity-10 text-6xl"><i class="fa-solid fa-fan"></i></div>
         
         <div class="max-w-4xl mx-auto relative z-10">
@@ -273,7 +260,6 @@
             </div>
 
             <div class="relative timeline-line">
-                <!-- Timeline Item 1 -->
                 <div class="flex flex-col md:flex-row items-center w-full mb-12 relative" data-aos="fade-up">
                     <div class="md:w-1/2 flex justify-start md:justify-end pl-12 md:pl-0 md:pr-12 w-full text-left md:text-right">
                         <div class="glass-panel p-6 rounded-2xl w-full">
@@ -285,7 +271,6 @@
                     <div class="absolute left-[11px] md:left-1/2 transform md:-translate-x-1/2 w-3 h-3 bg-gold rounded-full ring-4 ring-light z-10"></div>
                 </div>
 
-                <!-- Timeline Item 2 -->
                 <div class="flex flex-col md:flex-row items-center w-full mb-12 relative" data-aos="fade-up">
                     <div class="md:w-1/2 hidden md:block"></div>
                     <div class="md:w-1/2 pl-12 md:pl-12 w-full text-left">
@@ -309,7 +294,6 @@
                 <h2 class="font-serif text-5xl md:text-6xl text-dark" data-aos="fade-up" data-aos-delay="100">Gallery</h2>
             </div>
 
-            <!-- Masonry-style Grid -->
             <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
                 <div class="img-zoom-container relative cursor-pointer rounded-lg col-span-2 md:col-span-1 row-span-2 glass-panel p-1" data-aos="zoom-in" onclick="openLightbox('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop')">
                     <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop" loading="lazy" class="w-full h-full object-cover rounded-lg" alt="Gallery">
@@ -346,7 +330,6 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 mb-12">
-                <!-- Akad Card -->
                 <div class="glass-panel p-10 rounded-3xl text-center shadow-lg hover:shadow-xl transition-shadow border-t-4 border-t-gold" data-aos="fade-right">
                     <i class="fa-solid fa-ring text-4xl text-gold mb-4"></i>
                     <h3 class="font-serif text-3xl font-bold mb-2">Akad Nikah</h3>
@@ -358,7 +341,6 @@
                     </div>
                 </div>
                 
-                <!-- Resepsi Card -->
                 <div class="glass-panel p-10 rounded-3xl text-center shadow-lg hover:shadow-xl transition-shadow border-t-4 border-t-sage" data-aos="fade-left" data-aos-delay="200">
                     <i class="fa-solid fa-champagne-glasses text-4xl text-sage mb-4"></i>
                     <h3 class="font-serif text-3xl font-bold mb-2">Resepsi</h3>
@@ -371,10 +353,8 @@
                 </div>
             </div>
 
-            <!-- Map Embed -->
             <div class="glass-panel p-4 rounded-3xl" data-aos="fade-up">
                 <div class="w-full h-80 rounded-2xl overflow-hidden mb-6 relative">
-                     <!-- Filter grayscale untuk efek elegan pada peta -->
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24009761927!2d106.66470094760773!3d-6.16275817812542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f7aa2f9e403d%3A0xc3c544062cd10323!2sJakarta%20Barat%2C%20Kota%20Jakarta%20Barat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1714539123456!5m2!1sid!2sid" width="100%" height="100%" style="border:0; filter: grayscale(30%) contrast(1.1) sepia(20%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
                 <div class="text-center">
@@ -397,7 +377,7 @@
 
                 <form id="rsvp-form" class="space-y-5 glass-panel p-6 rounded-3xl">
                     <div>
-                        <input type="text" id="form-name" placeholder="Nama Lengkap" required class="w-full px-5 py-4 bg-white/50 border border-white/50 rounded-xl focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm">
+                        <input type="text" id="form-name" placeholder="Nama Lengkap (Otomatis dari Sistem)" required class="w-full px-5 py-4 bg-white/50 border border-white/50 rounded-xl focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm font-medium text-gray-700 bg-gray-100 cursor-not-allowed">
                     </div>
                     <div>
                         <select id="form-status" required class="w-full px-5 py-4 bg-white/50 border border-white/50 rounded-xl focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm text-gray-700">
@@ -430,7 +410,6 @@
                     </button>
                 </form>
 
-                <!-- Scrollable List -->
                 <div class="h-[250px] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                     <div class="glass-panel p-4 rounded-xl">
                         <h4 class="font-bold text-sm text-dark">Keluarga Besar</h4>
@@ -456,7 +435,6 @@
             <p class="text-sm text-gray-600 leading-relaxed mb-10" data-aos="fade-up" data-aos-delay="100">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless.</p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-6" data-aos="zoom-in" data-aos-delay="200">
-                <!-- Card Rekening 1 -->
                 <div class="glass-panel p-8 rounded-3xl w-full sm:w-1/2 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-16 h-16 bg-gold/20 rounded-bl-full transition-transform group-hover:scale-150 duration-500"></div>
                     <h3 class="font-bold text-xl text-dark mb-1">BCA</h3>
@@ -467,7 +445,6 @@
                     </button>
                 </div>
 
-                <!-- Card Rekening 2 -->
                 <div class="glass-panel p-8 rounded-3xl w-full sm:w-1/2 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-16 h-16 bg-sage/20 rounded-bl-full transition-transform group-hover:scale-150 duration-500"></div>
                     <h3 class="font-bold text-xl text-dark mb-1">Mandiri</h3>
@@ -483,40 +460,27 @@
 
     <!-- FOOTER -->
     <footer class="bg-[#1A1215] text-white text-center py-20 px-6 relative z-10 overflow-hidden">
-        <!-- Ambient Sakura Depth Layer -->
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#3B1E28]/40 to-[#2A1620]"></div>
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-overlay"></div>
-        
-        <!-- Bottom Glow Effect (Cinematic Lighting) -->
         <div class="absolute -bottom-32 left-1/2 transform -translate-x-1/2 w-[600px] h-[400px] bg-[#E5A9B4] opacity-15 blur-[120px] rounded-full pointer-events-none"></div>
 
         <div class="relative z-20 max-w-4xl mx-auto flex flex-col items-center">
-            <!-- Decorative Star/Sparkle -->
             <i class="fa-solid fa-star-of-life text-[10px] text-gold/60 mb-6 animate-pulse"></i>
-
-            <!-- Typography: Elegant Metallic/Sakura Gradient -->
             <h2 class="font-serif text-5xl md:text-7xl mb-6 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-gold via-[#FFF5F7] to-gold drop-shadow-[0_4px_10px_rgba(212,175,55,0.15)]">
                 Mutiara & Destra
             </h2>
-            
-            <!-- Text: Soft & Breathable -->
             <p class="text-sm md:text-base text-[#FADADD]/70 mb-12 max-w-lg mx-auto font-light leading-relaxed tracking-wide">
                 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
             </p>
             
-            <!-- WA Share Button: Modern App Feel with Hover Animation -->
             <button onclick="shareWhatsApp()" class="group relative px-10 py-4 bg-gradient-to-r from-[#128C7E] to-[#25D366] text-white rounded-full font-medium transition-all duration-500 shadow-[0_8px_30px_rgba(37,211,102,0.3)] hover:shadow-[0_15px_40px_rgba(37,211,102,0.5)] hover:-translate-y-1 overflow-hidden border border-white/20">
-                <!-- Inner Light Sweep Effect on Hover -->
                 <div class="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out"></div>
-                
                 <span class="relative z-10 flex items-center tracking-wider text-sm uppercase">
                     <i class="fa-brands fa-whatsapp mr-3 text-xl"></i> Bagikan Undangan
                 </span>
             </button>
             
-            <!-- Elegant Gradient Divider -->
             <div class="w-full max-w-sm mx-auto mt-20 pt-8 relative">
-                <!-- Subtle line fading at edges -->
                 <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E5A9B4]/30 to-transparent"></div>
                 <p class="text-[10px] md:text-xs text-[#E5A9B4]/50 tracking-[0.3em] uppercase font-light">
                     Created with care for Wedding Dashboard
@@ -536,38 +500,20 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // 1. INISIALISASI AOS SEJAK AWAL
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 50
-        });
+        AOS.init({ duration: 1000, once: true, offset: 50 });
 
-        // 2. URL Parameter Handling
-        const urlParams = new URLSearchParams(window.location.search);
-        const guestName = urlParams.get('to');
-        const defaultName = "Bapak/Ibu/Saudara/i";
-        const displayName = guestName ? decodeURIComponent(guestName) : defaultName;
-        
-        document.getElementById('guest-name').innerText = displayName;
-        document.getElementById('form-name').value = guestName ? decodeURIComponent(guestName) : '';
+        // Tampilkan default text sambil loading dari database
+        document.getElementById('guest-name').innerText = "Bapak/Ibu/Saudara/i";
 
-        // 3. Open Invitation Logic
         function openInvitation() {
             const cover = document.getElementById('cover-screen');
             cover.classList.add('cover-hide');
-            document.body.classList.add('cover-opened'); // Mengaktifkan scroll
+            document.body.classList.add('cover-opened'); 
             
-            // Menyegarkan AOS agar animasi di section bawahnya terdeteksi dengan benar
-            setTimeout(() => {
-                AOS.refresh();
-            }, 500);
-
-            // Memutar musik otomatis
+            setTimeout(() => { AOS.refresh(); }, 500);
             toggleMusic(true);
         }
 
-        // 4. Scroll Progress Bar
         window.onscroll = function() {
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -575,16 +521,12 @@
             document.getElementById("myBar").style.width = scrolled + "%";
         };
 
-        // 5. Countdown Logic
         const countDownDate = new Date("Apr 04, 2027 08:00:00").getTime();
         const x = setInterval(function() {
             const now = new Date().getTime();
             const distance = countDownDate - now;
 
-            if (distance < 0) {
-                clearInterval(x);
-                return;
-            }
+            if (distance < 0) { clearInterval(x); return; }
 
             document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
             document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
@@ -592,7 +534,6 @@
             document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
         }, 1000);
 
-        // 6. Lightbox Logic (Vanilla JS)
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
 
@@ -607,227 +548,216 @@
             lightbox.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // 7. Copy to Clipboard with SweetAlert
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
                 Swal.fire({
-                    toast: true,
-                    position: 'top',
-                    icon: 'success',
-                    title: 'Nomor rekening berhasil disalin!',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdrop: `rgba(0,0,0,0.1)`,
-                    color: '#2C3E50',
-                    iconColor: '#E5A9B4',
+                    toast: true, position: 'top', icon: 'success', title: 'Nomor rekening berhasil disalin!',
+                    showConfirmButton: false, timer: 2000, background: 'rgba(255, 255, 255, 0.9)',
+                    backdrop: `rgba(0,0,0,0.1)`, color: '#2C3E50', iconColor: '#E5A9B4',
                     customClass: { popup: 'backdrop-blur-md border border-white/40 shadow-xl rounded-2xl' }
                 });
             });
         }
 
-        // 8. Music Toggle Logic
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-toggle');
         let isPlaying = false;
 
         function toggleMusic(forcePlay = false) {
             if (isPlaying && !forcePlay) {
-                music.pause();
-                musicBtn.classList.add('music-paused');
-                musicBtn.innerHTML = '<i class="fa-solid fa-music-slash"></i>';
-                isPlaying = false;
+                music.pause(); musicBtn.classList.add('music-paused');
+                musicBtn.innerHTML = '<i class="fa-solid fa-music-slash"></i>'; isPlaying = false;
             } else {
                 music.play().catch(e => console.log("Autoplay prevented"));
                 musicBtn.classList.remove('music-paused');
-                musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
-                isPlaying = true;
+                musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>'; isPlaying = true;
             }
         }
 
-        // 9. Share WhatsApp Logic
         function shareWhatsApp() {
             const currentUrl = window.location.href;
-            const text = `Halo ${displayName},\n\nTanpa mengurangi rasa hormat, kami bermaksud mengundang Anda untuk hadir di acara pernikahan kami.\n\nBuka tautan berikut untuk info detail:\n${currentUrl}\n\nMerupakan suatu kebahagiaan bagi kami apabila Anda berkenan hadir.\n\nTerima kasih,\nDestara & Mutiara`;
+            const guestName = document.getElementById('guest-name').innerText;
+            const text = `Halo ${guestName},\n\nTanpa mengurangi rasa hormat, kami bermaksud mengundang Anda untuk hadir di acara pernikahan kami.\n\nBuka tautan berikut untuk info detail:\n${currentUrl}\n\nMerupakan suatu kebahagiaan bagi kami apabila Anda berkenan hadir.\n\nTerima kasih,\nDestara & Mutiara`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
 
-        // 10. Form Submissions (Dummy)
-        document.getElementById('rsvp-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Terima Kasih!',
-                text: 'Konfirmasi kehadiran Anda telah tersimpan.',
-                icon: 'success',
-                confirmButtonColor: '#E5A9B4',
-                customClass: { popup: 'rounded-3xl' }
-            });
-            this.reset();
-        });
-
         document.getElementById('wishes-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            Swal.fire({
-                title: 'Terkirim!',
-                text: 'Terima kasih atas doa dan ucapannya.',
-                icon: 'success',
-                confirmButtonColor: '#E5A9B4',
-                customClass: { popup: 'rounded-3xl' }
-            });
+            Swal.fire({ title: 'Terkirim!', text: 'Terima kasih atas doa dan ucapannya.', icon: 'success', confirmButtonColor: '#E5A9B4', customClass: { popup: 'rounded-3xl' } });
             document.getElementById('form-wish').value = '';
         });
     </script>
 
-    <!-- ========================================== -->
-    <!-- 🌸 ULTRA PREMIUM SAKURA JS INJECTION 🌸    -->
-    <!-- ========================================== -->
+    <!-- 🌸 SAKURA ANIMATION -->
     <script id="ultra-premium-sakura-js">
         (function() {
-            // Setup Canvas for Sakura Particle System
             const canvas = document.createElement('canvas');
             canvas.id = 'sakura-particle-system';
-            // Z-index 40 so it stays beautifully behind the cover initially, but floats over content
             canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease;';
             document.body.appendChild(canvas);
             
             const ctx = canvas.getContext('2d');
             let width, height;
             let particles = [];
-            
-            // Limit particle count for performance
             const isMobile = window.innerWidth < 768;
             const particleCount = isMobile ? 35 : 75;
 
-            function resizeCanvas() {
-                width = window.innerWidth;
-                height = window.innerHeight;
-                canvas.width = width;
-                canvas.height = height;
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+            function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+            window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
             class SakuraPetal {
                 constructor() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height - height; // Start above screen
-                    
-                    // Depth layers: 1 (far, slow, blur), 2 (mid), 3 (close, fast, clear)
+                    this.x = Math.random() * width; this.y = Math.random() * height - height;
                     const layerChance = Math.random();
-                    if (layerChance > 0.8) {
-                        this.layer = 3;
-                        this.size = Math.random() * 8 + 12; // 12-20
-                        this.speedY = Math.random() * 1.5 + 1.5;
-                        this.blur = 0;
-                    } else if (layerChance > 0.4) {
-                        this.layer = 2;
-                        this.size = Math.random() * 6 + 6; // 6-12
-                        this.speedY = Math.random() * 1 + 0.8;
-                        this.blur = 1;
-                    } else {
-                        this.layer = 1;
-                        this.size = Math.random() * 4 + 3; // 3-7
-                        this.speedY = Math.random() * 0.5 + 0.3;
-                        this.blur = 3;
-                    }
-
-                    this.speedX = Math.random() * 2 - 1; // Sway speed
-                    this.rotation = Math.random() * Math.PI * 2;
-                    this.rotationSpeed = (Math.random() * 0.04 - 0.02);
-                    
-                    // Sway logic
-                    this.angle = Math.random() * Math.PI * 2;
-                    this.angleSpeed = Math.random() * 0.02 + 0.01;
-                    
-                    this.opacity = Math.random() * 0.5 + (this.layer === 3 ? 0.4 : 0.2);
+                    if (layerChance > 0.8) { this.layer = 3; this.size = Math.random() * 8 + 12; this.speedY = Math.random() * 1.5 + 1.5; this.blur = 0; } 
+                    else if (layerChance > 0.4) { this.layer = 2; this.size = Math.random() * 6 + 6; this.speedY = Math.random() * 1 + 0.8; this.blur = 1; } 
+                    else { this.layer = 1; this.size = Math.random() * 4 + 3; this.speedY = Math.random() * 0.5 + 0.3; this.blur = 3; }
+                    this.speedX = Math.random() * 2 - 1; this.rotation = Math.random() * Math.PI * 2; this.rotationSpeed = (Math.random() * 0.04 - 0.02);
+                    this.angle = Math.random() * Math.PI * 2; this.angleSpeed = Math.random() * 0.02 + 0.01; this.opacity = Math.random() * 0.5 + (this.layer === 3 ? 0.4 : 0.2);
                 }
-
                 update() {
-                    this.y += this.speedY;
-                    this.x += this.speedX + Math.sin(this.angle) * (this.layer * 0.5); // Natural zig-zag
-                    this.angle += this.angleSpeed;
-                    this.rotation += this.rotationSpeed;
-
-                    // Reset if out of bounds
-                    if (this.y > height + this.size) {
-                        this.y = -this.size;
-                        this.x = Math.random() * width;
-                    }
-                    if (this.x > width + this.size) this.x = -this.size;
-                    else if (this.x < -this.size) this.x = width + this.size;
+                    this.y += this.speedY; this.x += this.speedX + Math.sin(this.angle) * (this.layer * 0.5);
+                    this.angle += this.angleSpeed; this.rotation += this.rotationSpeed;
+                    if (this.y > height + this.size) { this.y = -this.size; this.x = Math.random() * width; }
+                    if (this.x > width + this.size) this.x = -this.size; else if (this.x < -this.size) this.x = width + this.size;
                 }
-
                 draw() {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate(this.rotation);
-                    
-                    if (this.blur > 0) {
-                        ctx.filter = `blur(${this.blur}px)`;
-                    }
-
-                    ctx.beginPath();
-                    // Draw a realistic petal shape using bezier curves
-                    const s = this.size;
-                    ctx.moveTo(0, s * -0.5);
-                    ctx.bezierCurveTo(s * 0.4, s * -0.6, s, s * -0.2, s * 0.8, s * 0.4);
-                    ctx.bezierCurveTo(s * 0.6, s * 1, s * 0.2, s * 0.8, 0, s);
-                    ctx.bezierCurveTo(s * -0.2, s * 0.8, s * -0.6, s * 1, s * -0.8, s * 0.4);
+                    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation);
+                    if (this.blur > 0) { ctx.filter = `blur(${this.blur}px)`; }
+                    ctx.beginPath(); const s = this.size;
+                    ctx.moveTo(0, s * -0.5); ctx.bezierCurveTo(s * 0.4, s * -0.6, s, s * -0.2, s * 0.8, s * 0.4);
+                    ctx.bezierCurveTo(s * 0.6, s * 1, s * 0.2, s * 0.8, 0, s); ctx.bezierCurveTo(s * -0.2, s * 0.8, s * -0.6, s * 1, s * -0.8, s * 0.4);
                     ctx.bezierCurveTo(s * -1, s * -0.2, s * -0.4, s * -0.6, 0, s * -0.5);
-                    
-                    // Gradient for the petal to look premium
                     const gradient = ctx.createLinearGradient(0, -s, 0, s);
-                    gradient.addColorStop(0, `rgba(255, 230, 240, ${this.opacity})`);
-                    gradient.addColorStop(1, `rgba(248, 160, 185, ${this.opacity * 0.8})`);
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.fill();
-                    ctx.restore();
+                    gradient.addColorStop(0, `rgba(255, 230, 240, ${this.opacity})`); gradient.addColorStop(1, `rgba(248, 160, 185, ${this.opacity * 0.8})`);
+                    ctx.fillStyle = gradient; ctx.fill(); ctx.restore();
                 }
             }
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new SakuraPetal());
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animate);
-            }
+            for (let i = 0; i < particleCount; i++) { particles.push(new SakuraPetal()); }
+            function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
             animate();
-
-            // Parallax Depth Logic for sections
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const glassPanels = document.querySelectorAll('.glass-panel');
-                
-                glassPanels.forEach(panel => {
-                    // Slight upward drift to make it floaty
-                    const speed = 0.05;
-                    const yPos = -(scrolled * speed);
-                    // We only apply this safely without breaking layout
-                    // Actually, modifying transform directly might conflict with AOS/Hover.
-                    // Instead, we let AOS handle initial entry, and just tweak background position slightly if needed.
-                });
-            });
-
-            // Elevate Sakura canvas z-index slightly after cover opens so they fall over the content beautifully
             const originalOpenInvitation = window.openInvitation;
-            window.openInvitation = function() {
-                originalOpenInvitation();
-                setTimeout(() => {
-                    document.getElementById('sakura-particle-system').style.zIndex = '90';
-                }, 1000);
-            }
+            window.openInvitation = function() { originalOpenInvitation(); setTimeout(() => { document.getElementById('sakura-particle-system').style.zIndex = '90'; }, 1000); }
         })();
     </script>
-    <!-- ========================================== -->
 
+    <!-- ========================================== -->
+    <!-- 🟢 FIREBASE RSVP LOGIC (BERBASIS ID) 🟢    -->
+    <!-- ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // CONFIG FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIvPy_2z1-BpKjAxUE-0VHhELqx3DHepM",
+            authDomain: "desara-9027a.firebaseapp.com",
+            projectId: "desara-9027a",
+            storageBucket: "desara-9027a.firebasestorage.app",
+            messagingSenderId: "865899813290",
+            appId: "1:865899813290:web:05453a36ef1608d40b73d3"        
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 1. AMBIL PARAMETER ?id=
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestId = urlParams.get('id');
+
+        // 2. JIKA ADA ID, AMBIL NAMA DARI DATABASE FIREBASE
+        if (guestId) {
+            const docRef = doc(db, "wedding_list", guestId);
+            getDoc(docRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Render nama dari database ke UI Undangan
+                    document.getElementById('guest-name').innerText = data.nama;
+                    
+                    // Isi nama di Form RSVP dan buat Read-Only agar akurat
+                    const formNameInput = document.getElementById('form-name');
+                    formNameInput.value = data.nama;
+                    formNameInput.readOnly = true; 
+                    formNameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+
+                } else {
+                    console.warn("Data tamu tidak ditemukan untuk ID ini.");
+                }
+            }).catch((error) => {
+                console.error("Gagal mengambil data tamu:", error);
+            });
+        }
+
+        // 3. LOGIKA RSVP SUBMIT
+        const rsvpForm = document.getElementById('rsvp-form');
+        const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        rsvpForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validasi jika akses tidak memiliki ID
+            if(!guestId) {
+                Swal.fire({
+                    title: 'Akses Tidak Valid',
+                    text: 'URL undangan Anda tidak memiliki identitas tamu. Silakan pastikan link yang Anda buka benar.',
+                    icon: 'error',
+                    confirmButtonColor: '#E5A9B4',
+                    customClass: { popup: 'rounded-3xl' }
+                });
+                return;
+            }
+
+            const statusVal = document.getElementById('form-status').value;
+            const pax = parseInt(document.getElementById('form-pax').value) || 1;
+
+            if(!statusVal) return;
+
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
+
+            const dbStatus = statusVal === "Hadir" ? "hadir" : "tidak hadir";
+
+            try {
+                // LANGSUNG UPDATE BERDASARKAN ID DOKUMEN (Tanpa Query)
+                const docRef = doc(db, "wedding_list", guestId);
+                await updateDoc(docRef, {
+                    status: dbStatus,
+                    jumlahOrang: pax
+                });
+
+                // Tampilkan Feedback Sukses
+                Swal.fire({
+                    title: 'Terima Kasih!',
+                    text: 'Konfirmasi kehadiran Anda telah tersimpan.',
+                    icon: 'success',
+                    confirmButtonColor: '#E5A9B4',
+                    customClass: { popup: 'rounded-3xl' }
+                });
+                
+                // Mencegah Spam
+                document.getElementById('form-status').disabled = true;
+                document.getElementById('form-pax').disabled = true;
+                submitBtn.classList.remove('hover:bg-dark');
+                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                submitBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Sudah Terkonfirmasi';
+                
+            } catch (error) {
+                console.error("Error RSVP: ", error);
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Terjadi kesalahan sistem. Silakan coba lagi.',
+                    icon: 'error',
+                    confirmButtonColor: '#E5A9B4',
+                    customClass: { popup: 'rounded-3xl' }
+                });
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+    </script>
 </body>
 </html>
