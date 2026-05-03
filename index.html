@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -119,7 +119,6 @@
         </div>
     </div>
 
-
     <div id="dashboard-ui" class="hidden w-full h-full flex overflow-hidden relative z-10">
         <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
 
@@ -144,18 +143,9 @@
                     <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
-                    
-                    <a href="https://destara.pages.dev/undangan.html?to=Bapak%20Ibu" target="_blank" class="hidden md:flex items-center gap-2 px-4 py-2 bg-lavender text-white rounded-xl font-bold text-sm hover:bg-lavender-dark transition shadow-sm">
-                        <i class="fa-solid fa-eye"></i> Lihat Undangan
-                    </a>
-                    <a href="https://destara.pages.dev/undangan.html?to=Bapak%20Ibu" target="_blank" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-lavender bg-lavender-light hover:bg-lavender hover:text-white transition shadow-sm" title="Lihat Undangan">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
-
                     <button onclick="toggleHideMoney()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-lavender hover:bg-lavender-light transition" title="Sembunyikan / Tampilkan Uang">
                         <i id="toggle-eye-icon" class="fa-solid fa-eye"></i>
                     </button>
-
                     <div id="user-profile" class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
                         MD
                     </div>
@@ -173,45 +163,23 @@
 
     <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-
         <div class="relative bg-white rounded-3xl shadow-2xl w-[90%] max-w-sm p-6 fade-in scale-95 animate-[fadeIn_0.2s_ease-out_forwards]">
             <div class="w-14 h-14 bg-lavender-light rounded-2xl flex items-center justify-center mx-auto mb-4 text-lavender-dark text-xl shadow-inner">
                 <i class="fa-solid fa-lock"></i>
             </div>
-
-            <h3 class="text-center text-lg font-bold text-gray-800 mb-1">
-                Akses Data Finansial
-            </h3>
-
-            <p class="text-center text-xs text-gray-400 mb-5">
-                Masukkan password untuk membuka data
-            </p>
-
-            <input 
-                type="password" 
-                id="password-input"
-                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition-all"
-                placeholder="••••••••"
-            >
-
+            <h3 class="text-center text-lg font-bold text-gray-800 mb-1">Akses Data Finansial</h3>
+            <p class="text-center text-xs text-gray-400 mb-5">Masukkan password untuk membuka data</p>
+            <input type="password" id="password-input" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition-all" placeholder="••••••••">
             <div class="flex gap-2 mt-5">
-                <button onclick="closePasswordModal()" 
-                    class="flex-1 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-                    Batal
-                </button>
-
-                <button onclick="submitPassword()" 
-                    class="flex-1 py-2 text-sm bg-lavender text-white rounded-xl shadow-md hover:bg-lavender-dark transition">
-                    Buka
-                </button>
+                <button onclick="closePasswordModal()" class="flex-1 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition">Batal</button>
+                <button onclick="submitPassword()" class="flex-1 py-2 text-sm bg-lavender text-white rounded-xl shadow-md hover:bg-lavender-dark transition">Buka</button>
             </div>
         </div>
     </div>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         // CONFIG FIREBASE
@@ -228,9 +196,22 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // REALTIME LISTENER UNTUK WEDDING LIST (Fitur RSVP Otomatis Berubah Tanpa Refresh)
+        onSnapshot(collection(db, 'wedding_list'), (snapshot) => {
+            let data = [];
+            snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
+            appData.items['wedding_list'] = data;
+            
+            // Auto update UI jika sedang buka menu Wedding List atau Dashboard
+            if (activeMenu === 'wedding_list') {
+                renderTable('wedding_list');
+            } else if (activeMenu === 'dashboard') {
+                renderContent(); 
+            }
+        });
+
         window.goldPrice = 0;
         window.usdToIdr = 16000;
-        
         window.goldHistory = window.goldHistory || [];
         window.prevGoldPrice = 0;
         window.goldChartInstance = null;
@@ -239,24 +220,18 @@
             try {
                 const goldRes = await fetch('https://api.gold-api.com/price/XAU');
                 const goldData = await goldRes.json();
-
                 const kursRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
                 const kursData = await kursRes.json();
-
                 window.usdToIdr = kursData.rates.IDR;
-
                 const pricePerGramUSD = goldData.price / 31.1035;
-
                 const newGoldPrice = Math.round(pricePerGramUSD * window.usdToIdr);
                 
                 window.prevGoldPrice = window.goldPrice || newGoldPrice;
                 window.goldPrice = newGoldPrice;
-
                 window.goldHistory.push(window.goldPrice);
                 if (window.goldHistory.length > 20) {
                     window.goldHistory.shift();
                 }
-
             } catch (err) {
                 console.error('Fetch gold/kurs failed', err);
             }
@@ -397,7 +372,6 @@
         window.toggleMaharType = function() {
             const tipeInput = document.getElementById('inputTipeMahar');
             if(!tipeInput) return;
-            
             const isGold = tipeInput.value === 'gold';
             const goldWrapper = document.getElementById('goldInputWrapper');
             const nilaiWrapper = document.getElementById('inputNilai').parentElement;
@@ -428,9 +402,7 @@
         window.hitungTotalChecklist = function() {
             const harga = Number(document.getElementById('inputBiaya').value || 0);
             const qty = Number(document.getElementById('inputQty').value || 0);
-
             const total = harga * qty;
-
             document.getElementById('totalPreview').innerText = formatRupiah(total);
         }
 
@@ -455,42 +427,14 @@
             if(preview) preview.innerText = formatRupiah(total);
         }
 
-        window.seserahanFilter = 'semua';
-        window.setSeserahanFilter = function(f) {
-            window.seserahanFilter = f;
-            renderTable('seserahan');
-        }
-
-        window.seserahanCategoryFilter = 'all';
-        window.setSeserahanCategory = function(cat) {
-            window.seserahanCategoryFilter = cat;
-            renderTable('seserahan');
-        }
-
-        window.doorprizeFilter = 'all';
-        window.setDoorprizeFilter = function(f) {
-            window.doorprizeFilter = f;
-            renderTable('doorprize');
-        }
-
-        window.weddingFilter = 'all';
-        window.setWeddingFilter = function(f) {
-            window.weddingFilter = f;
-            renderTable('wedding_list');
-        }
-
-        window.weddingPihakFilter = 'all';
-        window.setWeddingPihakFilter = function(f) {
-            window.weddingPihakFilter = f;
-            renderTable('wedding_list');
-        }
-
-        window.weddingTipeFilter = 'all';
-        window.setWeddingTipeFilter = function(filter) {
-            window.weddingTipeFilter = filter;
-            renderTable('wedding_list');
-        }
-
+        // Filters and Sorts
+        window.seserahanFilter = 'semua'; window.setSeserahanFilter = function(f) { window.seserahanFilter = f; renderTable('seserahan'); }
+        window.seserahanCategoryFilter = 'all'; window.setSeserahanCategory = function(cat) { window.seserahanCategoryFilter = cat; renderTable('seserahan'); }
+        window.doorprizeFilter = 'all'; window.setDoorprizeFilter = function(f) { window.doorprizeFilter = f; renderTable('doorprize'); }
+        window.weddingFilter = 'all'; window.setWeddingFilter = function(f) { window.weddingFilter = f; renderTable('wedding_list'); }
+        window.weddingPihakFilter = 'all'; window.setWeddingPihakFilter = function(f) { window.weddingPihakFilter = f; renderTable('wedding_list'); }
+        window.weddingTipeFilter = 'all'; window.setWeddingTipeFilter = function(filter) { window.weddingTipeFilter = filter; renderTable('wedding_list'); }
+        
         window.weddingSort = { field: null, direction: 'asc' };
         window.setWeddingSort = function(field) {
             if (window.weddingSort.field === field) {
@@ -506,17 +450,12 @@
         window.handleUndanganType = function(type) {
             const fisik = document.getElementById('undanganFisik');
             const digital = document.getElementById('undanganDigital');
-            
             if(!fisik || !digital) return;
 
             if (type === 'fisik') {
-                fisik.checked = true;
-                digital.checked = false;
-                window.selectedUndanganType = 'fisik';
+                fisik.checked = true; digital.checked = false; window.selectedUndanganType = 'fisik';
             } else {
-                fisik.checked = false;
-                digital.checked = true;
-                window.selectedUndanganType = 'digital';
+                fisik.checked = false; digital.checked = true; window.selectedUndanganType = 'digital';
             }
         }
 
@@ -567,43 +506,42 @@
         }
 
         function formatRupiah(number) {
-            if (window.isHideMoney) {
-                return 'Rp ----';
-            }
-            return new Intl.NumberFormat('id-ID', { 
-                style: 'currency', 
-                currency: 'IDR', 
-                minimumFractionDigits: 0 
-            }).format(number);
+            if (window.isHideMoney) { return 'Rp ----'; }
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         }
 
         window.formatUSD = function(number) {
             if (window.isHideMoney) return '$ ----';
-            return '$' + Number(number).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            return '$' + Number(number).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         // ========================================================
-        // FITUR BARU: COPY LINK & KIRIM WHATSAPP UNDANGAN DIGITAL
+        // FITUR BARU: COPY LINK & KIRIM WHATSAPP UNDANGAN DIGITAL (BERBASIS ID)
         // ========================================================
-        window.copyUndangan = function(nama) {
-            const baseUrl = "https://destara.pages.dev/undangan.html?to=";
-            const link = baseUrl + encodeURIComponent(nama);
+        window.copyUndangan = function(nama, id) {
+            const baseUrl = "https://destara.pages.dev/undangan.html?id=";
+            const link = baseUrl + id;
 
-            navigator.clipboard.writeText(link).then(() => {
+            const pesan = 
+            "Yth. " + nama + ",\n\n" +
+            "Tanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir di acara pernikahan kami.\n\n" +
+            "🔗 Undangan:\n" + link + "\n\n" +
+            "Kehadiran Anda merupakan kebahagiaan bagi kami.\n\n" +
+            "Terima kasih 🙏\n" +
+            "Mutiara & Destra";
+
+            navigator.clipboard.writeText(pesan).then(() => {
                 if (window.showToast) {
-                    window.showToast("Link undangan berhasil dicopy!");
+                    window.showToast("Pesan undangan berhasil dicopy!");
                 } else {
-                    alert("Link undangan berhasil dicopy!");
+                    alert("Pesan undangan berhasil dicopy!");
                 }
             }).catch(() => {
-                alert("Gagal menyalin link undangan.");
+                alert("Gagal menyalin pesan.");
             });
         }
 
-        window.kirimWA = function(nama, nomor) {
+        window.kirimWA = function(nama, nomor, id) {
             if (!nomor) {
                 if (window.showToast) {
                     window.showToast("Nomor HP belum tersedia!", "error");
@@ -613,15 +551,13 @@
                 return;
             }
 
-            // Mencegah error jika input formatnya mengandung karakter non-angka
             let nomorWA = nomor.replace(/[^0-9]/g, ''); 
-            // Ubah angka 0 di depan menjadi 62
             if (nomorWA.startsWith('0')) {
                 nomorWA = '62' + nomorWA.substring(1);
             }
 
-            const baseUrl = "https://destara.pages.dev/undangan.html?to=";
-            const link = baseUrl + encodeURIComponent(nama);
+            const baseUrl = "https://destara.pages.dev/undangan.html?id=";
+            const link = baseUrl + id;
 
             const pesan = `Yth. ${nama},\n\nKami mengundang Anda ke acara pernikahan kami.\n\nBerikut link undangan:\n${link}\n\nTerima kasih 🙏`;
 
@@ -739,9 +675,7 @@
             const maharItems = appData.items['mahar'] || [];
             const totalMahar = maharItems.reduce((sum, i) => {
                 let currentVal = i.nilai || 0;
-                if (i.tipe === 'gold' && i.gram) {
-                    currentVal = i.gram * window.goldPrice;
-                }
+                if (i.tipe === 'gold' && i.gram) { currentVal = i.gram * window.goldPrice; }
                 return sum + currentVal;
             }, 0);
             
@@ -749,9 +683,7 @@
                 .filter(i => i.status === 'sudah')
                 .reduce((sum, i) => {
                     let currentVal = i.nilai || 0;
-                    if (i.tipe === 'gold' && i.gram) {
-                        currentVal = i.gram * window.goldPrice;
-                    }
+                    if (i.tipe === 'gold' && i.gram) { currentVal = i.gram * window.goldPrice; }
                     return sum + currentVal;
                 }, 0);
                 
@@ -805,65 +737,45 @@
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-                        <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">
-                            Anggaran Mahar
-                        </h3>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">Anggaran Mahar</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="bg-purple-50 border border-purple-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-purple-600 font-semibold mb-1">Total Mahar</p>
-                                <p class="text-lg font-bold text-purple-700">
-                                    ${formatRupiah(totalMahar)}
-                                </p>
+                                <p class="text-lg font-bold text-purple-700">${formatRupiah(totalMahar)}</p>
                             </div>
                             <div class="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-green-600 font-semibold mb-1">Sudah Siap</p>
-                                <p class="text-lg font-bold text-green-700">
-                                    ${formatRupiah(maharSelesai)}
-                                </p>
+                                <p class="text-lg font-bold text-green-700">${formatRupiah(maharSelesai)}</p>
                             </div>
                             <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-yellow-600 font-semibold mb-1">Sisa Mahar</p>
-                                <p class="text-lg font-bold text-yellow-700">
-                                    ${formatRupiah(sisaMahar)}
-                                </p>
+                                <p class="text-lg font-bold text-yellow-700">${formatRupiah(sisaMahar)}</p>
                             </div>
                             <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-gray-500 font-semibold mb-1">Total Item</p>
-                                <p class="text-lg font-bold text-gray-700">
-                                    ${totalItemMahar} Item
-                                </p>
+                                <p class="text-lg font-bold text-gray-700">${totalItemMahar} Item</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-                        <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">
-                            Anggaran Seserahan
-                        </h3>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase mb-4">Anggaran Seserahan</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="bg-pink-50 border border-pink-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-pink-600 font-semibold mb-1">Total Seserahan</p>
-                                <p class="text-lg font-bold text-pink-700">
-                                    ${formatRupiah(totalSeserahan)}
-                                </p>
+                                <p class="text-lg font-bold text-pink-700">${formatRupiah(totalSeserahan)}</p>
                             </div>
                             <div class="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-green-600 font-semibold mb-1">Sudah Dibungkus</p>
-                                <p class="text-lg font-bold text-green-700">
-                                    ${formatRupiah(seserahanSelesai)}
-                                </p>
+                                <p class="text-lg font-bold text-green-700">${formatRupiah(seserahanSelesai)}</p>
                             </div>
                             <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-yellow-600 font-semibold mb-1">Sisa Seserahan</p>
-                                <p class="text-lg font-bold text-yellow-700">
-                                    ${formatRupiah(sisaSeserahan)}
-                                </p>
+                                <p class="text-lg font-bold text-yellow-700">${formatRupiah(sisaSeserahan)}</p>
                             </div>
                             <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
                                 <p class="text-xs text-gray-500 font-semibold mb-1">Total Item</p>
-                                <p class="text-lg font-bold text-gray-700">
-                                    ${totalItemSeserahan} Item
-                                </p>
+                                <p class="text-lg font-bold text-gray-700">${totalItemSeserahan} Item</p>
                             </div>
                         </div>
                     </div>
@@ -1630,10 +1542,11 @@
                                         <td class="px-6 py-4 text-right flex justify-end gap-2 items-center">
                                             ${item.tipeUndangan === 'digital' ? `
                                             <div class="flex gap-2">
-                                                <button onclick="window.copyUndangan('${(item.nama || '').replace(/'/g, "\\'")}')" class="px-3 py-1 bg-green-100 text-green-600 rounded-lg text-xs font-semibold hover:bg-green-200 transition" title="Copy Link">
+                                                <!-- TOMBOL LINK INI SEKARANG MEMBAWA PARAMETER ?id= -->
+                                                <button onclick="window.copyUndangan('${(item.nama || '').replace(/'/g, "\\'")}', '${item.id}')" class="px-3 py-1 bg-green-100 text-green-600 rounded-lg text-xs font-semibold hover:bg-green-200 transition" title="Copy Link">
                                                     <i class="fa-solid fa-copy mr-1"></i> Copy Link
                                                 </button>
-                                                <button onclick="window.kirimWA('${(item.nama || '').replace(/'/g, "\\'")}', '${item.nomorHP || ''}')" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-200 transition" title="Kirim WA">
+                                                <button onclick="window.kirimWA('${(item.nama || '').replace(/'/g, "\\'")}', '${item.nomorHP || ''}', '${item.id}')" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-200 transition" title="Kirim WA">
                                                     <i class="fa-brands fa-whatsapp mr-1"></i> Kirim WA
                                                 </button>
                                             </div>
@@ -1691,14 +1604,12 @@
                                     <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-300 hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
                                 </div>
                                 <div class="flex justify-between items-start">
-                                    <!-- LEFT -->
                                     <div class="pr-12">
                                         <h3 class="font-semibold text-gray-800">${item.nama}</h3>
                                         <p class="text-xs text-gray-400 mt-1">${item.kategori} • ${item.vendor || '-'}</p>
                                         <div class="mt-2 text-sm text-gray-600 font-medium">${item.qty} × ${formatRupiah(item.harga)}</div>
                                         ${item.catatan ? `<p class="text-[10px] text-gray-500 mt-2 bg-gray-50 p-1.5 rounded">${item.catatan}</p>` : ''}
                                     </div>
-                                    <!-- RIGHT -->
                                     <div class="text-right flex-shrink-0">
                                         <p class="text-xs text-gray-400 uppercase tracking-wide">Total</p>
                                         <p class="text-sm font-bold text-lavender-dark">${formatRupiah(item.total)}</p>
@@ -1737,30 +1648,19 @@
                                                 ${(item.total > 0) ? `
                                                     <div class="mt-2 p-3 rounded-xl bg-gradient-to-r from-lavender-light/40 to-white border border-lavender/30">
                                                         <div class="flex items-center justify-between">
-                                                            <!-- LEFT -->
                                                             <div>
-                                                                <p class="text-[10px] uppercase text-gray-400 tracking-wider mb-1">
-                                                                    Breakdown Biaya
-                                                                </p>
+                                                                <p class="text-[10px] uppercase text-gray-400 tracking-wider mb-1">Breakdown Biaya</p>
                                                                 <div class="flex items-center gap-2 text-sm font-medium text-gray-700">
-                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">
-                                                                        ${item.qty} ${item.satuan}
-                                                                    </span>
+                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">${item.qty} ${item.satuan}</span>
                                                                     <i class="fa-solid fa-x text-[10px] text-gray-400"></i>
-                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">
-                                                                        ${formatRupiah(item.biaya)}
-                                                                    </span>
+                                                                    <span class="px-2 py-1 bg-white border rounded-lg shadow-sm">${formatRupiah(item.biaya)}</span>
                                                                 </div>
                                                             </div>
-                                                            <!-- RIGHT TOTAL -->
                                                             <div class="text-right">
                                                                 <p class="text-[10px] text-gray-400 uppercase">Total</p>
-                                                                <p class="text-sm font-bold text-lavender-dark">
-                                                                    ${formatRupiah(item.total)}
-                                                                </p>
+                                                                <p class="text-sm font-bold text-lavender-dark">${formatRupiah(item.total)}</p>
                                                             </div>
                                                         </div>
-                                                        <!-- LINE VISUAL -->
                                                         <div class="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                                             <div class="h-full bg-gradient-to-r from-lavender to-lavender-dark w-full"></div>
                                                         </div>
@@ -1812,16 +1712,10 @@
                         
                         return `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative group transition hover:-translate-y-1 hover:shadow-md">
-                            
                             <div class="absolute top-3 right-3 flex gap-1 bg-white/90 rounded-md p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition z-10">
-                                <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:text-lavender">
-                                    <i class="fa-solid fa-pen text-xs"></i>
-                                </button>
-                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-400 hover:text-red-600">
-                                    <i class="fa-solid fa-trash text-xs"></i>
-                                </button>
+                                <button onclick="editItem('${item.id}', '${categoryId}')" class="p-1.5 text-gray-400 hover:text-lavender"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="p-1.5 text-red-400 hover:text-red-600"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
-
                             <div class="flex justify-between items-start mb-2 pr-12">
                                 <span class="text-[10px] font-bold uppercase tracking-widest text-lavender block"><i class="fa-solid fa-tag mr-1"></i> ${item.kategori}</span>
                                 <span class="${item.statusPembayaran === 'lunas' ? 'bg-green-100 text-green-700' : item.statusPembayaran === 'dp' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} px-2 py-1 rounded-full text-[10px] font-bold">
@@ -1829,13 +1723,11 @@
                                 </span>
                             </div>
                             <h4 class="font-black text-xl text-gray-800 mb-4">${item.nama}</h4>
-                            
                             <div class="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-100 text-xs">
                                 <div class="flex justify-between mb-1"><span class="text-gray-500">Total Harga:</span> <span class="font-bold text-gray-700">${formatRupiah(totalH)}</span></div>
                                 <div class="flex justify-between mb-1"><span class="text-gray-500">Dibayar:</span> <span class="font-bold text-lavender-dark">${formatRupiah(dibayar)}</span></div>
                                 <div class="flex justify-between pt-1 border-t border-gray-200 mt-1"><span class="text-gray-500 font-semibold">Sisa:</span> <span class="font-bold text-red-500">${formatRupiah(sisa)}</span></div>
                             </div>
-
                             <div class="flex items-center gap-2 text-sm font-medium text-gray-600 mb-6 bg-gray-50 p-2 rounded-lg border border-gray-100"><i class="fa-brands fa-whatsapp text-green-500 text-lg"></i> ${item.kontak}</div>
                             <div class="flex justify-between items-center border-t border-gray-50 pt-4">
                                 <label class="flex items-center gap-2 cursor-pointer bg-white">
@@ -1868,7 +1760,6 @@
             } else if (categoryId === 'doorprize') {
                 let totalBiaya = 0;
                 
-                // Kalkulasi data realtime saat table dimuat
                 data.forEach(item => {
                     if (item.kategori === 'logam_mulia' && item.gram) {
                         item.harga = item.gram * window.goldPrice;
@@ -1907,21 +1798,14 @@
                             ${utamaItems.map(item => `
                             <div class="p-6 rounded-2xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-white shadow-md relative overflow-hidden group">
                                 <div class="absolute -top-5 -right-5 w-24 h-24 bg-yellow-200 rounded-full opacity-30 group-hover:scale-110 transition-transform"></div>
-                                
                                 <div class="absolute top-3 right-3 flex gap-1 z-10 bg-white/50 backdrop-blur-sm rounded-lg p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition">
-                                    <button onclick="editItem('${item.id}', 'doorprize')" class="p-1.5 text-gray-500 hover:text-lavender">
-                                        <i class="fa-solid fa-pen text-xs"></i>
-                                    </button>
-                                    <button onclick="deleteItem('${item.id}', 'doorprize')" class="p-1.5 text-red-400 hover:text-red-600">
-                                        <i class="fa-solid fa-trash text-xs"></i>
-                                    </button>
+                                    <button onclick="editItem('${item.id}', 'doorprize')" class="p-1.5 text-gray-500 hover:text-lavender"><i class="fa-solid fa-pen text-xs"></i></button>
+                                    <button onclick="deleteItem('${item.id}', 'doorprize')" class="p-1.5 text-red-400 hover:text-red-600"><i class="fa-solid fa-trash text-xs"></i></button>
                                 </div>
-
                                 <span class="inline-block px-2 py-1 bg-yellow-100 rounded text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-2 border border-yellow-200">🌟 Hadiah Utama</span>
                                 <h3 class="text-xl font-black text-gray-800 mt-1">${item.namaItem}</h3>
                                 ${item.kategori === 'logam_mulia' ? `<p class="text-xs text-yellow-600 font-semibold mt-1"><i class="fa-solid fa-coins mr-1"></i> ${item.gram} gr emas</p>` : ''}
                                 <p class="text-sm text-gray-500 mt-1">${item.catatan || '-'}</p>
-                                
                                 <div class="mt-4 flex justify-between items-center bg-white/80 p-3 rounded-xl border border-yellow-100">
                                     <span class="text-sm font-semibold text-gray-600">${item.jumlah} pcs</span>
                                     <span class="text-lg font-black text-yellow-700">${formatRupiah(item.total)}</span>
@@ -1937,19 +1821,13 @@
                             ${biasaItems.map(item => `
                                 <div class="bg-white p-5 rounded-xl border shadow-sm group relative hover:border-lavender/50 transition">
                                     <div class="absolute top-3 right-3 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition bg-gray-50 rounded-lg p-1">
-                                        <button onclick="editItem('${item.id}', 'doorprize')" class="p-1.5 text-gray-400 hover:text-lavender">
-                                            <i class="fa-solid fa-pen text-xs"></i>
-                                        </button>
-                                        <button onclick="deleteItem('${item.id}', 'doorprize')" class="p-1.5 text-red-400 hover:text-red-600">
-                                            <i class="fa-solid fa-trash text-xs"></i>
-                                        </button>
+                                        <button onclick="editItem('${item.id}', 'doorprize')" class="p-1.5 text-gray-400 hover:text-lavender"><i class="fa-solid fa-pen text-xs"></i></button>
+                                        <button onclick="deleteItem('${item.id}', 'doorprize')" class="p-1.5 text-red-400 hover:text-red-600"><i class="fa-solid fa-trash text-xs"></i></button>
                                     </div>
-
                                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">${(item.kategori || 'lainnya').replace('_', ' ')}</span>
                                     <h4 class="font-bold text-gray-800 text-lg">${item.namaItem}</h4>
                                     ${item.kategori === 'logam_mulia' ? `<p class="text-xs text-yellow-600 font-semibold mt-1"><i class="fa-solid fa-coins mr-1"></i> ${item.gram} gr emas</p>` : ''}
                                     <p class="text-xs text-gray-400 mt-1">${item.catatan || '-'}</p>
-
                                     <div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-50">
                                         <span class="text-sm font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${item.jumlah} pcs</span>
                                         <span class="text-sm font-bold text-lavender-dark">${formatRupiah(item.total)}</span>
