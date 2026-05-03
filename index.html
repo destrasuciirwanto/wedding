@@ -1092,7 +1092,8 @@
                     status: document.getElementById('inputStatus').value,
                     jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1),
                     tipeUndangan: window.selectedUndanganType || 'fisik',
-                    nomorHP: document.getElementById('inputNomorHP') ? document.getElementById('inputNomorHP').value : ''
+                    nomorHP: document.getElementById('inputNomorHP') ? document.getElementById('inputNomorHP').value : '',
+                    ucapan: editId ? (appData.items[categoryId].find(i => i.id === editId)?.ucapan || '') : ''
                 };
             } else if (categoryId === 'catering') {
                 const h = Number(document.getElementById('inputHargaPerPax').value || 0);
@@ -1509,6 +1510,7 @@
                                         <button onclick="setWeddingSort('jumlahOrang')" class="ml-1 text-xs text-gray-400 hover:text-lavender transition-colors"><i class="fa-solid fa-sort"></i></button>
                                     </th>
                                     <th class="px-6 py-4 font-semibold text-center">Tipe Undangan</th>
+                                    <th class="px-6 py-4 font-semibold">Ucapan</th>
                                     <th class="px-6 py-4 font-semibold">
                                         Status
                                         <button onclick="setWeddingSort('status')" class="ml-1 text-xs text-gray-400 hover:text-lavender transition-colors"><i class="fa-solid fa-sort"></i></button>
@@ -1531,6 +1533,9 @@
                                                 ${item.tipeUndangan === 'fisik' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}">
                                                 ${item.tipeUndangan === 'fisik' ? '<i class="fa-solid fa-envelope mr-1"></i> Fisik' : '<i class="fa-solid fa-mobile-screen mr-1"></i> Digital'}
                                             </span>
+                                        </td>
+                                        <td class="px-6 py-4 max-w-[150px]">
+                                            <p class="text-xs text-gray-500 truncate cursor-help" title="${item.ucapan || ''}">${item.ucapan ? `"${item.ucapan}"` : '<span class="text-gray-300 italic">Belum ada</span>'}</p>
                                         </td>
                                         <td class="px-6 py-4">
                                             <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border-2 outline-none cursor-pointer transition ${item.status==='hadir'?'bg-green-50 text-green-700 border-green-200': item.status==='tidak hadir'?'bg-red-50 text-red-700 border-red-200':'bg-yellow-50 text-yellow-700 border-yellow-200'}">
@@ -1555,7 +1560,7 @@
                                             <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                                         </td>
                                     </tr>
-                                `).join('') || `<tr><td colspan="5">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
+                                `).join('') || `<tr><td colspan="6">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
                             </tbody>
                         </table>
                     </div>`;
