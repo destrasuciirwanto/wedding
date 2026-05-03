@@ -196,7 +196,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // REALTIME LISTENER UNTUK WEDDING LIST (Fitur RSVP Otomatis Berubah Tanpa Refresh)
+        // REALTIME LISTENER UNTUK WEDDING LIST
         onSnapshot(collection(db, 'wedding_list'), (snapshot) => {
             let data = [];
             snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
@@ -426,6 +426,25 @@
             if(preview) preview.innerText = formatRupiah(total);
         }
 
+        // ==========================================================
+        // LOGIC OTOMATIS: KUNCI 'SIAP DIBELI' JIKA STATUS TELAH DIBELI
+        // ==========================================================
+        window.toggleSiapDibeliLogic = function() {
+            const statusEl = document.getElementById('inputStatus');
+            const siapEl = document.getElementById('inputSiapDibeli');
+            if (statusEl && siapEl) {
+                if (statusEl.value !== 'belum') {
+                    siapEl.value = 'selesai';
+                    siapEl.disabled = true;
+                } else {
+                    siapEl.disabled = false;
+                    if (siapEl.value === 'selesai') {
+                        siapEl.value = 'belum';
+                    }
+                }
+            }
+        };
+
         // Filters and Sorts
         window.seserahanFilter = 'semua'; window.setSeserahanFilter = function(f) { window.seserahanFilter = f; renderTable('seserahan'); }
         window.seserahanCategoryFilter = 'all'; window.setSeserahanCategory = function(cat) { window.seserahanCategoryFilter = cat; renderTable('seserahan'); }
@@ -515,9 +534,6 @@
             return '$' + Number(number).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // ========================================================
-        // FITUR BARU: COPY LINK & KIRIM WHATSAPP UNDANGAN DIGITAL (BERBASIS ID)
-        // ========================================================
         window.copyUndangan = function(nama, id) {
             const baseUrl = "https://destara.pages.dev/undangan.html?id=";
             const link = baseUrl + id;
@@ -643,9 +659,23 @@
             }
         }
 
+        // FUNGSI QUICK UPDATE DENGAN LOGIC OTOMATISASI SESERAHAN
         window.quickUpdate = async function(categoryId, id, field, value) {
             try {
-                await updateDoc(doc(db, categoryId, id), { [field]: value });
+                let updateData = { [field]: value };
+                
+                // Automasi: Jika field 'status' pada seserahan diganti jadi dibeli/dibungkus, 
+                // maka 'siapDibeli' otomatis menjadi 'selesai'
+                if (categoryId === 'seserahan' && field === 'status') {
+                    if (value !== 'belum') {
+                        updateData.siapDibeli = 'selesai';
+                    } else {
+                        // Jika dikembalikan ke 'belum dibeli', reset siap dibeli jadi 'belum'
+                        updateData.siapDibeli = 'belum'; 
+                    }
+                }
+                
+                await updateDoc(doc(db, categoryId, id), updateData);
                 await loadData(categoryId); 
                 showToast('Status berhasil diupdate!');
             } catch (error) {
@@ -868,8 +898,8 @@
                     </div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Jumlah</label><input type="number" id="inputJumlah" value="1" min="1" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                     <div><label class="block text-xs font-medium text-gray-500 mb-1">Harga Satuan (Rp)</label><input type="number" id="inputHarga" placeholder="Boleh kosong" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                        <select id="inputStatus" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status (Pembelian)</label>
+                        <select id="inputStatus" onchange="window.toggleSiapDibeliLogic()" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none">
                             <option value="belum">🔴 Belum Dibeli</option>
                             <option value="dibeli">🟡 Sudah Dibeli</option>
                             <option value="dibungkus">🟢 Sudah Dibungkus</option>
@@ -881,7 +911,14 @@
                             <option value="ada">Ada kadaluarsa</option>
                         </select>
                     </div>
-                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan</label><input type="text" id="inputCatatan" placeholder="Catatan tambahan (Opsional)" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Status Siap Dibeli</label>
+                        <select id="inputSiapDibeli" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors">
+                            <option value="belum">🔴 Belum Siap</option>
+                            <option value="siap">🟢 Siap Dibeli</option>
+                            <option value="selesai" hidden>✅ Selesai</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-1"><label class="block text-xs font-medium text-gray-500 mb-1">Catatan</label><input type="text" id="inputCatatan" placeholder="Catatan tambahan (Opsional)" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                 `;
             } else if (categoryId === 'wedding_list') {
                 formInner = `
@@ -1080,15 +1117,25 @@
                 const hargaInput = document.getElementById('inputHarga').value;
                 const h = hargaInput ? Number(hargaInput) : null;
                 const j = Number(document.getElementById('inputJumlah').value || 1);
+                
+                const statusVal = document.getElementById('inputStatus').value;
+                let siapDibeliVal = document.getElementById('inputSiapDibeli') ? document.getElementById('inputSiapDibeli').value : 'belum';
+                
+                // MENGUNCI "SIAP DIBELI" OTOMATIS JADI "SELESAI" JIKA STATUS BUKAN "BELUM DIBELI"
+                if (statusVal !== 'belum') {
+                    siapDibeliVal = 'selesai';
+                }
+
                 itemData = {
                     namaItem: document.getElementById('inputNamaItem').value,
                     kategori: document.getElementById('inputKategori').value,
                     jumlah: j,
                     harga: h,
                     total: h ? h * j : 0,
-                    status: document.getElementById('inputStatus').value,
+                    status: statusVal,
                     catatan: document.getElementById('inputCatatan').value,
                     kadaluarsa: document.getElementById('inputKadaluarsa') ? document.getElementById('inputKadaluarsa').value : 'tidak',
+                    siapDibeli: siapDibeliVal,
                     tanggalUpdate: new Date().toISOString()
                 };
             } else if (categoryId === 'wedding_list') {
@@ -1348,7 +1395,7 @@
                                                         Harga kosong
                                                     </span>` : ''}
 
-                                                ${item.status === 'belum' ? `
+                                                ${item.status === 'belum' && item.siapDibeli === 'belum' ? `
                                                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-600 font-semibold">
                                                         Belum dibeli
                                                     </span>` : ''}
@@ -1365,11 +1412,20 @@
                                             <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100 mt-2">
                                                 <div><p class="text-[10px] font-bold text-gray-400 uppercase">Total Harga</p><p class="font-black text-lavender-dark text-sm">${formatRupiah(item.total)}</p></div>
                                                 
-                                                <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="status-select px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer transition ${statusColor}">
-                                                    <option value="belum" ${item.status==='belum'?'selected':''} class="text-red-600 font-bold">🔴 Belum Dibeli</option>
-                                                    <option value="dibeli" ${item.status==='dibeli'?'selected':''} class="text-yellow-600 font-bold">🟡 Sudah Dibeli</option>
-                                                    <option value="dibungkus" ${item.status==='dibungkus'?'selected':''} class="text-green-700 font-bold">🟢 Dibungkus</option>
-                                                </select>
+                                                <div class="flex gap-2 flex-col sm:flex-row">
+                                                    <select onchange="quickUpdate('${categoryId}', '${item.id}', 'siapDibeli', this.value)" 
+                                                        class="status-select px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none transition ${item.status !== 'belum' ? 'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed' : item.siapDibeli === 'siap' ? 'bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer' : 'bg-rose-100 text-rose-700 border-rose-200 cursor-pointer'}"
+                                                        ${item.status !== 'belum' ? 'disabled' : ''}>
+                                                        <option value="belum" ${item.siapDibeli === 'belum' && item.status === 'belum' ? 'selected' : ''} class="text-rose-700 font-bold">🔴 Blm Siap</option>
+                                                        <option value="siap" ${item.siapDibeli === 'siap' && item.status === 'belum' ? 'selected' : ''} class="text-emerald-700 font-bold">🟢 Siap Dibeli</option>
+                                                        <option value="selesai" ${item.status !== 'belum' || item.siapDibeli === 'selesai' ? 'selected' : ''} class="text-gray-500 font-bold" ${item.status === 'belum' ? 'hidden' : ''}>✅ Selesai</option>
+                                                    </select>
+                                                    <select onchange="quickUpdate('${categoryId}', '${item.id}', 'status', this.value)" class="status-select px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer transition ${statusColor}">
+                                                        <option value="belum" ${item.status==='belum'?'selected':''} class="text-red-600 font-bold">🔴 Blm Dibeli</option>
+                                                        <option value="dibeli" ${item.status==='dibeli'?'selected':''} class="text-yellow-600 font-bold">🟡 Sdh Dibeli</option>
+                                                        <option value="dibungkus" ${item.status==='dibungkus'?'selected':''} class="text-green-700 font-bold">🟢 Dibungkus</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             
                                             <div class="absolute top-3 right-3 space-x-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition bg-white/90 rounded-md backdrop-blur-sm p-1">
@@ -1914,6 +1970,8 @@
                 document.getElementById('inputJumlah').value = item.jumlah; document.getElementById('inputHarga').value = item.harga;
                 document.getElementById('inputStatus').value = item.status; document.getElementById('inputCatatan').value = item.catatan || '';
                 if(document.getElementById('inputKadaluarsa')) { document.getElementById('inputKadaluarsa').value = item.kadaluarsa || 'tidak'; }
+                if(document.getElementById('inputSiapDibeli')) { document.getElementById('inputSiapDibeli').value = item.siapDibeli || 'belum'; }
+                window.toggleSiapDibeliLogic();
             } else if(categoryId === 'wedding_list') {
                 document.getElementById('inputNama').value = item.nama; 
                 document.getElementById('inputJumlahOrang').value = item.jumlahOrang;
@@ -1994,6 +2052,9 @@
                     toggleChecklistBiaya();
                 }
                 document.getElementById('totalPreview').innerText = 'Rp 0';
+            }
+            if (activeMenu === 'seserahan') {
+                setTimeout(window.toggleSiapDibeliLogic, 100);
             }
         }
     </script>
