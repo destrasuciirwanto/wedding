@@ -160,6 +160,43 @@
         #cover-screen > div.absolute {
             background: linear-gradient(to bottom, rgba(26, 18, 21, 0.3), rgba(26, 18, 21, 0.8)) !important;
         }
+
+        /* ======================================================== */
+        /* 💎 MESSAGE CARD (WISHES) CSS UPGRADE 💎                 */
+        /* ======================================================== */
+        
+        @keyframes wishSlideUp {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .wish-card {
+            animation: wishSlideUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            opacity: 0; 
+        }
+        
+        /* Staggered Entrance */
+        .wish-card:nth-child(1) { animation-delay: 0.1s; }
+        .wish-card:nth-child(2) { animation-delay: 0.25s; }
+        .wish-card:nth-child(3) { animation-delay: 0.4s; }
+        .wish-card:nth-child(4) { animation-delay: 0.55s; }
+        
+        /* Alternating Bubble Effect */
+        .wish-card:nth-child(odd) {
+            margin-right: 3rem;
+            border-top-right-radius: 0.5rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.5));
+        }
+        .wish-card:nth-child(even) {
+            margin-left: 3rem;
+            border-top-left-radius: 0.5rem;
+            background: linear-gradient(225deg, rgba(253,242,248,0.95), rgba(255,255,255,0.6));
+        }
+
+        /* Wish Scrollbar Premium */
+        .wish-list-container::-webkit-scrollbar { width: 5px; }
+        .wish-list-container::-webkit-scrollbar-track { background: transparent; }
+        .wish-list-container::-webkit-scrollbar-thumb { background: rgba(229,169,180,0.5); border-radius: 10px; }
+        .wish-list-container::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
     </style>
 
 </head>
@@ -170,7 +207,7 @@
         <div class="progress-bar" id="myBar"></div>
     </div>
 
-    <!-- FLOATING NAVIGATION (New) -->
+    <!-- FLOATING NAVIGATION -->
     <div id="floating-nav" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[90] bg-white/70 backdrop-blur-xl border border-white/50 shadow-2xl rounded-full px-8 py-3 flex gap-8 items-center transition-all duration-700">
         <a href="#hero" class="text-gray-400 hover:text-gold hover:scale-110 transition-all duration-300" title="Home"><i class="fa-solid fa-house text-lg"></i></a>
         <a href="#story" class="text-gray-400 hover:text-gold hover:scale-110 transition-all duration-300" title="Story"><i class="fa-solid fa-heart text-lg"></i></a>
@@ -243,7 +280,7 @@
         <i class="fa-brands fa-pagelines text-[#E5A9B4] text-3xl opacity-60"></i>
     </div>
 
-    <!-- 3. LOVE STORY (TIMELINE) -->
+    <!-- 3. LOVE STORY -->
     <section id="story" class="py-16 px-6 relative z-10">
         <div class="absolute top-0 right-10 text-gold opacity-5 text-8xl"><i class="fa-solid fa-fan"></i></div>
         
@@ -280,7 +317,7 @@
         </div>
     </section>
 
-    <!-- 4. GALERI FOTO (ADVANCED) -->
+    <!-- 4. GALERI FOTO -->
     <section id="gallery" class="py-20 bg-transparent relative z-10">
         <div class="max-w-6xl mx-auto px-6 relative z-10">
             <div class="text-center mb-16">
@@ -315,7 +352,7 @@
         <img id="lightbox-img" src="" alt="Zoomed" class="max-w-[95%] max-h-[90vh] object-contain rounded-lg scale-95 transition-transform duration-500 shadow-2xl">
     </div>
 
-    <!-- 5. EVENT DETAIL, MAP & LIVE STREAM (New Feature) -->
+    <!-- 5. EVENT DETAIL -->
     <section id="event" class="py-20 px-6 relative z-10">
         <div class="max-w-5xl mx-auto">
             <div class="text-center mb-16">
@@ -324,7 +361,6 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 mb-12">
-                <!-- Akad Card -->
                 <div class="glass-panel p-10 rounded-[2rem] text-center shadow-lg relative overflow-hidden group" data-aos="fade-up" data-aos-delay="100">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-gold to-[#E5A9B4]"></div>
                     <i class="fa-solid fa-ring text-5xl text-gold mb-6 opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
@@ -335,11 +371,9 @@
                         <span class="font-bold text-base block mb-1 text-gray-800">Masjid Raya Jakarta Barat</span>
                         Jl. Contoh Agama No. 1, Jakarta Barat
                     </div>
-                    <!-- Save to Calendar Button (New) -->
                     <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Akad+Nikah+Mutiara+%26+Destra&dates=20270404T010000Z/20270404T040000Z&details=Kehadiran+Anda+sangat+berarti.&location=Masjid+Raya+Jakarta+Barat" target="_blank" class="inline-block px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider rounded-full transition-colors border border-gray-200 shadow-sm"><i class="fa-regular fa-calendar-plus mr-2"></i> Simpan ke Kalender</a>
                 </div>
                 
-                <!-- Resepsi Card -->
                 <div class="glass-panel p-10 rounded-[2rem] text-center shadow-lg relative overflow-hidden group" data-aos="fade-up" data-aos-delay="200">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#E5A9B4] to-gold"></div>
                     <i class="fa-solid fa-champagne-glasses text-5xl text-[#E5A9B4] mb-6 opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
@@ -350,12 +384,11 @@
                         <span class="font-bold text-base block mb-1 text-gray-800">Grand Ballroom Jakarta Barat</span>
                         Jl. Contoh Resepsi No. 88, Jakarta Barat
                     </div>
-                    <!-- Save to Calendar Button (New) -->
                     <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Resepsi+Pernikahan+Mutiara+%26+Destra&dates=20270404T040000Z/20270404T070000Z&details=Kehadiran+Anda+sangat+berarti.&location=Grand+Ballroom+Jakarta+Barat" target="_blank" class="inline-block px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider rounded-full transition-colors border border-gray-200 shadow-sm"><i class="fa-regular fa-calendar-plus mr-2"></i> Simpan ke Kalender</a>
                 </div>
             </div>
 
-            <!-- Map Embed -->
+            <!-- Map -->
             <div class="glass-panel p-5 rounded-[2rem] shadow-xl" data-aos="fade-up">
                 <div class="w-full h-96 rounded-[1.5rem] overflow-hidden mb-6 relative border border-white/50 shadow-inner">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24009761927!2d106.66470094760773!3d-6.16275817812542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f7aa2f9e403d%3A0xc3c544062cd10323!2sJakarta%20Barat%2C%20Kota%20Jakarta%20Barat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1714539123456!5m2!1sid!2sid" width="100%" height="100%" style="border:0; filter: grayscale(20%) contrast(1.05) sepia(10%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -367,7 +400,7 @@
                 </div>
             </div>
 
-            <!-- LIVE STREAM (New Feature) -->
+            <!-- LIVE STREAM -->
             <div class="glass-panel p-10 rounded-[2rem] mt-10 text-center shadow-lg relative overflow-hidden" data-aos="fade-up">
                 <div class="absolute -right-10 -top-10 text-rose-300 opacity-10 text-9xl"><i class="fa-solid fa-video"></i></div>
                 <h3 class="font-serif text-3xl font-bold mb-3 text-gray-800 relative z-10">Live Streaming</h3>
@@ -377,28 +410,27 @@
         </div>
     </section>
 
-    <!-- 6. RSVP FORM & 7. WISHES -->
+    <!-- ======================================================== -->
+    <!-- 💎 6. RSVP FORM & 7. WISHES (UPGRADED SECTION) 💎        -->
+    <!-- ======================================================== -->
     <section id="rsvp-wishes" class="py-24 px-6 relative z-10">
         <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16">
             
             <!-- RSVP -->
-            <div data-aos="fade-right">
+            <div data-aos="fade-right" class="flex flex-col h-full">
                 <h3 class="font-sans text-xs text-[#E5A9B4] tracking-[0.3em] uppercase mb-2 font-semibold">Konfirmasi Kehadiran</h3>
                 <h2 class="font-serif text-5xl text-gray-800 font-bold mb-4">RSVP</h2>
                 <p class="text-sm text-gray-500 mb-8 leading-relaxed">Kehadiran Anda adalah hadiah terindah bagi kami. Mohon kesediaannya untuk mengonfirmasi kehadiran melalui form berikut.</p>
 
-                <form id="rsvp-form" class="space-y-6 glass-panel p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
-                    <!-- Ornamen -->
+                <form id="rsvp-form" class="space-y-6 glass-panel p-8 rounded-[2rem] shadow-xl relative">
                     <div class="absolute -bottom-10 -left-10 text-gold opacity-5 text-9xl pointer-events-none"><i class="fa-regular fa-envelope"></i></div>
 
-                    <!-- 1. NAMA TAMU (Dikunci Mati / Permanen) -->
                     <div class="relative z-20">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Nama Tamu</label>
                         <input type="text" id="form-name" placeholder="Memuat nama..." readonly disabled 
-                               class="w-full px-6 py-4 bg-gray-100/80 border border-gray-200 shadow-inner rounded-xl focus:outline-none text-sm font-bold text-gray-500 cursor-not-allowed pointer-events-none select-none">
+                               class="w-full px-6 py-4 bg-gray-100 border border-gray-200 shadow-inner rounded-xl focus:outline-none text-sm font-bold text-gray-500 cursor-not-allowed pointer-events-none select-none">
                     </div>
 
-                    <!-- 2. DROPDOWN KONFIRMASI -->
                     <div class="relative z-30">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Konfirmasi</label>
                         <div class="relative">
@@ -407,14 +439,10 @@
                                 <option value="Hadir">✅ Ya, Saya akan hadir</option>
                                 <option value="Tidak Hadir">❌ Maaf, saya tidak bisa hadir</option>
                             </select>
-                            <!-- Panah kustom -->
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </div>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10"><i class="fa-solid fa-chevron-down"></i></div>
                         </div>
                     </div>
 
-                    <!-- 3. DROPDOWN JUMLAH HADIR -->
                     <div class="relative z-20">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Jumlah Kehadiran</label>
                         <div class="relative">
@@ -422,13 +450,10 @@
                                 <option value="1">1 Orang</option>
                                 <option value="2">2 Orang</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </div>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10"><i class="fa-solid fa-chevron-down"></i></div>
                         </div>
                     </div>
 
-                    <!-- 4. QR CODE (Muncul jika hadir) -->
                     <div id="qr-code-section" class="hidden mt-6 text-center bg-white/50 p-6 rounded-2xl border border-white shadow-inner relative z-10 transition-all duration-500">
                         <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">QR Code Akses Masuk</p>
                         <div class="bg-white p-3 rounded-xl shadow-sm inline-block border-2 border-gold/20">
@@ -443,45 +468,25 @@
                 </form>
             </div>
 
-            <!-- WISHES -->
-            <div data-aos="fade-left">
+            <!-- 🔥 WISHES: TOTAL VISUAL & EXPERIENCE UPGRADE 🔥 -->
+            <div data-aos="fade-left" class="flex flex-col h-full relative z-10">
                 <h3 class="font-sans text-xs text-[#E5A9B4] tracking-[0.3em] uppercase mb-2 font-semibold">Tinggalkan Pesan</h3>
                 <h2 class="font-serif text-5xl text-gray-800 font-bold mb-4">Ucapan & Doa</h2>
                 <p class="text-sm text-gray-500 mb-8 leading-relaxed">Tuliskan harapan dan doa terbaik Anda untuk mengawali lembaran baru kehidupan kami berdua.</p>
 
-                <form id="wishes-form" class="mb-8 glass-panel p-8 rounded-[2rem] shadow-xl">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Pesan Anda</label>
-                    <textarea id="form-wish" rows="3" placeholder="Tuliskan ucapan indah di sini..." required class="w-full px-6 py-4 bg-white border border-white shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm mb-4 resize-none font-medium text-gray-700"></textarea>
-                    <button type="submit" class="px-8 py-3 bg-gray-800 text-white rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-gold transition-colors shadow-lg hover:-translate-y-1 duration-300">
-                        Kirim Ucapan <i class="fa-regular fa-paper-plane ml-1"></i>
+                <!-- Form Ucapan Premium -->
+                <form id="wishes-form" class="mb-8 glass-panel p-8 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                    <div class="absolute -bottom-10 -right-10 text-[#E5A9B4] opacity-5 text-9xl pointer-events-none group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-pen-nib"></i></div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 pl-2 relative z-10">Pesan Anda</label>
+                    <textarea id="form-wish" rows="3" placeholder="Tuliskan ucapan indah di sini..." required class="w-full px-6 py-4 bg-white/70 backdrop-blur-sm border border-white/80 shadow-inner rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm mb-4 resize-none font-medium text-gray-700 relative z-10"></textarea>
+                    <button type="submit" class="btn-premium w-full py-4 text-white rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl relative z-10 flex items-center justify-center gap-2">
+                        Kirim Ucapan <i class="fa-regular fa-paper-plane"></i>
                     </button>
                 </form>
 
-                <div class="h-[320px] overflow-y-auto pr-3 space-y-4 custom-scrollbar relative">
-                    <!-- Fake fade gradient at bottom -->
-                    <div class="fixed bottom-0 left-0 w-full h-10 bg-gradient-to-t from-[#FFF5F7] to-transparent pointer-events-none z-10"></div>
-                    
-                    <div class="glass-panel p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-sm text-gray-800">Keluarga Besar</h4>
-                            <span class="text-[10px] bg-[#E5A9B4]/10 text-[#E5A9B4] px-2 py-0.5 rounded font-bold uppercase tracking-wider">Baru saja</span>
-                        </div>
-                        <p class="text-sm text-gray-600 font-light leading-relaxed">Selamat menempuh hidup baru, semoga menjadi keluarga yang sakinah, mawaddah, warahmah.</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-sm text-gray-800">Sahabat Kuliah</h4>
-                            <span class="text-[10px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded font-bold uppercase tracking-wider">2 jam lalu</span>
-                        </div>
-                        <p class="text-sm text-gray-600 font-light leading-relaxed">Lancar-lancar sampai hari H ya! Bahagia selalu untuk kalian berdua. Maaf kalau tidak bisa hadir langsung.</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-sm text-gray-800">Rekan Kerja</h4>
-                            <span class="text-[10px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded font-bold uppercase tracking-wider">1 hari lalu</span>
-                        </div>
-                        <p class="text-sm text-gray-600 font-light leading-relaxed">Happy wedding! Semoga lancar persiapannya. Can't wait to see you both in the aisle!</p>
-                    </div>
+                <!-- Scrollable List Messages Hybrid Premium -->
+                <div id="wishes-container" class="flex-1 min-h-[350px] max-h-[450px] overflow-y-auto pr-4 space-y-6 wish-list-container relative pb-10 custom-scrollbar">
+                    <!-- Data ucapan akan dirender di sini via Firebase -->
                 </div>
             </div>
 
@@ -574,8 +579,6 @@
             document.body.classList.add('cover-opened'); 
             
             setTimeout(() => { AOS.refresh(); }, 800);
-            
-            // Show floating nav
             setTimeout(() => { document.getElementById('floating-nav').classList.add('show'); }, 1200);
 
             toggleMusic(true);
@@ -660,23 +663,6 @@
             const text = `Halo ${guestName},\n\nTanpa mengurangi rasa hormat, kami bermaksud mengundang Anda untuk hadir di acara pernikahan kami.\n\nBuka tautan berikut untuk info detail:\n${currentUrl}\n\nMerupakan suatu kebahagiaan bagi kami apabila Anda berkenan hadir.\n\nTerima kasih,\nDestara & Mutiara`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
-
-        document.getElementById('wishes-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                html: `
-                    <div class="py-4">
-                        <i class="fa-regular fa-paper-plane text-5xl text-gold mb-4 inline-block"></i>
-                        <h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Terkirim!</h2>
-                        <p class="text-gray-500 text-sm">Terima kasih atas doa dan harapan indah yang Anda berikan.</p>
-                    </div>
-                `,
-                showConfirmButton: true, confirmButtonText: 'Tutup',
-                confirmButtonColor: '#2C3E50',
-                customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel', confirmButton: 'rounded-full px-8 py-3 font-bold text-xs uppercase tracking-widest' }
-            });
-            document.getElementById('form-wish').value = '';
-        });
     </script>
 
     <!-- 🌸 REALISTIC SAKURA ANIMATION -->
@@ -691,7 +677,7 @@
             let width, height;
             let particles = [];
             const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 25 : 60;
+            const particleCount = isMobile ? 25 : 60; 
 
             function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
             window.addEventListener('resize', resizeCanvas); resizeCanvas();
@@ -733,11 +719,11 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- 🟢 FIREBASE RSVP LOGIC (BERBASIS ID) 🟢    -->
+    <!-- 🟢 FIREBASE RSVP & WISHES LOGIC (BERBASIS ID) -->
     <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDIvPy_2z1-BpKjAxUE-0VHhELqx3DHepM",
@@ -754,6 +740,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const guestId = urlParams.get('id');
 
+        // 1. Ambil Data Tamu untuk RSVP
         if (guestId) {
             const docRef = doc(db, "wedding_list", guestId);
             getDoc(docRef).then((docSnap) => {
@@ -766,96 +753,150 @@
                     const qrImg = document.getElementById('qr-code-img');
                     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${guestId}&color=2C3E50&bgcolor=FFFFFF`;
                     
-                    // Jika sudah pernah konfirmasi, otomatiskan nilainya tanpa mendisable dropdown
                     if(data.status === 'hadir' || data.status === 'tidak hadir') {
                         document.getElementById('form-status').value = data.status === 'hadir' ? 'Hadir' : 'Tidak Hadir';
                         document.getElementById('form-pax').value = data.jumlahOrang || '1';
-                        
                         document.getElementById('btn-submit-rsvp').innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Update Konfirmasi';
-                        
-                        if(data.status === 'hadir') {
-                            document.getElementById('qr-code-section').classList.remove('hidden');
-                        }
+                        if(data.status === 'hadir') { document.getElementById('qr-code-section').classList.remove('hidden'); }
                     }
-
                 } else {
                     document.getElementById('guest-name').innerText = "Bapak/Ibu/Saudara/i";
                 }
-            }).catch((error) => {
-                console.error("Gagal mengambil data tamu:", error);
-            });
+            }).catch((error) => console.error("Gagal mengambil data tamu:", error));
         }
 
+        // 2. RSVP Form Logic
         const rsvpForm = document.getElementById('rsvp-form');
         const submitBtn = document.getElementById('btn-submit-rsvp');
         const originalBtnText = submitBtn.innerHTML;
 
         rsvpForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             if(!guestId) {
                 Swal.fire({
-                    html: `
-                        <div class="py-2">
-                            <i class="fa-solid fa-link-slash text-4xl text-red-400 mb-3"></i>
-                            <h3 class="font-bold text-xl text-gray-800 mb-1">Akses Terbatas</h3>
-                            <p class="text-sm text-gray-500">URL tidak memiliki ID identitas tamu yang valid.</p>
-                        </div>
-                    `,
-                    showConfirmButton: true, confirmButtonText: 'Mengerti',
-                    confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel' }
+                    html: `<div class="py-2"><i class="fa-solid fa-link-slash text-4xl text-red-400 mb-3"></i><h3 class="font-bold text-xl text-gray-800 mb-1">Akses Terbatas</h3><p class="text-sm text-gray-500">URL tidak memiliki ID identitas tamu yang valid.</p></div>`,
+                    showConfirmButton: true, confirmButtonText: 'Mengerti', confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel' }
                 });
                 return;
             }
 
             const statusVal = document.getElementById('form-status').value;
             const pax = parseInt(document.getElementById('form-pax').value) || 1;
-
             if(!statusVal) return;
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...';
-
             const dbStatus = statusVal === "Hadir" ? "hadir" : "tidak hadir";
 
             try {
-                const docRef = doc(db, "wedding_list", guestId);
-                await updateDoc(docRef, {
+                await updateDoc(doc(db, "wedding_list", guestId), {
                     status: dbStatus,
-                    jumlahOrang: pax
+                    jumlahOrang: pax,
+                    updatedAt: new Date().toISOString()
                 });
 
                 Swal.fire({
-                    html: `
-                        <div class="py-4">
-                            <i class="fa-regular fa-calendar-check text-5xl text-gold mb-4 inline-block"></i>
-                            <h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Tersimpan!</h2>
-                            <p class="text-gray-500 text-sm">Konfirmasi kehadiran Anda telah berhasil diperbarui.</p>
-                        </div>
-                    `,
-                    showConfirmButton: true, confirmButtonText: 'Selesai',
-                    confirmButtonColor: '#2C3E50',
+                    html: `<div class="py-4"><i class="fa-regular fa-calendar-check text-5xl text-gold mb-4 inline-block"></i><h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Tersimpan!</h2><p class="text-gray-500 text-sm">Konfirmasi kehadiran Anda telah berhasil diperbarui.</p></div>`,
+                    showConfirmButton: true, confirmButtonText: 'Selesai', confirmButtonColor: '#2C3E50',
                     customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel', confirmButton: 'rounded-full px-8 py-3 font-bold text-xs uppercase tracking-widest' }
                 });
                 
-                if(dbStatus === 'hadir') {
-                    document.getElementById('qr-code-section').classList.remove('hidden');
-                } else {
-                    document.getElementById('qr-code-section').classList.add('hidden');
-                }
+                if(dbStatus === 'hadir') document.getElementById('qr-code-section').classList.remove('hidden');
+                else document.getElementById('qr-code-section').classList.add('hidden');
 
-                // Setelah submit selesai, buka kembali kuncinya dan ubah tulisan tombolnya
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Update Konfirmasi';
-                
             } catch (error) {
-                console.error("Error RSVP: ", error);
-                Swal.fire({
-                    icon: 'error', title: 'Terjadi Kesalahan', text: 'Gagal mengirim konfirmasi. Silakan coba lagi.',
-                    confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-3xl' }
+                Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', text: 'Gagal mengirim konfirmasi.', confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-3xl' } });
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Update Konfirmasi';
+            }
+        });
+
+        // 3. Realtime Fetch Data Ucapan dari wedding_list
+        onSnapshot(collection(db, "wedding_list"), (snapshot) => {
+            const container = document.getElementById('wishes-container');
+            let wishesHTML = '';
+            let wishesData = [];
+            
+            // Filter hanya yang memiliki ucapan
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.ucapan && data.ucapan.trim() !== '') wishesData.push(data);
+            });
+
+            // Urutkan ucapan terbaru (berdasarkan updatedAt) di posisi paling atas
+            wishesData.sort((a, b) => {
+                let dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
+                let dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
+                return dateB - dateA;
+            });
+
+            if (wishesData.length > 0) {
+                wishesData.forEach((data, index) => {
+                    const firstLetter = (data.nama || 'T').charAt(0).toUpperCase();
+                    const isOdd = index % 2 === 0;
+                    wishesHTML += `
+                    <div class="wish-card relative p-6 rounded-[2rem] border border-white/60 shadow-[0_8px_30px_rgba(229,169,180,0.15)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(229,169,180,0.3)] hover:border-[#E5A9B4]/50 group overflow-hidden">
+                        <div class="absolute right-4 bottom-2 opacity-5 text-5xl text-gray-800 transition-transform duration-500 group-hover:scale-110 group-hover:text-[#E5A9B4]"><i class="fa-solid fa-quote-right"></i></div>
+                        <div class="flex justify-between items-center mb-3 relative z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br ${isOdd ? 'from-[#E5A9B4] to-gold' : 'from-gray-200 to-gray-300'} p-[2px] shadow-sm">
+                                    <div class="w-full h-full bg-white rounded-full flex items-center justify-center font-serif font-bold text-gray-700 text-lg">${firstLetter}</div>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800 tracking-wide">${data.nama}</h4>
+                                    <span class="text-[9px] text-gray-400 font-medium tracking-wider uppercase">${data.kategori || 'Tamu Undangan'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 font-light leading-relaxed relative z-10 pl-1">${data.ucapan}</p>
+                    </div>`;
                 });
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
+                container.innerHTML = wishesHTML;
+            } else {
+                container.innerHTML = '<div class="text-center text-gray-400 text-sm mt-10 py-10 border border-dashed border-gray-300 rounded-2xl glass-panel">Jadilah yang pertama memberikan ucapan untuk Mutiara & Destra!</div>';
+            }
+        });
+
+        // 4. UpdateDoc Form Ucapan
+        const wishesForm = document.getElementById('wishes-form');
+        wishesForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if(!guestId) {
+                Swal.fire({
+                    html: `<div class="py-2"><i class="fa-solid fa-link-slash text-4xl text-red-400 mb-3"></i><h3 class="font-bold text-xl text-gray-800 mb-1">Akses Terbatas</h3><p class="text-sm text-gray-500">Gunakan link undangan resmi untuk mengirim ucapan.</p></div>`,
+                    showConfirmButton: true, confirmButtonText: 'Mengerti', confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel' }
+                });
+                return;
+            }
+
+            const message = document.getElementById('form-wish').value;
+            const btnSubmit = wishesForm.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerHTML;
+            
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
+
+            try {
+                // MURNI UPDATEDOC, SESUAI RULE 1 TAMU = 1 DATA
+                await updateDoc(doc(db, "wedding_list", guestId), {
+                    ucapan: message,
+                    updatedAt: new Date().toISOString()
+                });
+
+                Swal.fire({
+                    html: `<div class="py-4"><i class="fa-regular fa-paper-plane text-5xl text-gold mb-4 inline-block"></i><h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Terkirim!</h2><p class="text-gray-500 text-sm">Terima kasih atas doa dan harapan indah yang Anda berikan.</p></div>`,
+                    showConfirmButton: true, confirmButtonText: 'Tutup', confirmButtonColor: '#2C3E50',
+                    customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel', confirmButton: 'rounded-full px-8 py-3 font-bold text-xs uppercase tracking-widest' }
+                });
+                
+                document.getElementById('form-wish').value = '';
+                document.getElementById('wishes-container').scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Pesan gagal dikirim.', confirmButtonColor: '#2C3E50', customClass: { popup: 'rounded-[2rem] glass-panel' } });
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = originalText;
             }
         });
     </script>
