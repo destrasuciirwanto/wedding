@@ -387,31 +387,48 @@
                 <h2 class="font-serif text-5xl text-gray-800 font-bold mb-4">RSVP</h2>
                 <p class="text-sm text-gray-500 mb-8 leading-relaxed">Kehadiran Anda adalah hadiah terindah bagi kami. Mohon kesediaannya untuk mengonfirmasi kehadiran melalui form berikut.</p>
 
-                <form id="rsvp-form" class="space-y-5 glass-panel p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+                <form id="rsvp-form" class="space-y-6 glass-panel p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
                     <!-- Ornamen -->
                     <div class="absolute -bottom-10 -left-10 text-gold opacity-5 text-9xl pointer-events-none"><i class="fa-regular fa-envelope"></i></div>
 
-                    <div class="relative z-10">
+                    <!-- 1. NAMA TAMU (Dikunci Mati / Permanen) -->
+                    <div class="relative z-20">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Nama Tamu</label>
-                        <input type="text" id="form-name" placeholder="Memuat nama..." required class="w-full px-6 py-4 bg-white/60 border border-white shadow-inner rounded-xl focus:outline-none text-sm font-bold text-gray-800 cursor-not-allowed transition-colors">
-                    </div>
-                    <div class="relative z-10">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Konfirmasi</label>
-                        <select id="form-status" required class="w-full px-6 py-4 bg-white border border-white shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm font-medium text-gray-700 cursor-pointer">
-                            <option value="" disabled selected>Pilih Kehadiran Anda...</option>
-                            <option value="Hadir">✅ Ya, Saya akan hadir</option>
-                            <option value="Tidak Hadir">❌ Maaf, saya tidak bisa hadir</option>
-                        </select>
-                    </div>
-                    <div class="relative z-10">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Jumlah Kehadiran</label>
-                        <select id="form-pax" class="w-full px-6 py-4 bg-white border border-white shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm font-medium text-gray-700 cursor-pointer">
-                            <option value="1">1 Orang</option>
-                            <option value="2">2 Orang</option>
-                        </select>
+                        <input type="text" id="form-name" placeholder="Memuat nama..." readonly disabled 
+                               class="w-full px-6 py-4 bg-gray-100/80 border border-gray-200 shadow-inner rounded-xl focus:outline-none text-sm font-bold text-gray-500 cursor-not-allowed pointer-events-none select-none">
                     </div>
 
-                    <!-- QR Code Section (New Feature) -->
+                    <!-- 2. DROPDOWN KONFIRMASI -->
+                    <div class="relative z-30">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Konfirmasi</label>
+                        <div class="relative">
+                            <select id="form-status" required class="w-full px-6 py-4 bg-white border border-gray-100 shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm font-medium text-gray-700 cursor-pointer appearance-none relative z-20 bg-transparent">
+                                <option value="" disabled selected>Pilih Kehadiran Anda...</option>
+                                <option value="Hadir">✅ Ya, Saya akan hadir</option>
+                                <option value="Tidak Hadir">❌ Maaf, saya tidak bisa hadir</option>
+                            </select>
+                            <!-- Panah kustom -->
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. DROPDOWN JUMLAH HADIR -->
+                    <div class="relative z-20">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-2">Jumlah Kehadiran</label>
+                        <div class="relative">
+                            <select id="form-pax" required class="w-full px-6 py-4 bg-white border border-gray-100 shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E5A9B4] transition-all text-sm font-medium text-gray-700 cursor-pointer appearance-none relative z-20 bg-transparent">
+                                <option value="1">1 Orang</option>
+                                <option value="2">2 Orang</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-gray-400 z-10">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. QR CODE (Muncul jika hadir) -->
                     <div id="qr-code-section" class="hidden mt-6 text-center bg-white/50 p-6 rounded-2xl border border-white shadow-inner relative z-10 transition-all duration-500">
                         <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">QR Code Akses Masuk</p>
                         <div class="bg-white p-3 rounded-xl shadow-sm inline-block border-2 border-gold/20">
@@ -420,7 +437,7 @@
                         <p class="text-xs text-gray-400 mt-3 font-medium">Tunjukkan QR Code ini kepada penerima tamu di lokasi acara.</p>
                     </div>
 
-                    <button type="submit" class="btn-premium w-full mt-4 py-4 text-white rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl relative z-10">
+                    <button type="submit" id="btn-submit-rsvp" class="btn-premium w-full mt-4 py-4 text-white rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl relative z-10">
                         Kirim Konfirmasi
                     </button>
                 </form>
@@ -541,7 +558,6 @@
         <i class="fa-solid fa-music"></i>
     </button>
     <audio id="bg-music" loop>
-        <!-- Ganti URL ini dengan URL lagu "Calum Scott - You Are The Reason" jika kamu memilikinya di storage/firebase mu -->
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
@@ -616,7 +632,6 @@
         const musicBtn = document.getElementById('music-toggle');
         let isPlaying = false;
         
-        // Fade in audio effect
         function fadeInAudio() {
             music.volume = 0;
             music.play().then(() => {
@@ -676,7 +691,7 @@
             let width, height;
             let particles = [];
             const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 25 : 60; // Optimized for performance
+            const particleCount = isMobile ? 25 : 60;
 
             function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
             window.addEventListener('resize', resizeCanvas); resizeCanvas();
@@ -746,30 +761,25 @@
                     const data = docSnap.data();
                     
                     document.getElementById('guest-name').innerText = data.nama;
+                    document.getElementById('form-name').value = data.nama;
                     
-                    const formNameInput = document.getElementById('form-name');
-                    formNameInput.value = data.nama;
-                    
-                    // Generate QR Code untuk Check In
                     const qrImg = document.getElementById('qr-code-img');
                     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${guestId}&color=2C3E50&bgcolor=FFFFFF`;
                     
-                    // Jika data.status sudah hadir, munculkan QR Code
-                    if(data.status === 'hadir') {
-                        document.getElementById('qr-code-section').classList.remove('hidden');
-                        document.getElementById('form-status').value = 'Hadir';
+                    // Jika sudah pernah konfirmasi, otomatiskan nilainya tanpa mendisable dropdown
+                    if(data.status === 'hadir' || data.status === 'tidak hadir') {
+                        document.getElementById('form-status').value = data.status === 'hadir' ? 'Hadir' : 'Tidak Hadir';
                         document.getElementById('form-pax').value = data.jumlahOrang || '1';
-                        document.querySelector('#rsvp-form button[type="submit"]').innerHTML = '<i class="fa-solid fa-check mr-2"></i> Sudah Terkonfirmasi';
-                        document.querySelector('#rsvp-form button[type="submit"]').classList.add('bg-gray-400', 'cursor-not-allowed');
-                        document.querySelector('#rsvp-form button[type="submit"]').classList.remove('btn-premium');
-                        document.querySelector('#rsvp-form button[type="submit"]').disabled = true;
-                        document.getElementById('form-status').disabled = true;
-                        document.getElementById('form-pax').disabled = true;
+                        
+                        document.getElementById('btn-submit-rsvp').innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Update Konfirmasi';
+                        
+                        if(data.status === 'hadir') {
+                            document.getElementById('qr-code-section').classList.remove('hidden');
+                        }
                     }
 
                 } else {
                     document.getElementById('guest-name').innerText = "Bapak/Ibu/Saudara/i";
-                    console.warn("Data tamu tidak ditemukan untuk ID ini.");
                 }
             }).catch((error) => {
                 console.error("Gagal mengambil data tamu:", error);
@@ -777,7 +787,7 @@
         }
 
         const rsvpForm = document.getElementById('rsvp-form');
-        const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+        const submitBtn = document.getElementById('btn-submit-rsvp');
         const originalBtnText = submitBtn.innerHTML;
 
         rsvpForm.addEventListener('submit', async function(e) {
@@ -819,8 +829,8 @@
                     html: `
                         <div class="py-4">
                             <i class="fa-regular fa-calendar-check text-5xl text-gold mb-4 inline-block"></i>
-                            <h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Terkonfirmasi!</h2>
-                            <p class="text-gray-500 text-sm">Terima kasih, konfirmasi kehadiran Anda telah tersimpan.</p>
+                            <h2 class="font-serif text-3xl font-bold text-gray-800 mb-2">Tersimpan!</h2>
+                            <p class="text-gray-500 text-sm">Konfirmasi kehadiran Anda telah berhasil diperbarui.</p>
                         </div>
                     `,
                     showConfirmButton: true, confirmButtonText: 'Selesai',
@@ -828,18 +838,15 @@
                     customClass: { popup: 'rounded-[2rem] border border-white shadow-2xl glass-panel', confirmButton: 'rounded-full px-8 py-3 font-bold text-xs uppercase tracking-widest' }
                 });
                 
-                // Show QR if Hadir
                 if(dbStatus === 'hadir') {
                     document.getElementById('qr-code-section').classList.remove('hidden');
                 } else {
                     document.getElementById('qr-code-section').classList.add('hidden');
                 }
 
-                document.getElementById('form-status').disabled = true;
-                document.getElementById('form-pax').disabled = true;
-                submitBtn.classList.remove('btn-premium');
-                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
-                submitBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Terkonfirmasi';
+                // Setelah submit selesai, buka kembali kuncinya dan ubah tulisan tombolnya
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Update Konfirmasi';
                 
             } catch (error) {
                 console.error("Error RSVP: ", error);
