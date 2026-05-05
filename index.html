@@ -218,6 +218,9 @@
                 window.goldHistory = window.goldHistory || [];
                 window.prevGoldPrice = 0;
                 window.goldChartInstance = null;
+                
+                // STATE FOLDER DOKUMEN (Menyimpan posisi kita sekarang)
+                window.activeDokumenFolder = null; 
 
                 async function fetchGoldAndKurs() {
                     try {
@@ -332,13 +335,14 @@
                     { id: 'notes', icon: 'fa-sticky-note', label: 'Notes / Catatan' },
                     { id: 'attire', icon: 'fa-tshirt', label: 'Attire & MUA' },
                     { id: 'dekor', icon: 'fa-leaf', label: 'Dekorasi' },
-                    { id: 'dokumen', icon: 'fa-folder-open', label: 'Dokumen & Media' } // MENU BARU DITAMBAHKAN DI SINI
+                    { id: 'dokumen', icon: 'fa-folder-open', label: 'Dokumen & Media' }
                 ];
 
                 let activeMenu = 'dashboard';
                 let editId = null;
                 let appData = { totalBudget: 0, items: {} };
                 menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
+                appData.items['dokumen_folder'] = []; 
 
                 const savedHide = localStorage.getItem('hideMoney');
                 window.isHideMoney = savedHide === 'true';
@@ -446,9 +450,6 @@
                     if(preview) preview.innerText = formatRupiah(total);
                 }
 
-                // ==========================================================
-                // LOGIC OTOMATIS: KUNCI 'SIAP DIBELI' JIKA STATUS TELAH DIBELI
-                // ==========================================================
                 window.toggleSiapDibeliLogic = function() {
                     const statusEl = document.getElementById('inputStatus');
                     const siapEl = document.getElementById('inputSiapDibeli');
@@ -465,11 +466,9 @@
                     }
                 };
 
-                // Filters and Sorts
                 window.seserahanFilter = 'semua'; window.setSeserahanFilter = function(f) { window.seserahanFilter = f; renderTable('seserahan'); }
                 window.seserahanCategoryFilter = 'all'; window.setSeserahanCategory = function(cat) { window.seserahanCategoryFilter = cat; renderTable('seserahan'); }
                 window.seserahanKadaluarsaFilter = 'semua'; window.setSeserahanKadaluarsaFilter = function(f) { window.seserahanKadaluarsaFilter = f; renderTable('seserahan'); }
-                
                 window.seserahanSiapFilter = 'semua'; window.setSeserahanSiapFilter = function(f) { window.seserahanSiapFilter = f; renderTable('seserahan'); }
 
                 window.doorprizeFilter = 'all'; window.setDoorprizeFilter = function(f) { window.doorprizeFilter = f; renderTable('doorprize'); }
@@ -509,6 +508,14 @@
                     renderTable(categoryId);
                 };
 
+                // FUNGSI LOAD FOLDER DARI FIRESTORE
+                window.loadFolders = async function() {
+                    const snapshot = await getDocs(collection(db, 'dokumen_folder'));
+                    let data = [];
+                    snapshot.forEach(docSnap => data.push({ id: docSnap.id, ...docSnap.data() }));
+                    appData.items['dokumen_folder'] = data;
+                };
+
                 async function loadAllData() {
                     for (const menu of menus) {
                         if (menu.id !== 'dashboard') {
@@ -531,6 +538,7 @@
                     document.getElementById('main-content').innerHTML = `<div class="flex flex-col items-center justify-center h-full text-lavender"><i class="fa-solid fa-spinner fa-spin text-4xl mb-4"></i><p class="font-medium text-gray-500">Memuat Sistem...</p></div>`;
                     
                     await loadBudget();
+                    await loadFolders(); 
                     await loadAllData(); 
                     await fetchGoldAndKurs(); 
                     
@@ -599,7 +607,6 @@
                     const link = baseUrl + id;
 
                     const pesan = `Yth. ${nama},\n\nKami mengundang Anda ke acara pernikahan kami.\n\nBerikut link undangan:\n${link}\n\nTerima kasih 🙏`;
-
                     const url = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
 
                     window.open(url, '_blank');
@@ -666,6 +673,12 @@
                     editId = null;
                     document.getElementById('page-title').innerText = menus.find(m => m.id === menuId).label;
                     renderSidebar();
+                    
+                    // Keluar dari folder aktif saat berganti menu
+                    if(menuId !== 'dokumen') {
+                        window.activeDokumenFolder = null;
+                    }
+                    
                     await renderContent();
                     if(window.innerWidth < 1024) toggleSidebar(); 
                 }
@@ -702,11 +715,113 @@
                     }
                 }
 
+                // --- SISTEM FOLDER DOKUMEN (OTOMATIS MASUK FOLDER & NESTED FOLDER) ---
+
+                window.buatFolder = async function(e) {
+                    e.preventDefault();
+                    const nama = document.getElementById('inputNamaFolder').value;
+                    if(!nama) return;
+                    
+                    const btn = document.getElementById('btnSubmitFolder');
+                    btn.disabled = true; btn.innerHTML = 'Membuat...';
+                    
+                    try {
+                        // KUNCI IRIT DATABASE: Sisipkan parentId jika sedang berada di dalam sebuah folder
+                        const parentId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
+                        
+                        await addDoc(collection(db, 'dokumen_folder'), {
+                            namaFolder: nama,
+                            parentId: parentId, 
+                            tanggalBuat: new Date().toISOString()
+                        });
+                        document.getElementById('inputNamaFolder').value = '';
+                        await loadFolders(); 
+                        renderTable('dokumen'); 
+                        showToast('Folder berhasil dibuat!', 'success');
+                    } catch(error) {
+                        showToast('Gagal membuat folder!', 'error');
+                    } finally {
+                        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-folder-plus mr-1"></i> Buat Folder';
+                    }
+                };
+
+                window.hapusFolder = async function(id) {
+                    // 1. Tampilkan Alert Peringatan
+                    if(confirm('🚨 PERINGATAN: Menghapus folder ini juga akan menghapus SEMUA sub-folder dan file di dalamnya secara permanen! Apakah kamu yakin ingin melanjutkan?')) {
+                        try {
+                            // 2. Kumpulkan semua ID folder yang akan dihapus (termasuk sub-foldernya)
+                            let foldersToDelete = [id];
+                            let hasNewChildren = true;
+                            
+                            // Looping untuk mencari sub-folder di dalam memori (Sangat irit database!)
+                            while(hasNewChildren) {
+                                hasNewChildren = false;
+                                appData.items['dokumen_folder'].forEach(f => {
+                                    // Jika parent-nya ada di daftar hapus, dan folder ini belum masuk daftar
+                                    if (foldersToDelete.includes(f.parentId) && !foldersToDelete.includes(f.id)) {
+                                        foldersToDelete.push(f.id);
+                                        hasNewChildren = true; // Ulangi pencarian untuk sub-folder dari sub-folder ini
+                                    }
+                                });
+                            }
+
+                            // 3. Kumpulkan semua ID file yang berada di dalam folder-folder tersebut
+                            let filesToDelete = appData.items['dokumen']
+                                .filter(file => foldersToDelete.includes(file.folderId))
+                                .map(file => file.id);
+
+                            // 4. Siapkan perintah hapus untuk database
+                            const deleteFilePromises = filesToDelete.map(fileId => 
+                                deleteDoc(doc(db, 'dokumen', fileId))
+                            );
+                            
+                            const deleteFolderPromises = foldersToDelete.map(folderId => 
+                                deleteDoc(doc(db, 'dokumen_folder', folderId))
+                            );
+
+                            // 5. Eksekusi semua penghapusan secara bersamaan
+                            await Promise.all([...deleteFilePromises, ...deleteFolderPromises]);
+
+                            // 6. Muat ulang data terbaru ke layar
+                            await loadFolders();
+                            await loadData('dokumen'); 
+                            
+                            showToast('Folder beserta isinya berhasil dihapus!', 'success');
+                        } catch(error) {
+                            showToast('Gagal menghapus folder!', 'error');
+                            console.error(error);
+                        }
+                    }
+                };
+
+                // Menyimpan folder aktif beserta informasi parent-nya
+                window.masukFolder = function(id, nama, parentId) {
+                    window.activeDokumenFolder = { id, nama, parentId };
+                    renderTable('dokumen');
+                };
+
+                window.keParentFolder = function() {
+                    // Jika tidak punya parent, kembali ke Root
+                    if (!window.activeDokumenFolder || !window.activeDokumenFolder.parentId) {
+                        window.activeDokumenFolder = null;
+                    } else {
+                        // Mencari data parent dari memory tanpa perlu query database lagi
+                        const parentFolder = appData.items['dokumen_folder'].find(f => f.id === window.activeDokumenFolder.parentId);
+                        if(parentFolder) {
+                            window.activeDokumenFolder = { id: parentFolder.id, nama: parentFolder.namaFolder, parentId: parentFolder.parentId };
+                        } else {
+                            window.activeDokumenFolder = null; 
+                        }
+                    }
+                    renderTable('dokumen');
+                };
+
                 function getDashboardHTML() {
                     let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
                     
                     Object.keys(appData.items).forEach(key => {
-                        if (key === 'mahar' || key === 'dokumen') return; // DOKUMEN TIDAK DIHITUNG KE BUDGET
+                        // JANGAN HITUNG DOKUMEN & FOLDER KE BUDGET
+                        if (key === 'mahar' || key === 'dokumen' || key === 'dokumen_folder') return; 
                         
                         appData.items[key].forEach(item => {
                             if (item.includeToMainBudget === false) return; 
@@ -928,6 +1043,7 @@
                 function getCategoryHTML(categoryId) {
                     const menuLabel = menus.find(m => m.id === categoryId).label;
                     let formInner = '';
+                    let folderFormHtml = ''; 
                     
                     if (categoryId === 'mahar') {
                         formInner = `
@@ -1127,19 +1243,34 @@
                             </div>
                         `;
                     } else if (categoryId === 'dokumen') {
-                        // FORM UNTUK MENU DOKUMEN & MEDIA BARU
+                        // FORM UNTUK MEMBUAT FOLDER BARU 
+                        folderFormHtml = `
+                            <div class="bg-yellow-50/50 p-5 rounded-2xl border border-yellow-200 mb-6 shadow-sm fade-in">
+                                <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fa-solid fa-folder-plus text-yellow-500 mr-2"></i> Buat Folder Baru</h4>
+                                <form id="folderForm" onsubmit="buatFolder(event)" class="flex gap-2">
+                                    <input type="text" id="inputNamaFolder" placeholder="Nama Folder (cth: Bukti Pembayaran)" required class="flex-1 px-4 py-2 border border-yellow-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-yellow-400">
+                                    <button type="submit" id="btnSubmitFolder" class="px-5 py-2 text-sm bg-yellow-400 text-yellow-900 hover:bg-yellow-500 rounded-xl transition font-bold shadow-sm flex-shrink-0">Buat Folder</button>
+                                </form>
+                            </div>
+                        `;
+
+                        // FORM UNTUK MENU DOKUMEN & MEDIA TANPA DROPDOWN FOLDER!
                         formInner = `
+                            <div class="md:col-span-2"><h4 class="text-sm font-bold text-gray-700 mb-1 border-b pb-2"><i class="fa-solid fa-file-circle-plus text-lavender mr-2"></i> Tambah File / Dokumen Baru</h4></div>
                             <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama File / Media</label><input type="text" id="inputNamaFile" placeholder="Contoh: Foto Prewedd 1, Kontrak Vendor" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                            
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 mb-1">Jenis File</label>
                                 <select id="inputJenisFile" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender">
                                     <option value="foto">🖼️ Foto / Gambar</option>
                                     <option value="video">🎥 Video</option>
                                     <option value="dokumen">📄 Dokumen (PDF, Excel, dll)</option>
+                                    <option value="audio">🎵 Audio (MP3)</option>
                                     <option value="link">🔗 Tautan Bebas</option>
                                 </select>
                             </div>
-                            <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">URL / Link (Dari Cloudflare / GDrive)</label><input type="url" id="inputUrlFile" placeholder="https://..." required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                            
+                            <div><label class="block text-xs font-medium text-gray-500 mb-1">URL / Link (Dari Cloudflare / GDrive)</label><input type="url" id="inputUrlFile" placeholder="https://..." required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                             <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Keterangan / Catatan</label><input type="text" id="inputCatatan" placeholder="Opsional" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
                         `;
                     } else {
@@ -1151,6 +1282,7 @@
 
                     return `
                         <div class="fade-in space-y-6">
+                            ${folderFormHtml}
                             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4" id="form-title">Tambah Data ${menuLabel}</h3>
                                 <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1321,14 +1453,17 @@
                             tanggalUpdate: new Date().toISOString()
                         };
                     } else if (categoryId === 'dokumen') {
-                        // TANGKAP DATA FORM DOKUMEN
+                        // OTOMATIS TANGKAP ID FOLDER YANG SEDANG DIBUKA!
+                        const folderTujuanId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
+                        
                         itemData = {
                             namaFile: document.getElementById('inputNamaFile').value,
                             jenisFile: document.getElementById('inputJenisFile').value,
                             url: document.getElementById('inputUrlFile').value,
                             catatan: document.getElementById('inputCatatan').value,
+                            folderId: folderTujuanId, // <--- Ini otomatis!
                             tanggalUpdate: new Date().toISOString(),
-                            includeToMainBudget: false // Mencegah hitung ke budget utama
+                            includeToMainBudget: false
                         };
                     } else {
                         itemData = {
@@ -1358,6 +1493,41 @@
                         await loadData(categoryId); 
                     } catch (error) { showToast('Gagal menyimpan!', 'error'); } 
                     finally { btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`; btnSubmit.disabled = false; }
+                }
+
+                // HELPER KHUSUS RENDER FILE DOKUMEN 
+                function renderFilesGrid(filesToRender, categoryId) {
+                    if (filesToRender.length === 0) return `<div class="col-span-full">${getEmptyStateHTML('fa-folder-open', 'Belum ada file di bagian ini.')}</div>`;
+                    
+                    let gridHtml = `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">`;
+                    filesToRender.forEach(item => {
+                        let iconClass = 'fa-file-lines text-gray-400';
+                        let bgIcon = 'bg-gray-50';
+                        
+                        if(item.jenisFile === 'foto') { iconClass = 'fa-image text-blue-500'; bgIcon = 'bg-blue-50'; }
+                        if(item.jenisFile === 'video') { iconClass = 'fa-film text-purple-500'; bgIcon = 'bg-purple-50'; }
+                        if(item.jenisFile === 'dokumen') { iconClass = 'fa-file-pdf text-red-500'; bgIcon = 'bg-red-50'; }
+                        if(item.jenisFile === 'link') { iconClass = 'fa-link text-blue-400'; bgIcon = 'bg-blue-50'; }
+                        if(item.jenisFile === 'audio') { iconClass = 'fa-music text-green-500'; bgIcon = 'bg-green-50'; } 
+
+                        gridHtml += `
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-lavender transition-all flex flex-col items-center text-center relative group">
+                            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition bg-white/90 p-1 rounded-lg shadow-sm">
+                                <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                            </div>
+                            <a href="${item.url}" target="_blank" class="flex flex-col items-center w-full mt-2">
+                                <div class="w-16 h-16 ${bgIcon} rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                                    <i class="fa-solid ${iconClass} text-3xl"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-700 text-xs w-full truncate px-1" title="${item.namaFile}">${item.namaFile}</h4>
+                                <p class="text-[10px] text-gray-400 mt-1 truncate w-full" title="${item.catatan || ''}">${item.catatan || 'Tanpa keterangan'}</p>
+                            </a>
+                        </div>
+                        `;
+                    });
+                    gridHtml += `</div>`;
+                    return gridHtml;
                 }
 
                 window.renderTable = function(categoryId) {
@@ -2073,36 +2243,56 @@
                             </div>
                         `;
                     } else if (categoryId === 'dokumen') {
-                        // TAMPILAN GRID LAYAKNYA GOOGLE DRIVE
-                        htmlOut = `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">`;
-                        
-                        htmlOut += data.map(item => {
-                            let iconClass = 'fa-file-lines text-gray-400';
-                            let bgIcon = 'bg-gray-50';
-                            
-                            if(item.jenisFile === 'foto') { iconClass = 'fa-image text-blue-500'; bgIcon = 'bg-blue-50'; }
-                            if(item.jenisFile === 'video') { iconClass = 'fa-film text-purple-500'; bgIcon = 'bg-purple-50'; }
-                            if(item.jenisFile === 'dokumen') { iconClass = 'fa-file-pdf text-red-500'; bgIcon = 'bg-red-50'; }
-                            if(item.jenisFile === 'link') { iconClass = 'fa-link text-green-500'; bgIcon = 'bg-green-50'; }
+                        // MERENDER FOLDER BERDASARKAN PARENT ID
+                        let folders = appData.items['dokumen_folder'] || [];
+                        let files = data;
 
-                            return `
-                            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-lavender transition-all flex flex-col items-center text-center relative group">
-                                <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition bg-white/90 p-1 rounded-lg shadow-sm">
-                                    <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                    <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                        const currentFolderId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
+                        
+                        // KUNCI IRIT DATABASE: Filter hanya di array browser (memori lokal) saja!
+                        let activeFolders = folders.filter(f => (f.parentId || "") === currentFolderId);
+                        let activeFiles = files.filter(f => (f.folderId || "") === currentFolderId);
+
+                        htmlOut = ``;
+
+                        if (window.activeDokumenFolder) {
+                            // KITA BERADA DI DALAM FOLDER TERTENTU
+                            htmlOut += `
+                            <div class="mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm fade-in">
+                                <div class="flex items-center gap-3">
+                                    <button onclick="keParentFolder()" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-600 hover:bg-lavender hover:text-white hover:border-lavender transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+                                    <h3 class="font-bold text-gray-700 text-lg flex items-center gap-2"><i class="fa-solid fa-folder-open text-yellow-500 drop-shadow-sm"></i> ${window.activeDokumenFolder.nama}</h3>
                                 </div>
-                                <a href="${item.url}" target="_blank" class="flex flex-col items-center w-full mt-2">
-                                    <div class="w-16 h-16 ${bgIcon} rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                                        <i class="fa-solid ${iconClass} text-3xl"></i>
-                                    </div>
-                                    <h4 class="font-bold text-gray-700 text-xs w-full truncate px-1" title="${item.namaFile}">${item.namaFile}</h4>
-                                    <p class="text-[10px] text-gray-400 mt-1 truncate w-full" title="${item.catatan || ''}">${item.catatan || 'Tanpa keterangan'}</p>
-                                </a>
+                                <span class="text-xs font-bold bg-yellow-50 text-yellow-600 px-3 py-1 rounded-lg border border-yellow-100">${activeFiles.length} File & ${activeFolders.length} Sub-folder</span>
                             </div>
                             `;
-                        }).join('') || `<div class="col-span-full">${getEmptyStateHTML('fa-folder-open', 'Belum ada file atau media yang disimpan.')}</div>`;
-                        
-                        htmlOut += `</div>`;
+                        } else {
+                            // KITA BERADA DI ROOT (TAMPILAN UTAMA)
+                            htmlOut += `<h4 class="font-bold text-gray-500 text-sm mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-hard-drive text-gray-400 mr-2"></i> Ruang Penyimpanan Utama </h4>`;
+                        }
+
+                        // Render Folder (Sub-folders)
+                        if(activeFolders.length > 0) {
+                            htmlOut += `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-8">`;
+                            activeFolders.forEach(folder => {
+                                htmlOut += `
+                                <div class="bg-yellow-50/70 p-4 rounded-2xl border border-yellow-100 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-yellow-300 transition-all flex flex-col items-center text-center relative group cursor-pointer" onclick="masukFolder('${folder.id}', '${folder.namaFolder.replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
+                                    <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition bg-white/90 p-1 rounded-lg shadow-sm z-10">
+                                        <button onclick="event.stopPropagation(); hapusFolder('${folder.id}')" class="text-red-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                    </div>
+                                    <div class="w-16 h-16 bg-yellow-100/50 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform text-yellow-500">
+                                        <i class="fa-solid fa-folder text-3xl drop-shadow-sm"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-700 text-xs w-full truncate px-1" title="${folder.namaFolder}">${folder.namaFolder}</h4>
+                                </div>
+                                `;
+                            });
+                            htmlOut += `</div>`;
+                        }
+
+                        // Render File
+                        htmlOut += renderFilesGrid(activeFiles, categoryId);
+
                     } else {
                         htmlOut = `
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -2216,7 +2406,6 @@
                             hitungTotalChecklist(); 
                         }
                     } else if (categoryId === 'dokumen') {
-                        // SET VALUE KE FORM SAAT KLIK EDIT DOKUMEN
                         document.getElementById('inputNamaFile').value = item.namaFile || '';
                         document.getElementById('inputJenisFile').value = item.jenisFile || 'foto';
                         document.getElementById('inputUrlFile').value = item.url || '';
