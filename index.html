@@ -1077,7 +1077,7 @@
         };
 
         window.seserahanFilter = 'semua'; window.setSeserahanFilter = function(f) { window.seserahanFilter = f; renderTable('seserahan'); }
-        window.seserahanSearch = ''; window.setSeserahanSearch = function(value) { window.seserahanSearch = (value || '').toLowerCase(); renderTable('seserahan'); }
+        window.seserahanSearch = ''; window.setSeserahanSearch = function(value) { window.seserahanSearch = (value || '').toLowerCase(); debounceRenderTable('seserahan'); }
         window.seserahanCategoryFilter = 'all'; window.setSeserahanCategory = function(cat) { window.seserahanCategoryFilter = cat; renderTable('seserahan'); }
         window.seserahanKadaluarsaFilter = 'semua'; window.setSeserahanKadaluarsaFilter = function(f) { window.seserahanKadaluarsaFilter = f; renderTable('seserahan'); }
         window.seserahanSiapFilter = 'semua'; window.setSeserahanSiapFilter = function(f) { window.seserahanSiapFilter = f; renderTable('seserahan'); }
@@ -1087,7 +1087,7 @@
         window.weddingPihakFilter = 'all'; window.setWeddingPihakFilter = function(f) { window.weddingPihakFilter = f; renderTable('wedding_list'); }
         window.weddingTipeFilter = 'all'; window.setWeddingTipeFilter = function(filter) { window.weddingTipeFilter = filter; renderTable('wedding_list'); }
         window.weddingAkadFilter = 'all'; window.setWeddingAkadFilter = function(filter) { window.weddingAkadFilter = filter; renderTable('wedding_list'); }
-        window.weddingSearch = ''; window.setWeddingSearch = function(value) { window.weddingSearch = (value || '').toLowerCase(); renderTable('wedding_list'); }
+        window.weddingSearch = ''; window.setWeddingSearch = function(value) { window.weddingSearch = (value || '').toLowerCase(); debounceRenderTable('wedding_list'); }
         
         window.weddingSort = { field: null, direction: 'asc' };
         window.setWeddingSort = function(field) {
@@ -1111,7 +1111,7 @@
         }
         window.setDokumenSearch = function(value) {
             window.dokumenSearch = (value || '').toLowerCase();
-            renderTable('dokumen');
+            debounceRenderTable('dokumen');
         }
         window.selectedUndanganType = 'fisik'; 
         window.handleUndanganType = function(type) {
@@ -1198,6 +1198,17 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        // SEARCH DEBOUNCE
+        // Supaya input search tidak render ulang setiap 1 huruf.
+        // Render baru jalan setelah user berhenti mengetik sebentar.
+        window.searchDebounceTimer = window.searchDebounceTimer || null;
+        window.debounceRenderTable = function(categoryId, delay = 350) {
+            clearTimeout(window.searchDebounceTimer);
+            window.searchDebounceTimer = setTimeout(() => {
+                renderTable(categoryId);
+            }, delay);
         }
 
         window.copyUndangan = function(nama, id) {
