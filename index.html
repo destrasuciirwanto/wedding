@@ -200,18 +200,8 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // REALTIME LISTENER UNTUK WEDDING LIST
-        onSnapshot(collection(db, 'wedding_list'), (snapshot) => {
-            let data = [];
-            snapshot.forEach(docSnap => { data.push({ id: docSnap.id, ...docSnap.data() }); });
-            appData.items['wedding_list'] = data;
-            
-            if (activeMenu === 'wedding_list') {
-                renderTable('wedding_list');
-            } else if (activeMenu === 'dashboard') {
-                renderContent(); 
-            }
-        });
+        // WEDDING LIST TIDAK LAGI REALTIME GLOBAL.
+        // Supaya hemat database, data tamu hanya dibaca saat menu Wedding List dibuka.
 
         window.goldPrice = 0;
         window.usdToIdr = 16000;
@@ -343,9 +333,17 @@
 
         let activeMenu = 'dashboard';
         let editId = null;
-        let appData = { totalBudget: 0, items: {} };
+        let appData = { totalBudget: 0, items: {}, dashboardSummary: null };
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
         appData.items['dokumen_folder'] = []; 
+
+        const EMPTY_DASHBOARD_SUMMARY = {
+            totalBudget: 0, totalPengeluaran: 0, sisaBudget: 0, totalItems: 0, itemsSelesai: 0, progress: 0,
+            totalMahar: 0, maharSelesai: 0, sisaMahar: 0, totalItemMahar: 0,
+            totalSeserahan: 0, seserahanSelesai: 0, sisaSeserahan: 0, totalItemSeserahan: 0,
+            totalAttire: 0, totalDekor: 0, totalChecklist: 0, totalCatering: 0, totalDoorprize: 0, totalSeserahanRaw: 0,
+            totalTamu: 0, totalHadir: 0, totalTidakHadir: 0, totalPending: 0
+        };
 
         // =====================================================
         // GLOBAL HIDE / SHOW UANG - SUPER MINIMAL DATABASE
@@ -544,6 +542,19 @@
             renderTable('wedding_list');
         }
 
+
+
+        // FILTER UI DOKUMEN & MEDIA - hanya filter di browser, tidak tambah read database
+        window.dokumenSearch = '';
+        window.dokumenFileType = 'all';
+        window.setDokumenFileType = function(type) {
+            window.dokumenFileType = type;
+            renderTable('dokumen');
+        }
+        window.setDokumenSearch = function(value) {
+            window.dokumenSearch = (value || '').toLowerCase();
+            renderTable('dokumen');
+        }
         window.selectedUndanganType = 'fisik'; 
         window.handleUndanganType = function(type) {
             const fisik = document.getElementById('undanganFisik');
@@ -744,10 +755,13 @@
         window.renderContent = async function() {
             const mainContent = document.getElementById('main-content');
             if (activeMenu === 'dashboard') {
+                await loadBudget();
+                await loadFolders();
                 await loadAllData(); 
                 mainContent.innerHTML = getDashboardHTML();
                 setTimeout(window.renderGoldChart, 100);
             } else {
+                if (activeMenu === 'dokumen') await loadFolders();
                 mainContent.innerHTML = getCategoryHTML(activeMenu);
                 await loadData(activeMenu); 
             }
@@ -1338,38 +1352,80 @@
                     </div>
                 `;
             } else if (categoryId === 'dokumen') {
-                // FORM UNTUK MEMBUAT / EDIT FOLDER
+                const currentFolderName = window.activeDokumenFolder ? window.activeDokumenFolder.nama : 'Ruang Utama';
                 folderFormHtml = `
-                    <div class="bg-yellow-50/50 p-5 rounded-2xl border border-yellow-200 mb-6 shadow-sm fade-in">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 id="folderFormTitle" class="text-sm font-bold text-gray-700"><i class="fa-solid fa-folder-plus text-yellow-500 mr-2"></i> Buat Folder Baru</h4>
-                            <button type="button" id="btnCancelEditFolder" onclick="batalEditFolder()" class="hidden text-xs text-red-500 hover:text-red-700 font-bold transition"><i class="fa-solid fa-times mr-1"></i> Batal Edit</button>
+                    <div class="relative overflow-hidden rounded-3xl border border-lavender-light bg-gradient-to-br from-white via-purple-50 to-yellow-50 shadow-sm fade-in">
+                        <div class="absolute -top-16 -right-16 w-44 h-44 bg-lavender-light/60 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-20 -left-16 w-52 h-52 bg-yellow-100/80 rounded-full blur-3xl"></div>
+                        <div class="relative p-6 md:p-7">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-6">
+                                <div>
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[11px] font-bold text-lavender-dark shadow-sm mb-3">
+                                        <i class="fa-solid fa-folder-tree"></i> Dokumen & Media Center
+                                    </div>
+                                    <h3 class="text-2xl font-black text-gray-800 leading-tight">Kelola file wedding lebih rapi</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Folder aktif: <span class="font-bold text-lavender-dark">${currentFolderName}</span>. Buat folder, simpan link, dan buka file dari satu tempat.</p>
+                                </div>
+                                <div class="w-16 h-16 rounded-2xl bg-white shadow-sm border border-white flex items-center justify-center text-lavender-dark text-2xl">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/80 backdrop-blur rounded-2xl border border-white shadow-sm p-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 id="folderFormTitle" class="text-sm font-bold text-gray-700"><i class="fa-solid fa-folder-plus text-yellow-500 mr-2"></i> Buat Folder Baru</h4>
+                                    <button type="button" id="btnCancelEditFolder" onclick="batalEditFolder()" class="hidden text-xs text-red-500 hover:text-red-700 font-bold transition"><i class="fa-solid fa-times mr-1"></i> Batal Edit</button>
+                                </div>
+                                <form id="folderForm" onsubmit="buatFolder(event)" class="flex flex-col sm:flex-row gap-2">
+                                    <div class="relative flex-1">
+                                        <i class="fa-solid fa-folder absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400"></i>
+                                        <input type="text" id="inputNamaFolder" placeholder="Nama folder. Contoh: Bukti Pembayaran" required class="w-full pl-11 pr-4 py-3 bg-white border border-yellow-100 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent transition shadow-sm">
+                                    </div>
+                                    <button type="submit" id="btnSubmitFolder" class="px-5 py-3 text-sm bg-yellow-400 text-yellow-950 hover:bg-yellow-500 rounded-2xl transition font-black shadow-sm flex-shrink-0"><i class="fa-solid fa-folder-plus mr-1"></i> Buat Folder</button>
+                                </form>
+                            </div>
                         </div>
-                        <form id="folderForm" onsubmit="buatFolder(event)" class="flex gap-2">
-                            <input type="text" id="inputNamaFolder" placeholder="Nama Folder (cth: Bukti Pembayaran)" required class="flex-1 px-4 py-2 border border-yellow-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-yellow-400 transition">
-                            <button type="submit" id="btnSubmitFolder" class="px-5 py-2 text-sm bg-yellow-400 text-yellow-900 hover:bg-yellow-500 rounded-xl transition font-bold shadow-sm flex-shrink-0"><i class="fa-solid fa-folder-plus mr-1"></i> Buat Folder</button>
-                        </form>
                     </div>
                 `;
 
-                // FORM UNTUK MENU DOKUMEN & MEDIA TANPA DROPDOWN FOLDER!
                 formInner = `
-                    <div class="md:col-span-2"><h4 class="text-sm font-bold text-gray-700 mb-1 border-b pb-2"><i class="fa-solid fa-file-circle-plus text-lavender mr-2"></i> Tambah File / Dokumen Baru</h4></div>
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Nama File / Media</label><input type="text" id="inputNamaFile" placeholder="Contoh: Foto Prewedd 1, Kontrak Vendor" required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    
+                    <div class="md:col-span-2">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-1">
+                            <div>
+                                <h4 class="text-base font-black text-gray-800"><i class="fa-solid fa-file-circle-plus text-lavender mr-2"></i> Tambah File / Media Baru</h4>
+                                <p class="text-xs text-gray-400 mt-1">Link bisa dari Cloudflare, Google Drive, YouTube, atau storage lain.</p>
+                            </div>
+                            <span class="hidden md:inline-flex text-[10px] font-bold px-3 py-1 rounded-full bg-lavender-light text-lavender-dark">Tersimpan di folder aktif</span>
+                        </div>
+                    </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Jenis File</label>
-                        <select id="inputJenisFile" class="w-full px-4 py-2 border rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-lavender">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Nama File / Media</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-signature absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                            <input type="text" id="inputNamaFile" placeholder="Contoh: Kontrak Vendor, Foto Prewedd" required class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Jenis File</label>
+                        <select id="inputJenisFile" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
                             <option value="foto">🖼️ Foto / Gambar</option>
                             <option value="video">🎥 Video</option>
-                            <option value="dokumen">📄 Dokumen (PDF, Excel, dll)</option>
-                            <option value="audio">🎵 Audio (MP3)</option>
-                            <option value="link">🔗 Tautan Bebas</option>
+                            <option value="dokumen">📄 Dokumen PDF / Excel</option>
+                            <option value="audio">🎵 Audio / Musik</option>
+                            <option value="link">🔗 Link Bebas</option>
                         </select>
                     </div>
-                    
-                    <div><label class="block text-xs font-medium text-gray-500 mb-1">URL / Link (Dari Cloudflare / GDrive)</label><input type="url" id="inputUrlFile" placeholder="https://..." required class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Keterangan / Catatan</label><input type="text" id="inputCatatan" placeholder="Opsional" class="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-lavender"></div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">URL / Link File</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                            <input type="url" id="inputUrlFile" placeholder="https://..." required class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Keterangan / Catatan</label>
+                        <input type="text" id="inputCatatan" placeholder="Contoh: DP vendor dekor, file final, foto untuk gallery" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                    </div>
                 `;
             } else {
                 formInner = `
@@ -1594,33 +1650,61 @@
         }
 
         // HELPER KHUSUS RENDER FILE DOKUMEN 
+        function escapeHtml(text) {
+            return String(text || '').replace(/[&<>"]/g, function(m) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[m];
+            });
+        }
+
+        function getFileMeta(type) {
+            const map = {
+                foto: { label: 'Foto', icon: 'fa-image', text: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100', chip: 'bg-blue-50 text-blue-600 border-blue-100' },
+                video: { label: 'Video', icon: 'fa-film', text: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100', chip: 'bg-purple-50 text-purple-600 border-purple-100' },
+                dokumen: { label: 'Dokumen', icon: 'fa-file-pdf', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100', chip: 'bg-red-50 text-red-600 border-red-100' },
+                audio: { label: 'Audio', icon: 'fa-music', text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100', chip: 'bg-green-50 text-green-600 border-green-100' },
+                link: { label: 'Link', icon: 'fa-link', text: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100', chip: 'bg-sky-50 text-sky-600 border-sky-100' }
+            };
+            return map[type] || { label: 'File', icon: 'fa-file-lines', text: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-100', chip: 'bg-gray-50 text-gray-600 border-gray-100' };
+        }
+
+        // HELPER KHUSUS RENDER FILE DOKUMEN 
         function renderFilesGrid(filesToRender, categoryId) {
-            if (filesToRender.length === 0) return `<div class="col-span-full">${getEmptyStateHTML('fa-folder-open', 'Belum ada file di bagian ini.')}</div>`;
+            if (filesToRender.length === 0) return `<div class="col-span-full">${getEmptyStateHTML('fa-file-circle-xmark', 'Belum ada file di bagian ini.')}</div>`;
             
-            let gridHtml = `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">`;
+            let gridHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">`;
             filesToRender.forEach(item => {
-                let iconClass = 'fa-file-lines text-gray-400';
-                let bgIcon = 'bg-gray-50';
-                
-                if(item.jenisFile === 'foto') { iconClass = 'fa-image text-blue-500'; bgIcon = 'bg-blue-50'; }
-                if(item.jenisFile === 'video') { iconClass = 'fa-film text-purple-500'; bgIcon = 'bg-purple-50'; }
-                if(item.jenisFile === 'dokumen') { iconClass = 'fa-file-pdf text-red-500'; bgIcon = 'bg-red-50'; }
-                if(item.jenisFile === 'link') { iconClass = 'fa-link text-blue-400'; bgIcon = 'bg-blue-50'; }
-                if(item.jenisFile === 'audio') { iconClass = 'fa-music text-green-500'; bgIcon = 'bg-green-50'; } 
+                const meta = getFileMeta(item.jenisFile);
+                const safeName = escapeHtml(item.namaFile || 'Tanpa Nama');
+                const safeNote = escapeHtml(item.catatan || 'Tanpa keterangan');
+                const safeUrl = escapeHtml(item.url || '#');
+                const safeDate = item.tanggalUpdate ? new Date(item.tanggalUpdate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
 
                 gridHtml += `
-                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-lavender transition-all flex flex-col items-center text-center relative group">
-                    <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition bg-white/90 p-1 rounded-lg shadow-sm">
-                        <button onclick="editItem('${item.id}', '${categoryId}')" class="text-gray-400 hover:text-lavender p-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                        <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                    </div>
-                    <a href="${item.url}" target="_blank" class="flex flex-col items-center w-full mt-2">
-                        <div class="w-16 h-16 ${bgIcon} rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                            <i class="fa-solid ${iconClass} text-3xl"></i>
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden group">
+                    <div class="h-2 ${meta.bg}"></div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <div class="w-14 h-14 ${meta.bg} ${meta.border} border rounded-2xl flex items-center justify-center ${meta.text} text-2xl shadow-sm flex-shrink-0">
+                                <i class="fa-solid ${meta.icon}"></i>
+                            </div>
+                            <div class="flex gap-1">
+                                <button onclick="editItem('${item.id}', '${categoryId}')" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-400 hover:bg-lavender-light hover:text-lavender-dark transition" title="Edit"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 transition" title="Hapus"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                            </div>
                         </div>
-                        <h4 class="font-bold text-gray-700 text-xs w-full truncate px-1" title="${item.namaFile}">${item.namaFile}</h4>
-                        <p class="text-[10px] text-gray-400 mt-1 truncate w-full" title="${item.catatan || ''}">${item.catatan || 'Tanpa keterangan'}</p>
-                    </a>
+                        <div class="min-h-[74px]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[10px] font-black px-2.5 py-1 rounded-full border ${meta.chip}">${meta.label}</span>
+                                <span class="text-[10px] text-gray-400"><i class="fa-regular fa-calendar mr-1"></i>${safeDate}</span>
+                            </div>
+                            <h4 class="font-black text-gray-800 text-sm leading-snug line-clamp-2" title="${safeName}">${safeName}</h4>
+                            <p class="text-xs text-gray-400 mt-2 line-clamp-2" title="${safeNote}">${safeNote}</p>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-gray-50 flex gap-2">
+                            <a href="${safeUrl}" target="_blank" class="flex-1 text-center py-2.5 rounded-2xl bg-gray-900 text-white text-xs font-bold hover:bg-lavender-dark transition shadow-sm"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka</a>
+                            <button onclick="navigator.clipboard.writeText('${String(item.url || '').replace(/'/g, "\\'")}').then(()=>showToast('Link file berhasil dicopy!'))" class="w-11 rounded-2xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                    </div>
                 </div>
                 `;
             });
@@ -2341,58 +2425,121 @@
                     </div>
                 `;
             } else if (categoryId === 'dokumen') {
-                // MERENDER FOLDER BERDASARKAN PARENT ID
                 let folders = appData.items['dokumen_folder'] || [];
                 let files = data;
-
                 const currentFolderId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
-                
-                // KUNCI IRIT DATABASE: Filter hanya di array browser (memori lokal) saja!
                 let activeFolders = folders.filter(f => (f.parentId || "") === currentFolderId);
                 let activeFiles = files.filter(f => (f.folderId || "") === currentFolderId);
 
-                htmlOut = ``;
+                const totalFolders = activeFolders.length;
+                const totalFiles = activeFiles.length;
+                const totalPhotos = activeFiles.filter(f => f.jenisFile === 'foto').length;
+                const totalDocs = activeFiles.filter(f => f.jenisFile === 'dokumen').length;
 
-                if (window.activeDokumenFolder) {
-                    // KITA BERADA DI DALAM FOLDER TERTENTU
-                    htmlOut += `
-                    <div class="mb-6 flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm fade-in">
-                        <div class="flex items-center gap-3">
-                            <button onclick="keParentFolder()" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-600 hover:bg-lavender hover:text-white hover:border-lavender transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
-                            <h3 class="font-bold text-gray-700 text-lg flex items-center gap-2"><i class="fa-solid fa-folder-open text-yellow-500 drop-shadow-sm"></i> ${window.activeDokumenFolder.nama}</h3>
-                        </div>
-                        <span class="text-xs font-bold bg-yellow-50 text-yellow-600 px-3 py-1 rounded-lg border border-yellow-100">${activeFiles.length} File & ${activeFolders.length} Sub-folder</span>
-                    </div>
-                    `;
-                } else {
-                    // KITA BERADA DI ROOT (TAMPILAN UTAMA)
-                    htmlOut += `<h4 class="font-bold text-gray-500 text-sm mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-hard-drive text-gray-400 mr-2"></i> Ruang Penyimpanan Utama </h4>`;
+                if (window.dokumenFileType && window.dokumenFileType !== 'all') {
+                    activeFiles = activeFiles.filter(f => f.jenisFile === window.dokumenFileType);
+                }
+                if (window.dokumenSearch) {
+                    const q = window.dokumenSearch.toLowerCase();
+                    activeFiles = activeFiles.filter(f =>
+                        String(f.namaFile || '').toLowerCase().includes(q) ||
+                        String(f.catatan || '').toLowerCase().includes(q) ||
+                        String(f.jenisFile || '').toLowerCase().includes(q)
+                    );
+                    activeFolders = activeFolders.filter(f => String(f.namaFolder || '').toLowerCase().includes(q));
                 }
 
-                // Render Folder (Sub-folders)
-                if(activeFolders.length > 0) {
-                    htmlOut += `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 mb-8">`;
-                    activeFolders.forEach(folder => {
-                        htmlOut += `
-                        <div class="bg-yellow-50/70 p-4 rounded-2xl border border-yellow-100 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-yellow-300 transition-all flex flex-col items-center text-center relative group cursor-pointer" onclick="masukFolder('${folder.id}', '${folder.namaFolder.replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
-                            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition bg-white/90 p-1 rounded-lg shadow-sm z-10">
-                                <!-- Tombol Edit Baru -->
-                                <button onclick="event.stopPropagation(); editFolder('${folder.id}', '${folder.namaFolder.replace(/'/g, "\\'")}')" class="text-gray-400 hover:text-lavender p-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                <!-- Tombol Hapus Lama -->
-                                <button onclick="event.stopPropagation(); hapusFolder('${folder.id}')" class="text-red-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </div>
-                            <div class="w-16 h-16 bg-yellow-100/50 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform text-yellow-500">
-                                <i class="fa-solid fa-folder text-3xl drop-shadow-sm"></i>
+                const typeBtn = (type, label, icon) => `
+                    <button onclick="setDokumenFileType('${type}')" class="px-4 py-2 rounded-2xl text-xs font-black border transition ${window.dokumenFileType === type ? 'bg-lavender text-white border-lavender shadow-md shadow-lavender/20' : 'bg-white text-gray-500 border-gray-100 hover:border-lavender-light hover:text-lavender-dark'}">
+                        <i class="fa-solid ${icon} mr-1"></i>${label}
+                    </button>`;
+
+                htmlOut = `
+                    <div class="space-y-6 fade-in">
+                        <div class="relative overflow-hidden rounded-3xl bg-gray-900 text-white shadow-sm">
+                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 20%, #CBA6F7 0, transparent 28%), radial-gradient(circle at 80% 10%, #FDE68A 0, transparent 25%), radial-gradient(circle at 50% 90%, #93C5FD 0, transparent 24%);"></div>
+                            <div class="relative p-6 md:p-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-[0.25em] text-lavender-light mb-2">Media Library</p>
+                                    <h3 class="text-2xl md:text-3xl font-black">${window.activeDokumenFolder ? escapeHtml(window.activeDokumenFolder.nama) : 'Dokumen & Media'}</h3>
+                                    <p class="text-sm text-white/70 mt-2 max-w-2xl">Kelola bukti pembayaran, kontrak vendor, foto, video, audio, dan link penting. Tampilan ini hanya memakai data yang sudah dibaca di menu ini.</p>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-full lg:min-w-[520px]">
+                                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4 backdrop-blur"><p class="text-[10px] text-white/50 font-bold uppercase">Folder</p><p class="text-2xl font-black">${totalFolders}</p></div>
+                                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4 backdrop-blur"><p class="text-[10px] text-white/50 font-bold uppercase">File</p><p class="text-2xl font-black">${totalFiles}</p></div>
+                                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4 backdrop-blur"><p class="text-[10px] text-white/50 font-bold uppercase">Foto</p><p class="text-2xl font-black">${totalPhotos}</p></div>
+                                    <div class="bg-white/10 border border-white/10 rounded-2xl p-4 backdrop-blur"><p class="text-[10px] text-white/50 font-bold uppercase">Dokumen</p><p class="text-2xl font-black">${totalDocs}</p></div>
+                                </div>
                             </div>
-                            <h4 class="font-bold text-gray-700 text-xs w-full truncate px-1" title="${folder.namaFolder}">${folder.namaFolder}</h4>
                         </div>
-                        `;
+
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-4 md:p-5">
+                            <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                                <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                                    ${window.activeDokumenFolder ? `<button onclick="keParentFolder()" class="px-4 py-2 rounded-2xl bg-gray-900 text-white text-xs font-black hover:bg-lavender-dark transition flex-shrink-0"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>` : ''}
+                                    <span class="px-4 py-2 rounded-2xl bg-gray-50 text-gray-500 text-xs font-bold border border-gray-100 flex-shrink-0"><i class="fa-solid fa-hard-drive mr-1"></i> ${window.activeDokumenFolder ? 'Sub-folder' : 'Ruang Utama'}</span>
+                                    ${window.activeDokumenFolder ? `<span class="px-4 py-2 rounded-2xl bg-yellow-50 text-yellow-700 text-xs font-bold border border-yellow-100 flex-shrink-0"><i class="fa-solid fa-folder-open mr-1"></i> ${escapeHtml(window.activeDokumenFolder.nama)}</span>` : ''}
+                                </div>
+                                <div class="relative w-full xl:w-80">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                    <input type="text" value="${escapeHtml(window.dokumenSearch || '')}" oninput="setDokumenSearch(this.value)" placeholder="Cari file atau folder..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+                                ${typeBtn('all', 'Semua', 'fa-border-all')}
+                                ${typeBtn('foto', 'Foto', 'fa-image')}
+                                ${typeBtn('video', 'Video', 'fa-film')}
+                                ${typeBtn('dokumen', 'Dokumen', 'fa-file-pdf')}
+                                ${typeBtn('audio', 'Audio', 'fa-music')}
+                                ${typeBtn('link', 'Link', 'fa-link')}
+                            </div>
+                        </div>
+                `;
+
+                if(activeFolders.length > 0) {
+                    htmlOut += `
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-sm font-black text-gray-700 uppercase tracking-wide"><i class="fa-solid fa-folder-tree text-yellow-500 mr-2"></i> Folder</h4>
+                                <span class="text-xs text-gray-400 font-bold">${activeFolders.length} folder</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">`;
+                    activeFolders.forEach(folder => {
+                        const safeFolderName = escapeHtml(folder.namaFolder || 'Tanpa Nama');
+                        const childFolders = folders.filter(f => (f.parentId || '') === folder.id).length;
+                        const childFiles = files.filter(f => (f.folderId || '') === folder.id).length;
+                        htmlOut += `
+                        <div class="relative bg-white p-5 rounded-3xl border border-yellow-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all group cursor-pointer overflow-hidden" onclick="masukFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
+                            <div class="absolute -right-8 -top-8 w-24 h-24 bg-yellow-100 rounded-full blur-2xl group-hover:bg-yellow-200 transition"></div>
+                            <div class="relative flex items-start gap-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500 text-3xl shadow-sm border border-yellow-100 flex-shrink-0">
+                                    <i class="fa-solid fa-folder"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-black text-gray-800 text-sm truncate" title="${safeFolderName}">${safeFolderName}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">${childFiles} file · ${childFolders} sub-folder</p>
+                                    <div class="mt-4 flex items-center gap-2"><span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-100">Folder</span></div>
+                                </div>
+                                <div class="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition">
+                                    <button onclick="event.stopPropagation(); editFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-400 hover:bg-lavender-light hover:text-lavender-dark transition"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    <button onclick="event.stopPropagation(); hapusFolder('${folder.id}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 transition"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
                     });
-                    htmlOut += `</div>`;
+                    htmlOut += `</div></div>`;
                 }
 
-                // Render File
-                htmlOut += renderFilesGrid(activeFiles, categoryId);
+                htmlOut += `
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-sm font-black text-gray-700 uppercase tracking-wide"><i class="fa-solid fa-photo-film text-lavender mr-2"></i> File & Media</h4>
+                                <span class="text-xs text-gray-400 font-bold">${activeFiles.length} item tampil</span>
+                            </div>
+                            ${renderFilesGrid(activeFiles, categoryId)}
+                        </div>
+                    </div>
+                `;
 
             } else {
                 htmlOut = `
