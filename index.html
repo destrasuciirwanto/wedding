@@ -2930,7 +2930,9 @@
             let data = appData.items[categoryId] || [];
             let htmlOut = '';
 
-            const enhancedContentMenus = ['seserahan', 'doorprize', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor'];
+            const enhancedContentMenus = ['catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor']; 
+            // Seserahan dan Doorprize sengaja tidak masuk render cepat ini.
+            // Dua menu itu punya filter khusus lama yang lebih lengkap, jadi harus lewat blok render aslinya.
             if (enhancedContentMenus.includes(categoryId)) {
                 container.innerHTML = getModuleStatsHTML(categoryId, data) + getXMenuBoardHTML(categoryId, data);
                 return;
