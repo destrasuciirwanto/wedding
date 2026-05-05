@@ -347,26 +347,72 @@
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
         appData.items['dokumen_folder'] = []; 
 
-        const savedHide = localStorage.getItem('hideMoney');
-        window.isHideMoney = savedHide === 'true';
+        // =====================================================
+        // GLOBAL HIDE / SHOW UANG - SUPER MINIMAL DATABASE
+        // Berlaku untuk semua perangkat dan semua user dashboard.
+        // Hanya memakai 1 dokumen kecil:
+        // settings/money_visibility
+        // Isi dokumen hanya: { hideMoney: true / false }
+        // Tidak pakai localStorage. Tidak membuat riwayat. Tidak menambah dokumen baru.
+        // =====================================================
 
-        setTimeout(() => {
+        const moneyVisibilityRef = doc(db, "settings", "money_visibility");
+
+        window.isHideMoney = false;
+        window.moneyVisibilityLoaded = false;
+
+        function syncMoneyIcon() {
             const icon = document.getElementById('toggle-eye-icon');
-            if(icon){
-                icon.className = window.isHideMoney 
-                    ? 'fa-solid fa-eye-slash' 
+            const btn = icon ? icon.closest('button') : null;
+
+            if (icon) {
+                icon.className = window.isHideMoney
+                    ? 'fa-solid fa-eye-slash'
                     : 'fa-solid fa-eye';
             }
-        }, 100);
+
+            if (btn) {
+                btn.title = window.isHideMoney
+                    ? 'Uang sedang disembunyikan untuk semua user'
+                    : 'Uang sedang tampil untuk semua user';
+            }
+        }
+
+        onSnapshot(moneyVisibilityRef, (docSnap) => {
+            const oldValue = window.isHideMoney;
+
+            window.isHideMoney = docSnap.exists()
+                ? docSnap.data().hideMoney === true
+                : false;
+
+            window.moneyVisibilityLoaded = true;
+            syncMoneyIcon();
+
+            if (oldValue !== window.isHideMoney && typeof window.renderContent === 'function') {
+                window.renderContent();
+            }
+        }, (error) => {
+            console.error('Gagal membaca status hide money global:', error);
+            window.moneyVisibilityLoaded = true;
+            syncMoneyIcon();
+        });
         
         window.toggleHideMoney = function() {
+            if (!window.moneyVisibilityLoaded) {
+                showToast('Status uang masih dimuat. Coba lagi sebentar.', 'error');
+                return;
+            }
+
+            // Kalau uang sedang disembunyikan, buka wajib pakai password.
             if (window.isHideMoney === true) {
                 document.getElementById('password-modal').classList.remove('hidden');
                 document.getElementById('password-input').value = '';
                 setTimeout(() => document.getElementById('password-input').focus(), 100);
                 return;
             }
-            window.executeToggleMoney();
+
+            // Kalau uang sedang tampil, klik mata langsung hide untuk semua user.
+            window.setGlobalMoneyVisibility(true);
         }
 
         window.closePasswordModal = function() {
@@ -379,20 +425,28 @@
                 alert("Password salah!");
                 return;
             }
+
             closePasswordModal();
-            window.executeToggleMoney();
+
+            // Kalau password benar, uang tampil untuk semua user.
+            window.setGlobalMoneyVisibility(false);
         }
 
-        window.executeToggleMoney = function() {
-            window.isHideMoney = !window.isHideMoney;
-            localStorage.setItem('hideMoney', window.isHideMoney);
-            const icon = document.getElementById('toggle-eye-icon');
-            if(icon){
-                icon.className = window.isHideMoney 
-                    ? 'fa-solid fa-eye-slash' 
-                    : 'fa-solid fa-eye';
+        window.setGlobalMoneyVisibility = async function(hideStatus) {
+            try {
+                await setDoc(moneyVisibilityRef, {
+                    hideMoney: hideStatus
+                }, { merge: true });
+
+                showToast(
+                    hideStatus
+                        ? 'Uang disembunyikan untuk semua user.'
+                        : 'Uang ditampilkan untuk semua user.'
+                );
+            } catch (error) {
+                console.error('Gagal update hide money global:', error);
+                showToast('Gagal mengubah status uang.', 'error');
             }
-            renderContent();
         }
 
         window.toggleMaharType = function() {
