@@ -136,6 +136,40 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transform: translateY(-2px);
         }
+
+        /* Extra Sections - Balanced Premium */
+        .section-badge {
+            display:inline-block;
+            padding: .35rem .8rem;
+            border-radius: 999px;
+            background: rgba(229,169,180,.16);
+            color:#E5A9B4;
+            font-size:.68rem;
+            font-weight:700;
+            letter-spacing:.22em;
+            text-transform:uppercase;
+        }
+        .soft-card {
+            background: rgba(255,255,255,.62);
+            border:1px solid rgba(255,255,255,.75);
+            box-shadow:0 10px 30px rgba(229,169,180,.14);
+            border-radius:2rem;
+        }
+        .icon-pill {
+            width:3.5rem;height:3.5rem;border-radius:999px;
+            display:flex;align-items:center;justify-content:center;
+            background:linear-gradient(135deg, rgba(229,169,180,.22), rgba(212,175,55,.18));
+            color:#D4AF37;
+        }
+        .color-dot { width:2.2rem; height:2.2rem; border-radius:999px; border:3px solid white; box-shadow:0 8px 18px rgba(0,0,0,.12); }
+        details.faq-item summary::-webkit-details-marker { display:none; }
+        details.faq-item[open] summary i { transform:rotate(180deg); }
+        @media (max-width: 768px) {
+            .glass-panel:hover, .soft-card:hover { transform:none !important; }
+            .parallax-bg { background-attachment: scroll; }
+            .soft-card { box-shadow:0 8px 22px rgba(229,169,180,.10); }
+        }
+
     </style>
 
     <!-- 🌸 SAKURA PREMIUM THEME CSS -->
@@ -280,6 +314,118 @@
         <i class="fa-brands fa-pagelines text-[#E5A9B4] text-3xl opacity-60"></i>
     </div>
 
+
+
+
+    <!-- 2A. QUICK MENU PREMIUM -->
+    <section id="menu" class="py-14 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-10">
+                <span class="section-badge" data-aos="fade-up">Menu Undangan</span>
+                <h2 class="font-serif text-4xl md:text-5xl text-gray-800 font-bold mt-4" data-aos="fade-up">Temukan Detail Acara</h2>
+                <p class="text-sm text-gray-500 mt-3 max-w-xl mx-auto">Pilih bagian yang ingin dilihat. Semua informasi penting sudah kami susun agar tamu lebih mudah mengikuti acara.</p>
+            </div>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-5">
+                <a href="#mempelai" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in"><i class="fa-solid fa-user-heart text-gold text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Mempelai</p></a>
+                <a href="#story" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="50"><i class="fa-solid fa-heart text-[#E5A9B4] text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Story</p></a>
+                <a href="#event" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="100"><i class="fa-solid fa-calendar-days text-gold text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Acara</p></a>
+                <a href="#rundown" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="150"><i class="fa-solid fa-list-check text-[#E5A9B4] text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Rundown</p></a>
+                <a href="#gallery" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="200"><i class="fa-solid fa-camera-retro text-gold text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Galeri</p></a>
+                <a href="#rsvp-wishes" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="250"><i class="fa-solid fa-qrcode text-[#E5A9B4] text-xl mb-2"></i><p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">RSVP</p></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2B. AYAT PEMBUKA -->
+    <section id="ayat" class="py-16 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center soft-card p-8 md:p-12" data-aos="fade-up">
+            <span class="section-badge">Doa Pembuka</span>
+            <p class="font-serif text-3xl md:text-4xl text-gray-800 leading-relaxed mt-6 mb-6 italic">
+                “Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu merasa tenteram kepadanya.”
+            </p>
+            <p class="text-sm text-gray-500 tracking-widest uppercase font-semibold">QS. Ar-Rum: 21</p>
+        </div>
+    </section>
+
+    <!-- 2C. PROFIL MEMPELAI -->
+    <section id="mempelai" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <h3 class="font-sans text-xs md:text-sm text-[#E5A9B4] tracking-[0.3em] uppercase mb-3 font-semibold" data-aos="fade-up">Dengan Memohon Rahmat Allah</h3>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold" data-aos="fade-up" data-aos-delay="100">Mempelai</h2>
+                <p class="text-sm text-gray-500 max-w-2xl mx-auto mt-4 leading-relaxed">Kami bermaksud menyelenggarakan pernikahan putra dan putri kami.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-stretch">
+                <div class="glass-panel p-8 md:p-10 rounded-[2rem] text-center" data-aos="fade-right">
+                    <div class="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl mb-6">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=500&auto=format&fit=crop" loading="lazy" class="w-full h-full object-cover" alt="Mutiara">
+                    </div>
+                    <p class="text-xs uppercase tracking-[0.3em] text-[#E5A9B4] font-bold mb-2">The Bride</p>
+                    <h3 class="font-serif text-4xl md:text-5xl text-gray-800 font-bold mb-3">Mutiara</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-5">Putri dari Bapak Nama Ayah & Ibu Nama Ibu</p>
+                    <a href="https://instagram.com" target="_blank" class="inline-flex items-center gap-2 px-5 py-2 bg-white/70 border border-white rounded-full text-xs font-bold text-gray-600 hover:text-gold transition-colors">
+                        <i class="fa-brands fa-instagram"></i> @mutiara
+                    </a>
+                </div>
+
+                <div class="glass-panel p-8 md:p-10 rounded-[2rem] text-center" data-aos="fade-left">
+                    <div class="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl mb-6">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500&auto=format&fit=crop" loading="lazy" class="w-full h-full object-cover" alt="Destra">
+                    </div>
+                    <p class="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">The Groom</p>
+                    <h3 class="font-serif text-4xl md:text-5xl text-gray-800 font-bold mb-3">Destra</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-5">Putra dari Bapak Nama Ayah & Ibu Nama Ibu</p>
+                    <a href="https://instagram.com" target="_blank" class="inline-flex items-center gap-2 px-5 py-2 bg-white/70 border border-white rounded-full text-xs font-bold text-gray-600 hover:text-gold transition-colors">
+                        <i class="fa-brands fa-instagram"></i> @destra
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- 2D. KELUARGA BESAR -->
+    <section id="keluarga" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Keluarga Besar</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Turut Mengundang</h2>
+                <p class="text-sm text-gray-500 mt-4 max-w-2xl mx-auto">Dengan hormat, keluarga besar kedua mempelai mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-panel p-8 rounded-[2rem]" data-aos="fade-right">
+                    <p class="text-xs uppercase tracking-[0.3em] text-[#E5A9B4] font-bold mb-4">Keluarga Mempelai Wanita</p>
+                    <h3 class="font-serif text-3xl text-gray-800 font-bold mb-2">Bapak Nama Ayah</h3>
+                    <p class="text-sm text-gray-500 mb-4">& Ibu Nama Ibu</p>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <p><i class="fa-solid fa-house-chimney text-gold mr-2"></i> Keluarga besar dari Jakarta Barat</p>
+                        <p><i class="fa-solid fa-heart text-[#E5A9B4] mr-2"></i> Memohon doa restu untuk Mutiara</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-8 rounded-[2rem]" data-aos="fade-left">
+                    <p class="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-4">Keluarga Mempelai Pria</p>
+                    <h3 class="font-serif text-3xl text-gray-800 font-bold mb-2">Bapak Nama Ayah</h3>
+                    <p class="text-sm text-gray-500 mb-4">& Ibu Nama Ibu</p>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <p><i class="fa-solid fa-house-chimney text-gold mr-2"></i> Keluarga besar dari Jakarta Barat</p>
+                        <p><i class="fa-solid fa-heart text-[#E5A9B4] mr-2"></i> Memohon doa restu untuk Destra</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2E. KATA SAMBUTAN SINGKAT -->
+    <section id="sambutan" class="py-16 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto soft-card p-8 md:p-12 text-center" data-aos="fade-up">
+            <span class="section-badge">Dengan Hormat</span>
+            <h2 class="font-serif text-4xl md:text-5xl text-gray-800 font-bold mt-5 mb-5">Assalamu’alaikum Warahmatullahi Wabarakatuh</h2>
+            <p class="text-sm md:text-base text-gray-600 leading-relaxed">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara pernikahan putra dan putri kami. Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir, memberikan doa, dan menjadi bagian dari hari bahagia ini.</p>
+        </div>
+    </section>
+
     <!-- 3. LOVE STORY -->
     <section id="story" class="py-16 px-6 relative z-10">
         <div class="absolute top-0 right-10 text-gold opacity-5 text-8xl"><i class="fa-solid fa-fan"></i></div>
@@ -313,6 +459,30 @@
                     </div>
                     <div class="absolute left-[11px] md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-[#E5A9B4] rounded-full ring-8 ring-[#FFF5F7] z-10 shadow-lg"></div>
                 </div>
+
+                <div class="flex flex-col md:flex-row items-center w-full mb-16 relative" data-aos="fade-up">
+                    <div class="md:w-1/2 flex justify-start md:justify-end pl-12 md:pl-0 md:pr-12 w-full text-left md:text-right">
+                        <div class="glass-panel p-8 rounded-3xl w-full hover:-translate-y-2 transition-transform duration-500">
+                            <span class="inline-block px-3 py-1 bg-gold/10 text-gold rounded-full font-bold text-xs uppercase tracking-wide mb-3">Februari 2026</span>
+                            <h4 class="font-serif text-3xl mb-3 text-gray-800 font-bold">Lamaran Keluarga</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed font-light">Kedua keluarga bertemu dalam suasana hangat untuk membicarakan niat baik dan persiapan menuju hari pernikahan.</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-[11px] md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-gold rounded-full ring-8 ring-[#FFF5F7] z-10 shadow-lg"></div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center w-full mb-16 relative" data-aos="fade-up">
+                    <div class="md:w-1/2 hidden md:block"></div>
+                    <div class="md:w-1/2 pl-12 md:pl-12 w-full text-left">
+                        <div class="glass-panel p-8 rounded-3xl w-full hover:-translate-y-2 transition-transform duration-500">
+                            <span class="inline-block px-3 py-1 bg-[#E5A9B4]/20 text-[#E5A9B4] rounded-full font-bold text-xs uppercase tracking-wide mb-3">April 2027</span>
+                            <h4 class="font-serif text-3xl mb-3 text-gray-800 font-bold">Hari Bahagia</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed font-light">Dengan doa dan restu keluarga, kami akan memulai perjalanan baru dalam ikatan pernikahan.</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-[11px] md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-[#E5A9B4] rounded-full ring-8 ring-[#FFF5F7] z-10 shadow-lg"></div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -342,6 +512,29 @@
                     <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop" loading="lazy" class="w-full h-[250px] object-cover rounded-xl" alt="Gallery">
                     <div class="gallery-overlay absolute inset-0 flex items-center justify-center rounded-xl m-2"><i class="fa-solid fa-expand text-white text-3xl opacity-80"></i></div>
                 </div>
+            </div>
+
+
+            <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+                <div class="img-zoom-container relative cursor-pointer rounded-2xl glass-panel p-2" data-aos="zoom-in" onclick="openLightbox('https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=70&w=420&auto=format&fit=crop" loading="lazy" class="w-full h-44 object-cover rounded-xl" alt="Album">
+                </div>
+                <div class="img-zoom-container relative cursor-pointer rounded-2xl glass-panel p-2" data-aos="zoom-in" data-aos-delay="80" onclick="openLightbox('https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1529636798458-92182e662485?q=70&w=420&auto=format&fit=crop" loading="lazy" class="w-full h-44 object-cover rounded-xl" alt="Album">
+                </div>
+                <div class="img-zoom-container relative cursor-pointer rounded-2xl glass-panel p-2" data-aos="zoom-in" data-aos-delay="160" onclick="openLightbox('https://images.unsplash.com/photo-1509927083803-4bd519298ac4?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1509927083803-4bd519298ac4?q=70&w=420&auto=format&fit=crop" loading="lazy" class="w-full h-44 object-cover rounded-xl" alt="Album">
+                </div>
+                <div class="img-zoom-container relative cursor-pointer rounded-2xl glass-panel p-2" data-aos="zoom-in" data-aos-delay="240" onclick="openLightbox('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=70&w=420&auto=format&fit=crop" loading="lazy" class="w-full h-44 object-cover rounded-xl" alt="Album">
+                </div>
+            </div>
+
+            <div class="mt-12 soft-card p-8 text-center" data-aos="fade-up">
+                <span class="section-badge">Video Moment</span>
+                <h3 class="font-serif text-4xl text-gray-800 font-bold mt-4 mb-4">Prewedding Teaser</h3>
+                <p class="text-sm text-gray-500 max-w-xl mx-auto mb-6">Tonton cuplikan singkat perjalanan kami. Video sengaja dibuka lewat tombol agar halaman tetap ringan di HP.</p>
+                <a href="https://youtube.com" target="_blank" class="inline-block px-8 py-4 bg-gray-800 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-colors"><i class="fa-brands fa-youtube mr-2"></i> Lihat Video</a>
             </div>
         </div>
     </section>
@@ -400,6 +593,27 @@
                 </div>
             </div>
 
+
+
+            <!-- DETAIL LOKASI TAMBAHAN -->
+            <div class="grid md:grid-cols-3 gap-6 mt-10">
+                <div class="soft-card p-6 text-center" data-aos="fade-up">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-car"></i></div>
+                    <h4 class="font-serif text-2xl font-bold text-gray-800 mb-2">Area Parkir</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Tersedia area parkir untuk tamu undangan. Ikuti arahan petugas saat tiba di lokasi.</p>
+                </div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-location-crosshairs"></i></div>
+                    <h4 class="font-serif text-2xl font-bold text-gray-800 mb-2">Patokan Lokasi</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Lokasi berada di area Jakarta Barat dan mudah diakses melalui Google Maps.</p>
+                </div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-user-check"></i></div>
+                    <h4 class="font-serif text-2xl font-bold text-gray-800 mb-2">Check-In QR</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Tamu yang hadir dapat menunjukkan QR Code dari bagian RSVP kepada penerima tamu.</p>
+                </div>
+            </div>
+
             <!-- LIVE STREAM -->
             <div class="glass-panel p-10 rounded-[2rem] mt-10 text-center shadow-lg relative overflow-hidden" data-aos="fade-up">
                 <div class="absolute -right-10 -top-10 text-rose-300 opacity-10 text-9xl"><i class="fa-solid fa-video"></i></div>
@@ -410,9 +624,131 @@
         </div>
     </section>
 
+
+    <!-- 5B. DRESS CODE -->
+    <section id="dresscode" class="py-20 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="section-badge" data-aos="fade-up">Panduan Tamu</span>
+            <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4 mb-6" data-aos="fade-up">Dress Code</h2>
+            <p class="text-sm text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed" data-aos="fade-up">Kami akan senang apabila tamu undangan berkenan mengenakan warna yang senada dengan tema acara.</p>
+
+            <div class="glass-panel p-8 md:p-10 rounded-[2rem]" data-aos="zoom-in">
+                <div class="flex justify-center gap-4 mb-8">
+                    <div class="color-dot" style="background:#F8C8DC"></div>
+                    <div class="color-dot" style="background:#FADADD"></div>
+                    <div class="color-dot" style="background:#D4AF37"></div>
+                    <div class="color-dot" style="background:#8F9779"></div>
+                    <div class="color-dot" style="background:#FFFFFF"></div>
+                </div>
+                <h3 class="font-serif text-3xl text-gray-800 font-bold mb-3">Soft Pink, Gold, Sage, dan White</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Gunakan pakaian formal, batik, kebaya, atau dress yang nyaman. Warna di atas hanya saran, bukan kewajiban.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5C. SUSUNAN ACARA -->
+    <section id="rundown" class="py-20 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Rangkaian Acara</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Susunan Acara</h2>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-5">
+                <div class="soft-card p-6 text-center" data-aos="fade-up">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-ring text-2xl"></i></div>
+                    <p class="font-bold text-gold mb-1">08.00 WIB</p>
+                    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">Akad Nikah</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">Prosesi ijab kabul dan doa bersama keluarga.</p>
+                </div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-camera-retro text-2xl"></i></div>
+                    <p class="font-bold text-gold mb-1">10.00 WIB</p>
+                    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">Foto Keluarga</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">Sesi dokumentasi bersama keluarga dan kerabat dekat.</p>
+                </div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-champagne-glasses text-2xl"></i></div>
+                    <p class="font-bold text-gold mb-1">11.00 WIB</p>
+                    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">Resepsi</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">Penerimaan tamu, ramah tamah, dan makan siang.</p>
+                </div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid fa-heart text-2xl"></i></div>
+                    <p class="font-bold text-gold mb-1">14.00 WIB</p>
+                    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">Penutup</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">Ucapan terima kasih dari keluarga dan mempelai.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5D. INFO TAMU -->
+    <section id="info-tamu" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-start">
+            <div class="glass-panel p-8 rounded-[2rem]" data-aos="fade-right">
+                <span class="section-badge">Informasi</span>
+                <h2 class="font-serif text-5xl text-gray-800 font-bold mt-4 mb-6">Catatan Tamu</h2>
+                <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+                    <p><i class="fa-solid fa-qrcode text-gold mr-2"></i> Tunjukkan QR Code RSVP kepada penerima tamu.</p>
+                    <p><i class="fa-solid fa-clock text-gold mr-2"></i> Datang sesuai waktu acara agar prosesi berjalan tertib.</p>
+                    <p><i class="fa-solid fa-car text-gold mr-2"></i> Area parkir tersedia di sekitar gedung acara.</p>
+                    <p><i class="fa-solid fa-user-group text-gold mr-2"></i> Jumlah tamu mengikuti data pada link undangan.</p>
+                </div>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[2rem]" data-aos="fade-left">
+                <span class="section-badge">Hashtag</span>
+                <h2 class="font-serif text-5xl text-gray-800 font-bold mt-4 mb-6">Wedding Hashtag</h2>
+                <p class="text-sm text-gray-500 mb-6 leading-relaxed">Bagikan momen terbaik Anda dengan menggunakan hashtag berikut.</p>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-5 py-3 bg-white/70 border border-white rounded-full text-sm font-bold text-gray-700">#MutiaraDestraWedding</span>
+                    <span class="px-5 py-3 bg-white/70 border border-white rounded-full text-sm font-bold text-gray-700">#MDWedding2027</span>
+                    <span class="px-5 py-3 bg-white/70 border border-white rounded-full text-sm font-bold text-gray-700">#MenujuHalalMD</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
     <!-- ======================================================== -->
     <!-- 💎 6. RSVP FORM & 7. WISHES (UPGRADED SECTION) 💎        -->
     <!-- ======================================================== -->
+
+
+    <!-- 6B. BRIDESMAID & GROOMSMEN -->
+    <section id="sahabat" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Sahabat Terdekat</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Bridesmaid & Groomsmen</h2>
+                <p class="text-sm text-gray-500 max-w-2xl mx-auto mt-4">Terima kasih untuk sahabat yang ikut membantu dan mendampingi hari bahagia kami.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+                <div class="soft-card p-5 text-center" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=70&w=300&auto=format&fit=crop" class="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-white shadow" loading="lazy"><h4 class="font-bold text-sm text-gray-800">Alya</h4><p class="text-[10px] text-[#E5A9B4] uppercase tracking-widest">Bridesmaid</p></div>
+                <div class="soft-card p-5 text-center" data-aos="zoom-in" data-aos-delay="80"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=70&w=300&auto=format&fit=crop" class="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-white shadow" loading="lazy"><h4 class="font-bold text-sm text-gray-800">Nadia</h4><p class="text-[10px] text-[#E5A9B4] uppercase tracking-widest">Bridesmaid</p></div>
+                <div class="soft-card p-5 text-center" data-aos="zoom-in" data-aos-delay="160"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=70&w=300&auto=format&fit=crop" class="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-white shadow" loading="lazy"><h4 class="font-bold text-sm text-gray-800">Raka</h4><p class="text-[10px] text-gold uppercase tracking-widest">Groomsmen</p></div>
+                <div class="soft-card p-5 text-center" data-aos="zoom-in" data-aos-delay="240"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=70&w=300&auto=format&fit=crop" class="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-white shadow" loading="lazy"><h4 class="font-bold text-sm text-gray-800">Fahri</h4><p class="text-[10px] text-gold uppercase tracking-widest">Groomsmen</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6C. PANDUAN CHECK-IN -->
+    <section id="checkin" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Buku Tamu Digital</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Alur Check-In</h2>
+            </div>
+            <div class="grid md:grid-cols-4 gap-5">
+                <div class="soft-card p-6 text-center" data-aos="fade-up"><span class="text-4xl font-serif text-gold font-bold">01</span><h4 class="font-bold text-gray-800 mt-3 mb-2">Buka Undangan</h4><p class="text-xs text-gray-500">Gunakan link pribadi yang sudah dibagikan.</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="100"><span class="text-4xl font-serif text-[#E5A9B4] font-bold">02</span><h4 class="font-bold text-gray-800 mt-3 mb-2">Isi RSVP</h4><p class="text-xs text-gray-500">Konfirmasi hadir dan jumlah tamu.</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="200"><span class="text-4xl font-serif text-gold font-bold">03</span><h4 class="font-bold text-gray-800 mt-3 mb-2">Simpan QR</h4><p class="text-xs text-gray-500">QR muncul setelah memilih hadir.</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="300"><span class="text-4xl font-serif text-[#E5A9B4] font-bold">04</span><h4 class="font-bold text-gray-800 mt-3 mb-2">Scan di Lokasi</h4><p class="text-xs text-gray-500">Tunjukkan QR kepada penerima tamu.</p></div>
+            </div>
+        </div>
+    </section>
+
     <section id="rsvp-wishes" class="py-24 px-6 relative z-10">
         <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16">
             
@@ -526,6 +862,129 @@
         </div>
     </section>
 
+
+    <!-- 8A. QRIS DAN E-WALLET -->
+    <section id="qris" class="py-20 px-6 text-center relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <span class="section-badge" data-aos="fade-up">Alternatif Gift</span>
+            <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4 mb-6" data-aos="fade-up">QRIS & E-Wallet</h2>
+            <p class="text-sm text-gray-500 max-w-2xl mx-auto mb-10">Bagian ini opsional. Kamu bisa ganti gambar QRIS dengan QRIS asli dari rekening atau e-wallet.</p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-panel p-8 rounded-[2rem]" data-aos="zoom-in"><div class="bg-white p-4 rounded-2xl inline-block mb-4"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=QRIS-MUTIARA-DESTRA" class="w-40 h-40" loading="lazy"></div><h4 class="font-bold text-gray-800">QRIS</h4><p class="text-xs text-gray-500 mt-2">Scan untuk mengirim tanda kasih.</p></div>
+                <div class="glass-panel p-8 rounded-[2rem]" data-aos="zoom-in" data-aos-delay="100"><i class="fa-solid fa-wallet text-5xl text-gold mb-5"></i><h4 class="font-bold text-gray-800 mb-2">DANA / OVO</h4><p id="ewallet-number" class="font-mono text-2xl text-[#E5A9B4] font-bold mb-4">081234567890</p><button onclick="copyToClipboard('ewallet-number')" class="px-6 py-3 bg-gray-800 text-white rounded-full text-xs font-bold uppercase tracking-widest">Salin Nomor</button></div>
+                <div class="glass-panel p-8 rounded-[2rem]" data-aos="zoom-in" data-aos-delay="200"><i class="fa-solid fa-box-open text-5xl text-[#E5A9B4] mb-5"></i><h4 class="font-bold text-gray-800 mb-2">Kirim Hadiah</h4><p class="text-xs text-gray-500 leading-relaxed">Alamat pengiriman hadiah dapat ditambahkan di bagian ini sesuai kebutuhan.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8C. SOCIAL WALL -->
+    <section id="social" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-8 items-stretch">
+                <div class="soft-card p-8 md:p-10" data-aos="fade-right">
+                    <span class="section-badge">Wedding Hashtag</span>
+                    <h2 class="font-serif text-5xl text-gray-800 font-bold mt-4 mb-4">Bagikan Momen</h2>
+                    <p class="text-sm text-gray-500 mb-6 leading-relaxed">Gunakan hashtag resmi saat mengunggah foto atau video agar semua momen mudah dikumpulkan.</p>
+                    <p id="wedding-hashtag" class="font-serif text-4xl text-gold font-bold mb-6">#MutiaraDestraWedding</p>
+                    <button onclick="copyToClipboard('wedding-hashtag')" class="px-8 py-4 bg-gray-800 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-colors"><i class="fa-regular fa-copy mr-2"></i> Salin Hashtag</button>
+                </div>
+                <div class="soft-card p-8 md:p-10" data-aos="fade-left">
+                    <span class="section-badge">Instagram Filter</span>
+                    <h2 class="font-serif text-5xl text-gray-800 font-bold mt-4 mb-4">Wedding Filter</h2>
+                    <p class="text-sm text-gray-500 mb-6 leading-relaxed">Tambahkan link filter Instagram atau TikTok di sini agar tamu bisa memakai frame khusus acara.</p>
+                    <a href="https://instagram.com" target="_blank" class="inline-block px-8 py-4 bg-gradient-to-r from-[#E5A9B4] to-gold text-white rounded-full text-xs font-bold uppercase tracking-widest shadow-lg"><i class="fa-brands fa-instagram mr-2"></i> Buka Filter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8D. VENDOR DAN CREDIT -->
+    <section id="vendor" class="py-20 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Our Vendor</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Wedding Team</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="soft-card p-6 text-center" data-aos="fade-up"><i class="fa-solid fa-camera text-3xl text-gold mb-4"></i><h4 class="font-bold text-gray-800">Photography</h4><p class="text-xs text-gray-500 mt-1">Nama Vendor</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="100"><i class="fa-solid fa-video text-3xl text-[#E5A9B4] mb-4"></i><h4 class="font-bold text-gray-800">Videography</h4><p class="text-xs text-gray-500 mt-1">Nama Vendor</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="200"><i class="fa-solid fa-palette text-3xl text-gold mb-4"></i><h4 class="font-bold text-gray-800">Decoration</h4><p class="text-xs text-gray-500 mt-1">Nama Vendor</p></div>
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="300"><i class="fa-solid fa-utensils text-3xl text-[#E5A9B4] mb-4"></i><h4 class="font-bold text-gray-800">Catering</h4><p class="text-xs text-gray-500 mt-1">Nama Vendor</p></div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 8B. FAQ TAMU -->
+    <section id="faq" class="py-20 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="section-badge" data-aos="fade-up">Pertanyaan Umum</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">FAQ Tamu</h2>
+            </div>
+
+            <div class="space-y-4">
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah tamu boleh membawa pasangan?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Silakan menyesuaikan dengan jumlah tamu yang tertera pada link undangan atau RSVP.</p>
+                </details>
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah wajib menunjukkan QR Code?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Ya. QR Code membantu penerima tamu melakukan pendataan lebih cepat dan rapi.</p>
+                </details>
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah tersedia live streaming?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Tersedia. Tautan live streaming dapat dibuka pada bagian Wedding Event.</p>
+                </details>
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Jam berapa sebaiknya tamu hadir?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Tamu resepsi dapat hadir mulai pukul 11.00 WIB. Untuk keluarga inti, silakan hadir lebih awal.</p>
+                </details>
+
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah tersedia area parkir?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Tersedia area parkir di sekitar lokasi. Ikuti arahan petugas agar proses masuk lebih tertib.</p>
+                </details>
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah ada dress code khusus?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Dress code yang disarankan adalah pastel, soft pink, gold, dan earth tone. Tamu tetap boleh menyesuaikan pakaian dengan kenyamanan masing-masing.</p>
+                </details>
+
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">
+                        Apakah boleh mengirim hadiah secara digital?
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">Boleh. Informasi rekening, QRIS, dan e-wallet tersedia pada bagian Wedding Gift.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+
     <!-- FOOTER -->
     <footer class="bg-[#1A1215] text-white text-center py-24 px-6 relative z-10 overflow-hidden pb-32">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#3B1E28]/60 to-[#1A1215]"></div>
@@ -541,6 +1000,22 @@
                 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
             </p>
             
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl mb-12">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <i class="fa-solid fa-heart text-gold mb-3"></i>
+                    <p class="text-xs text-[#FADADD]/70 leading-relaxed">Terima kasih atas doa dan restu yang diberikan.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <i class="fa-solid fa-camera text-gold mb-3"></i>
+                    <p class="text-xs text-[#FADADD]/70 leading-relaxed">Jangan lupa abadikan momen dan gunakan hashtag resmi.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <i class="fa-solid fa-location-dot text-gold mb-3"></i>
+                    <p class="text-xs text-[#FADADD]/70 leading-relaxed">Kami menantikan kehadiran Anda di hari bahagia ini.</p>
+                </div>
+            </div>
+
             <button onclick="shareWhatsApp()" class="group relative px-12 py-5 bg-gradient-to-r from-[#128C7E] to-[#25D366] text-white rounded-full font-bold transition-all duration-500 shadow-[0_10px_40px_rgba(37,211,102,0.4)] hover:shadow-[0_15px_50px_rgba(37,211,102,0.6)] hover:-translate-y-2 overflow-hidden border border-white/30">
                 <div class="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out"></div>
                 <span class="relative z-10 flex items-center tracking-widest text-xs uppercase">
@@ -569,7 +1044,7 @@
     <!-- Scripts Base -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1200, once: true, offset: 50, easing: 'ease-out-cubic' });
+        AOS.init({ duration: 800, once: true, offset: 40, easing: 'ease-out-cubic', disable: function(){ return window.innerWidth < 360; } });
 
         document.getElementById('guest-name').innerText = "Memuat Nama...";
 
@@ -670,14 +1145,14 @@
         (function() {
             const canvas = document.createElement('canvas');
             canvas.id = 'sakura-particle-system';
-            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease; opacity: 0.8;';
+            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease; opacity: 0.65;';
             document.body.appendChild(canvas);
             
             const ctx = canvas.getContext('2d');
             let width, height;
             let particles = [];
             const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 25 : 60; 
+            const particleCount = isMobile ? 16 : 35; 
 
             function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
             window.addEventListener('resize', resizeCanvas); resizeCanvas();
