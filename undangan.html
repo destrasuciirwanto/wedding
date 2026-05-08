@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +58,15 @@
 
         /* Progress Bar */
         .progress-container { position: fixed; top: 0; z-index: 1000; width: 100%; height: 3px; background: transparent; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #F8C8DC, #D4AF37); width: 0%; transition: width 0.1s; }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #F8C8DC, #D4AF37);
+            width: 100%;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: none;
+            will-change: transform;
+        }
 
         /* Glassmorphism Panel Premium */
         .glass-panel {
@@ -181,6 +189,74 @@
                 gap: .75rem;
                 padding-left: 1rem;
                 padding-right: 1rem;
+            }
+        }
+
+        /* Smooth Auto Scroll Performance Fix */
+        html {
+            scroll-behavior: auto !important;
+        }
+
+        section,
+        footer {
+            content-visibility: auto;
+            contain-intrinsic-size: 800px;
+        }
+
+        #cover-screen,
+        #hero,
+        #floating-nav,
+        #music-toggle,
+        #lightbox,
+        .progress-container {
+            content-visibility: visible;
+        }
+
+        .glass-panel,
+        .soft-card,
+        .img-zoom-container,
+        .btn-premium {
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        body.is-auto-scrolling .glass-panel,
+        body.is-auto-scrolling .soft-card,
+        body.is-auto-scrolling .img-zoom-container img {
+            transition: none !important;
+        }
+
+        body.is-auto-scrolling #sakura-particle-system {
+            opacity: 0.25 !important;
+        }
+
+        @media (max-width: 768px) {
+            section,
+            footer {
+                content-visibility: auto;
+                contain-intrinsic-size: 700px;
+            }
+
+            .glass-panel {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                box-shadow: 0 6px 20px rgba(229,169,180,.10);
+            }
+
+            .soft-card {
+                box-shadow: 0 6px 16px rgba(229,169,180,.08);
+            }
+
+            .img-zoom-container img {
+                transition: none;
+            }
+
+            .gallery-overlay {
+                display: none;
+            }
+
+            #sakura-particle-system {
+                opacity: 0.35 !important;
             }
         }
 
@@ -1014,7 +1090,17 @@
     <!-- Scripts Base -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 800, once: true, offset: 40, easing: 'ease-out-cubic', disable: function(){ return window.innerWidth < 360; } });
+        AOS.init({
+            duration: window.innerWidth < 768 ? 500 : 700,
+            once: true,
+            offset: 30,
+            easing: 'ease-out-cubic',
+            throttleDelay: 120,
+            debounceDelay: 80,
+            disable: function () {
+                return window.innerWidth < 340;
+            }
+        });
 
         document.getElementById('guest-name').innerText = "Memuat Nama...";
 
@@ -1022,50 +1108,77 @@
         let autoScrollStarted = false;
         let autoScrollPaused = false;
         let autoScrollResumeTimer = null;
-        const AUTO_SCROLL_SPEED = 0.75;
-        const AUTO_SCROLL_RESUME_DELAY = 1800;
+
+        // Ubah angka ini kalau ingin auto-scroll lebih cepat/lambat:
+        // Mobile enak di 38-48, desktop enak di 50-68.
+        const AUTO_SCROLL_SPEED = window.innerWidth < 768 ? 42 : 56;
+        const AUTO_SCROLL_RESUME_DELAY = 2200;
 
         function isAtPageBottom() {
-            return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+            return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 3;
+        }
+
+        function stopAutoScrollFrame() {
+            if (autoScrollFrame) cancelAnimationFrame(autoScrollFrame);
+            autoScrollFrame = null;
         }
 
         function pauseAutoScrollTemporarily() {
             if (!autoScrollStarted) return;
 
             autoScrollPaused = true;
-            if (autoScrollFrame) cancelAnimationFrame(autoScrollFrame);
-            autoScrollFrame = null;
+            document.body.classList.remove('is-auto-scrolling');
+            stopAutoScrollFrame();
 
             clearTimeout(autoScrollResumeTimer);
             autoScrollResumeTimer = setTimeout(() => {
-                if (autoScrollStarted && !isAtPageBottom()) startAutoScroll();
+                if (autoScrollStarted && !isAtPageBottom()) {
+                    startAutoScroll();
+                }
             }, AUTO_SCROLL_RESUME_DELAY);
         }
 
         function startAutoScroll() {
             autoScrollStarted = true;
             autoScrollPaused = false;
-            clearTimeout(autoScrollResumeTimer);
+            document.body.classList.add('is-auto-scrolling');
 
-            if (autoScrollFrame || isAtPageBottom()) return;
+            clearTimeout(autoScrollResumeTimer);
+            stopAutoScrollFrame();
+
+            if (isAtPageBottom()) {
+                document.body.classList.remove('is-auto-scrolling');
+                return;
+            }
 
             let lastTime = performance.now();
+            let currentY = window.scrollY;
+
             function autoScrollStep(now) {
                 if (autoScrollPaused || !autoScrollStarted || isAtPageBottom()) {
                     autoScrollFrame = null;
+                    document.body.classList.remove('is-auto-scrolling');
                     return;
                 }
 
-                const delta = Math.min(now - lastTime, 32);
+                const deltaTime = Math.min(now - lastTime, 40);
                 lastTime = now;
-                window.scrollBy(0, AUTO_SCROLL_SPEED * (delta / 16.67));
+
+                currentY += (AUTO_SCROLL_SPEED * deltaTime) / 1000;
+
+                window.scrollTo({
+                    top: currentY,
+                    left: 0,
+                    behavior: 'auto'
+                });
+
                 autoScrollFrame = requestAnimationFrame(autoScrollStep);
             }
 
             autoScrollFrame = requestAnimationFrame(autoScrollStep);
         }
 
-        ['wheel', 'touchstart', 'touchmove', 'touchend', 'keydown', 'mousedown'].forEach((eventName) => {
+        ['wheel', 'touchstart', 'touchmove', 'keydown', 'mousedown'].forEach((eventName) => {
             window.addEventListener(eventName, pauseAutoScrollTemporarily, { passive: true });
         });
 
@@ -1076,18 +1189,33 @@
             
             setTimeout(() => { AOS.refresh(); }, 800);
             setTimeout(() => { document.getElementById('floating-nav').classList.add('show'); }, 1200);
-            setTimeout(() => { startAutoScroll(); }, 2600);
+            setTimeout(() => {
+                window.scrollTo({ top: window.scrollY + 1, behavior: 'auto' });
+                startAutoScroll();
+            }, 2600);
             setTimeout(() => { cover.style.display = 'none'; }, 3000);
 
             toggleMusic(true);
         }
 
-        window.onscroll = function() {
-            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            let scrolled = (winScroll / height) * 100;
-            document.getElementById("myBar").style.width = scrolled + "%";
-        };
+        const progressBar = document.getElementById("myBar");
+        let progressTicking = false;
+
+        function updateProgressBar() {
+            const winScroll = window.scrollY || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = height > 0 ? winScroll / height : 0;
+
+            progressBar.style.transform = `scaleX(${progress})`;
+            progressTicking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!progressTicking) {
+                requestAnimationFrame(updateProgressBar);
+                progressTicking = true;
+            }
+        }, { passive: true });
 
         const countDownDate = new Date("Apr 04, 2027 08:00:00").getTime();
         const x = setInterval(function() {
@@ -1168,14 +1296,14 @@
         (function() {
             const canvas = document.createElement('canvas');
             canvas.id = 'sakura-particle-system';
-            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease; opacity: 0.65;';
+            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease; opacity: 0.45; will-change: transform;';
             document.body.appendChild(canvas);
             
             const ctx = canvas.getContext('2d');
             let width, height;
             let particles = [];
             const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 16 : 35; 
+            const particleCount = isMobile ? 8 : 24; 
 
             function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
             window.addEventListener('resize', resizeCanvas); resizeCanvas();
