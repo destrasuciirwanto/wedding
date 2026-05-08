@@ -1365,6 +1365,123 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const guestId = urlParams.get('id');
+        const isCheckInMode = urlParams.get('checkin') === '1';
+
+        function getBaseInvitationUrl() {
+            return window.location.href.split('?')[0].split('#')[0];
+        }
+
+        function getGuestCheckInUrl(id) {
+            return `${getBaseInvitationUrl()}?id=${encodeURIComponent(id)}&checkin=1`;
+        }
+
+        function safeText(value, fallback = '-') {
+            const text = value === undefined || value === null || value === '' ? fallback : String(value);
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderCheckInPage(data, id) {
+            const nama = safeText(data.nama, 'Tamu Undangan');
+            const kategori = safeText(data.kategori, 'Tamu Undangan');
+            const jumlahOrang = safeText(data.jumlahOrang || 1, '1');
+            const status = String(data.status || 'belum konfirmasi').toLowerCase();
+            const isHadir = status === 'hadir';
+            const statusText = isHadir ? 'Hadir' : (status === 'tidak hadir' ? 'Tidak Hadir' : 'Belum Konfirmasi');
+            const statusClass = isHadir ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200';
+            const statusIcon = isHadir ? 'fa-circle-check' : 'fa-circle-info';
+            const backUrl = `${getBaseInvitationUrl()}?id=${encodeURIComponent(id)}`;
+
+            document.title = `Check-In - ${data.nama || 'Tamu Undangan'}`;
+            document.documentElement.classList.remove('scroll-smooth');
+            document.body.className = 'font-sans antialiased text-dark bg-[#FFF5F7] overflow-x-hidden cover-opened';
+            document.body.innerHTML = `
+                <main class="min-h-screen flex items-center justify-center px-6 py-10 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#FFF5F7] via-white to-[#FADADD]/70"></div>
+                    <div class="absolute -top-32 -right-32 w-96 h-96 bg-[#E5A9B4]/30 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-[#D4AF37]/20 rounded-full blur-3xl"></div>
+
+                    <section class="relative z-10 w-full max-w-xl text-center glass-panel rounded-[2rem] p-8 md:p-10 shadow-2xl">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#E5A9B4] to-[#D4AF37] p-[3px] mb-6 shadow-xl">
+                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <i class="fa-solid ${statusIcon} text-4xl ${isHadir ? 'text-emerald-500' : 'text-amber-500'}"></i>
+                            </div>
+                        </div>
+
+                        <p class="text-xs uppercase tracking-[0.35em] font-bold text-[#E5A9B4] mb-3">Check-In Tamu</p>
+                        <h1 class="font-serif text-5xl md:text-6xl font-bold text-gray-800 leading-tight mb-4">${nama}</h1>
+
+                        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full border text-sm font-bold ${statusClass} mb-8">
+                            <i class="fa-solid ${statusIcon}"></i> ${statusText}
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left mb-8">
+                            <div class="bg-white/70 border border-white rounded-2xl p-5">
+                                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Kategori</p>
+                                <p class="font-bold text-gray-800">${kategori}</p>
+                            </div>
+                            <div class="bg-white/70 border border-white rounded-2xl p-5">
+                                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Jumlah Tamu</p>
+                                <p class="font-bold text-gray-800">${jumlahOrang} Orang</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/70 border border-white rounded-2xl p-5 mb-8 text-left">
+                            <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">ID Tamu</p>
+                            <p class="font-mono text-sm text-gray-700 break-all">${safeText(id)}</p>
+                        </div>
+
+                        <p class="text-sm text-gray-500 leading-relaxed mb-8">
+                            Data tamu berhasil ditemukan. Halaman ini dapat ditunjukkan kepada penerima tamu untuk proses check-in.
+                        </p>
+
+                        <a href="${backUrl}" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-colors shadow-xl">
+                            <i class="fa-solid fa-arrow-left"></i> Kembali ke Undangan
+                        </a>
+                    </section>
+                </main>
+            `;
+        }
+
+        function renderCheckInError(message) {
+            document.title = 'Check-In Tidak Valid';
+            document.documentElement.classList.remove('scroll-smooth');
+            document.body.className = 'font-sans antialiased text-dark bg-[#FFF5F7] overflow-x-hidden cover-opened';
+            document.body.innerHTML = `
+                <main class="min-h-screen flex items-center justify-center px-6 py-10 bg-gradient-to-br from-[#FFF5F7] via-white to-[#FADADD]">
+                    <section class="w-full max-w-lg text-center glass-panel rounded-[2rem] p-8 md:p-10 shadow-2xl">
+                        <i class="fa-solid fa-triangle-exclamation text-5xl text-amber-500 mb-6"></i>
+                        <p class="text-xs uppercase tracking-[0.35em] font-bold text-[#E5A9B4] mb-3">Check-In Tamu</p>
+                        <h1 class="font-serif text-4xl md:text-5xl font-bold text-gray-800 mb-4">QR Tidak Valid</h1>
+                        <p class="text-sm text-gray-500 leading-relaxed mb-8">${safeText(message)}</p>
+                        <a href="${getBaseInvitationUrl()}" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-800 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold transition-colors shadow-xl">
+                            <i class="fa-solid fa-house"></i> Buka Undangan
+                        </a>
+                    </section>
+                </main>
+            `;
+        }
+
+        if (isCheckInMode) {
+            if (!guestId) {
+                renderCheckInError('Link QR tidak memiliki ID tamu. Pastikan QR Code berasal dari undangan resmi.');
+            } else {
+                getDoc(doc(db, "wedding_list", guestId)).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        renderCheckInPage(docSnap.data(), guestId);
+                    } else {
+                        renderCheckInError('Data tamu tidak ditemukan di database. Periksa kembali QR Code atau ID tamu.');
+                    }
+                }).catch((error) => {
+                    console.error('Gagal mengambil data check-in:', error);
+                    renderCheckInError('Terjadi kesalahan saat mengambil data tamu. Silakan coba lagi.');
+                });
+            }
+        } else {
 
         // 1. Ambil Data Tamu untuk RSVP
         if (guestId) {
@@ -1377,7 +1494,8 @@
                     document.getElementById('form-name').value = data.nama;
                     
                     const qrImg = document.getElementById('qr-code-img');
-                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${guestId}&color=2C3E50&bgcolor=FFFFFF`;
+                    const qrCheckInUrl = getGuestCheckInUrl(guestId);
+                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrCheckInUrl)}&color=2C3E50&bgcolor=FFFFFF`;
                     
                     if(data.status === 'hadir' || data.status === 'tidak hadir') {
                         document.getElementById('form-status').value = data.status === 'hadir' ? 'Hadir' : 'Tidak Hadir';
@@ -1525,6 +1643,7 @@
                 btnSubmit.innerHTML = originalText;
             }
         });
+        }
     </script>
 </body>
 </html>
