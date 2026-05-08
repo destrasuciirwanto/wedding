@@ -4031,23 +4031,24 @@
             container.innerHTML = getModuleStatsHTML(categoryId, data) + htmlOut;
         }
 
-        window.deleteItem = async function(id, categoryId) {
-            if(confirm('Apakah kamu yakin ingin menghapus data ini?')) {
-                try {
-                    await deleteDoc(doc(db, categoryId, id));
-                    await loadData(categoryId); 
-                    showToast('Data dihapus!', 'success');
-                } catch (error) { showToast('Gagal menghapus!', 'error'); }
-            }
-        }
-
         window.editItem = function(id, categoryId) {
             const item = appData.items[categoryId].find(i => i.id === id);
             if(!item) return;
 
             editId = id;
-            document.getElementById('form-title').innerText = 'Edit Data';
-            document.getElementById('btnSubmit').innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Data';
+            
+            // [PERBAIKAN] Cek apakah elemen dengan id 'form-title' ada di HTML
+            // Jika tidak ada, kode tidak akan error dan akan lanjut mengeksekusi baris berikutnya
+            const formTitle = document.getElementById('form-title');
+            if (formTitle) {
+                formTitle.innerText = 'Edit Data';
+            }
+
+            // Memastikan tombol submit ada sebelum mengubah teksnya
+            const btnSubmit = document.getElementById('btnSubmit');
+            if (btnSubmit) {
+                btnSubmit.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Data';
+            }
             
             if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; 
@@ -4133,14 +4134,31 @@
                 document.getElementById('inputUrlFile').value = item.url || '';
                 document.getElementById('inputCatatan').value = item.catatan || '';
             }
+            
+            // Menggulir layar ke atas secara halus agar form terlihat
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         window.resetForm = function() {
             editId = null;
-            document.getElementById('itemForm').reset();
-            document.getElementById('form-title').innerText = getFormTitle(activeMenu);
-            document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+            
+            // Cek elemen form sebelum di-reset
+            const itemForm = document.getElementById('itemForm');
+            if (itemForm) {
+                itemForm.reset();
+            }
+            
+            // [PERBAIKAN] Cek elemen form-title sebelum mengubah teksnya
+            const formTitle = document.getElementById('form-title');
+            if (formTitle) {
+                formTitle.innerText = getFormTitle(activeMenu);
+            }
+
+            // Cek elemen tombol submit sebelum mengubah teksnya
+            const btnSubmit = document.getElementById('btnSubmit');
+            if (btnSubmit) {
+                btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+            }
             
             if (activeMenu === 'wedding_list') {
                 handleUndanganType('fisik');
@@ -4159,7 +4177,8 @@
                     inputButuhBiaya.value = 'tidak';
                     toggleChecklistBiaya();
                 }
-                document.getElementById('totalPreview').innerText = 'Rp 0';
+                const totalPreview = document.getElementById('totalPreview');
+                if (totalPreview) totalPreview.innerText = 'Rp 0';
             }
             if (activeMenu === 'seserahan') {
                 setTimeout(window.toggleSiapDibeliLogic, 100);
@@ -4173,6 +4192,7 @@
                 }
             }
         }
+        
     </script>
 </body>
 </html>
