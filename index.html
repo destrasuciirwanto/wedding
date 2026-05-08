@@ -2411,16 +2411,7 @@
                     ${getCategoryHeroHTML(categoryId)}
                     ${folderFormHtml}
                     <div class="premium-form-card">
-                        <div class="relative z-10 p-6 md:p-7 border-b border-gray-100 bg-gradient-to-r from-white via-white to-lavender-light/20">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div>
-                                    <p class="text-[10px] font-black uppercase tracking-[0.24em] text-lavender-dark mb-1">Form Pengisian</p>
-                                    <h3 class="text-xl font-black text-gray-800" id="form-title">${getFormTitle(categoryId)}</h3>
-                                    <p class="text-xs text-gray-400 mt-1">Lengkapi data sesuai kebutuhan acara agar mudah dicek kembali.</p>
-                                </div>
-                                <span class="premium-chip text-lavender-dark"><i class="fa-solid fa-wand-magic-sparkles"></i> Tampilan Rapi</span>
-                            </div>
-                        </div>
+                        
                         <div class="relative z-10 p-6 md:p-7">
                             <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${formInner}
