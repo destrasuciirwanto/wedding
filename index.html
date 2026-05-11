@@ -539,6 +539,58 @@
         }
 
 
+        /* =====================================================
+           MOBILE / TABLET SCROLL FIX
+           Menjaga layout tetap full screen, tapi area isi tetap bisa discroll
+           sampai bagian paling bawah di HP/tablet dan aman dari browser bar.
+        ===================================================== */
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100dvh;
+            min-height: 100dvh;
+            overflow: hidden;
+        }
+        #dashboard-ui {
+            height: 100dvh !important;
+            min-height: 100dvh;
+            overflow: hidden;
+        }
+        #dashboard-ui > .flex-1 {
+            height: 100dvh !important;
+            min-height: 0;
+            overflow: hidden;
+        }
+        header {
+            flex-shrink: 0;
+        }
+        #main-content {
+            min-height: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            padding-bottom: max(7rem, calc(7rem + env(safe-area-inset-bottom))) !important;
+            scroll-padding-bottom: max(7rem, calc(7rem + env(safe-area-inset-bottom))) !important;
+        }
+        @supports not (height: 100dvh) {
+            body,
+            #dashboard-ui {
+                height: -webkit-fill-available !important;
+                min-height: -webkit-fill-available;
+            }
+            #dashboard-ui > .flex-1 {
+                height: -webkit-fill-available !important;
+            }
+        }
+        @media (max-width: 1023px) {
+            #main-content {
+                padding-bottom: max(9rem, calc(9rem + env(safe-area-inset-bottom))) !important;
+                scroll-padding-bottom: max(9rem, calc(9rem + env(safe-area-inset-bottom))) !important;
+            }
+        }
+
+
     </style>
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
@@ -1323,6 +1375,7 @@
         window.R2_UPLOAD_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/upload';
         window.R2_DELETE_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/delete';
         window.R2_FOLDER_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/folder';
+        window.R2_DELETE_FOLDER_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/delete-folder';
         window.r2Uploading = false;
         window.pendingR2Files = window.pendingR2Files || {};
 
@@ -1578,6 +1631,47 @@
                 return false;
             }
         }
+
+        window.deleteR2FolderPrefix = async function(folderId, options = {}) {
+            if (!folderId || !window.R2_DELETE_FOLDER_ENDPOINT) return true;
+
+            const folderPath = getR2FolderPathByFolderId(folderId);
+            if (!folderPath || folderPath === 'dokumen' || folderPath === 'dokumen/ruang-utama') {
+                if (!options.silent) showToast('Path folder tidak valid untuk dihapus.', 'error');
+                return false;
+            }
+
+            try {
+                const response = await fetch(window.R2_DELETE_FOLDER_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: 'dokumen',
+                        folderId,
+                        folderPath,
+                        folderKey: folderPath,
+                        prefix: folderPath
+                    })
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success === false) {
+                    if (!options.silent) {
+                        showToast(data.error || 'Gagal menghapus folder utama.', 'error');
+                    }
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Delete folder storage error:', error);
+                if (!options.silent) {
+                    showToast('Gagal menghapus folder utama. Data web tidak dihapus agar tidak tertinggal.', 'error');
+                }
+                return false;
+            }
+        }
+
 
         window.applyR2UploadedFileToForm = function(zoneKey, file, data) {
             if (!data || !data.fileUrl) return;
@@ -1974,6 +2068,15 @@
                     let filesToDelete = appData.items['dokumen']
                         .filter(file => foldersToDelete.includes(file.folderId));
 
+                    // Hapus prefix folder utama di penyimpanan terlebih dulu.
+                    // Ini menghapus marker .keep, file di dalam folder, sub-folder, dan file yatim yang mungkin tidak lagi tercatat di database.
+                    const rootFolderStorageDeleted = await window.deleteR2FolderPrefix(id, { silent: true });
+                    if (!rootFolderStorageDeleted) {
+                        showToast('Folder utama gagal dihapus. Data web tidak dihapus agar tidak tertinggal.', 'error');
+                        return;
+                    }
+
+                    // Fallback ringan untuk data lama yang tersimpan di path lama atau di luar prefix folder.
                     const r2DeleteResults = await Promise.all(filesToDelete.map(file => window.deleteR2Object(file, { silent: true })));
                     if (r2DeleteResults.some(result => result === false)) {
                         showToast('Ada file utama yang gagal dihapus. Folder web tidak dihapus agar data tetap aman.', 'error');
