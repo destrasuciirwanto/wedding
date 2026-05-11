@@ -872,6 +872,7 @@
 
         const menus = [
             { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
+            { id: 'wedding_profile', icon: 'fa-heart', label: 'Wedding Profile' },
             { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
             { id: 'seserahan', icon: 'fa-gift', label: 'Seserahan' },
             { id: 'doorprize', icon: 'fa-gift', label: 'Doorprize' },
@@ -1088,6 +1089,7 @@
         window.weddingPihakFilter = 'all'; window.setWeddingPihakFilter = function(f) { window.weddingPihakFilter = f; renderTable('wedding_list'); }
         window.weddingTipeFilter = 'all'; window.setWeddingTipeFilter = function(filter) { window.weddingTipeFilter = filter; renderTable('wedding_list'); }
         window.weddingAkadFilter = 'all'; window.setWeddingAkadFilter = function(filter) { window.weddingAkadFilter = filter; renderTable('wedding_list'); }
+        window.weddingInvitationFilter = 'all'; window.setWeddingInvitationFilter = function(filter) { window.weddingInvitationFilter = filter; renderTable('wedding_list'); }
         window.weddingSearch = ''; window.setWeddingSearch = function(value) { window.weddingSearch = (value || '').toLowerCase(); debounceRenderTable('wedding_list'); }
         
         window.weddingSort = { field: null, direction: 'asc' };
@@ -1312,6 +1314,354 @@
             }, delay);
         }
 
+        // =====================================================
+        // R2 DRAG & DROP UPLOAD
+        // Upload file ke Cloudflare R2 bucket wedding lewat Worker.
+        // Endpoint Worker: floral-king-5d3adestara-upload.destra751.workers.dev/upload
+        // Tidak menyimpan token Cloudflare di HTML.
+        // =====================================================
+        window.R2_UPLOAD_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/upload';
+        window.R2_DELETE_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/delete';
+        window.R2_FOLDER_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/folder';
+        window.r2Uploading = false;
+        window.pendingR2Files = window.pendingR2Files || {};
+
+        function formatFileSize(bytes) {
+            const size = Number(bytes || 0);
+            if (size < 1024) return size + ' B';
+            if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+            if (size < 1024 * 1024 * 1024) return (size / (1024 * 1024)).toFixed(1) + ' MB';
+            return (size / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+        }
+
+        function inferJenisFileFromUpload(file) {
+            const type = String(file?.type || '').toLowerCase();
+            const name = String(file?.name || '').toLowerCase();
+            if (type.startsWith('image/')) return 'foto';
+            if (type.startsWith('video/')) return 'video';
+            if (type.startsWith('audio/')) return 'audio';
+            if (name.endsWith('.mp3') || name.endsWith('.wav') || name.endsWith('.m4a') || name.endsWith('.ogg')) return 'audio';
+            if (name.endsWith('.mp4') || name.endsWith('.mov') || name.endsWith('.avi') || name.endsWith('.mkv')) return 'video';
+            return 'dokumen';
+        }
+
+        function setR2UploadStatus(zoneKey, message, type = 'info') {
+            const statusEl = document.getElementById(`r2-upload-status-${zoneKey}`);
+            if (!statusEl) return;
+            const colorClass = type === 'error' ? 'text-red-600' : (type === 'success' ? 'text-emerald-600' : 'text-slate-500');
+            statusEl.className = `mt-3 text-xs font-bold ${colorClass}`;
+            statusEl.textContent = message;
+        }
+
+        function setR2CancelButton(zoneKey, show) {
+            const btn = document.getElementById(`r2-cancel-${zoneKey}`);
+            if (!btn) return;
+            btn.classList.toggle('hidden', !show);
+        }
+
+        function slugR2Segment(value, fallback = 'tanpa-nama') {
+            const normalized = String(value || fallback)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^[-_.]+|[-_.]+$/g, '');
+            return normalized || fallback;
+        }
+
+        function getR2FolderPathByFolderId(folderId) {
+            if (!folderId) return 'dokumen/ruang-utama';
+
+            const folders = appData.items['dokumen_folder'] || [];
+            const folderMap = new Map(folders.map(folder => [folder.id, folder]));
+            const parts = [];
+            let currentId = folderId;
+            let guard = 0;
+
+            while (currentId && guard < 30) {
+                const folder = folderMap.get(currentId);
+                if (!folder) break;
+                parts.unshift(slugR2Segment(folder.namaFolder || folder.nama || 'folder'));
+                currentId = folder.parentId || '';
+                guard++;
+            }
+
+            return ['dokumen', ...(parts.length ? parts : ['ruang-utama'])].join('/');
+        }
+
+        function getR2FolderPath(zoneKey, folderId) {
+            if (zoneKey === 'izin') return 'izin_nikah';
+            return getR2FolderPathByFolderId(folderId || '');
+        }
+
+        function getSafeR2FileName(file, displayName = '') {
+            const originalName = String(file?.name || 'file');
+            const dotIndex = originalName.lastIndexOf('.');
+            const ext = dotIndex > -1 ? originalName.slice(dotIndex).toLowerCase().replace(/[^a-z0-9.]/g, '') : '';
+            const baseFromDisplay = String(displayName || '').trim();
+            const baseFromFile = dotIndex > -1 ? originalName.slice(0, dotIndex) : originalName;
+            const safeBase = slugR2Segment(baseFromDisplay || baseFromFile || 'file');
+            return `${safeBase}${ext}`;
+        }
+
+        function buildR2ObjectKey(zoneKey, file, options = {}) {
+            const folderPath = getR2FolderPath(zoneKey, options.folderId || '');
+            const safeFileName = getSafeR2FileName(file, options.displayName || '');
+            const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+            return `${folderPath}/${stamp}-${safeFileName}`;
+        }
+
+        function extractR2KeyFromUrl(url) {
+            if (!url) return '';
+            try {
+                const parsed = new URL(url);
+                const keyParam = parsed.searchParams.get('key');
+                if (keyParam) return decodeURIComponent(keyParam).replace(/^\/+/, '');
+
+                const fileMatch = parsed.pathname.match(/\/file\/(.+)$/);
+                if (fileMatch && fileMatch[1]) {
+                    return decodeURIComponent(fileMatch[1]).replace(/^\/+/, '');
+                }
+
+                // Untuk public R2 URL seperti:
+                // https://...r2.dev/destara/dokumen/2026/05-11/nama-file.png
+                // path URL adalah object key yang harus dikirim ke Worker delete.
+                return decodeURIComponent(parsed.pathname || '')
+                    .replace(/^\/+/, '')
+                    .replace(/^wedding\//, '');
+            } catch (error) {
+                return '';
+            }
+        }
+
+        async function ensureR2FolderMarker(folderId, folderName, parentId = '') {
+            if (!folderId || !window.R2_FOLDER_ENDPOINT) return true;
+
+            const folderPath = getR2FolderPathByFolderId(folderId);
+            try {
+                const response = await fetch(window.R2_FOLDER_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: 'dokumen',
+                        folderId,
+                        parentId: parentId || '',
+                        folderName: folderName || '',
+                        folderPath
+                    })
+                });
+                const data = await response.json().catch(() => ({}));
+                return response.ok && data.success !== false;
+            } catch (error) {
+                console.warn('Marker folder R2 belum tersedia atau gagal dibuat:', error);
+                return false;
+            }
+        }
+
+        window.uploadFileToR2 = async function(file, zoneKey, options = {}) {
+            if (!file) return null;
+
+            const maxSizeMB = 100;
+            if (file.size > maxSizeMB * 1024 * 1024) {
+                showToast(`Ukuran file maksimal ${maxSizeMB} MB.`, 'error');
+                setR2UploadStatus(zoneKey, `Upload gagal. File lebih dari ${maxSizeMB} MB.`, 'error');
+                return null;
+            }
+
+            const folderId = options.folderId || (window.activeDokumenFolder?.id || '');
+            const folderPath = getR2FolderPath(zoneKey, folderId);
+            const targetKey = options.targetKey || buildR2ObjectKey(zoneKey, file, {
+                folderId,
+                displayName: options.displayName || ''
+            });
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('category', zoneKey === 'izin' ? 'izin_nikah' : 'dokumen');
+            formData.append('folderId', folderId || 'root');
+            formData.append('folderPath', folderPath);
+            formData.append('targetKey', targetKey);
+            formData.append('displayName', options.displayName || file.name);
+            formData.append('originalName', file.name);
+
+            window.r2Uploading = true;
+            setR2UploadStatus(zoneKey, `Mengupload ${file.name} (${formatFileSize(file.size)}) ke Cloudflare R2...`, 'info');
+
+            try {
+                const response = await fetch(window.R2_UPLOAD_ENDPOINT, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || !data.success) {
+                    console.error('Upload R2 gagal:', data);
+                    const errMsg = data.error || 'Upload ke Cloudflare R2 gagal.';
+                    setR2UploadStatus(zoneKey, errMsg, 'error');
+                    showToast(errMsg, 'error');
+                    return null;
+                }
+
+                data.key = data.key || data.r2Key || targetKey;
+                setR2UploadStatus(zoneKey, `Upload selesai: ${data.fileName || file.name}`, 'success');
+                showToast('File berhasil diupload ke Cloudflare R2.');
+                return data;
+            } catch (error) {
+                console.error('Upload R2 error:', error);
+                setR2UploadStatus(zoneKey, 'Upload gagal. Pastikan Worker R2 sudah aktif dan CORS benar.', 'error');
+                showToast('Upload gagal. Cek koneksi atau Worker R2.', 'error');
+                return null;
+            } finally {
+                window.r2Uploading = false;
+            }
+        }
+
+        window.deleteR2Object = async function(item, options = {}) {
+            const sourceUrl = item?.url || item?.linkFile || '';
+            const keyFromUrl = extractR2KeyFromUrl(sourceUrl);
+            // Prioritaskan key dari URL karena Worker lama bisa mengabaikan targetKey
+            // dan membuat object key sendiri. Ini juga menyelamatkan data lama yang r2Key-nya salah.
+            const key = keyFromUrl || item?.r2Key || item?.key || '';
+            const endpointHost = (() => {
+                try { return new URL(window.R2_UPLOAD_ENDPOINT).hostname; } catch (error) { return ''; }
+            })();
+            const isR2File = item?.storageProvider === 'cloudflare_r2' || Boolean(item?.r2Key) || (endpointHost && String(sourceUrl).includes(endpointHost));
+
+            if (!isR2File || !key) return true;
+
+            try {
+                const response = await fetch(window.R2_DELETE_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key, category: 'dokumen' })
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success === false) {
+                    if (!options.silent) {
+                        showToast(data.error || 'Gagal menghapus file di Cloudflare R2.', 'error');
+                    }
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Delete R2 error:', error);
+                if (!options.silent) {
+                    showToast('Gagal menghapus file di Cloudflare R2. Data web tidak dihapus agar tidak yatim.', 'error');
+                }
+                return false;
+            }
+        }
+
+        window.applyR2UploadedFileToForm = function(zoneKey, file, data) {
+            if (!data || !data.fileUrl) return;
+
+            if (zoneKey === 'dokumen') {
+                const urlInput = document.getElementById('inputUrlFile');
+                const nameInput = document.getElementById('inputNamaFile');
+                const jenisInput = document.getElementById('inputJenisFile');
+                const catatanInput = document.getElementById('inputCatatan');
+
+                if (urlInput) urlInput.value = data.fileUrl;
+                if (nameInput && !nameInput.value) nameInput.value = (data.fileName || file.name || 'File').replace(/\.[^/.]+$/, '');
+                if (jenisInput) jenisInput.value = inferJenisFileFromUpload(file);
+                if (catatanInput && !catatanInput.value) catatanInput.value = `Upload R2: ${data.key || data.fileName || file.name}`;
+            }
+
+            if (zoneKey === 'izin') {
+                const urlInput = document.getElementById('inputLinkFileDoc');
+                const nameInput = document.getElementById('inputNamaDoc');
+                const statusInput = document.getElementById('inputStatusDoc');
+                const catatanInput = document.getElementById('inputCatatanDoc');
+
+                if (urlInput) urlInput.value = data.fileUrl;
+                if (nameInput && !nameInput.value) nameInput.value = (data.fileName || file.name || 'Dokumen').replace(/\.[^/.]+$/, '');
+                if (statusInput && statusInput.value === 'belum') statusInput.value = 'proses';
+                if (catatanInput && !catatanInput.value) catatanInput.value = `Scan/file tersimpan di Cloudflare R2. Key: ${data.key || '-'}`;
+            }
+        }
+
+        window.stageR2FileForDokumen = function(file) {
+            if (!file) return;
+
+            const maxSizeMB = 100;
+            if (file.size > maxSizeMB * 1024 * 1024) {
+                showToast(`Ukuran file maksimal ${maxSizeMB} MB.`, 'error');
+                setR2UploadStatus('dokumen', `File tidak dipilih. Ukuran lebih dari ${maxSizeMB} MB.`, 'error');
+                return;
+            }
+
+            window.pendingR2Files.dokumen = {
+                file,
+                folderId: window.activeDokumenFolder?.id || ''
+            };
+
+            const nameInput = document.getElementById('inputNamaFile');
+            const jenisInput = document.getElementById('inputJenisFile');
+            if (nameInput && !nameInput.value) nameInput.value = file.name.replace(/\.[^/.]+$/, '');
+            if (jenisInput) jenisInput.value = inferJenisFileFromUpload(file);
+
+            setR2UploadStatus('dokumen', `File dipilih: ${file.name} (${formatFileSize(file.size)}). Klik Simpan Data untuk upload.`, 'info');
+            setR2CancelButton('dokumen', true);
+        }
+
+        window.cancelPendingR2File = function(zoneKey) {
+            if (window.pendingR2Files && window.pendingR2Files[zoneKey]) {
+                delete window.pendingR2Files[zoneKey];
+            }
+            const input = document.getElementById(`r2-file-input-${zoneKey}`);
+            if (input) input.value = '';
+            setR2UploadStatus(zoneKey, 'Belum ada file dipilih.', 'info');
+            setR2CancelButton(zoneKey, false);
+        }
+
+        window.handleR2FileUpload = async function(file, zoneKey) {
+            if (zoneKey === 'dokumen') {
+                window.stageR2FileForDokumen(file);
+                return;
+            }
+
+            const data = await window.uploadFileToR2(file, zoneKey);
+            if (data) window.applyR2UploadedFileToForm(zoneKey, file, data);
+        }
+
+        window.initR2Dropzones = function() {
+            document.querySelectorAll('[data-r2-dropzone]').forEach((dropzone) => {
+                if (dropzone.dataset.r2Ready === 'true') return;
+                dropzone.dataset.r2Ready = 'true';
+
+                const zoneKey = dropzone.dataset.r2Dropzone;
+                const input = document.getElementById(`r2-file-input-${zoneKey}`);
+                if (!input) return;
+
+                dropzone.addEventListener('click', () => input.click());
+
+                input.addEventListener('change', async () => {
+                    const file = input.files && input.files[0];
+                    if (file) await window.handleR2FileUpload(file, zoneKey);
+                    input.value = '';
+                });
+
+                dropzone.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                    dropzone.classList.add('bg-lavender-light', 'border-lavender-dark');
+                });
+
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.classList.remove('bg-lavender-light', 'border-lavender-dark');
+                });
+
+                dropzone.addEventListener('drop', async (event) => {
+                    event.preventDefault();
+                    dropzone.classList.remove('bg-lavender-light', 'border-lavender-dark');
+                    const file = event.dataTransfer.files && event.dataTransfer.files[0];
+                    if (file) await window.handleR2FileUpload(file, zoneKey);
+                });
+            });
+        }
+
         window.copyUndangan = function(nama, id) {
             const baseUrl = "https://destara.baby/undangan.html?id=";
             const link = baseUrl + id;
@@ -1449,6 +1799,9 @@
             } else {
                 if (activeMenu === 'dokumen') await loadFolders();
                 mainContent.innerHTML = getCategoryHTML(activeMenu);
+                if (activeMenu === 'dokumen' || activeMenu === 'izin_nikah') {
+                    setTimeout(window.initR2Dropzones, 100);
+                }
                 await loadData(activeMenu); 
             }
         }
@@ -1501,11 +1854,13 @@
                 } else {
                     // Buat Folder Baru
                     const parentId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
-                    await addDoc(collection(db, 'dokumen_folder'), {
+                    const newFolderRef = await addDoc(collection(db, 'dokumen_folder'), {
                         namaFolder: nama,
                         parentId: parentId, 
                         tanggalBuat: new Date().toISOString()
                     });
+                    await loadFolders();
+                    await ensureR2FolderMarker(newFolderRef.id, nama.trim(), parentId);
                     showToast('Folder berhasil dibuat!', 'success');
                 }
                 
@@ -1569,11 +1924,16 @@
                     }
 
                     let filesToDelete = appData.items['dokumen']
-                        .filter(file => foldersToDelete.includes(file.folderId))
-                        .map(file => file.id);
+                        .filter(file => foldersToDelete.includes(file.folderId));
 
-                    const deleteFilePromises = filesToDelete.map(fileId => 
-                        deleteDoc(doc(db, 'dokumen', fileId))
+                    const r2DeleteResults = await Promise.all(filesToDelete.map(file => window.deleteR2Object(file, { silent: true })));
+                    if (r2DeleteResults.some(result => result === false)) {
+                        showToast('Ada file Cloudflare R2 yang gagal dihapus. Folder web tidak dihapus agar data tetap aman.', 'error');
+                        return;
+                    }
+
+                    const deleteFilePromises = filesToDelete.map(file => 
+                        deleteDoc(doc(db, 'dokumen', file.id))
                     );
                     
                     const deleteFolderPromises = foldersToDelete.map(folderId => 
@@ -1676,6 +2036,21 @@
             const totalDoorprize = sumCatRaw('doorprize');
             const totalSeserahanRaw = sumCatRaw('seserahan');
             const totalVendor = sumCatRaw('vendor');
+            const weddingProfiles = appData.items['wedding_profile'] || [];
+            const weddingProfile = weddingProfiles[0] || {};
+            const izinItems = appData.items['izin_nikah'] || [];
+            const izinWajib = izinItems.filter(i => i.wajib !== false);
+            const izinSelesai = izinItems.filter(i => i.status === 'sudah').length;
+            const izinWajibBelum = izinWajib.filter(i => i.status !== 'sudah').length;
+            const izinProgress = izinItems.length === 0 ? 0 : Math.round((izinSelesai / izinItems.length) * 100);
+            const todayForDash = new Date();
+            todayForDash.setHours(0,0,0,0);
+            const deadlineSoonIzin = izinItems.filter(i => {
+                if (!i.tanggal || i.status === 'sudah') return false;
+                const d = new Date(i.tanggal + 'T00:00:00');
+                const diff = Math.ceil((d - todayForDash) / 86400000);
+                return diff <= 14;
+            }).length;
 
             const categoryCards = [
                 { label: 'Attire & MUA', value: totalAttire, icon: 'fa-shirt', line: 'from-blue-500 to-indigo-500', bg: 'bg-blue-50', text: 'text-blue-700' },
@@ -1704,7 +2079,7 @@
 
             const miniCards = [
                 { label: 'Total Item', value: `${totalItems}`, icon: 'fa-layer-group', sub: `${itemsSelesai} selesai` },
-                { label: 'Mahar', value: `${totalItemMahar}`, icon: 'fa-gem', sub: `${maharProgress}% siap` },
+                { label: 'Izin Nikah', value: `${izinProgress}%`, icon: 'fa-file-contract', sub: `${izinWajibBelum} wajib belum` },
                 { label: 'Seserahan', value: `${totalItemSeserahan}`, icon: 'fa-gift', sub: `${seserahanProgress}% dibungkus` }
             ].map(card => `
                 <div class="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur-md">
@@ -1765,6 +2140,49 @@
                             </div>
                             <div class="mt-5 h-4 overflow-hidden rounded-full bg-slate-100">
                                 <div class="h-full rounded-full bg-gradient-to-r from-lavender to-lavender-dark transition-all duration-1000" style="width:${progress}%"></div>
+                            </div>
+                        </div>
+                    </section>
+
+
+
+                    <section class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                        <div class="relative overflow-hidden rounded-[30px] border border-rose-100 bg-white p-6 shadow-sm">
+                            <div class="absolute -right-14 -top-14 h-40 w-40 rounded-full bg-rose-50"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-rose-400">Wedding Profile</p>
+                                        <h3 class="mt-2 text-2xl font-black text-slate-900">${escapeHTML(weddingProfile.namaAcara || 'Data acara belum diisi')}</h3>
+                                        <p class="mt-2 text-sm font-semibold text-slate-500">${escapeHTML(weddingProfile.lokasiResepsi || weddingProfile.lokasiAkad || 'Isi menu Wedding Profile untuk pusat data acara.')}</p>
+                                    </div>
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600"><i class="fa-solid fa-heart"></i></div>
+                                </div>
+                                <div class="mt-5 grid grid-cols-2 gap-3">
+                                    <div class="rounded-2xl bg-slate-50 p-4"><p class="text-[10px] font-black uppercase text-slate-400">Tanggal Akad</p><p class="mt-1 text-sm font-black text-slate-800">${escapeHTML(weddingProfile.tanggalAkad || '-')}</p></div>
+                                    <div class="rounded-2xl bg-slate-50 p-4"><p class="text-[10px] font-black uppercase text-slate-400">Tanggal Resepsi</p><p class="mt-1 text-sm font-black text-slate-800">${escapeHTML(weddingProfile.tanggalResepsi || '-')}</p></div>
+                                    <div class="rounded-2xl bg-rose-50 p-4"><p class="text-[10px] font-black uppercase text-rose-500">Akad</p><p class="mt-1 text-sm font-black text-rose-800">${escapeHTML(weddingProfile.tempatAkad || '-')}</p></div>
+                                    <div class="rounded-2xl bg-violet-50 p-4"><p class="text-[10px] font-black uppercase text-violet-500">Target KUA</p><p class="mt-1 text-sm font-black text-violet-800">${escapeHTML(weddingProfile.targetDaftarKua || '-')}</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative overflow-hidden rounded-[30px] border border-teal-100 bg-white p-6 shadow-sm">
+                            <div class="absolute -right-14 -top-14 h-40 w-40 rounded-full bg-teal-50"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-teal-500">Administrasi Nikah</p>
+                                        <h3 class="mt-2 text-2xl font-black text-slate-900">Progress Dokumen Izin Nikah</h3>
+                                        <p class="mt-2 text-sm font-semibold text-slate-500">Pantau berkas wajib, deadline mepet, Bimwin, KUA, dan PNBP.</p>
+                                    </div>
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-teal-600"><i class="fa-solid fa-file-contract"></i></div>
+                                </div>
+                                <div class="mt-5 grid grid-cols-3 gap-3">
+                                    <div class="rounded-2xl bg-teal-50 p-4"><p class="text-[10px] font-black uppercase text-teal-500">Progress</p><p class="mt-1 text-xl font-black text-teal-800">${izinProgress}%</p></div>
+                                    <div class="rounded-2xl bg-amber-50 p-4"><p class="text-[10px] font-black uppercase text-amber-500">Wajib Belum</p><p class="mt-1 text-xl font-black text-amber-800">${izinWajibBelum}</p></div>
+                                    <div class="rounded-2xl bg-red-50 p-4"><p class="text-[10px] font-black uppercase text-red-500">Mepet</p><p class="mt-1 text-xl font-black text-red-700">${deadlineSoonIzin}</p></div>
+                                </div>
+                                <div class="mt-5 h-3 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-gradient-to-r from-teal-400 to-emerald-500" style="width:${Math.min(izinProgress, 100)}%"></div></div>
                             </div>
                         </div>
                     </section>
@@ -1907,6 +2325,7 @@
 
         function getMenuMeta(categoryId) {
             const map = {
+                wedding_profile: { eyebrow: 'Data Acara', title: 'Wedding Profile', desc: 'Pusat data utama akad, resepsi, venue, keluarga, wali, target KUA, dan link penting acara.', icon: 'fa-heart', accent: 'from-rose-500 to-pink-600' },
                 mahar: { eyebrow: 'Data Mahar', title: 'Mahar', desc: 'Catat mahar uang, emas, nominal, status kesiapan, dan keterangan penting.', icon: 'fa-gem', accent: 'from-violet-500 to-fuchsia-500' },
                 seserahan: { eyebrow: 'Data Seserahan', title: 'Seserahan', desc: 'Catat item seserahan, kategori, harga, status beli, dan proses bungkus.', icon: 'fa-gift', accent: 'from-pink-500 to-rose-400' },
                 doorprize: { eyebrow: 'Data Doorprize', title: 'Doorprize', desc: 'Catat hadiah, kategori, jumlah, estimasi harga, dan status persiapan doorprize.', icon: 'fa-gift', accent: 'from-amber-400 to-orange-500' },
@@ -1926,6 +2345,7 @@
 
         function getFormTitle(categoryId) {
             const titles = {
+                wedding_profile: 'Isi Data Utama Wedding',
                 mahar: 'Isi Detail Mahar',
                 seserahan: 'Isi Detail Seserahan',
                 doorprize: 'Isi Detail Doorprize',
@@ -1976,7 +2396,52 @@
             let formInner = '';
             let folderFormHtml = ''; 
             
-            if (categoryId === 'mahar') {
+
+            if (categoryId === 'wedding_profile') {
+                formInner = `
+                    <div class="md:col-span-2 mb-1">
+                        <div class="ultra-form-head p-5 md:p-6">
+                            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-rose-500 mb-2"><i class="fa-solid fa-heart mr-2"></i>Wedding Profile</p>
+                                    <h4 class="text-xl md:text-2xl font-black text-gray-800">Data Utama Acara</h4>
+                                    <p class="text-xs text-gray-500 mt-2 max-w-2xl">Simpan data pusat acara agar akad, resepsi, KUA, venue, keluarga, wali, dan link penting tidak tercecer.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2"><span class="ultra-pill"><i class="fa-solid fa-calendar-check text-rose-500"></i> Pusat Jadwal</span><span class="ultra-pill"><i class="fa-solid fa-location-dot text-blue-500"></i> Venue</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-6"><label class="ultra-label">Nama Acara</label><input type="text" id="inputNamaAcara" required placeholder="Contoh: Pernikahan Mutiara & Destra" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Tanggal Akad</label><input type="date" id="inputTanggalAkad" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Jam Akad</label><input type="time" id="inputJamAkad" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Tanggal Resepsi</label><input type="date" id="inputTanggalResepsi" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Jam Resepsi</label><input type="time" id="inputJamResepsi" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Target Daftar KUA</label><input type="date" id="inputTargetDaftarKua" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Tipe Akad</label><select id="inputTipeAkad" class="ultra-select"><option value="kua">Di KUA</option><option value="luar_kua">Di luar KUA</option></select></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4"><label class="ultra-label">Tempat Akad</label><input type="text" id="inputTempatAkad" placeholder="KUA / Masjid / Rumah / Venue" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Lokasi Akad</label><input type="text" id="inputLokasiAkad" placeholder="Alamat lengkap akad" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Lokasi Resepsi</label><input type="text" id="inputLokasiResepsi" placeholder="Venue dan alamat resepsi" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Mempelai Pria</label><input type="text" id="inputMempelaiPria" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Mempelai Wanita</label><input type="text" id="inputMempelaiWanita" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Wali Nikah</label><input type="text" id="inputWaliNikah" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Kontak PIC Keluarga</label><input type="text" id="inputKontakPic" placeholder="WA keluarga/WO" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4"><label class="ultra-label">Nama KUA</label><input type="text" id="inputNamaKua" placeholder="KUA tempat akad/daftar" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Link Google Maps</label><input type="url" id="inputMapsLink" placeholder="https://maps.google.com/..." class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Link Folder Drive</label><input type="url" id="inputDriveLink" placeholder="Folder dokumen/kontrak" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2"><label class="ultra-label">Catatan Besar Acara</label><textarea id="inputCatatanProfile" rows="3" placeholder="Catatan penting: dresscode keluarga, arahan WO, parkir, alur akad, dll." class="ultra-textarea resize-none"></textarea></div>
+                `;
+            } else if (categoryId === 'mahar') {
+
                 formInner = `
                     <div class="md:col-span-2 mb-2">
                         <div class="relative overflow-hidden rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-amber-50 p-5 shadow-sm">
@@ -2197,6 +2662,17 @@
                             <option value="ya">✅ Ya</option>
                         </select>
                     </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Status Kirim Undangan</label><select id="inputStatusUndangan" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"><option value="belum">Belum Dikirim</option><option value="terkirim">Sudah Dikirim</option><option value="follow_up">Perlu Follow Up</option></select></div>
+                        <div class="lg:col-span-3"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Tanggal Kirim</label><input type="date" id="inputTanggalKirim" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"></div>
+                        <div class="lg:col-span-3"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Tanggal RSVP</label><input type="date" id="inputTanggalRSVP" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"></div>
+                        <div class="lg:col-span-3"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Meja / Seating</label><input type="text" id="inputMeja" placeholder="Contoh: A1 / keluarga" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Souvenir</label><select id="inputSouvenir" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"><option value="belum">Belum</option><option value="sudah">Sudah Diberikan</option></select></div>
+                        <div class="lg:col-span-9"><label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Catatan Khusus Tamu</label><input type="text" id="inputCatatanTamu" placeholder="Contoh: VIP, kursi roda, alergi makanan, jemput keluarga" class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm outline-none focus:ring-4 focus:ring-lavender-light/50 focus:border-lavender transition shadow-sm"></div>
+                    </div>
+
                     <div class="md:col-span-2">
                         <label class="block text-xs font-black text-gray-500 mb-2 uppercase tracking-wide">Tipe Undangan</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2241,8 +2717,23 @@
                         <div class="lg:col-span-2"><label class="ultra-label">Jumlah Pax</label><input type="number" id="inputJumlahPax" required placeholder="0" class="ultra-input"></div>
                     </div>
                     <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
-                        <div class="lg:col-span-4"><label class="ultra-label">Status Bayar</label><select id="inputStatusBayar" class="ultra-select"><option value="dp">🟡 DP</option><option value="lunas">🟢 Lunas</option></select></div>
-                        <div class="lg:col-span-8 rounded-3xl border border-orange-100 bg-orange-50/60 p-4 flex items-center gap-3">
+                        <div class="lg:col-span-3"><label class="ultra-label">Status Bayar</label><select id="inputStatusBayar" class="ultra-select"><option value="dp">DP</option><option value="lunas">Lunas</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Tipe Layanan</label><select id="inputTipeLayanan" class="ultra-select"><option value="buffet">Buffet</option><option value="stall">Stall</option><option value="coffee_break">Coffee Break</option><option value="mixed">Mixed</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Deadline Final Pax</label><input type="date" id="inputFinalPaxDeadline" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Food Tasting</label><input type="date" id="inputFoodTastingDate" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Pax Tamu</label><input type="number" id="inputPaxTamu" placeholder="0" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Pax Keluarga</label><input type="number" id="inputPaxKeluarga" placeholder="0" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Vendor Meal</label><input type="number" id="inputVendorMeal" placeholder="0" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Cadangan Pax</label><input type="number" id="inputCadanganPax" placeholder="0" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-6"><label class="ultra-label">Menu Detail</label><input type="text" id="inputMenuDetail" placeholder="Menu buffet, stall, minuman, dessert" class="ultra-input"></div>
+                        <div class="lg:col-span-6"><label class="ultra-label">Catatan Menu Khusus</label><input type="text" id="inputCatatanMenu" placeholder="Alergi, vegetarian, request keluarga" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-12 rounded-3xl border border-orange-100 bg-orange-50/60 p-4 flex items-center gap-3">
                             <div class="w-11 h-11 rounded-2xl bg-white text-orange-500 flex items-center justify-center"><i class="fa-solid fa-calculator"></i></div>
                             <p class="text-xs font-bold text-orange-700">Total catering otomatis dihitung dari harga per pax dikali jumlah pax saat data disimpan.</p>
                         </div>
@@ -2298,6 +2789,17 @@
                         <div class="lg:col-span-3"><label class="ultra-label">Butuh Biaya?</label><select id="inputButuhBiaya" onchange="toggleChecklistBiaya()" class="ultra-select"><option value="tidak">Tidak</option><option value="ya">Ya</option></select></div>
                         <div class="lg:col-span-3"><label class="ultra-label">Satuan</label><select id="inputSatuan" class="ultra-select"><option value="pcs">pcs</option><option value="buah">buah</option><option value="orang">orang</option><option value="paket">paket</option><option value="lainnya">lainnya</option></select></div>
                     </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Status Tugas</label><select id="inputStatusTask" class="ultra-select"><option value="belum">Belum</option><option value="proses">Proses</option><option value="selesai">Selesai</option><option value="tertunda">Tertunda</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Prioritas</label><select id="inputPrioritas" class="ultra-select"><option value="tinggi">Tinggi</option><option value="sedang">Sedang</option><option value="rendah">Rendah</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Deadline</label><input type="date" id="inputDeadline" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">PIC</label><input type="text" id="inputPicTask" placeholder="Nama penanggung jawab" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4"><label class="ultra-label">Kategori Tugas</label><input type="text" id="inputKategoriTask" placeholder="KUA, vendor, keluarga, venue" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Link Bukti / Lampiran</label><input type="url" id="inputLinkBukti" placeholder="Drive / bukti transfer / foto" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Catatan</label><input type="text" id="inputCatatanTask" placeholder="Next action / kendala" class="ultra-input"></div>
+                    </div>
                     <div id="biayaWrapper" class="hidden md:col-span-2 rounded-3xl border border-emerald-100 bg-emerald-50/60 p-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label class="ultra-label">Harga per Satuan</label><input type="number" id="inputBiaya" oninput="hitungTotalChecklist()" class="ultra-input bg-white"></div>
@@ -2324,9 +2826,17 @@
                         </div>
                     </div>
                     <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
-                        <div class="lg:col-span-3"><label class="ultra-label">Jam</label><input type="time" id="inputJam" required class="ultra-input"></div>
-                        <div class="lg:col-span-4"><label class="ultra-label">PIC</label><input type="text" id="inputPic" placeholder="WO / Saudara / Vendor" required class="ultra-input"></div>
-                        <div class="lg:col-span-5"><label class="ultra-label">Kegiatan</label><input type="text" id="inputKegiatan" placeholder="Contoh: Akad nikah, foto keluarga" required class="ultra-input"></div>
+                        <div class="lg:col-span-2"><label class="ultra-label">Tanggal</label><input type="date" id="inputTanggalTimeline" class="ultra-input"></div>
+                        <div class="lg:col-span-2"><label class="ultra-label">Jam Mulai</label><input type="time" id="inputJam" required class="ultra-input"></div>
+                        <div class="lg:col-span-2"><label class="ultra-label">Jam Selesai</label><input type="time" id="inputJamSelesai" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">PIC</label><input type="text" id="inputPic" placeholder="WO / Saudara / Vendor" required class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Kegiatan</label><input type="text" id="inputKegiatan" placeholder="Contoh: Akad nikah" required class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Kategori</label><select id="inputKategoriTimeline" class="ultra-select"><option value="akad">Akad</option><option value="resepsi">Resepsi</option><option value="keluarga">Keluarga</option><option value="vendor">Vendor</option><option value="foto">Foto/Video</option><option value="wo">WO</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Status</label><select id="inputStatusTimeline" class="ultra-select"><option value="belum">Belum Siap</option><option value="standby">Standby</option><option value="selesai">Selesai</option></select></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Lokasi</label><input type="text" id="inputLokasiTimeline" placeholder="Venue / ruangan" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Catatan Teknis</label><input type="text" id="inputCatatanTimeline" placeholder="Sound, mic, keluarga, vendor" class="ultra-input"></div>
                     </div>
                 `;
             } else if (categoryId === 'vendor') {
@@ -2356,6 +2866,18 @@
                         <div class="lg:col-span-6"><label class="ultra-label">Total Harga Vendor</label><input type="number" id="inputTotalHarga" placeholder="0" class="ultra-input"></div>
                         <div class="lg:col-span-6"><label class="ultra-label">Sudah Dibayar</label><input type="number" id="inputDibayar" placeholder="0" class="ultra-input"></div>
                     </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3"><label class="ultra-label">Tanggal DP</label><input type="date" id="inputTanggalDP" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Deadline Pelunasan</label><input type="date" id="inputDeadlinePelunasan" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">PIC Vendor</label><input type="text" id="inputPicVendor" placeholder="Nama sales/admin" class="ultra-input"></div>
+                        <div class="lg:col-span-3"><label class="ultra-label">Rekening Vendor</label><input type="text" id="inputRekeningVendor" placeholder="Bank - No rek - nama" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4"><label class="ultra-label">Link Kontrak</label><input type="url" id="inputLinkKontrak" placeholder="Drive kontrak / invoice" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Link Bukti Transfer</label><input type="url" id="inputLinkBuktiTransfer" placeholder="Drive bukti DP/lunas" class="ultra-input"></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Riwayat Pembayaran</label><input type="text" id="inputRiwayatPembayaran" placeholder="Contoh: DP 1jt 10 Mei; lunas H-7" class="ultra-input"></div>
+                    </div>
+                    <div class="md:col-span-2"><label class="ultra-label">Catatan Meeting / Negosiasi</label><textarea id="inputCatatanMeeting" rows="3" placeholder="Catatan meeting, request, revisi paket, jadwal technical meeting" class="ultra-textarea resize-none"></textarea></div>
                 `;
             } else if (categoryId === 'notes') {
                 formInner = `
@@ -2476,10 +2998,21 @@
                         </select>
                     </div>
                     <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload File Otomatis ke Cloudflare R2</label>
+                        <div data-r2-dropzone="dokumen" class="cursor-pointer rounded-3xl border-2 border-dashed border-lavender-light bg-lavender-light/20 p-6 text-center transition hover:border-lavender hover:bg-lavender-light/35">
+                            <input type="file" id="r2-file-input-dokumen" class="hidden">
+                            <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl text-lavender-dark shadow-sm"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <p class="text-sm font-black text-slate-800">Drag & drop file ke sini</p>
+                            <p class="mt-1 text-xs font-semibold text-slate-400">File baru dipilih dulu. Upload ke Cloudflare R2 baru jalan saat klik Simpan Data.</p>
+                            <p id="r2-upload-status-dokumen" class="mt-3 text-xs font-bold text-slate-500">Belum ada file dipilih.</p>
+                            <button type="button" id="r2-cancel-dokumen" onclick="event.stopPropagation(); cancelPendingR2File('dokumen')" class="hidden mt-3 px-4 py-2 rounded-2xl bg-white text-red-500 border border-red-100 text-xs font-black hover:bg-red-50 transition"><i class="fa-solid fa-xmark mr-1"></i> Batal Pilih File</button>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">URL / Link File</label>
                         <div class="relative">
                             <i class="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                            <input type="url" id="inputUrlFile" placeholder="https://..." required class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                            <input type="url" id="inputUrlFile" placeholder="Akan terisi setelah Simpan Data, atau isi manual https://..." class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
                         </div>
                     </div>
                     <div class="md:col-span-2">
@@ -2616,10 +3149,20 @@
                     </div>
 
                     <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload Scan / File ke Cloudflare R2</label>
+                        <div data-r2-dropzone="izin" class="cursor-pointer rounded-3xl border-2 border-dashed border-teal-200 bg-teal-50/60 p-6 text-center transition hover:border-teal-400 hover:bg-teal-50">
+                            <input type="file" id="r2-file-input-izin" class="hidden">
+                            <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl text-teal-600 shadow-sm"><i class="fa-solid fa-file-arrow-up"></i></div>
+                            <p class="text-sm font-black text-slate-800">Drag & drop scan/foto dokumen ke sini</p>
+                            <p class="mt-1 text-xs font-semibold text-slate-400">KTP, KK, formulir N, surat sehat, PDF, foto, atau file pendukung lain.</p>
+                            <p id="r2-upload-status-izin" class="mt-3 text-xs font-bold text-slate-500">Belum ada file diupload.</p>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Link Scan / Drive / Foto Dokumen</label>
                         <div class="relative">
                             <i class="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                            <input type="url" id="inputLinkFileDoc" placeholder="https://drive.google.com/... atau link scan dokumen" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            <input type="url" id="inputLinkFileDoc" placeholder="Upload otomatis akan mengisi link ini, atau isi manual https://..." class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
                         </div>
                     </div>
                     <div class="md:col-span-2">
@@ -2691,10 +3234,42 @@
                 btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...`;
                 btnSubmit.disabled = true;
             }
+
+            if (window.r2Uploading) {
+                showToast('Tunggu upload file selesai dulu sebelum menyimpan data.', 'error');
+                resetSubmitButton();
+                return;
+            }
             
             let itemData = {};
+            let uploadedR2DataForRollback = null;
 
-            if (categoryId === 'mahar') {
+            if (categoryId === 'wedding_profile') {
+                const existingProfile = editId ? appData.items[categoryId].find(i => i.id === editId) : null;
+                itemData = {
+                    namaAcara: document.getElementById('inputNamaAcara').value.trim(),
+                    tanggalAkad: document.getElementById('inputTanggalAkad').value,
+                    jamAkad: document.getElementById('inputJamAkad').value,
+                    tanggalResepsi: document.getElementById('inputTanggalResepsi').value,
+                    jamResepsi: document.getElementById('inputJamResepsi').value,
+                    targetDaftarKua: document.getElementById('inputTargetDaftarKua').value,
+                    tipeAkad: document.getElementById('inputTipeAkad').value,
+                    tempatAkad: document.getElementById('inputTempatAkad').value.trim(),
+                    lokasiAkad: document.getElementById('inputLokasiAkad').value.trim(),
+                    lokasiResepsi: document.getElementById('inputLokasiResepsi').value.trim(),
+                    mempelaiPria: document.getElementById('inputMempelaiPria').value.trim(),
+                    mempelaiWanita: document.getElementById('inputMempelaiWanita').value.trim(),
+                    waliNikah: document.getElementById('inputWaliNikah').value.trim(),
+                    kontakPic: document.getElementById('inputKontakPic').value.trim(),
+                    namaKua: document.getElementById('inputNamaKua').value.trim(),
+                    mapsLink: document.getElementById('inputMapsLink').value.trim(),
+                    driveLink: document.getElementById('inputDriveLink').value.trim(),
+                    catatan: document.getElementById('inputCatatanProfile').value.trim(),
+                    tanggalUpdate: new Date().toISOString(),
+                    createdAt: existingProfile ? existingProfile.createdAt : new Date().toISOString(),
+                    includeToMainBudget: false
+                };
+            } else if (categoryId === 'mahar') {
                 let tipe = document.getElementById('inputTipeMahar').value;
                 let nilaiFinal = 0;
                 let gram = 0;
@@ -2762,6 +3337,12 @@
                     jumlahOrang: Number(document.getElementById('inputJumlahOrang').value || 1),
                     tipeUndangan: window.selectedUndanganType || 'fisik',
                     nomorHP: document.getElementById('inputNomorHP') ? document.getElementById('inputNomorHP').value : '',
+                    statusUndangan: document.getElementById('inputStatusUndangan') ? document.getElementById('inputStatusUndangan').value : 'belum',
+                    tanggalKirim: document.getElementById('inputTanggalKirim') ? document.getElementById('inputTanggalKirim').value : '',
+                    tanggalRSVP: document.getElementById('inputTanggalRSVP') ? document.getElementById('inputTanggalRSVP').value : '',
+                    meja: document.getElementById('inputMeja') ? document.getElementById('inputMeja').value : '',
+                    souvenir: document.getElementById('inputSouvenir') ? document.getElementById('inputSouvenir').value : 'belum',
+                    catatanTamu: document.getElementById('inputCatatanTamu') ? document.getElementById('inputCatatanTamu').value : '',
                     ucapan: editId ? (appData.items[categoryId].find(i => i.id === editId)?.ucapan || '') : ''
                 };
             } else if (categoryId === 'catering') {
@@ -2773,7 +3354,16 @@
                     hargaPerPax: h,
                     jumlahPax: p,
                     total: h * p,
-                    statusBayar: document.getElementById('inputStatusBayar').value
+                    statusBayar: document.getElementById('inputStatusBayar').value,
+                    tipeLayanan: document.getElementById('inputTipeLayanan') ? document.getElementById('inputTipeLayanan').value : 'buffet',
+                    finalPaxDeadline: document.getElementById('inputFinalPaxDeadline') ? document.getElementById('inputFinalPaxDeadline').value : '',
+                    foodTastingDate: document.getElementById('inputFoodTastingDate') ? document.getElementById('inputFoodTastingDate').value : '',
+                    paxTamu: Number(document.getElementById('inputPaxTamu')?.value || 0),
+                    paxKeluarga: Number(document.getElementById('inputPaxKeluarga')?.value || 0),
+                    vendorMeal: Number(document.getElementById('inputVendorMeal')?.value || 0),
+                    cadanganPax: Number(document.getElementById('inputCadanganPax')?.value || 0),
+                    menuDetail: document.getElementById('inputMenuDetail') ? document.getElementById('inputMenuDetail').value : '',
+                    catatanMenu: document.getElementById('inputCatatanMenu') ? document.getElementById('inputCatatanMenu').value : ''
                 };
             } else if (categoryId === 'attire') {
                 const harga = Number(document.getElementById('inputHarga').value || 0);
@@ -2795,7 +3385,14 @@
 
                 itemData = {
                     tugas: document.getElementById('inputTugas').value,
-                    status: existingChecklist ? existingChecklist.status : false,
+                    status: document.getElementById('inputStatusTask') ? document.getElementById('inputStatusTask').value === 'selesai' : (existingChecklist ? existingChecklist.status : false),
+                    statusTask: document.getElementById('inputStatusTask') ? document.getElementById('inputStatusTask').value : (existingChecklist?.statusTask || (existingChecklist?.status ? 'selesai' : 'belum')),
+                    prioritas: document.getElementById('inputPrioritas') ? document.getElementById('inputPrioritas').value : 'sedang',
+                    deadline: document.getElementById('inputDeadline') ? document.getElementById('inputDeadline').value : '',
+                    pic: document.getElementById('inputPicTask') ? document.getElementById('inputPicTask').value : '',
+                    kategoriTask: document.getElementById('inputKategoriTask') ? document.getElementById('inputKategoriTask').value : '',
+                    linkBukti: document.getElementById('inputLinkBukti') ? document.getElementById('inputLinkBukti').value : '',
+                    catatan: document.getElementById('inputCatatanTask') ? document.getElementById('inputCatatanTask').value : '',
                     butuhBiaya: document.getElementById('inputButuhBiaya').value,
                     biaya: document.getElementById('inputButuhBiaya').value === 'ya' ? harga : 0,
                     qty: document.getElementById('inputButuhBiaya').value === 'ya' ? qty : 0,
@@ -2805,9 +3402,15 @@
                 };
             } else if (categoryId === 'timeline') {
                 itemData = {
+                    tanggal: document.getElementById('inputTanggalTimeline') ? document.getElementById('inputTanggalTimeline').value : '',
                     jam: document.getElementById('inputJam').value,
+                    jamSelesai: document.getElementById('inputJamSelesai') ? document.getElementById('inputJamSelesai').value : '',
                     kegiatan: document.getElementById('inputKegiatan').value,
-                    pic: document.getElementById('inputPic').value
+                    pic: document.getElementById('inputPic').value,
+                    kategori: document.getElementById('inputKategoriTimeline') ? document.getElementById('inputKategoriTimeline').value : '',
+                    status: document.getElementById('inputStatusTimeline') ? document.getElementById('inputStatusTimeline').value : 'belum',
+                    lokasi: document.getElementById('inputLokasiTimeline') ? document.getElementById('inputLokasiTimeline').value : '',
+                    catatan: document.getElementById('inputCatatanTimeline') ? document.getElementById('inputCatatanTimeline').value : ''
                 };
             } else if (categoryId === 'vendor') {
                 itemData = {
@@ -2817,6 +3420,14 @@
                     status: document.getElementById('inputStatus').value,
                     totalHarga: Number(document.getElementById('inputTotalHarga').value || 0),
                     sudahDibayar: Number(document.getElementById('inputDibayar').value || 0),
+                    tanggalDP: document.getElementById('inputTanggalDP') ? document.getElementById('inputTanggalDP').value : '',
+                    deadlinePelunasan: document.getElementById('inputDeadlinePelunasan') ? document.getElementById('inputDeadlinePelunasan').value : '',
+                    rekeningVendor: document.getElementById('inputRekeningVendor') ? document.getElementById('inputRekeningVendor').value : '',
+                    linkKontrak: document.getElementById('inputLinkKontrak') ? document.getElementById('inputLinkKontrak').value : '',
+                    linkBuktiTransfer: document.getElementById('inputLinkBuktiTransfer') ? document.getElementById('inputLinkBuktiTransfer').value : '',
+                    picVendor: document.getElementById('inputPicVendor') ? document.getElementById('inputPicVendor').value : '',
+                    catatanMeeting: document.getElementById('inputCatatanMeeting') ? document.getElementById('inputCatatanMeeting').value : '',
+                    riwayatPembayaran: document.getElementById('inputRiwayatPembayaran') ? document.getElementById('inputRiwayatPembayaran').value : '',
                     statusPembayaran: 'belum'
                 };
 
@@ -2881,6 +3492,7 @@
                     penanggungJawab: document.getElementById('inputPenanggungJawabDoc').value.trim(),
                     nomorSurat: document.getElementById('inputNomorSuratDoc').value.trim(),
                     linkFile: document.getElementById('inputLinkFileDoc').value.trim(),
+                    storageProvider: document.getElementById('inputLinkFileDoc').value.includes('/file/') ? 'cloudflare_r2' : 'external_link',
                     tanggal: document.getElementById('inputTanggalDoc').value,
                     catatan: document.getElementById('inputCatatanDoc').value.trim(),
                     tanggalUpdate: new Date().toISOString(),
@@ -2889,15 +3501,51 @@
             } else if (categoryId === 'dokumen') {
                 // Saat tambah file, otomatis masuk folder yang sedang dibuka.
                 // Saat edit file, pertahankan folder lama supaya data tidak pindah folder tanpa sengaja.
+                // Upload R2 dibuat pending dulu; baru benar-benar upload saat tombol Simpan Data diklik.
                 const existingDokumen = editId ? appData.items[categoryId].find(i => i.id === editId) : null;
                 const folderTujuanId = existingDokumen
                     ? (existingDokumen.folderId || "")
                     : (window.activeDokumenFolder ? window.activeDokumenFolder.id : "");
-                
+
+                const pendingUpload = window.pendingR2Files?.dokumen || null;
+                const namaFileValue = document.getElementById('inputNamaFile').value.trim();
+                let finalUrl = document.getElementById('inputUrlFile').value.trim();
+                let finalStorageProvider = finalUrl.includes('/file/') ? 'cloudflare_r2' : 'external_link';
+                let finalR2Key = existingDokumen?.r2Key || '';
+                let finalR2FileName = existingDokumen?.r2FileName || '';
+
+                if (pendingUpload?.file) {
+                    const uploadData = await window.uploadFileToR2(pendingUpload.file, 'dokumen', {
+                        folderId: folderTujuanId,
+                        displayName: namaFileValue || pendingUpload.file.name
+                    });
+
+                    if (!uploadData || !uploadData.fileUrl) {
+                        resetSubmitButton();
+                        return;
+                    }
+
+                    finalUrl = uploadData.fileUrl;
+                    finalStorageProvider = 'cloudflare_r2';
+                    finalR2Key = extractR2KeyFromUrl(uploadData.fileUrl) || uploadData.key || uploadData.r2Key || '';
+                    finalR2FileName = uploadData.fileName || pendingUpload.file.name || '';
+                    uploadedR2DataForRollback = { storageProvider: 'cloudflare_r2', r2Key: finalR2Key, key: finalR2Key, url: finalUrl };
+                    window.applyR2UploadedFileToForm('dokumen', pendingUpload.file, uploadData);
+                }
+
+                if (!finalUrl) {
+                    showToast('Pilih file untuk upload atau isi URL file manual dulu.', 'error');
+                    resetSubmitButton();
+                    return;
+                }
+
                 itemData = {
-                    namaFile: document.getElementById('inputNamaFile').value,
+                    namaFile: namaFileValue,
                     jenisFile: document.getElementById('inputJenisFile').value,
-                    url: document.getElementById('inputUrlFile').value,
+                    url: finalUrl,
+                    storageProvider: finalStorageProvider,
+                    r2Key: finalR2Key,
+                    r2FileName: finalR2FileName,
                     catatan: document.getElementById('inputCatatan').value,
                     folderId: folderTujuanId,
                     tanggalUpdate: new Date().toISOString(),
@@ -2920,7 +3568,11 @@
             }
 
             try {
-                if (editId) {
+                if (!editId && categoryId === 'wedding_profile' && (appData.items['wedding_profile'] || []).length > 0) {
+                    const profileId = appData.items['wedding_profile'][0].id;
+                    await updateDoc(doc(db, categoryId, profileId), itemData);
+                    showToast('Wedding Profile berhasil diperbarui!');
+                } else if (editId) {
                     await updateDoc(doc(db, categoryId, editId), itemData);
                     showToast('Data berhasil diperbarui!');
                 } else {
@@ -2930,6 +3582,9 @@
                 resetForm();
                 await loadData(categoryId); 
             } catch (error) {
+                if (uploadedR2DataForRollback) {
+                    await window.deleteR2Object(uploadedR2DataForRollback, { silent: true });
+                }
                 console.error('Gagal menyimpan data:', error);
                 showToast('Gagal menyimpan: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
             } finally {
@@ -2946,9 +3601,16 @@
             if (!confirm('Yakin ingin menghapus data ini?')) return;
 
             try {
+                const existingItem = (appData.items[categoryId] || []).find(item => item.id === id);
+
+                if (categoryId === 'dokumen' && existingItem) {
+                    const r2Deleted = await window.deleteR2Object(existingItem);
+                    if (!r2Deleted) return;
+                }
+
                 await deleteDoc(doc(db, categoryId, id));
                 await loadData(categoryId);
-                showToast('Data berhasil dihapus!');
+                showToast(categoryId === 'dokumen' ? 'Data web dan file Cloudflare berhasil dihapus!' : 'Data berhasil dihapus!');
             } catch (error) {
                 console.error('Gagal menghapus data:', error);
                 showToast('Gagal menghapus data: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
@@ -3020,7 +3682,7 @@
 
 
         function getModuleStatsHTML(categoryId, data) {
-            const allowed = ['seserahan', 'doorprize', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor'];
+            const allowed = ['wedding_profile', 'seserahan', 'doorprize', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor'];
             if (!allowed.includes(categoryId)) return '';
             const meta = getMenuMeta(categoryId);
             const totalData = data.length;
@@ -3048,6 +3710,7 @@
 
         function getXMenuConfig(categoryId) {
             const map = {
+                wedding_profile: { icon: 'fa-heart', title: 'Data Utama Wedding', accent: 'from-rose-500 to-pink-600', empty: 'Wedding Profile belum diisi.' },
                 seserahan: { icon: 'fa-gift', title: 'Daftar Item Seserahan', accent: 'from-pink-500 to-rose-500', empty: 'Belum ada seserahan di list.' },
                 doorprize: { icon: 'fa-trophy', title: 'Daftar Doorprize', accent: 'from-amber-400 to-orange-500', empty: 'Belum ada doorprize di list.' },
                 catering: { icon: 'fa-utensils', title: 'Daftar Catering', accent: 'from-orange-500 to-red-500', empty: 'Belum ada pesanan catering.' },
@@ -3063,6 +3726,7 @@
 
         function getXItemTitle(categoryId, item) {
             const map = {
+                wedding_profile: item.namaAcara,
                 seserahan: item.namaItem,
                 doorprize: item.namaItem,
                 catering: item.vendor,
@@ -3078,12 +3742,13 @@
 
         function getXItemSubtitle(categoryId, item) {
             const text = {
+                wedding_profile: `Akad ${item.tanggalAkad || '-'} ${item.jamAkad || ''} · Resepsi ${item.tanggalResepsi || '-'} ${item.jamResepsi || ''} · ${item.lokasiResepsi || item.lokasiAkad || 'Lokasi belum diisi'}`,
                 seserahan: `${item.kategori || 'lainnya'} · ${item.jumlah || 1} item · ${item.catatan || 'Tanpa catatan'}`,
                 doorprize: `${(item.kategori || 'lainnya').replace('_', ' ')} · ${item.jumlah || 1} pcs · ${item.catatan || 'Tanpa catatan'}`,
-                catering: `${item.paket || 'Paket catering'} · ${item.jumlahPax || 0} pax`,
-                vendor: `${item.kategori || 'Vendor'} · ${item.kontak || 'Kontak belum diisi'}`,
-                timeline: `${item.jam || '--:--'} · PIC ${item.pic || '-'}`,
-                checklist: `${item.butuhBiaya === 'ya' ? 'Butuh biaya' : 'Tanpa biaya'} · ${item.qty || 1} ${item.satuan || 'pcs'}`,
+                catering: `${item.paket || 'Paket catering'} · ${item.jumlahPax || 0} pax · ${item.tipeLayanan || 'buffet'} · Final pax ${item.finalPaxDeadline || '-'}`,
+                vendor: `${item.kategori || 'Vendor'} · ${item.kontak || 'Kontak belum diisi'} · Pelunasan ${item.deadlinePelunasan || '-'}`,
+                timeline: `${item.tanggal || '-'} ${item.jam || '--:--'}-${item.jamSelesai || '--:--'} · ${item.lokasi || 'Lokasi belum diisi'} · PIC ${item.pic || '-'}`,
+                checklist: `${item.statusTask || (item.status ? 'selesai' : 'belum')} · ${item.prioritas || 'sedang'} · Deadline ${item.deadline || '-'} · PIC ${item.pic || '-'}`,
                 notes: item.isi || 'Catatan kosong',
                 attire: `${item.kategori || 'Attire'} · ${item.vendor || 'Vendor belum diisi'} · ${item.qty || 1} pcs`,
                 dekor: `Estimasi dekorasi · ${item.catatan || 'Tanpa catatan'}`
@@ -3092,7 +3757,7 @@
         }
 
         function getXItemMoney(categoryId, item) {
-            if (categoryId === 'timeline' || categoryId === 'notes') return '';
+            if (categoryId === 'wedding_profile' || categoryId === 'timeline' || categoryId === 'notes') return '';
             if (categoryId === 'vendor') return formatRupiah(item.totalHarga || 0);
             if (categoryId === 'catering') return formatRupiah(item.total || 0);
             if (categoryId === 'checklist') return item.butuhBiaya === 'ya' ? formatRupiah(item.total || item.biaya || 0) : 'Tanpa biaya';
@@ -3101,7 +3766,11 @@
 
         function getXStatusBadge(categoryId, item) {
             let label = 'Aktif', tone = 'bg-gray-50 text-gray-600 border-gray-200', icon = 'fa-circle-dot';
-            if (categoryId === 'vendor') {
+            if (categoryId === 'wedding_profile') {
+                label = item.tipeAkad === 'luar_kua' ? 'Akad Luar KUA' : 'Akad di KUA';
+                tone = item.tipeAkad === 'luar_kua' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                icon = 'fa-heart';
+            } else if (categoryId === 'vendor') {
                 label = item.status === 'deal' ? 'Deal' : 'Belum Deal';
                 tone = item.status === 'deal' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-600 border-slate-200';
                 icon = item.status === 'deal' ? 'fa-circle-check' : 'fa-handshake';
@@ -3197,6 +3866,59 @@
                         const progressVendor = categoryId === 'vendor' && totalVendor > 0 ? Math.min(100, Math.round((paidVendor / totalVendor) * 100)) : null;
                         const vendorPaymentLabel = paidVendor <= 0 ? 'Belum DP' : (totalVendor > 0 && paidVendor >= totalVendor ? 'Lunas' : 'DP / Cicilan');
                         const vendorPaymentTone = paidVendor <= 0 ? 'text-rose-600 bg-rose-50 border-rose-100' : (totalVendor > 0 && paidVendor >= totalVendor ? 'text-emerald-700 bg-emerald-50 border-emerald-100' : 'text-amber-700 bg-amber-50 border-amber-100');
+                        
+                        const profileDetailHTML = categoryId === 'wedding_profile' ? `
+                                <div class="relative z-10 mt-4 rounded-[24px] border border-rose-100 bg-rose-50/50 p-4">
+                                    <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600">
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Mempelai</span><br>${escapeHTML(item.mempelaiPria || '-')} & ${escapeHTML(item.mempelaiWanita || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Wali</span><br>${escapeHTML(item.waliNikah || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">KUA</span><br>${escapeHTML(item.namaKua || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">PIC</span><br>${escapeHTML(item.kontakPic || '-')}</div>
+                                    </div>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        ${item.mapsLink ? `<a href="${escapeHTML(item.mapsLink)}" target="_blank" class="px-3 py-2 rounded-2xl bg-white text-xs font-black text-rose-600 border border-rose-100">Maps</a>` : ''}
+                                        ${item.driveLink ? `<a href="${escapeHTML(item.driveLink)}" target="_blank" class="px-3 py-2 rounded-2xl bg-white text-xs font-black text-violet-600 border border-violet-100">Drive</a>` : ''}
+                                    </div>
+                                </div>` : '';
+                        const cateringDetailHTML = categoryId === 'catering' ? `
+                                <div class="relative z-10 mt-4 rounded-[24px] border border-orange-100 bg-orange-50/50 p-4">
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-bold text-slate-600">
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Tamu</span><br>${Number(item.paxTamu || 0)}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Keluarga</span><br>${Number(item.paxKeluarga || 0)}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Vendor Meal</span><br>${Number(item.vendorMeal || 0)}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Cadangan</span><br>${Number(item.cadanganPax || 0)}</div>
+                                    </div>
+                                    <p class="mt-3 text-xs text-slate-500 line-clamp-2">${escapeHTML(item.menuDetail || item.catatanMenu || 'Menu detail belum diisi.')}</p>
+                                </div>` : '';
+                        const checklistDetailHTML = categoryId === 'checklist' ? `
+                                <div class="relative z-10 mt-4 rounded-[24px] border border-emerald-100 bg-emerald-50/50 p-4">
+                                    <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600">
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Kategori</span><br>${escapeHTML(item.kategoriTask || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Deadline</span><br>${escapeHTML(item.deadline || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">PIC</span><br>${escapeHTML(item.pic || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Lampiran</span><br>${item.linkBukti ? '<a href="' + escapeHTML(item.linkBukti) + '" target="_blank" class="text-emerald-700">Buka link</a>' : '-'}</div>
+                                    </div>
+                                    <p class="mt-3 text-xs text-slate-500 line-clamp-2">${escapeHTML(item.catatan || 'Belum ada catatan.')}</p>
+                                </div>` : '';
+                        const timelineDetailHTML = categoryId === 'timeline' ? `
+                                <div class="relative z-10 mt-4 rounded-[24px] border border-indigo-100 bg-indigo-50/50 p-4">
+                                    <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600">
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Kategori</span><br>${escapeHTML(item.kategori || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Status</span><br>${escapeHTML(item.status || '-')}</div>
+                                    </div>
+                                    <p class="mt-3 text-xs text-slate-500 line-clamp-2">${escapeHTML(item.catatan || 'Catatan teknis belum diisi.')}</p>
+                                </div>` : '';
+                        const vendorExtraHTML = categoryId === 'vendor' ? `
+                                <div class="relative z-10 mt-4 rounded-[24px] border border-sky-100 bg-sky-50/50 p-4">
+                                    <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600">
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Deadline Lunas</span><br>${escapeHTML(item.deadlinePelunasan || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">PIC Vendor</span><br>${escapeHTML(item.picVendor || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Rekening</span><br>${escapeHTML(item.rekeningVendor || '-')}</div>
+                                        <div><span class="text-slate-400 uppercase text-[10px] font-black">Dokumen</span><br>${item.linkKontrak ? '<a href="' + escapeHTML(item.linkKontrak) + '" target="_blank" class="text-sky-700">Kontrak</a>' : '-'} ${item.linkBuktiTransfer ? '<a href="' + escapeHTML(item.linkBuktiTransfer) + '" target="_blank" class="text-emerald-700 ml-2">Bukti</a>' : ''}</div>
+                                    </div>
+                                    <p class="mt-3 text-xs text-slate-500 line-clamp-2">${escapeHTML(item.riwayatPembayaran || item.catatanMeeting || 'Riwayat pembayaran/catatan belum diisi.')}</p>
+                                </div>` : '';
+
                         const vendorPaymentHTML = categoryId === 'vendor' ? `
                                 <div class="relative z-10 mt-4 rounded-[24px] border border-slate-200/80 bg-slate-50/70 p-4">
                                     <div class="mb-3 flex items-center justify-between gap-3">
@@ -3249,6 +3971,11 @@
                                     <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Nilai</p><p class="text-sm font-black text-gray-800 mt-1">${money || 'Tersimpan'}</p></div>
                                     <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Kontrol</p><div class="mt-1">${getXQuickControls(categoryId, item) || '<span class="text-xs font-bold text-gray-400">Siap dipantau</span>'}</div></div>
                                 </div>
+                                ${profileDetailHTML}
+                                ${cateringDetailHTML}
+                                ${checklistDetailHTML}
+                                ${timelineDetailHTML}
+                                ${vendorExtraHTML}
                                 ${vendorPaymentHTML}
                             </div>`;
                     }).join('')}</div>` : getEmptyStateHTML(cfg.icon, q ? 'Data tidak ditemukan dari pencarian ini.' : cfg.empty)}
@@ -3262,7 +3989,7 @@
             let data = appData.items[categoryId] || [];
             let htmlOut = '';
 
-            const enhancedContentMenus = ['catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor']; 
+            const enhancedContentMenus = ['wedding_profile', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor']; 
             // Seserahan dan Doorprize sengaja tidak masuk render cepat ini.
             // Dua menu itu punya filter khusus lama yang lebih lengkap, jadi harus lewat blok render aslinya.
             if (enhancedContentMenus.includes(categoryId)) {
@@ -3675,13 +4402,17 @@
                         String(i.nama || '').toLowerCase().includes(searchKeyword) ||
                         String(i.nomorHP || '').toLowerCase().includes(searchKeyword) ||
                         String(i.kategori || '').toLowerCase().includes(searchKeyword) ||
-                        String(i.pihak || '').toLowerCase().includes(searchKeyword)
+                        String(i.pihak || '').toLowerCase().includes(searchKeyword) ||
+                        String(i.statusUndangan || '').toLowerCase().includes(searchKeyword) ||
+                        String(i.meja || '').toLowerCase().includes(searchKeyword) ||
+                        String(i.catatanTamu || '').toLowerCase().includes(searchKeyword)
                     );
                 }
                 if (window.weddingFilter !== 'all') filteredData = filteredData.filter(i => i.kategori === window.weddingFilter);
                 if (window.weddingPihakFilter !== 'all') filteredData = filteredData.filter(i => i.pihak === window.weddingPihakFilter);
                 if (window.weddingTipeFilter !== 'all') filteredData = filteredData.filter(i => i.tipeUndangan === window.weddingTipeFilter);
                 if (window.weddingAkadFilter !== 'all') filteredData = filteredData.filter(i => (i.akad || 'tidak') === window.weddingAkadFilter);
+                if (window.weddingInvitationFilter !== 'all') filteredData = filteredData.filter(i => (i.statusUndangan || 'belum') === window.weddingInvitationFilter);
 
                 filteredData = [...filteredData];
                 if (window.weddingSort.field) {
@@ -3706,6 +4437,9 @@
                 const akadYaPax = filteredData.filter(i => (i.akad || 'tidak') === 'ya').reduce((sum, i) => sum + (Number(i.jumlahOrang) || 1), 0);
                 const totalFisik = filteredData.filter(i => i.tipeUndangan === 'fisik').length;
                 const totalDigital = filteredData.filter(i => i.tipeUndangan === 'digital').length;
+                const totalTerkirim = filteredData.filter(i => (i.statusUndangan || 'belum') === 'terkirim').length;
+                const totalFollowUp = filteredData.filter(i => (i.statusUndangan || 'belum') === 'follow_up').length;
+                const totalSouvenir = filteredData.filter(i => (i.souvenir || 'belum') === 'sudah').length;
                 const hadirPercent = totalUndangan === 0 ? 0 : Math.round((hadir / totalUndangan) * 100);
                 const akadPercent = totalPax === 0 ? 0 : Math.round((akadYaPax / totalPax) * 100);
 
@@ -3715,7 +4449,10 @@
                     { label: 'Tamu Hadir', value: hadir, icon: 'fa-circle-check', tone: 'from-emerald-500 to-teal-600', text: 'text-white', sub: `${hadirPercent}% hadir` },
                     { label: 'Pax Akad', value: akadYaPax, icon: 'fa-mosque', tone: 'from-green-500 to-emerald-700', text: 'text-white', sub: `${akadPercent}% dari pax` },
                     { label: 'Fisik', value: totalFisik, icon: 'fa-envelope-open-text', tone: 'from-sky-500 to-blue-600', text: 'text-white', sub: 'Undangan cetak' },
-                    { label: 'Digital', value: totalDigital, icon: 'fa-mobile-screen-button', tone: 'from-purple-500 to-fuchsia-600', text: 'text-white', sub: 'Link undangan' }
+                    { label: 'Digital', value: totalDigital, icon: 'fa-mobile-screen-button', tone: 'from-purple-500 to-fuchsia-600', text: 'text-white', sub: 'Link undangan' },
+                    { label: 'Terkirim', value: totalTerkirim, icon: 'fa-paper-plane', tone: 'from-emerald-500 to-green-600', text: 'text-white', sub: 'Undangan terkirim' },
+                    { label: 'Follow Up', value: totalFollowUp, icon: 'fa-bell', tone: 'from-amber-500 to-orange-600', text: 'text-white', sub: 'Perlu follow up' },
+                    { label: 'Souvenir', value: totalSouvenir, icon: 'fa-gift', tone: 'from-pink-500 to-rose-600', text: 'text-white', sub: 'Sudah diberikan' }
                 ];
 
                 const pillClass = (active, activeClass='bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/20') =>
@@ -3805,7 +4542,11 @@
                                     <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3"><i class="fa-solid fa-mosque mr-1"></i> Akad</p>
                                     <div class="flex flex-wrap gap-2">
                                         <button onclick="setWeddingAkadFilter('all')" class="${pillClass(window.weddingAkadFilter==='all')}">Semua</button>
-                                        <button onclick="setWeddingAkadFilter('ya')" class="${pillClass(window.weddingAkadFilter==='ya','bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20')}">Akad Ya</button>
+                                        <button onclick="setWeddingInvitationFilter('all')" class="${pillClass(window.weddingInvitationFilter==='all')}"><i class="fa-solid fa-paper-plane mr-1"></i> Semua Kirim</button>
+                                    <button onclick="setWeddingInvitationFilter('belum')" class="${pillClass(window.weddingInvitationFilter==='belum', 'bg-rose-50 text-rose-600 border-rose-200 shadow-md')}">Belum Dikirim</button>
+                                    <button onclick="setWeddingInvitationFilter('terkirim')" class="${pillClass(window.weddingInvitationFilter==='terkirim', 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-md')}">Terkirim</button>
+                                    <button onclick="setWeddingInvitationFilter('follow_up')" class="${pillClass(window.weddingInvitationFilter==='follow_up', 'bg-amber-50 text-amber-600 border-amber-200 shadow-md')}">Follow Up</button>
+                                    <button onclick="setWeddingAkadFilter('ya')" class="${pillClass(window.weddingAkadFilter==='ya','bg-green-600 text-white border-green-600 shadow-lg shadow-green-600/20')}">Akad Ya</button>
                                     </div>
                                 </div>
                             </div>
@@ -3830,6 +4571,7 @@
                                             <th class="px-6 py-4 font-black">Tamu</th>
                                             <th class="px-6 py-4 font-black text-center">Pax</th>
                                             <th class="px-6 py-4 font-black text-center">Undangan</th>
+                                            <th class="px-6 py-4 font-black">Tracking</th>
                                             <th class="px-6 py-4 font-black">Ucapan</th>
                                             <th class="px-6 py-4 font-black text-center">Status</th>
                                             <th class="px-6 py-4 font-black text-center">Akad</th>
@@ -3865,6 +4607,13 @@
                                                         ${item.tipeUndangan === 'fisik' ? '<i class="fa-solid fa-envelope-open-text mr-2"></i> Fisik' : '<i class="fa-solid fa-mobile-screen-button mr-2"></i> Digital'}
                                                     </span>
                                                 </td>
+                                                <td class="px-6 py-5 max-w-[260px]">
+                                                    <div class="space-y-1 text-[11px] font-bold text-gray-500">
+                                                        <div class="flex flex-wrap items-center gap-2"><select onchange="quickUpdate('${categoryId}', '${item.id}', 'statusUndangan', this.value)" class="px-2 py-1 rounded-xl border border-gray-200 bg-white text-[10px] font-black outline-none"><option value="belum" ${(item.statusUndangan || 'belum') === 'belum' ? 'selected' : ''}>Belum Kirim</option><option value="terkirim" ${(item.statusUndangan || 'belum') === 'terkirim' ? 'selected' : ''}>Terkirim</option><option value="follow_up" ${(item.statusUndangan || 'belum') === 'follow_up' ? 'selected' : ''}>Follow Up</option></select>${item.tanggalKirim ? `<span>${item.tanggalKirim}</span>` : ''}</div>
+                                                        <div class="flex flex-wrap items-center gap-2"><span><i class="fa-solid fa-chair text-blue-400 mr-1"></i>Meja: ${item.meja || '-'}</span><select onchange="quickUpdate('${categoryId}', '${item.id}', 'souvenir', this.value)" class="px-2 py-1 rounded-xl border border-gray-200 bg-white text-[10px] font-black outline-none"><option value="belum" ${(item.souvenir || 'belum') === 'belum' ? 'selected' : ''}>Souvenir Belum</option><option value="sudah" ${(item.souvenir || 'belum') === 'sudah' ? 'selected' : ''}>Souvenir Sudah</option></select></div>
+                                                        ${item.catatanTamu ? `<p class="truncate" title="${escapeHTML(item.catatanTamu)}"><i class="fa-solid fa-note-sticky text-amber-400 mr-1"></i>${escapeHTML(item.catatanTamu)}</p>` : ''}
+                                                    </div>
+                                                </td>
                                                 <td class="px-6 py-5 max-w-[210px]">
                                                     <p class="text-xs text-gray-500 truncate cursor-help" title="${item.ucapan || ''}">${item.ucapan ? `“${item.ucapan}”` : '<span class="text-gray-300 italic">Belum ada</span>'}</p>
                                                 </td>
@@ -3896,7 +4645,7 @@
                                                     </div>
                                                 </td>
                                             </tr>`;
-                                        }).join('') || `<tr><td colspan="7">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
+                                        }).join('') || `<tr><td colspan="8">${getEmptyStateHTML('fa-users', 'Belum ada daftar tamu di filter ini.')}</td></tr>`}
                                     </tbody>
                                 </table>
                             </div>
@@ -4312,7 +5061,10 @@
                                     <h3 class="text-2xl font-black text-gray-900 mt-1">${progress}% semua dokumen, ${wajibProgress}% dokumen wajib</h3>
                                     <p class="text-xs text-gray-500 mt-2 max-w-2xl">Gunakan template KUA untuk membuat daftar awal, lalu ubah status, deadline, link scan, dan penanggung jawab setiap dokumen.</p>
                                 </div>
-                                
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="buatTemplateIzinNikah()" class="px-4 py-2 rounded-2xl bg-teal-600 text-white text-xs font-black hover:bg-teal-700 transition"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Isi Template KUA</button>
+                                    <button onclick="copyRingkasanIzinNikah()" class="px-4 py-2 rounded-2xl bg-white border border-teal-100 text-teal-700 text-xs font-black hover:bg-teal-50 transition"><i class="fa-solid fa-copy mr-1"></i> Copy Ringkasan</button>
+                                </div>
                             </div>
                             <div class="relative z-10 mt-5 h-3 overflow-hidden rounded-full bg-white border border-teal-100">
                                 <div class="h-full rounded-full bg-gradient-to-r from-teal-400 to-emerald-500 transition-all" style="width:${progress}%"></div>
@@ -4600,7 +5352,26 @@
                 btnSubmit.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Data';
             }
             
-            if(categoryId === 'mahar') {
+            if(categoryId === 'wedding_profile') {
+                document.getElementById('inputNamaAcara').value = item.namaAcara || '';
+                document.getElementById('inputTanggalAkad').value = item.tanggalAkad || '';
+                document.getElementById('inputJamAkad').value = item.jamAkad || '';
+                document.getElementById('inputTanggalResepsi').value = item.tanggalResepsi || '';
+                document.getElementById('inputJamResepsi').value = item.jamResepsi || '';
+                document.getElementById('inputTargetDaftarKua').value = item.targetDaftarKua || '';
+                document.getElementById('inputTipeAkad').value = item.tipeAkad || 'kua';
+                document.getElementById('inputTempatAkad').value = item.tempatAkad || '';
+                document.getElementById('inputLokasiAkad').value = item.lokasiAkad || '';
+                document.getElementById('inputLokasiResepsi').value = item.lokasiResepsi || '';
+                document.getElementById('inputMempelaiPria').value = item.mempelaiPria || '';
+                document.getElementById('inputMempelaiWanita').value = item.mempelaiWanita || '';
+                document.getElementById('inputWaliNikah').value = item.waliNikah || '';
+                document.getElementById('inputKontakPic').value = item.kontakPic || '';
+                document.getElementById('inputNamaKua').value = item.namaKua || '';
+                document.getElementById('inputMapsLink').value = item.mapsLink || '';
+                document.getElementById('inputDriveLink').value = item.driveLink || '';
+                document.getElementById('inputCatatanProfile').value = item.catatan || '';
+            } else if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; 
                 document.getElementById('inputDeskripsi').value = item.deskripsi; 
                 document.getElementById('inputStatus').value = item.status;
@@ -4634,6 +5405,12 @@
                 if(document.getElementById('inputNomorHP')) {
                     document.getElementById('inputNomorHP').value = item.nomorHP || '';
                 }
+                if(document.getElementById('inputStatusUndangan')) document.getElementById('inputStatusUndangan').value = item.statusUndangan || 'belum';
+                if(document.getElementById('inputTanggalKirim')) document.getElementById('inputTanggalKirim').value = item.tanggalKirim || '';
+                if(document.getElementById('inputTanggalRSVP')) document.getElementById('inputTanggalRSVP').value = item.tanggalRSVP || '';
+                if(document.getElementById('inputMeja')) document.getElementById('inputMeja').value = item.meja || '';
+                if(document.getElementById('inputSouvenir')) document.getElementById('inputSouvenir').value = item.souvenir || 'belum';
+                if(document.getElementById('inputCatatanTamu')) document.getElementById('inputCatatanTamu').value = item.catatanTamu || '';
                 handleUndanganType(item.tipeUndangan || 'fisik');
             } else if (categoryId === 'catering') {
                 document.getElementById('inputVendor').value = item.vendor || '';
@@ -4641,10 +5418,25 @@
                 document.getElementById('inputHargaPerPax').value = item.hargaPerPax || 0;
                 document.getElementById('inputJumlahPax').value = item.jumlahPax || 0;
                 document.getElementById('inputStatusBayar').value = item.statusBayar || 'dp';
+                if(document.getElementById('inputTipeLayanan')) document.getElementById('inputTipeLayanan').value = item.tipeLayanan || 'buffet';
+                if(document.getElementById('inputFinalPaxDeadline')) document.getElementById('inputFinalPaxDeadline').value = item.finalPaxDeadline || '';
+                if(document.getElementById('inputFoodTastingDate')) document.getElementById('inputFoodTastingDate').value = item.foodTastingDate || '';
+                if(document.getElementById('inputPaxTamu')) document.getElementById('inputPaxTamu').value = item.paxTamu || 0;
+                if(document.getElementById('inputPaxKeluarga')) document.getElementById('inputPaxKeluarga').value = item.paxKeluarga || 0;
+                if(document.getElementById('inputVendorMeal')) document.getElementById('inputVendorMeal').value = item.vendorMeal || 0;
+                if(document.getElementById('inputCadanganPax')) document.getElementById('inputCadanganPax').value = item.cadanganPax || 0;
+                if(document.getElementById('inputMenuDetail')) document.getElementById('inputMenuDetail').value = item.menuDetail || '';
+                if(document.getElementById('inputCatatanMenu')) document.getElementById('inputCatatanMenu').value = item.catatanMenu || '';
             } else if (categoryId === 'timeline') {
+                if(document.getElementById('inputTanggalTimeline')) document.getElementById('inputTanggalTimeline').value = item.tanggal || '';
                 document.getElementById('inputJam').value = item.jam || '';
+                if(document.getElementById('inputJamSelesai')) document.getElementById('inputJamSelesai').value = item.jamSelesai || '';
                 document.getElementById('inputPic').value = item.pic || '';
                 document.getElementById('inputKegiatan').value = item.kegiatan || '';
+                if(document.getElementById('inputKategoriTimeline')) document.getElementById('inputKategoriTimeline').value = item.kategori || 'akad';
+                if(document.getElementById('inputStatusTimeline')) document.getElementById('inputStatusTimeline').value = item.status || 'belum';
+                if(document.getElementById('inputLokasiTimeline')) document.getElementById('inputLokasiTimeline').value = item.lokasi || '';
+                if(document.getElementById('inputCatatanTimeline')) document.getElementById('inputCatatanTimeline').value = item.catatan || '';
             } else if (categoryId === 'notes') {
                 document.getElementById('inputIsi').value = item.isi || '';
             } else if (categoryId === 'vendor') {
@@ -4654,6 +5446,14 @@
                 document.getElementById('inputStatus').value = item.status;
                 document.getElementById('inputTotalHarga').value = item.totalHarga || 0;
                 document.getElementById('inputDibayar').value = item.sudahDibayar || 0;
+                if(document.getElementById('inputTanggalDP')) document.getElementById('inputTanggalDP').value = item.tanggalDP || '';
+                if(document.getElementById('inputDeadlinePelunasan')) document.getElementById('inputDeadlinePelunasan').value = item.deadlinePelunasan || '';
+                if(document.getElementById('inputRekeningVendor')) document.getElementById('inputRekeningVendor').value = item.rekeningVendor || '';
+                if(document.getElementById('inputLinkKontrak')) document.getElementById('inputLinkKontrak').value = item.linkKontrak || '';
+                if(document.getElementById('inputLinkBuktiTransfer')) document.getElementById('inputLinkBuktiTransfer').value = item.linkBuktiTransfer || '';
+                if(document.getElementById('inputPicVendor')) document.getElementById('inputPicVendor').value = item.picVendor || '';
+                if(document.getElementById('inputCatatanMeeting')) document.getElementById('inputCatatanMeeting').value = item.catatanMeeting || '';
+                if(document.getElementById('inputRiwayatPembayaran')) document.getElementById('inputRiwayatPembayaran').value = item.riwayatPembayaran || '';
             } else if (categoryId === 'attire') {
                 document.getElementById('inputNama').value = item.nama;
                 document.getElementById('inputKategori').value = item.kategori;
@@ -4677,6 +5477,13 @@
                 }
             } else if (categoryId === 'checklist') {
                 document.getElementById('inputTugas').value = item.tugas || '';
+                if(document.getElementById('inputStatusTask')) document.getElementById('inputStatusTask').value = item.statusTask || (item.status ? 'selesai' : 'belum');
+                if(document.getElementById('inputPrioritas')) document.getElementById('inputPrioritas').value = item.prioritas || 'sedang';
+                if(document.getElementById('inputDeadline')) document.getElementById('inputDeadline').value = item.deadline || '';
+                if(document.getElementById('inputPicTask')) document.getElementById('inputPicTask').value = item.pic || '';
+                if(document.getElementById('inputKategoriTask')) document.getElementById('inputKategoriTask').value = item.kategoriTask || '';
+                if(document.getElementById('inputLinkBukti')) document.getElementById('inputLinkBukti').value = item.linkBukti || '';
+                if(document.getElementById('inputCatatanTask')) document.getElementById('inputCatatanTask').value = item.catatan || '';
                 document.getElementById('inputButuhBiaya').value = item.butuhBiaya || 'tidak';
                 document.getElementById('inputSatuan').value = item.satuan || 'pcs';
                 document.getElementById('inputQty').value = item.qty || 1;
@@ -4738,6 +5545,9 @@
             
             if (activeMenu === 'wedding_list') {
                 handleUndanganType('fisik');
+            }
+            if (activeMenu === 'checklist') {
+                toggleChecklistBiaya();
             }   
             if (activeMenu === 'mahar') {
                 toggleMaharType();
@@ -4762,6 +5572,9 @@
             if (activeMenu === 'dokumen') {
                 const jenis = document.getElementById('inputJenisFile');
                 if(jenis) jenis.value = 'foto';
+                if (window.cancelPendingR2File) {
+                    window.cancelPendingR2File('dokumen');
+                }
                 // Jika sedang di dokumen, pastikan form edit folder direvserve kalau sedang reset keseluruhan
                 if(window.editFolderId) {
                     window.batalEditFolder();
