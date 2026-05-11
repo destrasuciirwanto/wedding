@@ -591,6 +591,111 @@
         }
 
 
+
+
+        /* Undangan Digital: panel kategori bisa dibuka/tutup */
+        .ud-dashboard-fold {
+            overflow: hidden;
+            transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+        }
+        .ud-dashboard-fold > summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.15rem;
+            border-radius: 1.5rem;
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(255,255,255,.72);
+            font-size: .78rem;
+            font-weight: 900;
+            color: #334155;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .ud-dashboard-fold > summary::-webkit-details-marker { display: none; }
+        .ud-dashboard-fold > summary:after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #8b5cf6;
+            transition: transform .2s ease;
+        }
+        .ud-dashboard-fold[open] > summary:after { transform: rotate(180deg); }
+        .ud-dashboard-fold-body { padding-top: 1rem; }
+        .ud-mini-hint {
+            font-size: 11px;
+            line-height: 1.7;
+            color: #64748b;
+        }
+        .ud-code-help {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+            font-size: 11px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+
+        .ud-sub-fold > summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            font-size: .78rem;
+            font-weight: 900;
+            color: #334155;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .ud-sub-fold > summary::-webkit-details-marker { display: none; }
+        .ud-sub-fold > summary small {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 800;
+        }
+        .ud-sub-fold > summary:after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #8b5cf6;
+            transition: transform .2s ease;
+        }
+        .ud-sub-fold[open] > summary:after { transform: rotate(180deg); }
+        .ud-color-card, .ud-check-card {
+            border: 1px solid rgba(226,232,240,.9);
+            background: rgba(255,255,255,.78);
+            border-radius: 1.25rem;
+            padding: .9rem;
+            display: flex;
+            gap: .75rem;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(15,23,42,.035);
+        }
+        .ud-color-card { align-items: flex-start; flex-direction: column; }
+        .ud-color-card span { font-size: 11px; font-weight: 900; color: #334155; text-transform: uppercase; letter-spacing: .08em; }
+        .ud-color-card em { font-size: 11px; color: #64748b; font-style: normal; line-height: 1.45; }
+        .ud-color-card input[type="color"] {
+            width: 100%;
+            height: 3rem;
+            padding: .25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            background: #fff;
+            cursor: pointer;
+        }
+        .ud-check-card {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+        }
+        .ud-check-card input { width: 1rem; height: 1rem; accent-color: #8b5cf6; }
+
     </style>
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
@@ -925,6 +1030,7 @@
         const menus = [
             { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
             { id: 'wedding_profile', icon: 'fa-heart', label: 'Wedding Profile' },
+            { id: 'undangan_digital', icon: 'fa-laptop-code', label: 'Undangan Digital' },
             { id: 'mahar', icon: 'fa-gem', label: 'Mahar' },
             { id: 'seserahan', icon: 'fa-gift', label: 'Seserahan' },
             { id: 'doorprize', icon: 'fa-gift', label: 'Doorprize' },
@@ -1897,6 +2003,305 @@
             </div>`;
         }
 
+
+
+        const UD_DASH_THEME_PRESETS = {
+            sakura: { primary: '#E5A9B4', secondary: '#FADADD', accent: '#D4AF37', bg: '#FFF5F7', bg2: '#FFFFFF', text: '#2C3E50', muted: '#64748B', card: '#FFFFFF' },
+            gold: { primary: '#C89B3C', secondary: '#FFF2C6', accent: '#9A6B16', bg: '#FFF9EB', bg2: '#FFFFFF', text: '#3A2A0B', muted: '#7C6A3B', card: '#FFFFFF' },
+            sage: { primary: '#8F9779', secondary: '#E6EAD8', accent: '#C9A24D', bg: '#F7FAF1', bg2: '#FFFFFF', text: '#263222', muted: '#68745E', card: '#FFFFFF' },
+            lavender: { primary: '#A78BFA', secondary: '#EEE7FF', accent: '#C084FC', bg: '#FAF7FF', bg2: '#FFFFFF', text: '#2E2343', muted: '#6B5B7B', card: '#FFFFFF' },
+            emerald: { primary: '#10B981', secondary: '#D1FAE5', accent: '#D4AF37', bg: '#F0FDF4', bg2: '#FFFFFF', text: '#103B2A', muted: '#537768', card: '#FFFFFF' },
+            royal: { primary: '#2937A3', secondary: '#E7EAFF', accent: '#D4AF37', bg: '#F5F6FF', bg2: '#FFFFFF', text: '#172554', muted: '#64748B', card: '#FFFFFF' },
+            mono: { primary: '#111827', secondary: '#E5E7EB', accent: '#6B7280', bg: '#F9FAFB', bg2: '#FFFFFF', text: '#111827', muted: '#6B7280', card: '#FFFFFF' },
+            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: '#1E171E' }
+        };
+
+        function udDashGet(id, fallback = '') {
+            const el = document.getElementById(id);
+            return el ? (el.value || fallback) : fallback;
+        }
+
+        function udDashSet(id, value) {
+            const el = document.getElementById(id);
+            if (el && value !== undefined && value !== null && value !== '') el.value = value;
+        }
+
+        function udDashNormalizeKey(key) {
+            return String(key || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
+        }
+
+        function parseUDDesignPackForDashboard(text) {
+            const result = {};
+            String(text || '').split(/\r?\n/).forEach((rawLine) => {
+                const line = rawLine.replace(/^[-*]\s*/, '').trim();
+                if (!line || /^\/\//.test(line) || /^#\s/.test(line) || /^\[[^\]]+\]$/.test(line)) return;
+                const match = line.match(/^([^:=]+)\s*[:=]\s*(.*)$/);
+                if (!match) return;
+                result[udDashNormalizeKey(match[1])] = match[2].trim();
+            });
+            return result;
+        }
+
+        function udDashPackValue(pack, ...keys) {
+            for (const key of keys) {
+                const normalized = udDashNormalizeKey(key);
+                if (pack[normalized] !== undefined) return pack[normalized];
+            }
+            return '';
+        }
+
+        function udDashSafeColor(value, fallback) {
+            const v = String(value || '').trim();
+            if (/^#[0-9a-f]{6}$/i.test(v)) return v;
+            return fallback;
+        }
+
+
+        function udDashCssColorToHex(value, fallback) {
+            const v = String(value || '').trim();
+            if (/^#[0-9a-f]{6}$/i.test(v)) return v;
+            const match = v.match(/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+            if (match) {
+                const nums = match.slice(1, 4).map(n => Math.max(0, Math.min(255, Number(n) || 0)));
+                return '#' + nums.map(n => n.toString(16).padStart(2, '0')).join('').toUpperCase();
+            }
+            return fallback;
+        }
+
+        function udDashHexToRgba(hex, alpha) {
+            const safe = udDashSafeColor(hex, '#FFFFFF').replace('#', '');
+            const r = parseInt(safe.slice(0, 2), 16);
+            const g = parseInt(safe.slice(2, 4), 16);
+            const b = parseInt(safe.slice(4, 6), 16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
+
+        function udDashOverlay(level, bg) {
+            const safeBg = udDashSafeColor(bg, '#FFF5F7');
+            const map = {
+                none: 'transparent',
+                soft: `linear-gradient(to bottom, rgba(26,18,21,.22), rgba(26,18,21,.58))`,
+                medium: `linear-gradient(to bottom, rgba(26,18,21,.38), rgba(26,18,21,.78))`,
+                dark: `linear-gradient(to bottom, rgba(10,10,12,.62), rgba(10,10,12,.92))`
+            };
+            if (level === 'hero-soft') return `linear-gradient(to bottom, rgba(26,18,21,.38), rgba(26,18,21,.12), ${safeBg})`;
+            if (level === 'hero-medium') return `linear-gradient(to bottom, rgba(26,18,21,.55), rgba(26,18,21,.22), ${safeBg})`;
+            if (level === 'hero-dark') return `linear-gradient(to bottom, rgba(10,10,12,.72), rgba(10,10,12,.42), ${safeBg})`;
+            if (level === 'hero-none') return 'transparent';
+            return map[level] || map.soft;
+        }
+
+        function udDashOverlayKeyFromValue(value, hero = false) {
+            const v = String(value || '').toLowerCase();
+            if (!v || v === 'transparent' || v === 'none') return 'none';
+            if (v.includes('.9') || v.includes('.92') || v.includes('.72')) return 'dark';
+            if (v.includes('.78') || v.includes('.55') || v.includes('.38')) return 'medium';
+            return 'soft';
+        }
+
+        function udDashOrderFromPreset(preset) {
+            const map = {
+                default: 'menu,ayat,mempelai,keluarga,sambutan,story,gallery,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
+                story_first: 'menu,ayat,story,mempelai,keluarga,sambutan,gallery,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
+                event_first: 'menu,ayat,event,mempelai,keluarga,sambutan,story,gallery,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
+                gallery_last: 'menu,ayat,mempelai,keluarga,sambutan,story,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,gallery,faq'
+            };
+            return map[preset] || map.default;
+        }
+
+        function udDashPresetFromOrder(orderRaw) {
+            const clean = String(orderRaw || '').replace(/\s+/g, '');
+            for (const key of ['story_first', 'event_first', 'gallery_last', 'default']) {
+                if (clean === udDashOrderFromPreset(key).replace(/\s+/g, '')) return key;
+            }
+            return 'default';
+        }
+
+        window.applyUDDesignPresetToPickers = function(sync = true) {
+            const presetName = udDashGet('inputUDThemePreset', 'sakura');
+            const preset = UD_DASH_THEME_PRESETS[presetName] || UD_DASH_THEME_PRESETS.sakura;
+            udDashSet('inputUDColorPrimary', preset.primary);
+            udDashSet('inputUDColorSecondary', preset.secondary);
+            udDashSet('inputUDColorAccent', preset.accent);
+            udDashSet('inputUDColorBg', preset.bg);
+            udDashSet('inputUDColorBg2', preset.bg2);
+            udDashSet('inputUDColorText', preset.text);
+            udDashSet('inputUDColorMuted', preset.muted);
+            udDashSet('inputUDColorCard', udDashCssColorToHex(udDashPackValue(pack, 'card', 'cardBg'), preset.card));
+            if (sync) window.syncUDDesignControlsToText();
+        };
+
+        window.buildUDDesignPackFromControls = function() {
+            const hidden = Array.from(document.querySelectorAll('.ud-section-hide:checked')).map(el => el.value).join(',');
+            const bg = udDashGet('inputUDColorBg', '#FFF5F7');
+            const card = udDashGet('inputUDColorCard', '#FFFFFF');
+            const coverOverlay = udDashOverlay(udDashGet('inputUDCoverOverlay', 'soft'), bg);
+            const heroOverlay = udDashOverlay('hero-' + udDashGet('inputUDHeroOverlay', 'medium'), bg);
+            const pack = [
+                '[tema]',
+                `preset=${udDashGet('inputUDThemePreset', 'sakura')}`,
+                `mode=${udDashGet('inputUDThemeMode', 'gradient')}`,
+                '',
+                '[warna]',
+                `primary=${udDashGet('inputUDColorPrimary', '#E5A9B4')}`,
+                `secondary=${udDashGet('inputUDColorSecondary', '#FADADD')}`,
+                `accent=${udDashGet('inputUDColorAccent', '#D4AF37')}`,
+                `bg=${bg}`,
+                `bg2=${udDashGet('inputUDColorBg2', '#FFFFFF')}`,
+                `text=${udDashGet('inputUDColorText', '#2C3E50')}`,
+                `muted=${udDashGet('inputUDColorMuted', '#64748B')}`,
+                `card=${udDashHexToRgba(card, .72)}`,
+                `border=${udDashHexToRgba(card, .84)}`,
+                '',
+                '[font]',
+                `heading=${udDashGet('inputUDFontHeading', 'cormorant')}`,
+                `body=${udDashGet('inputUDFontBody', 'montserrat')}`,
+                '',
+                '[layout]',
+                `width=${udDashGet('inputUDContentWidth', '72rem')}`,
+                `sectionPadding=${udDashGet('inputUDSectionPadding', '5rem')}`,
+                `radius=${udDashGet('inputUDCardRadius', '2rem')}`,
+                `buttonRadius=${udDashGet('inputUDButtonRadius', '999px')}`,
+                `cardBlur=${udDashGet('inputUDCardBlur', '18px')}`,
+                `shadow=${udDashGet('inputUDShadow', 'soft')}`,
+                `textAlign=${udDashGet('inputUDTextAlign', 'center')}`,
+                `cardStyle=${udDashGet('inputUDCardStyle', 'glass')}`,
+                `buttonStyle=${udDashGet('inputUDButtonStyle', 'gradient')}`,
+                '',
+                '[cover]',
+                `coverOverlay=${coverOverlay}`,
+                `heroOverlay=${heroOverlay}`,
+                `heroPosition=${udDashGet('inputUDHeroPosition', 'center')}`,
+                '',
+                '[section]',
+                `hideSections=${hidden}`,
+                `order=${udDashOrderFromPreset(udDashGet('inputUDSectionOrderPreset', 'default'))}`,
+                '',
+                '[media]',
+                `imageRadius=${udDashGet('inputUDImageRadius', '1.5rem')}`,
+                `galleryMode=${udDashGet('inputUDGalleryMode', 'grid')}`
+            ].join('\n');
+            const target = document.getElementById('inputUDDesignPackText');
+            if (target) target.value = pack;
+            return pack;
+        };
+
+        window.syncUDDesignControlsToText = function() {
+            window.buildUDDesignPackFromControls();
+        };
+
+
+        window.syncUDDresscodeColorControlsToHidden = function() {
+            const values = ['inputUDDresscodeColor1', 'inputUDDresscodeColor2', 'inputUDDresscodeColor3']
+                .map(id => document.getElementById(id)?.value)
+                .filter(Boolean);
+            const target = document.getElementById('inputUDDresscodeColorsText');
+            if (target) target.value = values.join(', ');
+            return target ? target.value.trim() : values.join(', ');
+        };
+
+        window.applyUDDresscodeColorTextToControls = function(text) {
+            const colors = String(text || '').split(',').map(v => v.trim()).filter(v => /^#[0-9a-f]{6}$/i.test(v));
+            const defaults = ['#000000', '#FFFFFF', '#D4AF37'];
+            ['inputUDDresscodeColor1', 'inputUDDresscodeColor2', 'inputUDDresscodeColor3'].forEach((id, index) => {
+                const el = document.getElementById(id);
+                if (el) el.value = colors[index] || defaults[index];
+            });
+            return window.syncUDDresscodeColorControlsToHidden ? window.syncUDDresscodeColorControlsToHidden() : '';
+        };
+
+        window.applyUDDesignPackTextToControls = function(text) {
+            const pack = parseUDDesignPackForDashboard(text);
+            const presetName = (udDashPackValue(pack, 'preset', 'tema') || 'sakura').toLowerCase();
+            const preset = UD_DASH_THEME_PRESETS[presetName] || UD_DASH_THEME_PRESETS.sakura;
+            udDashSet('inputUDThemePreset', presetName);
+            udDashSet('inputUDThemeMode', udDashPackValue(pack, 'mode', 'backgroundMode') || 'gradient');
+            udDashSet('inputUDTextAlign', udDashPackValue(pack, 'textAlign', 'align') || 'center');
+            udDashSet('inputUDColorPrimary', udDashSafeColor(udDashPackValue(pack, 'primary', 'warnaUtama'), preset.primary));
+            udDashSet('inputUDColorSecondary', udDashSafeColor(udDashPackValue(pack, 'secondary'), preset.secondary));
+            udDashSet('inputUDColorAccent', udDashSafeColor(udDashPackValue(pack, 'accent', 'aksen'), preset.accent));
+            udDashSet('inputUDColorBg', udDashSafeColor(udDashPackValue(pack, 'bg', 'background'), preset.bg));
+            udDashSet('inputUDColorBg2', udDashSafeColor(udDashPackValue(pack, 'bg2', 'background2'), preset.bg2));
+            udDashSet('inputUDColorText', udDashSafeColor(udDashPackValue(pack, 'text', 'teks'), preset.text));
+            udDashSet('inputUDColorMuted', udDashSafeColor(udDashPackValue(pack, 'muted', 'teksMuted'), preset.muted));
+            udDashSet('inputUDColorCard', udDashCssColorToHex(udDashPackValue(pack, 'card', 'cardBg'), preset.card));
+            udDashSet('inputUDFontHeading', udDashPackValue(pack, 'heading', 'headingFont', 'judulFont') || 'cormorant');
+            udDashSet('inputUDFontBody', udDashPackValue(pack, 'body', 'bodyFont', 'teksFont') || 'montserrat');
+            udDashSet('inputUDContentWidth', udDashPackValue(pack, 'width', 'contentWidth', 'lebar') || '72rem');
+            udDashSet('inputUDSectionPadding', udDashPackValue(pack, 'sectionPadding', 'jarakSection') || '5rem');
+            udDashSet('inputUDCardRadius', udDashPackValue(pack, 'radius', 'cardRadius') || '2rem');
+            udDashSet('inputUDButtonRadius', udDashPackValue(pack, 'buttonRadius', 'tombolRadius') || '999px');
+            udDashSet('inputUDCardBlur', udDashPackValue(pack, 'cardBlur', 'blur') || '18px');
+            udDashSet('inputUDShadow', udDashPackValue(pack, 'shadow', 'bayangan') || 'soft');
+            udDashSet('inputUDCardStyle', udDashPackValue(pack, 'cardStyle', 'kartu') || 'glass');
+            udDashSet('inputUDButtonStyle', udDashPackValue(pack, 'buttonStyle', 'tombol') || 'gradient');
+            udDashSet('inputUDImageRadius', udDashPackValue(pack, 'imageRadius', 'fotoRadius') || '1.5rem');
+            udDashSet('inputUDGalleryMode', udDashPackValue(pack, 'galleryMode', 'galeriMode') || 'grid');
+            udDashSet('inputUDCoverOverlay', udDashOverlayKeyFromValue(udDashPackValue(pack, 'coverOverlay')) || 'soft');
+            udDashSet('inputUDHeroOverlay', udDashOverlayKeyFromValue(udDashPackValue(pack, 'heroOverlay'), true) || 'medium');
+            udDashSet('inputUDHeroPosition', udDashPackValue(pack, 'heroPosition', 'fotoPosition') || 'center');
+            udDashSet('inputUDSectionOrderPreset', udDashPresetFromOrder(udDashPackValue(pack, 'order', 'urutan')));
+            const hidden = String(udDashPackValue(pack, 'hideSections', 'sembunyikan', 'hide') || '').split(',').map(x => x.trim()).filter(Boolean);
+            document.querySelectorAll('.ud-section-hide').forEach((el) => { el.checked = hidden.includes(el.value); });
+            window.buildUDDesignPackFromControls();
+        };
+
+        window.initUDDesignControls = function() {
+            if (activeMenu !== 'undangan_digital') return;
+            const form = document.getElementById('itemForm');
+            if (!form || form.dataset.udDesignReady === '1') return;
+            form.dataset.udDesignReady = '1';
+            form.querySelectorAll('.ud-design-control').forEach((el) => {
+                const eventName = el.type === 'checkbox' || el.tagName.toLowerCase() === 'select' ? 'change' : 'input';
+                el.addEventListener(eventName, () => {
+                    if (el.dataset.udPreset === '1') window.applyUDDesignPresetToPickers(false);
+                    window.syncUDDesignControlsToText();
+                });
+            });
+            form.querySelectorAll('.ud-dresscode-color').forEach((el) => {
+                el.addEventListener('input', () => window.syncUDDresscodeColorControlsToHidden && window.syncUDDresscodeColorControlsToHidden());
+            });
+            if (window.applyUDDresscodeColorTextToControls) window.applyUDDresscodeColorTextToControls(document.getElementById('inputUDDresscodeColorsText')?.value || '');
+            const existing = document.getElementById('inputUDDesignPackText')?.value || '';
+            if (existing.trim()) window.applyUDDesignPackTextToControls(existing);
+            else {
+                window.applyUDDesignPresetToPickers(false);
+                window.syncUDDesignControlsToText();
+            }
+        };
+
+
+        window.initUndanganDigitalAccordions = function() {
+            if (activeMenu !== 'undangan_digital') return;
+            const form = document.getElementById('itemForm');
+            if (!form || form.dataset.udAccordionReady === '1') return;
+            form.dataset.udAccordionReady = '1';
+            const panels = Array.from(form.children).filter((el) => {
+                if (!(el instanceof HTMLElement)) return false;
+                if (el.tagName.toLowerCase() === 'details') return false;
+                const cls = el.getAttribute('class') || '';
+                return cls.includes('md:col-span-2') && cls.includes('rounded-') && !cls.includes('flex justify-end');
+            });
+            panels.forEach((panel, index) => {
+                const titleEl = panel.querySelector('p[class*="uppercase"], h4, label');
+                const title = (titleEl?.textContent || `Kategori ${index + 1}`).replace(/\s+/g, ' ').trim();
+                const details = document.createElement('details');
+                details.className = panel.className + ' ud-dashboard-fold';
+                details.open = false;
+                const summary = document.createElement('summary');
+                summary.innerHTML = `<span><i class="fa-solid fa-layer-group text-violet-500 mr-2"></i>${escapeHTML(title)}</span><span class="text-[10px] text-gray-400 normal-case tracking-normal">klik buka/tutup</span>`;
+                const body = document.createElement('div');
+                body.className = 'ud-dashboard-fold-body';
+                panel.parentNode.insertBefore(details, panel);
+                panel.className = '';
+                details.appendChild(summary);
+                details.appendChild(body);
+                body.appendChild(panel);
+            });
+            if (window.initUDDesignControls) window.initUDDesignControls();
+        }
+
+
         function renderSidebar() {
             const sidebarHtml = menus.map(menu => `
                 <a href="#" onclick="changeMenu('${menu.id}')" class="flex items-center px-6 py-3 my-1 mx-3 rounded-xl transition-all duration-200 text-sm font-medium ${activeMenu === menu.id ? 'bg-lavender text-white shadow-md shadow-lavender/30' : 'text-gray-500 hover:bg-lavender-light hover:text-lavender-dark'}">
@@ -1937,6 +2342,7 @@
                     setTimeout(window.initR2Dropzones, 100);
                 }
                 await loadData(activeMenu); 
+                if (activeMenu === 'undangan_digital') setTimeout(window.initUndanganDigitalAccordions, 50);
             }
         }
 
@@ -2477,6 +2883,7 @@
         function getMenuMeta(categoryId) {
             const map = {
                 wedding_profile: { eyebrow: 'Data Acara', title: 'Wedding Profile', desc: 'Pusat data utama akad, resepsi, venue, keluarga, wali, target KUA, dan link penting acara.', icon: 'fa-heart', accent: 'from-rose-500 to-pink-600' },
+                undangan_digital: { eyebrow: 'Kontrol Undangan', title: 'Undangan Digital', desc: 'Atur isi undangan digital dari dashboard: foto, teks, galeri, susunan acara, gift, FAQ, dan elemen tambahan tanpa mengubah RSVP/ucapan.', icon: 'fa-laptop-code', accent: 'from-fuchsia-500 to-violet-600' },
                 mahar: { eyebrow: 'Data Mahar', title: 'Mahar', desc: 'Catat mahar uang, emas, nominal, status kesiapan, dan keterangan penting.', icon: 'fa-gem', accent: 'from-violet-500 to-fuchsia-500' },
                 seserahan: { eyebrow: 'Data Seserahan', title: 'Seserahan', desc: 'Catat item seserahan, kategori, harga, status beli, dan proses bungkus.', icon: 'fa-gift', accent: 'from-pink-500 to-rose-400' },
                 doorprize: { eyebrow: 'Data Doorprize', title: 'Doorprize', desc: 'Catat hadiah, kategori, jumlah, estimasi harga, dan status persiapan doorprize.', icon: 'fa-gift', accent: 'from-amber-400 to-orange-500' },
@@ -2497,6 +2904,7 @@
         function getFormTitle(categoryId) {
             const titles = {
                 wedding_profile: 'Isi Data Utama Wedding',
+                undangan_digital: 'Atur Undangan Digital',
                 mahar: 'Isi Detail Mahar',
                 seserahan: 'Isi Detail Seserahan',
                 doorprize: 'Isi Detail Doorprize',
@@ -2590,6 +2998,273 @@
                         <div class="lg:col-span-4"><label class="ultra-label">Link Folder Drive</label><input type="url" id="inputDriveLink" placeholder="Folder dokumen/kontrak" class="ultra-input"></div>
                     </div>
                     <div class="md:col-span-2"><label class="ultra-label">Catatan Besar Acara</label><textarea id="inputCatatanProfile" rows="3" placeholder="Catatan penting: dresscode keluarga, arahan WO, parkir, alur akad, dll." class="ultra-textarea resize-none"></textarea></div>
+                `;
+            } else if (categoryId === 'undangan_digital') {
+                formInner = `
+                    <div class="md:col-span-2 mb-1">
+                        <div class="ultra-form-head p-5 md:p-6">
+                            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-fuchsia-500 mb-2"><i class="fa-solid fa-laptop-code mr-2"></i>Undangan Digital</p>
+                                    <h4 class="text-xl md:text-2xl font-black text-gray-800">Kontrol Isi Undangan Digital</h4>
+                                    <p class="text-xs text-gray-500 mt-2 max-w-3xl">Bagian ini khusus mengatur isi halaman undangan: foto, teks, menu, galeri, susunan acara, gift, FAQ, dan elemen tambahan. RSVP/konfirmasi hadir dan ucapan tetap memakai sistem yang sudah ada.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2"><span class="ultra-pill"><i class="fa-solid fa-image text-fuchsia-500"></i> Foto</span><span class="ultra-pill"><i class="fa-solid fa-pen-to-square text-violet-500"></i> Edit Text</span><span class="ultra-pill"><i class="fa-solid fa-plus-minus text-blue-500"></i> Tambah/Kurangi Elemen</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 rounded-[28px] border border-fuchsia-100 bg-fuchsia-50/50 p-5">
+                        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-fuchsia-600 mb-2">Data Utama</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div class="lg:col-span-4"><label class="ultra-label">Nama Pengaturan</label><input type="text" id="inputUDNamaPengaturan" value="Pengaturan Undangan Digital" class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Nama Singkat Mempelai</label><input type="text" id="inputUDCoupleShort" placeholder="Mutiara & Destra" class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Tanggal Tampil</label><input type="text" id="inputUDEventDateText" placeholder="04 April 2027" class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Teks Cover Kecil</label><input type="text" id="inputUDCoverKicker" placeholder="The Wedding Of" class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Teks Hero Kecil</label><input type="text" id="inputUDHeroSubtitle" placeholder="We are getting married" class="ultra-input"></div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 rounded-[28px] border border-slate-100 bg-white p-5">
+                        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500 mb-2">Foto Utama</p>
+                        <p class="text-xs text-gray-500 mb-4">Isi URL foto. Jika foto diupload lewat menu Dokumen & Media, salin link file lalu tempel di sini.</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div class="lg:col-span-6"><label class="ultra-label">Foto Cover</label><input type="url" id="inputUDCoverImage" placeholder="https://..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Foto Hero / Background</label><input type="url" id="inputUDHeroImage" placeholder="https://..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Foto Mempelai Wanita</label><input type="url" id="inputUDBridePhoto" placeholder="https://..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Foto Mempelai Pria</label><input type="url" id="inputUDGroomPhoto" placeholder="https://..." class="ultra-input"></div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="md:col-span-2 rounded-[28px] border border-indigo-100 bg-indigo-50/40 p-5">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-indigo-600 mb-2">Tema, Warna, Layout & Tampilan</p>
+                                <p class="text-xs text-gray-500 max-w-3xl">Kontrol visual untuk orang awam: pilih tema, klik warna, pilih font, geser ukuran, dan centang section yang mau disembunyikan. Data tetap disimpan super irit dalam 1 field otomatis.</p>
+                            </div>
+                            <span class="ultra-pill"><i class="fa-solid fa-palette text-indigo-500"></i> Visual Builder</span>
+                        </div>
+                        <textarea id="inputUDDesignPackText" class="hidden"></textarea>
+                        <div class="space-y-4">
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Tema Cepat</span><small>Pilih gaya dasar</small></summary>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
+                                    <div class="lg:col-span-4"><label class="ultra-label">Tema Siap Pakai</label><select id="inputUDThemePreset" class="ultra-input ud-design-control" data-ud-preset="1"><option value="sakura">Romantis Sakura</option><option value="gold">Elegan Gold</option><option value="sage">Natural Sage</option><option value="lavender">Soft Lavender</option><option value="emerald">Emerald Fresh</option><option value="royal">Royal Blue</option><option value="mono">Minimalis Mono</option><option value="dark">Dark Luxury</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Model Background</label><select id="inputUDThemeMode" class="ultra-input ud-design-control"><option value="gradient">Gradasi Lembut</option><option value="solid">Polos</option><option value="radial">Cahaya Tengah</option><option value="dark">Gelap Elegan</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Arah Teks</label><select id="inputUDTextAlign" class="ultra-input ud-design-control"><option value="center">Tengah</option><option value="left">Kiri</option><option value="right">Kanan</option></select></div>
+                                </div>
+                            </details>
+
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-droplet text-pink-500 mr-2"></i>Warna Undangan</span><small>Klik kotak warna</small></summary>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 pt-4">
+                                    <label class="ud-color-card"><span>Warna Utama</span><input type="color" id="inputUDColorPrimary" value="#E5A9B4" class="ud-design-control"><em>Dipakai tombol, ornamen, highlight.</em></label>
+                                    <label class="ud-color-card"><span>Warna Lembut</span><input type="color" id="inputUDColorSecondary" value="#FADADD" class="ud-design-control"><em>Dipakai latar gradasi dan badge.</em></label>
+                                    <label class="ud-color-card"><span>Warna Aksen</span><input type="color" id="inputUDColorAccent" value="#D4AF37" class="ud-design-control"><em>Biasanya gold / warna hiasan.</em></label>
+                                    <label class="ud-color-card"><span>Background 1</span><input type="color" id="inputUDColorBg" value="#FFF5F7" class="ud-design-control"><em>Warna latar utama.</em></label>
+                                    <label class="ud-color-card"><span>Background 2</span><input type="color" id="inputUDColorBg2" value="#FFFFFF" class="ud-design-control"><em>Warna campuran latar.</em></label>
+                                    <label class="ud-color-card"><span>Teks Utama</span><input type="color" id="inputUDColorText" value="#2C3E50" class="ud-design-control"><em>Warna tulisan utama.</em></label>
+                                    <label class="ud-color-card"><span>Teks Kecil</span><input type="color" id="inputUDColorMuted" value="#64748B" class="ud-design-control"><em>Warna keterangan kecil.</em></label>
+                                    <label class="ud-color-card"><span>Card / Kotak</span><input type="color" id="inputUDColorCard" value="#FFFFFF" class="ud-design-control"><em>Warna kotak isi undangan.</em></label>
+                                </div>
+                            </details>
+
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-font text-purple-500 mr-2"></i>Font & Tulisan</span><small>Pilih tanpa ketik kode</small></summary>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
+                                    <div class="lg:col-span-6"><label class="ultra-label">Font Judul Besar</label><select id="inputUDFontHeading" class="ultra-input ud-design-control"><option value="cormorant">Romantis Klasik</option><option value="playfair">Elegan Formal</option><option value="greatvibes">Kaligrafi Mewah</option><option value="dancing">Handwriting Lembut</option><option value="lora">Serif Modern</option><option value="serif">Serif Bawaan</option></select></div>
+                                    <div class="lg:col-span-6"><label class="ultra-label">Font Isi / Paragraf</label><select id="inputUDFontBody" class="ultra-input ud-design-control"><option value="montserrat">Modern Bersih</option><option value="poppins">Poppins</option><option value="inter">Inter</option><option value="lora">Lora</option><option value="system">Font HP Bawaan</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Ukuran Jarak Section</label><select id="inputUDSectionPadding" class="ultra-input ud-design-control"><option value="3.5rem">Rapat</option><option value="5rem">Normal</option><option value="6.5rem">Lapang</option><option value="8rem">Sangat Lapang</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Lebar Isi</label><select id="inputUDContentWidth" class="ultra-input ud-design-control"><option value="64rem">Ramping</option><option value="72rem">Normal</option><option value="80rem">Lebar</option><option value="100%">Full</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Bayangan Card</label><select id="inputUDShadow" class="ultra-input ud-design-control"><option value="none">Tanpa Bayangan</option><option value="soft">Lembut</option><option value="medium">Sedang</option><option value="strong">Tebal</option></select></div>
+                                </div>
+                            </details>
+
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-border-top-left text-blue-500 mr-2"></i>Bentuk, Card & Tombol</span><small>Atur rasa visual</small></summary>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
+                                    <div class="lg:col-span-3"><label class="ultra-label">Style Card</label><select id="inputUDCardStyle" class="ultra-input ud-design-control"><option value="glass">Glass / Transparan</option><option value="solid">Solid</option><option value="outline">Outline</option><option value="flat">Flat</option></select></div>
+                                    <div class="lg:col-span-3"><label class="ultra-label">Style Tombol</label><select id="inputUDButtonStyle" class="ultra-input ud-design-control"><option value="gradient">Gradasi</option><option value="solid">Polos</option><option value="outline">Garis</option></select></div>
+                                    <div class="lg:col-span-3"><label class="ultra-label">Lengkung Card</label><select id="inputUDCardRadius" class="ultra-input ud-design-control"><option value="0.75rem">Sedikit</option><option value="1.5rem">Medium</option><option value="2rem">Bulat</option><option value="2.5rem">Sangat Bulat</option></select></div>
+                                    <div class="lg:col-span-3"><label class="ultra-label">Lengkung Tombol</label><select id="inputUDButtonRadius" class="ultra-input ud-design-control"><option value="0.75rem">Kotak Lembut</option><option value="1.5rem">Medium</option><option value="999px">Pill / Bulat Penuh</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Blur Card Transparan</label><select id="inputUDCardBlur" class="ultra-input ud-design-control"><option value="0px">Tidak Blur</option><option value="10px">Ringan</option><option value="18px">Normal</option><option value="28px">Tebal</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Lengkung Foto</label><select id="inputUDImageRadius" class="ultra-input ud-design-control"><option value="0.75rem">Sedikit</option><option value="1.5rem">Normal</option><option value="2rem">Bulat</option><option value="999px">Lingkaran</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Tampilan Galeri</label><select id="inputUDGalleryMode" class="ultra-input ud-design-control"><option value="grid">Grid Rapi</option><option value="masonry">Masonry / Pinterest</option></select></div>
+                                </div>
+                            </details>
+
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-image text-emerald-500 mr-2"></i>Cover & Hero</span><small>Overlay dan posisi foto</small></summary>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
+                                    <div class="lg:col-span-4"><label class="ultra-label">Gelap Cover Pembuka</label><select id="inputUDCoverOverlay" class="ultra-input ud-design-control"><option value="soft">Lembut</option><option value="medium">Sedang</option><option value="dark">Gelap</option><option value="none">Tanpa Gelap</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Gelap Hero Utama</label><select id="inputUDHeroOverlay" class="ultra-input ud-design-control"><option value="soft">Lembut</option><option value="medium">Sedang</option><option value="dark">Gelap</option><option value="none">Tanpa Gelap</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Posisi Foto Hero</label><select id="inputUDHeroPosition" class="ultra-input ud-design-control"><option value="center">Tengah</option><option value="top">Atas</option><option value="bottom">Bawah</option><option value="left">Kiri</option><option value="right">Kanan</option></select></div>
+                                </div>
+                            </details>
+
+                            <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
+                                <summary><span><i class="fa-solid fa-eye-slash text-slate-500 mr-2"></i>Tampilkan / Sembunyikan Section</span><small>Centang yang mau disembunyikan</small></summary>
+                                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 pt-4">
+                                    <label class="ud-check-card"><input type="checkbox" value="ayat" class="ud-section-hide ud-design-control"> Ayat / Doa</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="mempelai" class="ud-section-hide ud-design-control"> Mempelai</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="keluarga" class="ud-section-hide ud-design-control"> Keluarga</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="sambutan" class="ud-section-hide ud-design-control"> Sambutan</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="story" class="ud-section-hide ud-design-control"> Love Story</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="gallery" class="ud-section-hide ud-design-control"> Galeri</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="event" class="ud-section-hide ud-design-control"> Acara</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="dresscode" class="ud-section-hide ud-design-control"> Dress Code</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="rundown" class="ud-section-hide ud-design-control"> Rundown</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="info-tamu" class="ud-section-hide ud-design-control"> Info Tamu</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="checkin" class="ud-section-hide ud-design-control"> Check-in</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="gift" class="ud-section-hide ud-design-control"> Gift</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="qris" class="ud-section-hide ud-design-control"> QRIS</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="social" class="ud-section-hide ud-design-control"> Sosial Media</label>
+                                    <label class="ud-check-card"><input type="checkbox" value="faq" class="ud-section-hide ud-design-control"> FAQ</label>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4">
+                                    <div class="lg:col-span-6"><label class="ultra-label">Urutan Section</label><select id="inputUDSectionOrderPreset" class="ultra-input ud-design-control"><option value="default">Urutan Normal</option><option value="story_first">Love Story Sebelum Mempelai</option><option value="event_first">Acara Lebih Atas</option><option value="gallery_last">Galeri Dekat Akhir</option></select></div>
+                                    <div class="lg:col-span-6 rounded-2xl bg-indigo-50 border border-indigo-100 p-4 ud-mini-hint"><b class="text-indigo-700">Irit database:</b> semua pilihan visual ini tetap diringkas otomatis ke field <b>designPackText</b>. Pengguna tidak perlu melihat atau mengetik kode warna.</div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 rounded-[28px] border border-violet-100 bg-violet-50/40 p-5">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-violet-600 mb-2">Kontrol Efek & Animasi</p>
+                                <p class="text-xs text-gray-500 max-w-3xl">Aktifkan/matikan efek, pilih jenis efek, dan atur kecepatan/intensitas langsung dari dashboard. Ini hanya mengatur visual undangan, bukan RSVP dan bukan ucapan.</p>
+                            </div>
+                            <span class="ultra-pill"><i class="fa-solid fa-wand-magic-sparkles text-violet-500"></i> Semua Efek</span>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div class="lg:col-span-3"><label class="ultra-label">Efek Partikel</label><select id="inputUDEffectParticlesEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Pilihan Efek Partikel</label><select id="inputUDEffectParticleType" class="ultra-input"><option value="sakura" selected>Sakura / Kelopak</option><option value="snow">Salju</option><option value="hearts">Hati</option><option value="stars">Bintang</option><option value="bubbles">Bubble</option><option value="confetti">Confetti</option><option value="fireflies">Fireflies / Kunang-kunang</option><option value="glitter">Glitter</option><option value="none">Tidak Ada</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Jumlah Partikel</label><select id="inputUDEffectParticleIntensity" class="ultra-input"><option value="low">Sedikit</option><option value="medium" selected>Normal</option><option value="high">Banyak</option><option value="ultra">Sangat Banyak</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Kecepatan Partikel</label><input type="number" id="inputUDEffectParticleSpeed" min="0.2" max="5" step="0.1" value="1" class="ultra-input"></div>
+                            <div class="lg:col-span-1"><label class="ultra-label">Opacity</label><input type="number" id="inputUDEffectParticleOpacity" min="0" max="1" step="0.05" value="0.45" class="ultra-input"></div>
+                            <div class="lg:col-span-1"><label class="ultra-label">Ukuran</label><input type="number" id="inputUDEffectParticleSize" min="0.4" max="3" step="0.1" value="1" class="ultra-input"></div>
+
+                            <div class="lg:col-span-3"><label class="ultra-label">Animasi Scroll / AOS</label><select id="inputUDEffectAosEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Pilihan Animasi Masuk</label><select id="inputUDEffectAosType" class="ultra-input"><option value="default" selected>Ikuti bawaan tiap elemen</option><option value="fade-up">Fade Up</option><option value="fade-down">Fade Down</option><option value="fade-left">Fade Left</option><option value="fade-right">Fade Right</option><option value="zoom-in">Zoom In</option><option value="zoom-out">Zoom Out</option><option value="flip-up">Flip Up</option><option value="flip-left">Flip Left</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Durasi Animasi</label><input type="number" id="inputUDEffectAosDuration" min="100" max="3000" step="50" value="700" class="ultra-input"></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Animasi Sekali</label><select id="inputUDEffectAosOnce" class="ultra-input"><option value="true" selected>Ya</option><option value="false">Ulang saat scroll</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Transisi Cover</label><select id="inputUDEffectCoverTransition" class="ultra-input"><option value="cinematic" selected>Cinematic Zoom + Blur</option><option value="fade">Fade</option><option value="slide">Slide Ke Atas</option><option value="zoom">Zoom</option><option value="blur">Blur</option><option value="none">Tanpa Animasi</option></select></div>
+
+                            <div class="lg:col-span-3"><label class="ultra-label">Parallax Background</label><select id="inputUDEffectParallaxEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Hover Card / Foto</label><select id="inputUDEffectHoverEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Progress Bar</label><select id="inputUDEffectProgressBar" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Floating Menu</label><select id="inputUDEffectFloatingNav" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-2"><label class="ultra-label">Efek Tombol Shine</label><select id="inputUDEffectButtonShine" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+
+                            <div class="lg:col-span-3"><label class="ultra-label">Auto Scroll Setelah Dibuka</label><select id="inputUDEffectAutoScrollEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Kecepatan Auto Scroll Mobile</label><input type="number" id="inputUDEffectAutoScrollMobileSpeed" min="10" max="150" step="1" value="42" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Kecepatan Auto Scroll Desktop</label><input type="number" id="inputUDEffectAutoScrollDesktopSpeed" min="10" max="180" step="1" value="56" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Delay Lanjut Auto Scroll</label><input type="number" id="inputUDEffectAutoScrollResumeDelay" min="500" max="10000" step="100" value="2200" class="ultra-input"></div>
+
+                            <div class="lg:col-span-3"><label class="ultra-label">Ikon Musik Berputar</label><select id="inputUDEffectMusicSpin" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
+                            <div class="lg:col-span-9"><label class="ultra-label">Catatan Efek</label><input type="text" disabled value="Untuk mengurangi elemen/efek: pilih Mati atau Tidak Ada, lalu Simpan Data." class="ultra-input bg-white/60 text-gray-400"></div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="rounded-[28px] border border-rose-100 bg-rose-50/40 p-5">
+                            <p class="text-[10px] font-black uppercase tracking-[0.24em] text-rose-500 mb-3">Mempelai Wanita</p>
+                            <div class="space-y-3">
+                                <input type="text" id="inputUDBrideLabel" placeholder="The Bride" class="ultra-input">
+                                <input type="text" id="inputUDBrideName" placeholder="Nama lengkap mempelai wanita" class="ultra-input">
+                                <input type="text" id="inputUDBrideParents" placeholder="Putri dari ..." class="ultra-input">
+                                <input type="text" id="inputUDBrideInstagram" placeholder="@username / link Instagram" class="ultra-input">
+                            </div>
+                        </div>
+                        <div class="rounded-[28px] border border-amber-100 bg-amber-50/40 p-5">
+                            <p class="text-[10px] font-black uppercase tracking-[0.24em] text-amber-600 mb-3">Mempelai Pria</p>
+                            <div class="space-y-3">
+                                <input type="text" id="inputUDGroomLabel" placeholder="The Groom" class="ultra-input">
+                                <input type="text" id="inputUDGroomName" placeholder="Nama lengkap mempelai pria" class="ultra-input">
+                                <input type="text" id="inputUDGroomParents" placeholder="Putra dari ..." class="ultra-input">
+                                <input type="text" id="inputUDGroomInstagram" placeholder="@username / link Instagram" class="ultra-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4"><label class="ultra-label">Judul Ayat/Doa</label><input type="text" id="inputUDAyatTitle" placeholder="Doa Pembuka" class="ultra-input"></div>
+                        <div class="lg:col-span-8"><label class="ultra-label">Sumber Ayat/Doa</label><input type="text" id="inputUDAyatSource" placeholder="QS. Ar-Rum: 21" class="ultra-input"></div>
+                        <div class="lg:col-span-12"><label class="ultra-label">Isi Ayat/Doa</label><textarea id="inputUDAyatText" rows="3" placeholder="Tulis ayat/doa pembuka..." class="ultra-textarea resize-none"></textarea></div>
+                        <div class="lg:col-span-4"><label class="ultra-label">Judul Sambutan</label><input type="text" id="inputUDGreetingTitle" placeholder="Assalamu’alaikum..." class="ultra-input"></div>
+                        <div class="lg:col-span-8"><label class="ultra-label">Isi Sambutan</label><textarea id="inputUDGreetingText" rows="3" placeholder="Tulis sambutan pembuka..." class="ultra-textarea resize-none"></textarea></div>
+                    </div>
+
+                    <div class="md:col-span-2 rounded-[28px] border border-blue-100 bg-blue-50/40 p-5">
+                        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-blue-600 mb-3">Acara & Lokasi</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div class="lg:col-span-3"><label class="ultra-label">Judul Acara 1</label><input type="text" id="inputUDAkadTitle" placeholder="Akad Nikah" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Tanggal Acara 1</label><input type="text" id="inputUDAkadDate" placeholder="Minggu, 04 April 2027" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Jam Acara 1</label><input type="text" id="inputUDAkadTime" placeholder="Pukul 08.00 WIB - Selesai" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Icon Acara 1</label><input type="text" id="inputUDAkadIcon" placeholder="fa-ring" class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Venue Acara 1</label><input type="text" id="inputUDAkadVenue" placeholder="Masjid / Gedung" class="ultra-input"></div>
+                            <div class="lg:col-span-5"><label class="ultra-label">Alamat Acara 1</label><input type="text" id="inputUDAkadAddress" placeholder="Alamat lengkap" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Link Kalender 1</label><input type="url" id="inputUDAkadCalendarLink" placeholder="https://calendar.google.com/..." class="ultra-input"></div>
+
+                            <div class="lg:col-span-3"><label class="ultra-label">Judul Acara 2</label><input type="text" id="inputUDResepsiTitle" placeholder="Resepsi" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Tanggal Acara 2</label><input type="text" id="inputUDResepsiDate" placeholder="Minggu, 04 April 2027" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Jam Acara 2</label><input type="text" id="inputUDResepsiTime" placeholder="Pukul 11.00 WIB - 14.00 WIB" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Icon Acara 2</label><input type="text" id="inputUDResepsiIcon" placeholder="fa-champagne-glasses" class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Venue Acara 2</label><input type="text" id="inputUDResepsiVenue" placeholder="Gedung / Ballroom" class="ultra-input"></div>
+                            <div class="lg:col-span-5"><label class="ultra-label">Alamat Acara 2</label><input type="text" id="inputUDResepsiAddress" placeholder="Alamat lengkap" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Link Kalender 2</label><input type="url" id="inputUDResepsiCalendarLink" placeholder="https://calendar.google.com/..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Link Google Maps</label><input type="url" id="inputUDMapsLink" placeholder="https://maps.google.com/..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Embed Google Maps</label><input type="url" id="inputUDMapsEmbed" placeholder="https://www.google.com/maps/embed?..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Link Live Streaming</label><input type="url" id="inputUDLiveStreamLink" placeholder="https://youtube.com/..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Teks Live Streaming</label><input type="text" id="inputUDLiveStreamText" placeholder="Tonton Live YouTube" class="ultra-input"></div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div><label class="ultra-label">Quick Menu <span class="text-gray-400 normal-case">(1 baris: Label|#section|fa-icon)</span></label><textarea id="inputUDQuickMenuItemsText" rows="5" class="ultra-textarea" placeholder="Mempelai|#mempelai|fa-user-heart&#10;Story|#story|fa-heart"></textarea></div>
+                        <div><label class="ultra-label">Love Story <span class="text-gray-400 normal-case">(Tanggal|Judul|Isi)</span></label><textarea id="inputUDStoryItemsText" rows="5" class="ultra-textarea" placeholder="Desember 2024|Pertemuan Pertama|Cerita singkat..."></textarea></div>
+                        <div><label class="ultra-label">Galeri Foto <span class="text-gray-400 normal-case">(1 URL per baris)</span></label><textarea id="inputUDGalleryImagesText" rows="5" class="ultra-textarea" placeholder="https://...foto1.jpg&#10;https://...foto2.jpg"></textarea></div>
+                        <div><label class="ultra-label">Susunan Acara <span class="text-gray-400 normal-case">(Jam|Judul|Isi|fa-icon)</span></label><textarea id="inputUDRundownItemsText" rows="5" class="ultra-textarea" placeholder="08.00 WIB|Akad Nikah|Prosesi ijab kabul|fa-ring"></textarea></div>
+                        <div><label class="ultra-label">Info Lokasi <span class="text-gray-400 normal-case">(Judul|Isi|fa-icon)</span></label><textarea id="inputUDLocationCardsText" rows="4" class="ultra-textarea" placeholder="Area Parkir|Tersedia area parkir...|fa-car"></textarea></div>
+                        <div><label class="ultra-label">Catatan Tamu <span class="text-gray-400 normal-case">(1 catatan per baris)</span></label><textarea id="inputUDInfoTamuText" rows="4" class="ultra-textarea" placeholder="Tunjukkan QR Code RSVP kepada penerima tamu."></textarea></div>
+                    </div>
+
+                    <div class="md:col-span-2 rounded-[28px] border border-emerald-100 bg-emerald-50/40 p-5">
+                        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-600 mb-3">Dress Code, Gift, FAQ, Elemen Tambahan</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div class="lg:col-span-3"><label class="ultra-label">Nama Dress Code</label><input type="text" id="inputUDDresscodeTitle" placeholder="Black" class="ultra-input"></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Warna Dress Code</label><input type="hidden" id="inputUDDresscodeColorsText"><div class="grid grid-cols-3 gap-2"><input type="color" id="inputUDDresscodeColor1" value="#000000" class="ud-dresscode-color w-full h-12 rounded-2xl border border-gray-200 bg-white p-1 cursor-pointer"><input type="color" id="inputUDDresscodeColor2" value="#FFFFFF" class="ud-dresscode-color w-full h-12 rounded-2xl border border-gray-200 bg-white p-1 cursor-pointer"><input type="color" id="inputUDDresscodeColor3" value="#D4AF37" class="ud-dresscode-color w-full h-12 rounded-2xl border border-gray-200 bg-white p-1 cursor-pointer"></div><p class="mt-1 text-[10px] font-bold text-gray-400">Klik kotak warna, tidak perlu ketik kode.</p></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Catatan Dress Code</label><input type="text" id="inputUDDresscodeNote" placeholder="Gunakan pakaian formal..." class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Bank / Rekening <span class="text-gray-400 normal-case">(Bank|Nomor|Atas Nama)</span></label><textarea id="inputUDBankAccountsText" rows="4" class="ultra-textarea"></textarea></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">FAQ <span class="text-gray-400 normal-case">(Pertanyaan|Jawaban)</span></label><textarea id="inputUDFAQItemsText" rows="4" class="ultra-textarea"></textarea></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">URL Gambar QRIS</label><input type="url" id="inputUDQrisImage" placeholder="https://..." class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Nomor E-Wallet</label><input type="text" id="inputUDEwalletNumber" placeholder="081234567890" class="ultra-input"></div>
+                            <div class="lg:col-span-4"><label class="ultra-label">Hashtag <span class="text-gray-400 normal-case">(pisah koma)</span></label><input type="text" id="inputUDHashtagsText" placeholder="#Wedding, #MDWedding2027" class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Link Video Galeri</label><input type="url" id="inputUDGalleryVideoLink" placeholder="https://...mp4 / youtube" class="ultra-input"></div>
+                            <div class="lg:col-span-6"><label class="ultra-label">Teks Tombol Video</label><input type="text" id="inputUDGalleryVideoText" placeholder="Lihat Video" class="ultra-input"></div>
+                            <div class="lg:col-span-12"><label class="ultra-label">Elemen Tambahan Sederhana <span class="text-gray-400 normal-case">(Judul|Isi|fa-icon|#anchor opsional, 1 baris = 1 elemen)</span></label><textarea id="inputUDExtraElementsText" rows="4" class="ultra-textarea" placeholder="Cerita Singkat|Isi elemen tambahan...|fa-star|custom-1"></textarea></div>
+                            <div class="lg:col-span-12 rounded-[24px] border border-sky-100 bg-sky-50/60 p-4">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-3">
+                                    <div>
+                                        <label class="ultra-label mb-1">Builder Elemen Fleksibel Super Irit Database</label>
+                                        <p class="text-xs text-gray-500 leading-relaxed">Semua section/elemen custom disimpan hanya dalam 1 field teks. Hapus baris untuk mengurangi elemen. Ubah urutan baris untuk mengubah urutan tampil.</p>
+                                    </div>
+                                    <span class="ultra-pill"><i class="fa-solid fa-database text-sky-500"></i> 1 Field Ringkas</span>
+                                </div>
+                                <textarea id="inputUDCustomBuilderText" rows="8" class="ultra-textarea" placeholder="Kategori|Tipe|Judul|Isi|Icon|Media/Link|Anchor|Status&#10;Info Keluarga|card|Pesan Keluarga|Mohon hadir tepat waktu.|fa-heart||info-keluarga|on&#10;Fasilitas|list|Fasilitas Tamu|Parkir luas; Musholla; Toilet; Area foto|fa-list-check||fasilitas|on&#10;Foto Tambahan|foto|Spot Foto|Area foto tersedia di depan venue.|fa-camera|https://...jpg|spot-foto|on&#10;Link Penting|button|Buka Grup WA|Klik tombol untuk masuk grup keluarga.|fa-whatsapp|https://wa.me/...|grup-wa|on"></textarea>
+                                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-gray-500 leading-relaxed">
+                                    <div class="bg-white/70 border border-white rounded-2xl p-3"><b class="text-gray-700">Format:</b> Kategori|Tipe|Judul|Isi|Icon|Media/Link|Anchor|Status</div>
+                                    <div class="bg-white/70 border border-white rounded-2xl p-3"><b class="text-gray-700">Tipe:</b> card, foto, video, quote, button, list, timeline, faq, embed, spacer. Status: on/off.</div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-12"><label class="ultra-label">Teks Footer</label><textarea id="inputUDFooterText" rows="3" class="ultra-textarea" placeholder="Kami menantikan kehadiran Anda..."></textarea></div>
+                        </div>
+                    </div>
                 `;
             } else if (categoryId === 'mahar') {
 
@@ -3420,6 +4095,94 @@
                     createdAt: existingProfile ? existingProfile.createdAt : new Date().toISOString(),
                     includeToMainBudget: false
                 };
+            } else if (categoryId === 'undangan_digital') {
+                const existingUndanganDigital = editId ? appData.items[categoryId].find(i => i.id === editId) : ((appData.items[categoryId] || [])[0] || null);
+                itemData = {
+                    nama: document.getElementById('inputUDNamaPengaturan').value.trim() || 'Pengaturan Undangan Digital',
+                    coupleShort: document.getElementById('inputUDCoupleShort').value.trim(),
+                    eventDateText: document.getElementById('inputUDEventDateText').value.trim(),
+                    coverKicker: document.getElementById('inputUDCoverKicker').value.trim(),
+                    heroSubtitle: document.getElementById('inputUDHeroSubtitle').value.trim(),
+                    coverImage: document.getElementById('inputUDCoverImage').value.trim(),
+                    heroImage: document.getElementById('inputUDHeroImage').value.trim(),
+                    bridePhoto: document.getElementById('inputUDBridePhoto').value.trim(),
+                    groomPhoto: document.getElementById('inputUDGroomPhoto').value.trim(),
+                    designPackText: window.buildUDDesignPackFromControls ? window.buildUDDesignPackFromControls() : document.getElementById('inputUDDesignPackText').value.trim(),
+                    effectParticlesEnabled: document.getElementById('inputUDEffectParticlesEnabled').value,
+                    effectParticleType: document.getElementById('inputUDEffectParticleType').value,
+                    effectParticleIntensity: document.getElementById('inputUDEffectParticleIntensity').value,
+                    effectParticleSpeed: document.getElementById('inputUDEffectParticleSpeed').value,
+                    effectParticleOpacity: document.getElementById('inputUDEffectParticleOpacity').value,
+                    effectParticleSize: document.getElementById('inputUDEffectParticleSize').value,
+                    effectAosEnabled: document.getElementById('inputUDEffectAosEnabled').value,
+                    effectAosType: document.getElementById('inputUDEffectAosType').value,
+                    effectAosDuration: document.getElementById('inputUDEffectAosDuration').value,
+                    effectAosOnce: document.getElementById('inputUDEffectAosOnce').value,
+                    effectCoverTransition: document.getElementById('inputUDEffectCoverTransition').value,
+                    effectParallaxEnabled: document.getElementById('inputUDEffectParallaxEnabled').value,
+                    effectHoverEnabled: document.getElementById('inputUDEffectHoverEnabled').value,
+                    effectProgressBar: document.getElementById('inputUDEffectProgressBar').value,
+                    effectFloatingNav: document.getElementById('inputUDEffectFloatingNav').value,
+                    effectButtonShine: document.getElementById('inputUDEffectButtonShine').value,
+                    effectAutoScrollEnabled: document.getElementById('inputUDEffectAutoScrollEnabled').value,
+                    effectAutoScrollMobileSpeed: document.getElementById('inputUDEffectAutoScrollMobileSpeed').value,
+                    effectAutoScrollDesktopSpeed: document.getElementById('inputUDEffectAutoScrollDesktopSpeed').value,
+                    effectAutoScrollResumeDelay: document.getElementById('inputUDEffectAutoScrollResumeDelay').value,
+                    effectMusicSpin: document.getElementById('inputUDEffectMusicSpin').value,
+                    brideLabel: document.getElementById('inputUDBrideLabel').value.trim(),
+                    brideName: document.getElementById('inputUDBrideName').value.trim(),
+                    brideParents: document.getElementById('inputUDBrideParents').value.trim(),
+                    brideInstagram: document.getElementById('inputUDBrideInstagram').value.trim(),
+                    groomLabel: document.getElementById('inputUDGroomLabel').value.trim(),
+                    groomName: document.getElementById('inputUDGroomName').value.trim(),
+                    groomParents: document.getElementById('inputUDGroomParents').value.trim(),
+                    groomInstagram: document.getElementById('inputUDGroomInstagram').value.trim(),
+                    ayatTitle: document.getElementById('inputUDAyatTitle').value.trim(),
+                    ayatText: document.getElementById('inputUDAyatText').value.trim(),
+                    ayatSource: document.getElementById('inputUDAyatSource').value.trim(),
+                    greetingTitle: document.getElementById('inputUDGreetingTitle').value.trim(),
+                    greetingText: document.getElementById('inputUDGreetingText').value.trim(),
+                    akadTitle: document.getElementById('inputUDAkadTitle').value.trim(),
+                    akadDate: document.getElementById('inputUDAkadDate').value.trim(),
+                    akadTime: document.getElementById('inputUDAkadTime').value.trim(),
+                    akadIcon: document.getElementById('inputUDAkadIcon').value.trim(),
+                    akadVenue: document.getElementById('inputUDAkadVenue').value.trim(),
+                    akadAddress: document.getElementById('inputUDAkadAddress').value.trim(),
+                    akadCalendarLink: document.getElementById('inputUDAkadCalendarLink').value.trim(),
+                    resepsiTitle: document.getElementById('inputUDResepsiTitle').value.trim(),
+                    resepsiDate: document.getElementById('inputUDResepsiDate').value.trim(),
+                    resepsiTime: document.getElementById('inputUDResepsiTime').value.trim(),
+                    resepsiIcon: document.getElementById('inputUDResepsiIcon').value.trim(),
+                    resepsiVenue: document.getElementById('inputUDResepsiVenue').value.trim(),
+                    resepsiAddress: document.getElementById('inputUDResepsiAddress').value.trim(),
+                    resepsiCalendarLink: document.getElementById('inputUDResepsiCalendarLink').value.trim(),
+                    mapsLink: document.getElementById('inputUDMapsLink').value.trim(),
+                    mapsEmbed: document.getElementById('inputUDMapsEmbed').value.trim(),
+                    liveStreamLink: document.getElementById('inputUDLiveStreamLink').value.trim(),
+                    liveStreamText: document.getElementById('inputUDLiveStreamText').value.trim(),
+                    quickMenuItemsText: document.getElementById('inputUDQuickMenuItemsText').value.trim(),
+                    storyItemsText: document.getElementById('inputUDStoryItemsText').value.trim(),
+                    galleryImagesText: document.getElementById('inputUDGalleryImagesText').value.trim(),
+                    rundownItemsText: document.getElementById('inputUDRundownItemsText').value.trim(),
+                    locationCardsText: document.getElementById('inputUDLocationCardsText').value.trim(),
+                    infoTamuText: document.getElementById('inputUDInfoTamuText').value.trim(),
+                    dresscodeTitle: document.getElementById('inputUDDresscodeTitle').value.trim(),
+                    dresscodeColorsText: window.syncUDDresscodeColorControlsToHidden ? window.syncUDDresscodeColorControlsToHidden() : document.getElementById('inputUDDresscodeColorsText').value.trim(),
+                    dresscodeNote: document.getElementById('inputUDDresscodeNote').value.trim(),
+                    bankAccountsText: document.getElementById('inputUDBankAccountsText').value.trim(),
+                    faqItemsText: document.getElementById('inputUDFAQItemsText').value.trim(),
+                    qrisImage: document.getElementById('inputUDQrisImage').value.trim(),
+                    ewalletNumber: document.getElementById('inputUDEwalletNumber').value.trim(),
+                    hashtagsText: document.getElementById('inputUDHashtagsText').value.trim(),
+                    galleryVideoLink: document.getElementById('inputUDGalleryVideoLink').value.trim(),
+                    galleryVideoText: document.getElementById('inputUDGalleryVideoText').value.trim(),
+                    extraElementsText: document.getElementById('inputUDExtraElementsText').value.trim(),
+                    customBuilderText: document.getElementById('inputUDCustomBuilderText').value.trim(),
+                    footerText: document.getElementById('inputUDFooterText').value.trim(),
+                    tanggalUpdate: new Date().toISOString(),
+                    createdAt: existingUndanganDigital ? existingUndanganDigital.createdAt : new Date().toISOString(),
+                    includeToMainBudget: false
+                };
             } else if (categoryId === 'mahar') {
                 let tipe = document.getElementById('inputTipeMahar').value;
                 let nilaiFinal = 0;
@@ -3723,6 +4486,10 @@
                     const profileId = appData.items['wedding_profile'][0].id;
                     await updateDoc(doc(db, categoryId, profileId), itemData);
                     showToast('Wedding Profile berhasil diperbarui!');
+                } else if (!editId && categoryId === 'undangan_digital' && (appData.items['undangan_digital'] || []).length > 0) {
+                    const settingId = appData.items['undangan_digital'][0].id;
+                    await updateDoc(doc(db, categoryId, settingId), itemData);
+                    showToast('Pengaturan undangan digital berhasil diperbarui!');
                 } else if (editId) {
                     await updateDoc(doc(db, categoryId, editId), itemData);
                     showToast('Data berhasil diperbarui!');
@@ -3862,6 +4629,7 @@
         function getXMenuConfig(categoryId) {
             const map = {
                 wedding_profile: { icon: 'fa-heart', title: 'Data Utama Wedding', accent: 'from-rose-500 to-pink-600', empty: 'Wedding Profile belum diisi.' },
+                undangan_digital: { icon: 'fa-laptop-code', title: 'Pengaturan Undangan Digital', accent: 'from-fuchsia-500 to-violet-600', empty: 'Belum ada pengaturan undangan digital.' },
                 seserahan: { icon: 'fa-gift', title: 'Daftar Item Seserahan', accent: 'from-pink-500 to-rose-500', empty: 'Belum ada seserahan di list.' },
                 doorprize: { icon: 'fa-trophy', title: 'Daftar Doorprize', accent: 'from-amber-400 to-orange-500', empty: 'Belum ada doorprize di list.' },
                 catering: { icon: 'fa-utensils', title: 'Daftar Catering', accent: 'from-orange-500 to-red-500', empty: 'Belum ada pesanan catering.' },
@@ -3878,6 +4646,7 @@
         function getXItemTitle(categoryId, item) {
             const map = {
                 wedding_profile: item.namaAcara,
+                undangan_digital: item.nama || 'Pengaturan Undangan Digital',
                 seserahan: item.namaItem,
                 doorprize: item.namaItem,
                 catering: item.vendor,
@@ -3894,6 +4663,7 @@
         function getXItemSubtitle(categoryId, item) {
             const text = {
                 wedding_profile: `Akad ${item.tanggalAkad || '-'} ${item.jamAkad || ''} · Resepsi ${item.tanggalResepsi || '-'} ${item.jamResepsi || ''} · ${item.lokasiResepsi || item.lokasiAkad || 'Lokasi belum diisi'}`,
+                undangan_digital: `${item.coupleShort || 'Nama mempelai belum diisi'} · ${item.eventDateText || 'Tanggal belum diisi'} · Efek ${(item.effectParticlesEnabled || 'on') === 'off' ? 'mati' : (item.effectParticleType || 'sakura')} · ${(item.extraElementsText || item.customBuilderText) ? 'Ada elemen tambahan' : 'Belum ada elemen tambahan'}`,
                 seserahan: `${item.kategori || 'lainnya'} · ${item.jumlah || 1} item · ${item.catatan || 'Tanpa catatan'}`,
                 doorprize: `${(item.kategori || 'lainnya').replace('_', ' ')} · ${item.jumlah || 1} pcs · ${item.catatan || 'Tanpa catatan'}`,
                 catering: `${item.paket || 'Paket catering'} · ${item.jumlahPax || 0} pax · ${item.tipeLayanan || 'buffet'} · Final pax ${item.finalPaxDeadline || '-'}`,
@@ -3908,7 +4678,7 @@
         }
 
         function getXItemMoney(categoryId, item) {
-            if (categoryId === 'wedding_profile' || categoryId === 'timeline' || categoryId === 'notes') return '';
+            if (categoryId === 'wedding_profile' || categoryId === 'undangan_digital' || categoryId === 'timeline' || categoryId === 'notes') return '';
             if (categoryId === 'vendor') return formatRupiah(item.totalHarga || 0);
             if (categoryId === 'catering') return formatRupiah(item.total || 0);
             if (categoryId === 'checklist') return item.butuhBiaya === 'ya' ? formatRupiah(item.total || item.biaya || 0) : 'Tanpa biaya';
@@ -3921,6 +4691,10 @@
                 label = item.tipeAkad === 'luar_kua' ? 'Akad Luar KUA' : 'Akad di KUA';
                 tone = item.tipeAkad === 'luar_kua' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200';
                 icon = 'fa-heart';
+            } else if (categoryId === 'undangan_digital') {
+                label = 'Terhubung Undangan';
+                tone = 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200';
+                icon = 'fa-laptop-code';
             } else if (categoryId === 'vendor') {
                 label = item.status === 'deal' ? 'Deal' : 'Belum Deal';
                 tone = item.status === 'deal' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-600 border-slate-200';
@@ -4108,7 +4882,7 @@
                                     <div class="flex items-start gap-4 min-w-0">
                                         <div class="xmenu-icon bg-gradient-to-br ${cfg.accent} shrink-0"><i class="fa-solid ${cfg.icon}"></i></div>
                                         <div class="min-w-0">
-                                            <div class="flex flex-wrap gap-2 mb-3">${getXStatusBadge(categoryId, item)}${categoryId !== 'timeline' && categoryId !== 'notes' ? `<label class="xmenu-badge cursor-pointer"><input type="checkbox" ${item.includeToMainBudget !== false ? 'checked' : ''} onchange="quickUpdate('${categoryId}', '${item.id}', 'includeToMainBudget', this.checked)" class="w-3.5 h-3.5 text-lavender rounded focus:ring-lavender cursor-pointer">Budget</label>` : ''}</div>
+                                            <div class="flex flex-wrap gap-2 mb-3">${getXStatusBadge(categoryId, item)}${!['timeline', 'notes', 'undangan_digital'].includes(categoryId) ? `<label class="xmenu-badge cursor-pointer"><input type="checkbox" ${item.includeToMainBudget !== false ? 'checked' : ''} onchange="quickUpdate('${categoryId}', '${item.id}', 'includeToMainBudget', this.checked)" class="w-3.5 h-3.5 text-lavender rounded focus:ring-lavender cursor-pointer">Budget</label>` : ''}</div>
                                             <h4 class="text-lg font-black text-gray-800 leading-snug break-words">${title}</h4>
                                             <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3">${sub}</p>
                                         </div>
@@ -4140,7 +4914,7 @@
             let data = appData.items[categoryId] || [];
             let htmlOut = '';
 
-            const enhancedContentMenus = ['wedding_profile', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor']; 
+            const enhancedContentMenus = ['wedding_profile', 'undangan_digital', 'catering', 'vendor', 'timeline', 'checklist', 'notes', 'attire', 'dekor']; 
             // Seserahan dan Doorprize sengaja tidak masuk render cepat ini.
             // Dua menu itu punya filter khusus lama yang lebih lengkap, jadi harus lewat blok render aslinya.
             if (enhancedContentMenus.includes(categoryId)) {
@@ -5522,6 +6296,91 @@
                 document.getElementById('inputMapsLink').value = item.mapsLink || '';
                 document.getElementById('inputDriveLink').value = item.driveLink || '';
                 document.getElementById('inputCatatanProfile').value = item.catatan || '';
+            } else if(categoryId === 'undangan_digital') {
+                const fill = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+                fill('inputUDNamaPengaturan', item.nama || 'Pengaturan Undangan Digital');
+                fill('inputUDCoupleShort', item.coupleShort);
+                fill('inputUDEventDateText', item.eventDateText);
+                fill('inputUDCoverKicker', item.coverKicker);
+                fill('inputUDHeroSubtitle', item.heroSubtitle);
+                fill('inputUDCoverImage', item.coverImage);
+                fill('inputUDHeroImage', item.heroImage);
+                fill('inputUDBridePhoto', item.bridePhoto);
+                fill('inputUDGroomPhoto', item.groomPhoto);
+                fill('inputUDDesignPackText', item.designPackText);
+                if (window.applyUDDesignPackTextToControls) window.applyUDDesignPackTextToControls(item.designPackText || '');
+                fill('inputUDEffectParticlesEnabled', item.effectParticlesEnabled || 'on');
+                fill('inputUDEffectParticleType', item.effectParticleType || 'sakura');
+                fill('inputUDEffectParticleIntensity', item.effectParticleIntensity || 'medium');
+                fill('inputUDEffectParticleSpeed', item.effectParticleSpeed || '1');
+                fill('inputUDEffectParticleOpacity', item.effectParticleOpacity || '0.45');
+                fill('inputUDEffectParticleSize', item.effectParticleSize || '1');
+                fill('inputUDEffectAosEnabled', item.effectAosEnabled || 'on');
+                fill('inputUDEffectAosType', item.effectAosType || 'default');
+                fill('inputUDEffectAosDuration', item.effectAosDuration || '700');
+                fill('inputUDEffectAosOnce', item.effectAosOnce || 'true');
+                fill('inputUDEffectCoverTransition', item.effectCoverTransition || 'cinematic');
+                fill('inputUDEffectParallaxEnabled', item.effectParallaxEnabled || 'on');
+                fill('inputUDEffectHoverEnabled', item.effectHoverEnabled || 'on');
+                fill('inputUDEffectProgressBar', item.effectProgressBar || 'on');
+                fill('inputUDEffectFloatingNav', item.effectFloatingNav || 'on');
+                fill('inputUDEffectButtonShine', item.effectButtonShine || 'on');
+                fill('inputUDEffectAutoScrollEnabled', item.effectAutoScrollEnabled || 'on');
+                fill('inputUDEffectAutoScrollMobileSpeed', item.effectAutoScrollMobileSpeed || '42');
+                fill('inputUDEffectAutoScrollDesktopSpeed', item.effectAutoScrollDesktopSpeed || '56');
+                fill('inputUDEffectAutoScrollResumeDelay', item.effectAutoScrollResumeDelay || '2200');
+                fill('inputUDEffectMusicSpin', item.effectMusicSpin || 'on');
+                fill('inputUDBrideLabel', item.brideLabel);
+                fill('inputUDBrideName', item.brideName);
+                fill('inputUDBrideParents', item.brideParents);
+                fill('inputUDBrideInstagram', item.brideInstagram);
+                fill('inputUDGroomLabel', item.groomLabel);
+                fill('inputUDGroomName', item.groomName);
+                fill('inputUDGroomParents', item.groomParents);
+                fill('inputUDGroomInstagram', item.groomInstagram);
+                fill('inputUDAyatTitle', item.ayatTitle);
+                fill('inputUDAyatText', item.ayatText);
+                fill('inputUDAyatSource', item.ayatSource);
+                fill('inputUDGreetingTitle', item.greetingTitle);
+                fill('inputUDGreetingText', item.greetingText);
+                fill('inputUDAkadTitle', item.akadTitle);
+                fill('inputUDAkadDate', item.akadDate);
+                fill('inputUDAkadTime', item.akadTime);
+                fill('inputUDAkadIcon', item.akadIcon);
+                fill('inputUDAkadVenue', item.akadVenue);
+                fill('inputUDAkadAddress', item.akadAddress);
+                fill('inputUDAkadCalendarLink', item.akadCalendarLink);
+                fill('inputUDResepsiTitle', item.resepsiTitle);
+                fill('inputUDResepsiDate', item.resepsiDate);
+                fill('inputUDResepsiTime', item.resepsiTime);
+                fill('inputUDResepsiIcon', item.resepsiIcon);
+                fill('inputUDResepsiVenue', item.resepsiVenue);
+                fill('inputUDResepsiAddress', item.resepsiAddress);
+                fill('inputUDResepsiCalendarLink', item.resepsiCalendarLink);
+                fill('inputUDMapsLink', item.mapsLink);
+                fill('inputUDMapsEmbed', item.mapsEmbed);
+                fill('inputUDLiveStreamLink', item.liveStreamLink);
+                fill('inputUDLiveStreamText', item.liveStreamText);
+                fill('inputUDQuickMenuItemsText', item.quickMenuItemsText);
+                fill('inputUDStoryItemsText', item.storyItemsText);
+                fill('inputUDGalleryImagesText', item.galleryImagesText);
+                fill('inputUDRundownItemsText', item.rundownItemsText);
+                fill('inputUDLocationCardsText', item.locationCardsText);
+                fill('inputUDInfoTamuText', item.infoTamuText);
+                fill('inputUDDresscodeTitle', item.dresscodeTitle);
+                fill('inputUDDresscodeColorsText', item.dresscodeColorsText);
+                if (window.applyUDDresscodeColorTextToControls) window.applyUDDresscodeColorTextToControls(item.dresscodeColorsText || '');
+                fill('inputUDDresscodeNote', item.dresscodeNote);
+                fill('inputUDBankAccountsText', item.bankAccountsText);
+                fill('inputUDFAQItemsText', item.faqItemsText);
+                fill('inputUDQrisImage', item.qrisImage);
+                fill('inputUDEwalletNumber', item.ewalletNumber);
+                fill('inputUDHashtagsText', item.hashtagsText);
+                fill('inputUDGalleryVideoLink', item.galleryVideoLink);
+                fill('inputUDGalleryVideoText', item.galleryVideoText);
+                fill('inputUDExtraElementsText', item.extraElementsText);
+                fill('inputUDCustomBuilderText', item.customBuilderText);
+                fill('inputUDFooterText', item.footerText);
             } else if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; 
                 document.getElementById('inputDeskripsi').value = item.deskripsi; 
