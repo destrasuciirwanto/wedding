@@ -883,7 +883,8 @@
             { id: 'notes', icon: 'fa-sticky-note', label: 'Notes / Catatan' },
             { id: 'attire', icon: 'fa-tshirt', label: 'Attire & MUA' },
             { id: 'dekor', icon: 'fa-leaf', label: 'Dekorasi' },
-            { id: 'dokumen', icon: 'fa-folder-open', label: 'Dokumen & Media' }
+            { id: 'dokumen', icon: 'fa-folder-open', label: 'Dokumen & Media' },
+            { id: 'izin_nikah', icon: 'fa-file-contract', label: 'Dokumen Izin Nikah' }
         ];
 
         let activeMenu = 'dashboard';
@@ -1100,6 +1101,106 @@
             renderTable('wedding_list');
         }
 
+        // FILTER & AUTOMATION DOKUMEN IZIN NIKAH
+        // Fokus UX: template dokumen, filter cepat, ringkasan, dan reminder deadline.
+        window.izinNikahSearch = '';
+        window.izinNikahStatusFilter = 'all';
+        window.izinNikahPihakFilter = 'all';
+        window.izinNikahKategoriFilter = 'all';
+        window.izinNikahJenisFilter = 'all';
+
+        window.setIzinNikahSearch = function(value) {
+            window.izinNikahSearch = (value || '').toLowerCase();
+            debounceRenderTable('izin_nikah');
+        }
+        window.setIzinNikahStatusFilter = function(value) { window.izinNikahStatusFilter = value || 'all'; renderTable('izin_nikah'); }
+        window.setIzinNikahPihakFilter = function(value) { window.izinNikahPihakFilter = value || 'all'; renderTable('izin_nikah'); }
+        window.setIzinNikahKategoriFilter = function(value) { window.izinNikahKategoriFilter = value || 'all'; renderTable('izin_nikah'); }
+        window.setIzinNikahJenisFilter = function(value) { window.izinNikahJenisFilter = value || 'all'; renderTable('izin_nikah'); }
+
+        window.getIzinNikahTemplateDocs = function() {
+            return [
+                { namaDoc: 'Surat Pengantar Nikah / Formulir N1-N4 dari Desa atau Kelurahan', kategoriDoc: 'formulir_n', pihak: 'bersama', wajib: true, prioritas: 'tinggi', tahapUrus: 'desa', instansi: 'Desa/Kelurahan', catatan: 'Dasar berkas awal untuk dibawa ke KUA.' },
+                { namaDoc: 'Persetujuan Calon Pengantin', kategoriDoc: 'formulir_n', pihak: 'bersama', wajib: true, prioritas: 'tinggi', tahapUrus: 'desa', instansi: 'Desa/Kelurahan / KUA', catatan: 'Pastikan data kedua calon pengantin sesuai KTP dan KK.' },
+                { namaDoc: 'Fotokopi KTP Calon Pengantin Pria', kategoriDoc: 'identitas', pihak: 'pria', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Siapkan juga versi scan/foto jelas.' },
+                { namaDoc: 'Fotokopi KTP Calon Pengantin Wanita', kategoriDoc: 'identitas', pihak: 'wanita', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Siapkan juga versi scan/foto jelas.' },
+                { namaDoc: 'Fotokopi Kartu Keluarga Calon Pengantin Pria', kategoriDoc: 'identitas', pihak: 'pria', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Cek NIK, nama orang tua, dan alamat.' },
+                { namaDoc: 'Fotokopi Kartu Keluarga Calon Pengantin Wanita', kategoriDoc: 'identitas', pihak: 'wanita', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Cek NIK, nama orang tua, dan alamat.' },
+                { namaDoc: 'Fotokopi Akta Kelahiran Calon Pengantin Pria', kategoriDoc: 'akta_lahir', pihak: 'pria', wajib: true, prioritas: 'sedang', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Samakan nama dengan KTP/KK.' },
+                { namaDoc: 'Fotokopi Akta Kelahiran Calon Pengantin Wanita', kategoriDoc: 'akta_lahir', pihak: 'wanita', wajib: true, prioritas: 'sedang', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Pribadi', catatan: 'Samakan nama dengan KTP/KK.' },
+                { namaDoc: 'Fotokopi Ijazah Terakhir Calon Pengantin Pria', kategoriDoc: 'ijazah', pihak: 'pria', wajib: true, prioritas: 'sedang', tahapUrus: 'kumpulkan', instansi: 'Pribadi / Sekolah', catatan: 'Berguna untuk validasi identitas.' },
+                { namaDoc: 'Fotokopi Ijazah Terakhir Calon Pengantin Wanita', kategoriDoc: 'ijazah', pihak: 'wanita', wajib: true, prioritas: 'sedang', tahapUrus: 'kumpulkan', instansi: 'Pribadi / Sekolah', catatan: 'Berguna untuk validasi identitas.' },
+                { namaDoc: 'Pas Foto Background Biru', kategoriDoc: 'pas_foto', pihak: 'bersama', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Studio Foto', catatan: 'Umumnya ukuran 2x3 dan 4x6. Cek jumlah ke KUA setempat.' },
+                { namaDoc: 'Surat Keterangan Sehat Calon Pengantin Pria', kategoriDoc: 'kesehatan', pihak: 'pria', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Puskesmas / Fasilitas Kesehatan', catatan: 'Lampirkan dari fasilitas kesehatan resmi.' },
+                { namaDoc: 'Surat Keterangan Sehat Calon Pengantin Wanita', kategoriDoc: 'kesehatan', pihak: 'wanita', wajib: true, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Puskesmas / Fasilitas Kesehatan', catatan: 'Tanyakan juga kebutuhan imunisasi/cek kesehatan catin di wilayah setempat.' },
+                { namaDoc: 'Data KTP Wali Nikah', kategoriDoc: 'wali_saksi', pihak: 'wali', wajib: true, prioritas: 'tinggi', tahapUrus: 'kua', instansi: 'KUA / Pribadi', catatan: 'Pastikan wali hadir/terdata saat pemeriksaan nikah.' },
+                { namaDoc: 'Data KTP Dua Orang Saksi', kategoriDoc: 'wali_saksi', pihak: 'saksi', wajib: true, prioritas: 'sedang', tahapUrus: 'kua', instansi: 'KUA / Pribadi', catatan: 'Siapkan nama lengkap, NIK, dan kontak saksi.' },
+                { namaDoc: 'Sertifikat Bimbingan Perkawinan / Bimwin', kategoriDoc: 'bimwin', pihak: 'bersama', wajib: true, prioritas: 'tinggi', tahapUrus: 'kua', instansi: 'KUA', catatan: 'Jadwalkan sebelum akad agar tidak menghambat pencetakan buku nikah.' },
+                { namaDoc: 'Surat Rekomendasi Nikah dari KUA Asal', kategoriDoc: 'rekomendasi', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'kua', instansi: 'KUA asal', catatan: 'Diurus jika akad di luar kecamatan domisili KTP.' },
+                { namaDoc: 'Surat Dispensasi Camat Jika Pendaftaran Kurang dari 10 Hari Kerja', kategoriDoc: 'dispensasi', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'kecamatan', instansi: 'Kecamatan tempat akad', catatan: 'Diperlukan jika daftar terlalu mepet dari tanggal akad.' },
+                { namaDoc: 'Bukti Pembayaran PNBP Jika Akad di Luar KUA atau di Luar Jam Kerja', kategoriDoc: 'pembayaran', pihak: 'bersama', wajib: false, prioritas: 'sedang', tahapUrus: 'kua', instansi: 'Bank / KUA', catatan: 'Biaya layanan nikah di luar KUA mengikuti ketentuan PNBP.' },
+                { namaDoc: 'Akta Cerai Bagi Cerai Hidup', kategoriDoc: 'kondisi_khusus', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Pengadilan Agama', catatan: 'Hanya jika status sebelumnya cerai hidup.' },
+                { namaDoc: 'Akta Kematian Pasangan Bagi Cerai Mati', kategoriDoc: 'kondisi_khusus', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'kumpulkan', instansi: 'Dukcapil / Desa/Kelurahan', catatan: 'Hanya jika status sebelumnya cerai mati.' },
+                { namaDoc: 'Izin Orang Tua/Wali Jika Belum 21 Tahun', kategoriDoc: 'izin_khusus', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'desa', instansi: 'Orang tua/wali / Desa/Kelurahan', catatan: 'Hanya jika calon pengantin belum berusia 21 tahun.' },
+                { namaDoc: 'Dispensasi Kawin dari Pengadilan Jika Belum 19 Tahun', kategoriDoc: 'izin_khusus', pihak: 'bersama', wajib: false, prioritas: 'tinggi', tahapUrus: 'pengadilan', instansi: 'Pengadilan Agama', catatan: 'Hanya jika usia belum mencapai ketentuan minimal.' },
+                { namaDoc: 'Izin Atasan/Kesatuan untuk TNI/POLRI', kategoriDoc: 'izin_khusus', pihak: 'bersama', wajib: false, prioritas: 'sedang', tahapUrus: 'instansi', instansi: 'Kesatuan/Instansi', catatan: 'Hanya jika calon pengantin anggota TNI/POLRI.' },
+                { namaDoc: 'Penetapan Izin Poligami dari Pengadilan Agama', kategoriDoc: 'izin_khusus', pihak: 'pria', wajib: false, prioritas: 'tinggi', tahapUrus: 'pengadilan', instansi: 'Pengadilan Agama', catatan: 'Hanya jika calon suami hendak beristri lebih dari seorang.' }
+            ].map(docItem => ({
+                ...docItem,
+                status: 'belum',
+                tanggal: '',
+                nomorSurat: '',
+                linkFile: '',
+                penanggungJawab: '',
+                tanggalUpdate: new Date().toISOString(),
+                includeToMainBudget: false
+            }));
+        }
+
+        window.buatTemplateIzinNikah = async function() {
+            if (!confirm('Isi template dokumen izin nikah lengkap? Data yang sudah ada tidak akan dibuat dobel berdasarkan nama dokumen dan pihak.')) return;
+            try {
+                const existing = (appData.items['izin_nikah'] || []).map(item => `${String(item.namaDoc || '').trim().toLowerCase()}__${String(item.pihak || '').trim().toLowerCase()}`);
+                const existingSet = new Set(existing);
+                const templateDocs = window.getIzinNikahTemplateDocs();
+                const docsToCreate = templateDocs.filter(item => !existingSet.has(`${item.namaDoc.trim().toLowerCase()}__${item.pihak.trim().toLowerCase()}`));
+
+                if (docsToCreate.length === 0) {
+                    showToast('Template dokumen sudah ada semua.');
+                    return;
+                }
+
+                await Promise.all(docsToCreate.map(item => addDoc(collection(db, 'izin_nikah'), item)));
+                await loadData('izin_nikah');
+                showToast(`${docsToCreate.length} dokumen template berhasil ditambahkan.`);
+            } catch (error) {
+                console.error('Gagal membuat template izin nikah:', error);
+                showToast('Gagal membuat template izin nikah!', 'error');
+            }
+        }
+
+        window.copyRingkasanIzinNikah = function() {
+            const dataNikah = appData.items['izin_nikah'] || [];
+            if (dataNikah.length === 0) {
+                showToast('Belum ada data dokumen izin nikah untuk disalin.', 'error');
+                return;
+            }
+            const statusText = { belum: 'Belum Ada', proses: 'Sedang Proses', sudah: 'Sudah Lengkap' };
+            const lines = ['RINGKASAN DOKUMEN IZIN NIKAH', ''];
+            dataNikah.forEach((item, idx) => {
+                lines.push(`${idx + 1}. ${item.namaDoc || '-'}`);
+                lines.push(`   Pihak: ${item.pihak || '-'} | Status: ${statusText[item.status] || item.status || '-'}`);
+                if (item.instansi) lines.push(`   Instansi: ${item.instansi}`);
+                if (item.tanggal) lines.push(`   Deadline: ${item.tanggal}`);
+                if (item.catatan) lines.push(`   Catatan: ${item.catatan}`);
+            });
+            navigator.clipboard.writeText(lines.join('\n')).then(() => {
+                showToast('Ringkasan dokumen berhasil dicopy.');
+            }).catch(() => {
+                showToast('Gagal copy ringkasan.', 'error');
+            });
+        }
+
 
 
         // FILTER UI DOKUMEN & MEDIA - hanya filter di browser, tidak tambah read database
@@ -1290,9 +1391,16 @@
 
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
+
             const toast = document.createElement('div');
+            const safeMessage = escapeHTML(message || '');
+            const iconClass = type === 'success'
+                ? 'fa-circle-check text-green-500'
+                : 'fa-circle-xmark text-red-500';
+
             toast.className = 'toast';
-            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check text-green-500':'fa-circle-xmark text-red-500'} text-xl"></i> <p class="text-sm font-medium">${message}</p>`;
+            toast.innerHTML = `<i class="fa-solid ${iconClass} text-xl"></i> <p class="text-sm font-medium">${safeMessage}</p>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
@@ -1508,7 +1616,7 @@
             let totalPengeluaran = 0, totalItems = 0, itemsSelesai = 0;
             
             Object.keys(appData.items).forEach(key => {
-                if (key === 'mahar' || key === 'dokumen' || key === 'dokumen_folder') return;
+                if (key === 'mahar' || key === 'dokumen' || key === 'dokumen_folder' || key === 'izin_nikah') return;
                 
                 appData.items[key].forEach(item => {
                     if (item.includeToMainBudget === false) return;
@@ -1810,7 +1918,8 @@
                 notes: { eyebrow: 'Catatan Penting', title: 'Notes / Catatan', desc: 'Simpan catatan penting, ide acara, reminder, dan informasi teknis yang perlu diingat.', icon: 'fa-sticky-note', accent: 'from-yellow-400 to-amber-500' },
                 attire: { eyebrow: 'Attire & MUA', title: 'Attire & MUA', desc: 'Catat busana, MUA, vendor, harga, jumlah item, dan catatan fitting atau styling.', icon: 'fa-tshirt', accent: 'from-purple-500 to-pink-500' },
                 dekor: { eyebrow: 'Data Dekorasi', title: 'Dekorasi', desc: 'Catat item dekorasi, konsep, vendor, estimasi biaya, dan kebutuhan venue.', icon: 'fa-leaf', accent: 'from-green-500 to-lime-500' },
-                dokumen: { eyebrow: 'Dokumen Acara', title: 'Dokumen & Media', desc: 'Simpan kontrak, bukti pembayaran, foto, video, link, dan file penting acara.', icon: 'fa-folder-open', accent: 'from-gray-700 to-gray-900' }
+                dokumen: { eyebrow: 'Dokumen Acara', title: 'Dokumen & Media', desc: 'Simpan kontrak, bukti pembayaran, foto, video, link, dan file penting acara.', icon: 'fa-folder-open', accent: 'from-gray-700 to-gray-900' },
+                izin_nikah: { eyebrow: 'Izin Nikah', title: 'Dokumen Izin Nikah', desc: 'Pusat kontrol berkas nikah: template KUA, status, deadline, scan dokumen, PIC, instansi, dan dokumen kondisional.', icon: 'fa-file-contract', accent: 'from-teal-600 to-emerald-700' }
             };
             return map[categoryId] || { eyebrow: 'Menu Dashboard', title: 'Menu', desc: 'Kelola data acara dengan susunan yang jelas dan mudah dibaca.', icon: 'fa-layer-group', accent: 'from-lavender to-lavender-dark' };
         }
@@ -1828,7 +1937,8 @@
                 notes: 'Tulis Catatan Acara',
                 attire: 'Isi Detail Attire & MUA',
                 dekor: 'Isi Detail Dekorasi',
-                dokumen: 'Tambah Dokumen / Media'
+                dokumen: 'Tambah Dokumen / Media',
+                izin_nikah: 'Tambah Dokumen Izin Nikah'
             };
             return titles[categoryId] || 'Isi Detail Data';
         }
@@ -2377,6 +2487,146 @@
                         <input type="text" id="inputCatatan" placeholder="Contoh: DP vendor dekor, file final, foto untuk gallery" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
                     </div>
                 `;
+            } else if (categoryId === 'izin_nikah') {
+                formInner = `
+                    <div class="md:col-span-2 mb-2">
+                        <div class="relative overflow-hidden rounded-3xl border border-teal-100 bg-gradient-to-br from-teal-50 via-white to-emerald-50 p-5 shadow-sm">
+                            <div class="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-teal-200/35 blur-3xl"></div>
+                            <div class="absolute -left-12 -bottom-12 w-36 h-36 rounded-full bg-emerald-200/35 blur-3xl"></div>
+                            <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-teal-600 mb-1"><i class="fa-solid fa-file-contract mr-2"></i>Dokumen Izin Nikah</p>
+                                    <h4 class="text-xl font-black text-gray-800">Pusat Kontrol Berkas KUA</h4>
+                                    <p class="text-xs text-gray-500 mt-1 max-w-2xl">Catat dokumen wajib, dokumen kondisional, deadline, instansi, scan/link file, nomor surat, dan siapa yang bertanggung jawab.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="buatTemplateIzinNikah()" class="px-4 py-2 rounded-2xl bg-teal-600 text-white text-xs font-black hover:bg-teal-700 transition shadow-sm"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Isi Template KUA</button>
+                                    <button type="button" onclick="copyRingkasanIzinNikah()" class="px-4 py-2 rounded-2xl bg-white text-teal-700 border border-teal-100 text-xs font-black hover:bg-teal-50 transition"><i class="fa-solid fa-copy mr-1"></i> Copy Ringkasan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-5">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Nama Dokumen</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-file-lines absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                <input type="text" id="inputNamaDoc" required placeholder="Contoh: KTP calon pengantin pria, N1-N4, surat sehat" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            </div>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Kategori</label>
+                            <select id="inputKategoriDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="formulir_n">Formulir N / Surat Pengantar</option>
+                                <option value="identitas">Identitas KTP / KK</option>
+                                <option value="akta_lahir">Akta Kelahiran</option>
+                                <option value="ijazah">Ijazah</option>
+                                <option value="pas_foto">Pas Foto</option>
+                                <option value="kesehatan">Surat Keterangan Sehat</option>
+                                <option value="wali_saksi">Wali / Saksi</option>
+                                <option value="rekomendasi">Rekomendasi Nikah</option>
+                                <option value="dispensasi">Dispensasi</option>
+                                <option value="bimwin">Bimbingan Perkawinan</option>
+                                <option value="pembayaran">Pembayaran PNBP</option>
+                                <option value="izin_khusus">Izin Khusus</option>
+                                <option value="kondisi_khusus">Cerai / Kematian / Kondisi Khusus</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Pihak</label>
+                            <select id="inputPihakDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="pria">Pria</option>
+                                <option value="wanita">Wanita</option>
+                                <option value="bersama">Bersama</option>
+                                <option value="wali">Wali</option>
+                                <option value="saksi">Saksi</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Status</label>
+                            <select id="inputStatusDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="belum">Belum Ada</option>
+                                <option value="proses">Sedang Diproses</option>
+                                <option value="sudah">Sudah Lengkap</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Jenis Kebutuhan</label>
+                            <select id="inputWajibDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="true">Wajib Umum</option>
+                                <option value="false">Kondisional</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Prioritas</label>
+                            <select id="inputPrioritasDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="tinggi">Tinggi</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="rendah">Rendah</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Tahap Urus</label>
+                            <select id="inputTahapDoc" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                                <option value="kumpulkan">Kumpulkan Berkas</option>
+                                <option value="desa">Desa / Kelurahan</option>
+                                <option value="kecamatan">Kecamatan</option>
+                                <option value="kua">KUA</option>
+                                <option value="puskesmas">Puskesmas / Faskes</option>
+                                <option value="pengadilan">Pengadilan</option>
+                                <option value="instansi">Instansi Lain</option>
+                                <option value="selesai">Selesai Arsip</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Deadline / Target</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                <input type="date" id="inputTanggalDoc" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div class="lg:col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Instansi / Tempat Urus</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                <input type="text" id="inputInstansiDoc" placeholder="Contoh: KUA Kecamatan, Desa, Dukcapil, Puskesmas" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            </div>
+                        </div>
+                        <div class="lg:col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Penanggung Jawab</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-user-check absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                <input type="text" id="inputPenanggungJawabDoc" placeholder="Contoh: Destra, Mutiara, orang tua, wali" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            </div>
+                        </div>
+                        <div class="lg:col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Nomor Surat / Kode Berkas</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                <input type="text" id="inputNomorSuratDoc" placeholder="Opsional, isi kalau sudah ada nomor surat" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Link Scan / Drive / Foto Dokumen</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                            <input type="url" id="inputLinkFileDoc" placeholder="https://drive.google.com/... atau link scan dokumen" class="w-full pl-11 pr-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Catatan / Next Action</label>
+                        <textarea id="inputCatatanDoc" rows="3" placeholder="Contoh: perlu legalisir, tunggu tanda tangan kepala desa, bawa map hijau, follow up KUA Senin" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-400 transition resize-none"></textarea>
+                    </div>
+                `;
             } else if (categoryId === 'dekor') {
                 formInner = `
                     <div class="md:col-span-2 mb-1">
@@ -2430,8 +2680,17 @@
         window.handleFormSubmit = async function(e, categoryId) {
             e.preventDefault();
             const btnSubmit = document.getElementById('btnSubmit');
-            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...`;
-            btnSubmit.disabled = true;
+            const resetSubmitButton = () => {
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+                    btnSubmit.disabled = false;
+                }
+            };
+
+            if (btnSubmit) {
+                btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...`;
+                btnSubmit.disabled = true;
+            }
             
             let itemData = {};
 
@@ -2442,6 +2701,19 @@
 
                 if (tipe === 'gold') {
                     gram = Number(document.getElementById('inputGram').value || 0);
+
+                    if (gram <= 0) {
+                        showToast('Gram emas wajib diisi lebih dari 0.', 'error');
+                        resetSubmitButton();
+                        return;
+                    }
+
+                    if (!Number.isFinite(window.goldPrice) || window.goldPrice <= 0) {
+                        showToast('Harga emas belum berhasil dimuat. Coba refresh atau isi mahar manual dulu.', 'error');
+                        resetSubmitButton();
+                        return;
+                    }
+
                     nilaiFinal = gram * window.goldPrice;
                 } else {
                     nilaiFinal = Number(document.getElementById('inputNilai').value || 0);
@@ -2519,15 +2791,17 @@
                 const harga = Number(document.getElementById('inputBiaya').value || 0);
                 const qty = Number(document.getElementById('inputQty').value || 0);
 
+                const existingChecklist = editId ? appData.items[categoryId].find(i => i.id === editId) : null;
+
                 itemData = {
                     tugas: document.getElementById('inputTugas').value,
-                    status: editId ? appData.items[categoryId].find(i => i.id === editId).status : false,
+                    status: existingChecklist ? existingChecklist.status : false,
                     butuhBiaya: document.getElementById('inputButuhBiaya').value,
                     biaya: document.getElementById('inputButuhBiaya').value === 'ya' ? harga : 0,
                     qty: document.getElementById('inputButuhBiaya').value === 'ya' ? qty : 0,
                     total: document.getElementById('inputButuhBiaya').value === 'ya' ? harga * qty : 0,
                     satuan: document.getElementById('inputSatuan').value,
-                    createdAt: editId ? appData.items[categoryId].find(i => i.id === editId).createdAt : new Date().toISOString()
+                    createdAt: existingChecklist ? existingChecklist.createdAt : new Date().toISOString()
                 };
             } else if (categoryId === 'timeline') {
                 itemData = {
@@ -2568,6 +2842,18 @@
                 let h = Number(document.getElementById('inputHarga')?.value || 0);
 
                 if (kategori === 'logam_mulia') {
+                    if (gram <= 0) {
+                        showToast('Berat emas doorprize wajib diisi lebih dari 0.', 'error');
+                        resetSubmitButton();
+                        return;
+                    }
+
+                    if (!Number.isFinite(window.goldPrice) || window.goldPrice <= 0) {
+                        showToast('Harga emas belum berhasil dimuat. Coba refresh atau isi kategori non emas dulu.', 'error');
+                        resetSubmitButton();
+                        return;
+                    }
+
                     h = gram * window.goldPrice;
                 }
 
@@ -2582,16 +2868,38 @@
                     catatan: document.getElementById('inputCatatan').value,
                     tanggalUpdate: new Date().toISOString()
                 };
+            } else if (categoryId === 'izin_nikah') {
+                itemData = {
+                    namaDoc: document.getElementById('inputNamaDoc').value.trim(),
+                    kategoriDoc: document.getElementById('inputKategoriDoc').value,
+                    pihak: document.getElementById('inputPihakDoc').value,
+                    status: document.getElementById('inputStatusDoc').value,
+                    wajib: document.getElementById('inputWajibDoc').value === 'true',
+                    prioritas: document.getElementById('inputPrioritasDoc').value,
+                    tahapUrus: document.getElementById('inputTahapDoc').value,
+                    instansi: document.getElementById('inputInstansiDoc').value.trim(),
+                    penanggungJawab: document.getElementById('inputPenanggungJawabDoc').value.trim(),
+                    nomorSurat: document.getElementById('inputNomorSuratDoc').value.trim(),
+                    linkFile: document.getElementById('inputLinkFileDoc').value.trim(),
+                    tanggal: document.getElementById('inputTanggalDoc').value,
+                    catatan: document.getElementById('inputCatatanDoc').value.trim(),
+                    tanggalUpdate: new Date().toISOString(),
+                    includeToMainBudget: false
+                };
             } else if (categoryId === 'dokumen') {
-                // OTOMATIS TANGKAP ID FOLDER YANG SEDANG DIBUKA!
-                const folderTujuanId = window.activeDokumenFolder ? window.activeDokumenFolder.id : "";
+                // Saat tambah file, otomatis masuk folder yang sedang dibuka.
+                // Saat edit file, pertahankan folder lama supaya data tidak pindah folder tanpa sengaja.
+                const existingDokumen = editId ? appData.items[categoryId].find(i => i.id === editId) : null;
+                const folderTujuanId = existingDokumen
+                    ? (existingDokumen.folderId || "")
+                    : (window.activeDokumenFolder ? window.activeDokumenFolder.id : "");
                 
                 itemData = {
                     namaFile: document.getElementById('inputNamaFile').value,
                     jenisFile: document.getElementById('inputJenisFile').value,
                     url: document.getElementById('inputUrlFile').value,
                     catatan: document.getElementById('inputCatatan').value,
-                    folderId: folderTujuanId, // <--- Ini otomatis!
+                    folderId: folderTujuanId,
                     tanggalUpdate: new Date().toISOString(),
                     includeToMainBudget: false
                 };
@@ -2621,8 +2929,30 @@
                 }
                 resetForm();
                 await loadData(categoryId); 
-            } catch (error) { showToast('Gagal menyimpan!', 'error'); } 
-            finally { btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`; btnSubmit.disabled = false; }
+            } catch (error) {
+                console.error('Gagal menyimpan data:', error);
+                showToast('Gagal menyimpan: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
+            } finally {
+                resetSubmitButton();
+            }
+        }
+
+        window.deleteItem = async function(id, categoryId) {
+            if (!id || !categoryId) {
+                showToast('Data yang akan dihapus tidak valid.', 'error');
+                return;
+            }
+
+            if (!confirm('Yakin ingin menghapus data ini?')) return;
+
+            try {
+                await deleteDoc(doc(db, categoryId, id));
+                await loadData(categoryId);
+                showToast('Data berhasil dihapus!');
+            } catch (error) {
+                console.error('Gagal menghapus data:', error);
+                showToast('Gagal menghapus data: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
+            }
         }
 
         // HELPER KHUSUS RENDER FILE DOKUMEN 
@@ -2911,7 +3241,7 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-1 shrink-0">
-                                        ${categoryId !== 'catering' && categoryId !== 'timeline' && categoryId !== 'notes' ? `<button onclick="editItem('${item.id}', '${categoryId}')" class="xmenu-action xmenu-action-edit" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>` : ''}
+                                        <button onclick="editItem('${item.id}', '${categoryId}')" class="xmenu-action xmenu-action-edit" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
                                         <button onclick="deleteItem('${item.id}', '${categoryId}')" class="xmenu-action xmenu-action-delete" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button>
                                     </div>
                                 </div>
@@ -3881,6 +4211,229 @@
                         </div>
                     </div>
                 `;
+            } else if (categoryId === 'izin_nikah') {
+                const dataNikahRaw = appData.items['izin_nikah'] || [];
+                const statusMap = {
+                    belum: { label: 'Belum Ada', cls: 'bg-red-50 text-red-500 border-red-100', dot: 'bg-red-400' },
+                    proses: { label: 'Sedang Diproses', cls: 'bg-yellow-50 text-yellow-600 border-yellow-100', dot: 'bg-yellow-400' },
+                    sudah: { label: 'Sudah Lengkap', cls: 'bg-emerald-50 text-emerald-600 border-emerald-100', dot: 'bg-emerald-400' }
+                };
+                const kategoriLabel = {
+                    surat_nikah: 'Formulir N', formulir_n: 'Formulir N / Surat Pengantar', ktp: 'KTP', kk: 'Kartu Keluarga', identitas: 'Identitas KTP / KK',
+                    akta_lahir: 'Akta Lahir', ijazah: 'Ijazah', foto: 'Pas Foto', pas_foto: 'Pas Foto', kesehatan: 'Surat Sehat',
+                    surat_wali: 'Surat Wali', wali_saksi: 'Wali / Saksi', surat_dispensasi: 'Surat Dispensasi', dispensasi: 'Dispensasi',
+                    surat_izin_ortu: 'Izin Orang Tua', surat_domisili: 'Surat Domisili', akta_cerai: 'Akta Cerai/Kematian',
+                    rekomendasi: 'Rekomendasi Nikah', bimwin: 'Bimwin', pembayaran: 'Pembayaran PNBP', izin_khusus: 'Izin Khusus', kondisi_khusus: 'Kondisi Khusus', lainnya: 'Lainnya'
+                };
+                const pihakLabel = { pria: 'Pria', wanita: 'Wanita', bersama: 'Bersama', wali: 'Wali', saksi: 'Saksi' };
+                const tahapLabel = { kumpulkan: 'Kumpulkan Berkas', desa: 'Desa/Kelurahan', kecamatan: 'Kecamatan', kua: 'KUA', puskesmas: 'Puskesmas/Faskes', pengadilan: 'Pengadilan', instansi: 'Instansi Lain', selesai: 'Selesai Arsip' };
+                const prioritasLabel = { tinggi: 'Prioritas Tinggi', sedang: 'Prioritas Sedang', rendah: 'Prioritas Rendah' };
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dateDiffDays = (dateText) => {
+                    if (!dateText) return null;
+                    const d = new Date(dateText + 'T00:00:00');
+                    if (Number.isNaN(d.getTime())) return null;
+                    return Math.ceil((d - today) / 86400000);
+                };
+                const isUrgent = (item) => {
+                    const diff = dateDiffDays(item.tanggal);
+                    return item.status !== 'sudah' && diff !== null && diff <= 14;
+                };
+
+                let dataNikah = [...dataNikahRaw];
+                if (window.izinNikahStatusFilter && window.izinNikahStatusFilter !== 'all') {
+                    dataNikah = dataNikah.filter(item => (item.status || 'belum') === window.izinNikahStatusFilter);
+                }
+                if (window.izinNikahPihakFilter && window.izinNikahPihakFilter !== 'all') {
+                    dataNikah = dataNikah.filter(item => (item.pihak || '') === window.izinNikahPihakFilter);
+                }
+                if (window.izinNikahKategoriFilter && window.izinNikahKategoriFilter !== 'all') {
+                    dataNikah = dataNikah.filter(item => (item.kategoriDoc || '') === window.izinNikahKategoriFilter);
+                }
+                if (window.izinNikahJenisFilter === 'wajib') {
+                    dataNikah = dataNikah.filter(item => item.wajib !== false);
+                } else if (window.izinNikahJenisFilter === 'kondisional') {
+                    dataNikah = dataNikah.filter(item => item.wajib === false);
+                } else if (window.izinNikahJenisFilter === 'urgent') {
+                    dataNikah = dataNikah.filter(item => isUrgent(item));
+                }
+                if (window.izinNikahSearch) {
+                    const q = window.izinNikahSearch.toLowerCase();
+                    dataNikah = dataNikah.filter(item =>
+                        String(item.namaDoc || '').toLowerCase().includes(q) ||
+                        String(item.instansi || '').toLowerCase().includes(q) ||
+                        String(item.catatan || '').toLowerCase().includes(q) ||
+                        String(item.penanggungJawab || '').toLowerCase().includes(q) ||
+                        String(item.nomorSurat || '').toLowerCase().includes(q)
+                    );
+                }
+                dataNikah.sort((a, b) => {
+                    const statusOrder = { belum: 0, proses: 1, sudah: 2 };
+                    const priorityOrder = { tinggi: 0, sedang: 1, rendah: 2 };
+                    const byStatus = (statusOrder[a.status || 'belum'] ?? 9) - (statusOrder[b.status || 'belum'] ?? 9);
+                    if (byStatus !== 0) return byStatus;
+                    const byPriority = (priorityOrder[a.prioritas || 'sedang'] ?? 9) - (priorityOrder[b.prioritas || 'sedang'] ?? 9);
+                    if (byPriority !== 0) return byPriority;
+                    return String(a.tanggal || '9999-99-99').localeCompare(String(b.tanggal || '9999-99-99'));
+                });
+
+                const totalDocNikah = dataNikahRaw.length;
+                const sudahLengkap = dataNikahRaw.filter(d => d.status === 'sudah').length;
+                const belumAda = dataNikahRaw.filter(d => (d.status || 'belum') === 'belum').length;
+                const prosesAda = dataNikahRaw.filter(d => d.status === 'proses').length;
+                const wajibBelum = dataNikahRaw.filter(d => d.wajib !== false && d.status !== 'sudah').length;
+                const urgentCount = dataNikahRaw.filter(isUrgent).length;
+                const progress = totalDocNikah === 0 ? 0 : Math.round((sudahLengkap / totalDocNikah) * 100);
+                const wajibTotal = dataNikahRaw.filter(d => d.wajib !== false).length;
+                const wajibDone = dataNikahRaw.filter(d => d.wajib !== false && d.status === 'sudah').length;
+                const wajibProgress = wajibTotal === 0 ? 0 : Math.round((wajibDone / wajibTotal) * 100);
+
+                const guideCards = [
+                    { icon: 'fa-house-user', title: '1. Desa/Kelurahan', desc: 'Urus surat pengantar/Formulir N dan cocokkan data KTP, KK, akta, serta wali.' },
+                    { icon: 'fa-hospital', title: '2. Faskes', desc: 'Siapkan surat keterangan sehat dari fasilitas kesehatan resmi.' },
+                    { icon: 'fa-building-columns', title: '3. KUA', desc: 'Daftar di KUA tempat akad atau SIMKAH, lalu ikuti pemeriksaan nikah.' },
+                    { icon: 'fa-calendar-check', title: '4. Bimwin & Akad', desc: 'Jadwalkan bimbingan perkawinan, validasi berkas, dan simpan bukti akhir.' }
+                ].map(card => `
+                    <div class="rounded-3xl border border-teal-100 bg-white p-4 shadow-sm">
+                        <div class="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-3"><i class="fa-solid ${card.icon}"></i></div>
+                        <p class="text-sm font-black text-gray-800">${card.title}</p>
+                        <p class="text-xs text-gray-500 mt-1 leading-5">${card.desc}</p>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="space-y-5">
+                        <div class="relative overflow-hidden rounded-[30px] border border-teal-100 bg-gradient-to-br from-teal-50 via-white to-emerald-50 p-5 shadow-sm">
+                            <div class="absolute -right-14 -top-14 w-40 h-40 rounded-full bg-teal-200/35 blur-3xl"></div>
+                            <div class="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.22em] text-teal-600">Progress Administrasi Nikah</p>
+                                    <h3 class="text-2xl font-black text-gray-900 mt-1">${progress}% semua dokumen, ${wajibProgress}% dokumen wajib</h3>
+                                    <p class="text-xs text-gray-500 mt-2 max-w-2xl">Gunakan template KUA untuk membuat daftar awal, lalu ubah status, deadline, link scan, dan penanggung jawab setiap dokumen.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="buatTemplateIzinNikah()" class="px-4 py-2 rounded-2xl bg-teal-600 text-white text-xs font-black hover:bg-teal-700 transition"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Isi Template KUA</button>
+                                    <button onclick="copyRingkasanIzinNikah()" class="px-4 py-2 rounded-2xl bg-white border border-teal-100 text-teal-700 text-xs font-black hover:bg-teal-50 transition"><i class="fa-solid fa-copy mr-1"></i> Copy Ringkasan</button>
+                                </div>
+                            </div>
+                            <div class="relative z-10 mt-5 h-3 overflow-hidden rounded-full bg-white border border-teal-100">
+                                <div class="h-full rounded-full bg-gradient-to-r from-teal-400 to-emerald-500 transition-all" style="width:${progress}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                            <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-gray-800">${totalDocNikah}</p><p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Total</p></div>
+                            <div class="bg-emerald-50 rounded-2xl border border-emerald-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-emerald-600">${sudahLengkap}</p><p class="text-[10px] font-bold text-emerald-500 uppercase mt-1">Lengkap</p></div>
+                            <div class="bg-yellow-50 rounded-2xl border border-yellow-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-yellow-600">${prosesAda}</p><p class="text-[10px] font-bold text-yellow-500 uppercase mt-1">Proses</p></div>
+                            <div class="bg-red-50 rounded-2xl border border-red-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-red-500">${belumAda}</p><p class="text-[10px] font-bold text-red-400 uppercase mt-1">Belum</p></div>
+                            <div class="bg-orange-50 rounded-2xl border border-orange-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-orange-600">${wajibBelum}</p><p class="text-[10px] font-bold text-orange-500 uppercase mt-1">Wajib Belum</p></div>
+                            <div class="bg-rose-50 rounded-2xl border border-rose-100 p-4 text-center shadow-sm"><p class="text-2xl font-black text-rose-600">${urgentCount}</p><p class="text-[10px] font-bold text-rose-500 uppercase mt-1">Mepet</p></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">${guideCards}</div>
+
+                        <div class="xmenu-toolbar p-4">
+                            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+                                <div class="lg:col-span-4 relative">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                                    <input oninput="setIzinNikahSearch(this.value)" value="${escapeHTML(window.izinNikahSearch || '')}" placeholder="Cari dokumen, instansi, nomor surat, catatan..." class="xmenu-search">
+                                </div>
+                                <select onchange="setIzinNikahStatusFilter(this.value)" class="lg:col-span-2 px-4 py-3 rounded-2xl border border-gray-100 bg-white text-xs font-bold outline-none">
+                                    <option value="all" ${window.izinNikahStatusFilter==='all'?'selected':''}>Semua Status</option>
+                                    <option value="belum" ${window.izinNikahStatusFilter==='belum'?'selected':''}>Belum Ada</option>
+                                    <option value="proses" ${window.izinNikahStatusFilter==='proses'?'selected':''}>Sedang Proses</option>
+                                    <option value="sudah" ${window.izinNikahStatusFilter==='sudah'?'selected':''}>Sudah Lengkap</option>
+                                </select>
+                                <select onchange="setIzinNikahPihakFilter(this.value)" class="lg:col-span-2 px-4 py-3 rounded-2xl border border-gray-100 bg-white text-xs font-bold outline-none">
+                                    <option value="all" ${window.izinNikahPihakFilter==='all'?'selected':''}>Semua Pihak</option>
+                                    <option value="pria" ${window.izinNikahPihakFilter==='pria'?'selected':''}>Pria</option>
+                                    <option value="wanita" ${window.izinNikahPihakFilter==='wanita'?'selected':''}>Wanita</option>
+                                    <option value="bersama" ${window.izinNikahPihakFilter==='bersama'?'selected':''}>Bersama</option>
+                                    <option value="wali" ${window.izinNikahPihakFilter==='wali'?'selected':''}>Wali</option>
+                                    <option value="saksi" ${window.izinNikahPihakFilter==='saksi'?'selected':''}>Saksi</option>
+                                </select>
+                                <select onchange="setIzinNikahJenisFilter(this.value)" class="lg:col-span-2 px-4 py-3 rounded-2xl border border-gray-100 bg-white text-xs font-bold outline-none">
+                                    <option value="all" ${window.izinNikahJenisFilter==='all'?'selected':''}>Semua Jenis</option>
+                                    <option value="wajib" ${window.izinNikahJenisFilter==='wajib'?'selected':''}>Wajib Umum</option>
+                                    <option value="kondisional" ${window.izinNikahJenisFilter==='kondisional'?'selected':''}>Kondisional</option>
+                                    <option value="urgent" ${window.izinNikahJenisFilter==='urgent'?'selected':''}>Mepet Deadline</option>
+                                </select>
+                                <select onchange="setIzinNikahKategoriFilter(this.value)" class="lg:col-span-2 px-4 py-3 rounded-2xl border border-gray-100 bg-white text-xs font-bold outline-none">
+                                    <option value="all" ${window.izinNikahKategoriFilter==='all'?'selected':''}>Semua Kategori</option>
+                                    ${Object.entries(kategoriLabel).filter(([key]) => !['surat_nikah','ktp','kk','foto','surat_wali','surat_dispensasi','surat_izin_ortu','surat_domisili','akta_cerai'].includes(key)).map(([key, label]) => `<option value="${key}" ${window.izinNikahKategoriFilter===key?'selected':''}>${label}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+
+                        ${dataNikahRaw.length === 0 ? `
+                            <div class="text-center py-16 text-gray-400 bg-white rounded-[30px] border border-gray-100 shadow-sm">
+                                <i class="fa-solid fa-file-contract text-5xl mb-4 text-teal-200"></i>
+                                <p class="font-black text-gray-500 text-base">Belum ada dokumen izin nikah</p>
+                                <p class="text-xs mt-1 mb-4">Klik Isi Template KUA agar daftar berkas langsung terisi.</p>
+                                <button onclick="buatTemplateIzinNikah()" class="px-5 py-3 rounded-2xl bg-teal-600 text-white text-xs font-black hover:bg-teal-700 transition"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Isi Template KUA Sekarang</button>
+                            </div>` : dataNikah.length === 0 ? `
+                            <div class="text-center py-12 text-gray-400 bg-white rounded-[30px] border border-gray-100 shadow-sm">
+                                <i class="fa-solid fa-filter-circle-xmark text-4xl mb-3 text-gray-200"></i>
+                                <p class="font-black text-gray-500">Tidak ada dokumen sesuai filter.</p>
+                            </div>` : `
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                ${dataNikah.map(item => {
+                                    const st = statusMap[item.status || 'belum'] || statusMap['belum'];
+                                    const diff = dateDiffDays(item.tanggal);
+                                    const deadlineText = diff === null ? 'Tanpa deadline' : diff < 0 ? `Lewat ${Math.abs(diff)} hari` : diff === 0 ? 'Hari ini' : `${diff} hari lagi`;
+                                    const deadlineClass = item.status === 'sudah' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : diff !== null && diff < 0 ? 'bg-red-50 text-red-600 border-red-100' : diff !== null && diff <= 14 ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-slate-50 text-slate-500 border-slate-100';
+                                    const wajibBadge = item.wajib === false
+                                        ? '<span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-50 text-slate-500 border border-slate-100">Kondisional</span>'
+                                        : '<span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-teal-50 text-teal-600 border border-teal-100">Wajib Umum</span>';
+                                    return `
+                                    <div class="bg-white rounded-[28px] border border-gray-100 p-5 shadow-sm hover:shadow-md transition group">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-start gap-3 min-w-0">
+                                                <div class="flex-shrink-0 w-11 h-11 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 text-lg"><i class="fa-solid fa-file-contract"></i></div>
+                                                <div class="min-w-0">
+                                                    <p class="font-black text-gray-800 text-sm leading-5">${escapeHTML(item.namaDoc || '-')}</p>
+                                                    <div class="flex flex-wrap gap-2 mt-2">
+                                                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-teal-50 text-teal-600 border border-teal-100">${escapeHTML(kategoriLabel[item.kategoriDoc] || item.kategoriDoc || '-')}</span>
+                                                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gray-50 text-gray-500 border border-gray-100">${escapeHTML(pihakLabel[item.pihak] || item.pihak || '-')}</span>
+                                                        ${wajibBadge}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="w-3 h-3 rounded-full ${st.dot} mt-1 flex-shrink-0"></span>
+                                        </div>
+
+                                        <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                                            <div class="rounded-2xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] font-black text-slate-400 uppercase">Tahap</p><p class="font-bold text-slate-700 mt-1">${escapeHTML(tahapLabel[item.tahapUrus] || item.tahapUrus || '-')}</p></div>
+                                            <div class="rounded-2xl border p-3 ${deadlineClass}"><p class="text-[10px] font-black uppercase opacity-70">Deadline</p><p class="font-bold mt-1">${escapeHTML(deadlineText)}</p></div>
+                                            <div class="rounded-2xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] font-black text-slate-400 uppercase">Prioritas</p><p class="font-bold text-slate-700 mt-1">${escapeHTML(prioritasLabel[item.prioritas] || item.prioritas || '-')}</p></div>
+                                            <div class="rounded-2xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] font-black text-slate-400 uppercase">PIC</p><p class="font-bold text-slate-700 mt-1 truncate">${escapeHTML(item.penanggungJawab || '-')}</p></div>
+                                        </div>
+
+                                        <div class="mt-4 space-y-1 text-xs text-gray-500">
+                                            ${item.instansi ? `<p><i class="fa-solid fa-building mr-1 text-gray-300"></i>${escapeHTML(item.instansi)}</p>` : ''}
+                                            ${item.nomorSurat ? `<p><i class="fa-solid fa-hashtag mr-1 text-gray-300"></i>${escapeHTML(item.nomorSurat)}</p>` : ''}
+                                            ${item.catatan ? `<p class="italic leading-5"><i class="fa-solid fa-note-sticky mr-1 text-gray-300"></i>${escapeHTML(item.catatan)}</p>` : ''}
+                                        </div>
+
+                                        <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-100">
+                                            <select onchange="quickUpdate('izin_nikah','${item.id}','status',this.value)" class="text-xs font-bold px-3 py-2 rounded-2xl border ${st.cls} outline-none cursor-pointer transition">
+                                                <option value="belum" ${(item.status || 'belum')==='belum'?'selected':''}>Belum Ada</option>
+                                                <option value="proses" ${item.status==='proses'?'selected':''}>Sedang Proses</option>
+                                                <option value="sudah" ${item.status==='sudah'?'selected':''}>Sudah Lengkap</option>
+                                            </select>
+                                            <div class="flex items-center gap-2">
+                                                ${item.linkFile ? `<a href="${escapeHTML(item.linkFile)}" target="_blank" rel="noopener" class="w-9 h-9 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-100 flex items-center justify-center transition" title="Buka scan/link"><i class="fa-solid fa-link text-[12px]"></i></a>` : ''}
+                                                <button onclick="editItem('${item.id}', 'izin_nikah')" class="w-9 h-9 rounded-2xl bg-teal-50 text-teal-500 hover:bg-teal-100 transition" title="Edit"><i class="fa-solid fa-pen text-[12px]"></i></button>
+                                                <button onclick="deleteItem('${item.id}', 'izin_nikah')" class="w-9 h-9 rounded-2xl bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition" title="Hapus"><i class="fa-solid fa-trash text-[12px]"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                                }).join('')}
+                            </div>`}
+                    </div>
+                `;
+                return;
             } else if (categoryId === 'dokumen') {
                 let folders = appData.items['dokumen_folder'] || [];
                 let files = data;
@@ -4085,6 +4638,18 @@
                     document.getElementById('inputNomorHP').value = item.nomorHP || '';
                 }
                 handleUndanganType(item.tipeUndangan || 'fisik');
+            } else if (categoryId === 'catering') {
+                document.getElementById('inputVendor').value = item.vendor || '';
+                document.getElementById('inputPaket').value = item.paket || '';
+                document.getElementById('inputHargaPerPax').value = item.hargaPerPax || 0;
+                document.getElementById('inputJumlahPax').value = item.jumlahPax || 0;
+                document.getElementById('inputStatusBayar').value = item.statusBayar || 'dp';
+            } else if (categoryId === 'timeline') {
+                document.getElementById('inputJam').value = item.jam || '';
+                document.getElementById('inputPic').value = item.pic || '';
+                document.getElementById('inputKegiatan').value = item.kegiatan || '';
+            } else if (categoryId === 'notes') {
+                document.getElementById('inputIsi').value = item.isi || '';
             } else if (categoryId === 'vendor') {
                 document.getElementById('inputNama').value = item.nama;
                 document.getElementById('inputKategori').value = item.kategori;
@@ -4128,6 +4693,20 @@
             } else if (categoryId === 'dekor') {
                 document.getElementById('inputNama').value = item.nama || '';
                 document.getElementById('inputBiaya').value = item.biaya || 0;
+            } else if (categoryId === 'izin_nikah') {
+                document.getElementById('inputNamaDoc').value = item.namaDoc || '';
+                document.getElementById('inputKategoriDoc').value = item.kategoriDoc || 'formulir_n';
+                document.getElementById('inputPihakDoc').value = item.pihak || 'pria';
+                document.getElementById('inputStatusDoc').value = item.status || 'belum';
+                document.getElementById('inputWajibDoc').value = item.wajib === false ? 'false' : 'true';
+                document.getElementById('inputPrioritasDoc').value = item.prioritas || 'sedang';
+                document.getElementById('inputTahapDoc').value = item.tahapUrus || 'kumpulkan';
+                document.getElementById('inputInstansiDoc').value = item.instansi || '';
+                document.getElementById('inputPenanggungJawabDoc').value = item.penanggungJawab || '';
+                document.getElementById('inputNomorSuratDoc').value = item.nomorSurat || '';
+                document.getElementById('inputLinkFileDoc').value = item.linkFile || '';
+                document.getElementById('inputTanggalDoc').value = item.tanggal || '';
+                document.getElementById('inputCatatanDoc').value = item.catatan || '';
             } else if (categoryId === 'dokumen') {
                 document.getElementById('inputNamaFile').value = item.namaFile || '';
                 document.getElementById('inputJenisFile').value = item.jenisFile || 'foto';
