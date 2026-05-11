@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;600;700&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -321,6 +321,91 @@
         .wish-list-container::-webkit-scrollbar-track { background: transparent; }
         .wish-list-container::-webkit-scrollbar-thumb { background: rgba(229,169,180,0.5); border-radius: 10px; }
         .wish-list-container::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+    </style>
+
+
+    <style id="ud-dashboard-effect-css">
+        body.ud-disable-hover .glass-panel:hover,
+        body.ud-disable-hover .soft-card:hover,
+        body.ud-disable-hover .btn-premium:hover {
+            transform: none !important;
+            box-shadow: inherit !important;
+        }
+        body.ud-disable-hover .img-zoom-container:hover img { transform: none !important; }
+        body.ud-disable-button-shine .btn-premium::before { display: none !important; }
+        body.ud-disable-music-spin .music-spin { animation: none !important; }
+        body.ud-disable-progress .progress-container { display: none !important; }
+        body.ud-disable-floating-nav #floating-nav { display: none !important; }
+        body.ud-disable-parallax .parallax-bg { background-attachment: scroll !important; }
+        body.ud-disable-aos [data-aos] {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+        body.ud-cover-effect-fade #cover-screen { transition: opacity 1.1s ease !important; }
+        body.ud-cover-effect-fade .cover-hide { transform: none !important; opacity: 0 !important; filter: none !important; }
+        body.ud-cover-effect-slide #cover-screen { transition: transform 1.2s ease, opacity 1.2s ease !important; }
+        body.ud-cover-effect-slide .cover-hide { transform: translateY(-105%) !important; opacity: 0 !important; filter: none !important; }
+        body.ud-cover-effect-zoom #cover-screen { transition: transform 1.35s ease, opacity 1.15s ease !important; }
+        body.ud-cover-effect-zoom .cover-hide { transform: scale(1.35) !important; opacity: 0 !important; filter: none !important; }
+        body.ud-cover-effect-blur #cover-screen { transition: opacity 1.2s ease, filter 1.2s ease !important; }
+        body.ud-cover-effect-blur .cover-hide { transform: none !important; opacity: 0 !important; filter: blur(24px) !important; }
+        body.ud-cover-effect-none #cover-screen,
+        body.ud-cover-effect-none .cover-hide { transition: none !important; transform: none !important; filter: none !important; opacity: 0 !important; }
+    </style>
+
+
+
+    <style id="ud-design-pack-css">
+        :root {
+            --ud-bg: #FFF5F7;
+            --ud-bg-2: #FFFFFF;
+            --ud-primary: #E5A9B4;
+            --ud-secondary: #FADADD;
+            --ud-accent: #D4AF37;
+            --ud-text: #2C3E50;
+            --ud-muted: #64748B;
+            --ud-card-bg: rgba(255,255,255,.62);
+            --ud-card-border: rgba(255,255,255,.75);
+            --ud-card-radius: 2rem;
+            --ud-button-radius: 999px;
+            --ud-section-py: 5rem;
+            --ud-content-width: 72rem;
+            --ud-card-blur: 18px;
+            --ud-card-shadow: 0 10px 30px rgba(229,169,180,.14);
+            --ud-heading-font: "Cormorant Garamond";
+            --ud-body-font: Montserrat;
+            --ud-image-radius: 1.5rem;
+        }
+        body { background: linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; color: var(--ud-text) !important; font-family: var(--ud-body-font), Montserrat, sans-serif !important; }
+        body.ud-bg-solid { background: var(--ud-bg) !important; }
+        body.ud-bg-radial { background: radial-gradient(circle at top, var(--ud-secondary), var(--ud-bg) 42%, var(--ud-bg-2)) !important; }
+        body.ud-bg-dark { background: linear-gradient(135deg, #151017, #231722) !important; color: #f8fafc !important; }
+        .font-serif, h1, h2, h3, h4 { font-family: var(--ud-heading-font), "Cormorant Garamond", serif !important; }
+        .font-sans, p, a, button, input, textarea, select { font-family: var(--ud-body-font), Montserrat, sans-serif !important; }
+        .text-gold, .hover\:text-gold:hover { color: var(--ud-accent) !important; }
+        .bg-gold { background-color: var(--ud-accent) !important; }
+        .border-gold { border-color: var(--ud-accent) !important; }
+        .section-badge { background: color-mix(in srgb, var(--ud-primary) 18%, transparent) !important; color: var(--ud-primary) !important; }
+        .icon-pill { background: linear-gradient(135deg, color-mix(in srgb, var(--ud-primary) 22%, transparent), color-mix(in srgb, var(--ud-accent) 18%, transparent)) !important; color: var(--ud-accent) !important; }
+        .glass-panel, .soft-card { background: var(--ud-card-bg) !important; border-color: var(--ud-card-border) !important; border-radius: var(--ud-card-radius) !important; box-shadow: var(--ud-card-shadow) !important; backdrop-filter: blur(var(--ud-card-blur)); -webkit-backdrop-filter: blur(var(--ud-card-blur)); }
+        .btn-premium { background: linear-gradient(135deg, var(--ud-primary), var(--ud-accent)) !important; border-radius: var(--ud-button-radius) !important; }
+        .progress-bar { background: linear-gradient(90deg, var(--ud-primary), var(--ud-accent)) !important; }
+        ::-webkit-scrollbar-track { background: var(--ud-bg) !important; }
+        ::-webkit-scrollbar-thumb { background: var(--ud-primary) !important; }
+        section { padding-top: var(--ud-section-py); padding-bottom: var(--ud-section-py); }
+        section > .max-w-6xl, footer > .max-w-4xl { max-width: var(--ud-content-width) !important; }
+        .img-zoom-container, .img-zoom-container img, .soft-card img, .glass-panel img, video, iframe { border-radius: var(--ud-image-radius); }
+        body.ud-text-left section .text-center { text-align: left !important; }
+        body.ud-text-right section .text-center { text-align: right !important; }
+        body.ud-card-flat .glass-panel, body.ud-card-flat .soft-card { box-shadow: none !important; }
+        body.ud-card-solid .glass-panel, body.ud-card-solid .soft-card { background: color-mix(in srgb, var(--ud-card-bg) 92%, white) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        body.ud-card-outline .glass-panel, body.ud-card-outline .soft-card { background: transparent !important; border: 1px solid var(--ud-card-border) !important; box-shadow: none !important; }
+        body.ud-button-outline .btn-premium { background: transparent !important; color: var(--ud-accent) !important; border: 1px solid var(--ud-accent) !important; }
+        body.ud-button-solid .btn-premium { background: var(--ud-primary) !important; }
+        body.ud-gallery-masonry #gallery .grid { columns: 2; display: block; }
+        body.ud-gallery-masonry #gallery .grid > * { break-inside: avoid; margin-bottom: 1rem; }
+        @media (min-width: 768px) { body.ud-gallery-masonry #gallery .grid { columns: 3; } }
     </style>
 
 </head>
@@ -1111,8 +1196,10 @@
 
         // Ubah angka ini kalau ingin auto-scroll lebih cepat/lambat:
         // Mobile enak di 38-48, desktop enak di 50-68.
-        const AUTO_SCROLL_SPEED = window.innerWidth < 768 ? 42 : 56;
-        const AUTO_SCROLL_RESUME_DELAY = 2200;
+        let AUTO_SCROLL_SPEED = window.innerWidth < 768 ? 42 : 56;
+        let AUTO_SCROLL_RESUME_DELAY = 2200;
+        let AUTO_SCROLL_ENABLED = true;
+        let COVER_HIDE_DELAY = 3000;
 
         function isAtPageBottom() {
             return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 3;
@@ -1124,7 +1211,7 @@
         }
 
         function pauseAutoScrollTemporarily() {
-            if (!autoScrollStarted) return;
+            if (!AUTO_SCROLL_ENABLED || !autoScrollStarted) return;
 
             autoScrollPaused = true;
             document.body.classList.remove('is-auto-scrolling');
@@ -1139,6 +1226,7 @@
         }
 
         function startAutoScroll() {
+            if (!AUTO_SCROLL_ENABLED) return;
             autoScrollStarted = true;
             autoScrollPaused = false;
             document.body.classList.add('is-auto-scrolling');
@@ -1190,10 +1278,12 @@
             setTimeout(() => { AOS.refresh(); }, 800);
             setTimeout(() => { document.getElementById('floating-nav').classList.add('show'); }, 1200);
             setTimeout(() => {
-                window.scrollTo({ top: window.scrollY + 1, behavior: 'auto' });
-                startAutoScroll();
+                if (AUTO_SCROLL_ENABLED) {
+                    window.scrollTo({ top: window.scrollY + 1, behavior: 'auto' });
+                    startAutoScroll();
+                }
             }, 2600);
-            setTimeout(() => { cover.style.display = 'none'; }, 3000);
+            setTimeout(() => { cover.style.display = 'none'; }, COVER_HIDE_DELAY);
 
             toggleMusic(true);
         }
@@ -1283,6 +1373,28 @@
             }
         }
 
+
+
+        window.setAutoScrollOptions = function(effectSettings = {}) {
+            const readValue = (key, fallback) => effectSettings[key] === undefined || effectSettings[key] === null || effectSettings[key] === '' ? fallback : effectSettings[key];
+            const isOn = (value) => !['off', 'false', '0', 'no', 'none'].includes(String(value || '').toLowerCase());
+            AUTO_SCROLL_ENABLED = isOn(readValue('effectAutoScrollEnabled', 'on'));
+            const mobileSpeed = Number(readValue('effectAutoScrollMobileSpeed', 42));
+            const desktopSpeed = Number(readValue('effectAutoScrollDesktopSpeed', 56));
+            AUTO_SCROLL_SPEED = window.innerWidth < 768 ? (Number.isFinite(mobileSpeed) ? mobileSpeed : 42) : (Number.isFinite(desktopSpeed) ? desktopSpeed : 56);
+            const resumeDelay = Number(readValue('effectAutoScrollResumeDelay', 2200));
+            AUTO_SCROLL_RESUME_DELAY = Number.isFinite(resumeDelay) ? resumeDelay : 2200;
+            const coverEffect = String(readValue('effectCoverTransition', 'cinematic')).toLowerCase();
+            COVER_HIDE_DELAY = coverEffect === 'none' ? 120 : (coverEffect === 'cinematic' ? 3000 : 1500);
+            if (!AUTO_SCROLL_ENABLED) {
+                autoScrollStarted = false;
+                autoScrollPaused = false;
+                document.body.classList.remove('is-auto-scrolling');
+                stopAutoScrollFrame();
+                clearTimeout(autoScrollResumeTimer);
+            }
+        };
+
         function shareWhatsApp() {
             const currentUrl = window.location.href;
             const guestName = document.getElementById('guest-name').innerText;
@@ -1291,56 +1403,240 @@
         }
     </script>
 
-    <!-- 🌸 REALISTIC SAKURA ANIMATION -->
+    <!-- 🌸 PARTICLE EFFECT CONTROLLER - DIKONTROL DARI DASHBOARD -->
     <script id="ultra-premium-sakura-js">
         (function() {
             const canvas = document.createElement('canvas');
             canvas.id = 'sakura-particle-system';
-            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease; opacity: 0.45; will-change: transform;';
+            canvas.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:40; transition: z-index 1s ease, opacity .4s ease; opacity:0.45; will-change: transform;';
             document.body.appendChild(canvas);
-            
+
             const ctx = canvas.getContext('2d');
-            let width, height;
+            let width = 0;
+            let height = 0;
             let particles = [];
-            const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 8 : 24; 
+            let animationFrame = null;
+            let config = {
+                enabled: true,
+                type: 'sakura',
+                intensity: 'medium',
+                speed: 1,
+                opacity: 0.45,
+                size: 1
+            };
 
-            function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
-            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            const isMobile = () => window.innerWidth < 768;
+            const isOn = (value) => !['off', 'false', '0', 'no', 'none'].includes(String(value || '').toLowerCase());
+            const clamp = (value, min, max, fallback) => {
+                const number = Number(value);
+                if (!Number.isFinite(number)) return fallback;
+                return Math.min(Math.max(number, min), max);
+            };
 
-            class SakuraPetal {
-                constructor() {
-                    this.x = Math.random() * width; this.y = Math.random() * height - height;
-                    const layerChance = Math.random();
-                    if (layerChance > 0.8) { this.layer = 3; this.size = Math.random() * 6 + 10; this.speedY = Math.random() * 1 + 1; this.blur = 0; } 
-                    else if (layerChance > 0.4) { this.layer = 2; this.size = Math.random() * 5 + 6; this.speedY = Math.random() * 0.8 + 0.6; this.blur = 1; } 
-                    else { this.layer = 1; this.size = Math.random() * 3 + 3; this.speedY = Math.random() * 0.4 + 0.3; this.blur = 3; }
-                    this.speedX = Math.random() * 1.5 - 0.75; this.rotation = Math.random() * Math.PI * 2; this.rotationSpeed = (Math.random() * 0.04 - 0.02);
-                    this.angle = Math.random() * Math.PI * 2; this.angleSpeed = Math.random() * 0.02 + 0.01; this.opacity = Math.random() * 0.4 + (this.layer === 3 ? 0.4 : 0.2);
-                }
-                update() {
-                    this.y += this.speedY; this.x += this.speedX + Math.sin(this.angle) * (this.layer * 0.5);
-                    this.angle += this.angleSpeed; this.rotation += this.rotationSpeed;
-                    if (this.y > height + this.size) { this.y = -this.size; this.x = Math.random() * width; }
-                    if (this.x > width + this.size) this.x = -this.size; else if (this.x < -this.size) this.x = width + this.size;
-                }
-                draw() {
-                    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation);
-                    if (this.blur > 0) { ctx.filter = `blur(${this.blur}px)`; }
-                    ctx.beginPath(); const s = this.size;
-                    ctx.moveTo(0, s * -0.5); ctx.bezierCurveTo(s * 0.4, s * -0.6, s, s * -0.2, s * 0.8, s * 0.4);
-                    ctx.bezierCurveTo(s * 0.6, s * 1, s * 0.2, s * 0.8, 0, s); ctx.bezierCurveTo(s * -0.2, s * 0.8, s * -0.6, s * 1, s * -0.8, s * 0.4);
-                    ctx.bezierCurveTo(s * -1, s * -0.2, s * -0.4, s * -0.6, 0, s * -0.5);
-                    const gradient = ctx.createLinearGradient(0, -s, 0, s);
-                    gradient.addColorStop(0, `rgba(255, 230, 240, ${this.opacity})`); gradient.addColorStop(1, `rgba(248, 160, 185, ${this.opacity * 0.8})`);
-                    ctx.fillStyle = gradient; ctx.fill(); ctx.restore();
-                }
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
             }
-            for (let i = 0; i < particleCount; i++) { particles.push(new SakuraPetal()); }
-            function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
-            animate();
+            window.addEventListener('resize', () => { resizeCanvas(); rebuildParticles(); }, { passive: true });
+            resizeCanvas();
+
+            function particleTotal() {
+                const desktop = { low: 14, medium: 24, high: 48, ultra: 80 };
+                const mobile = { low: 6, medium: 8, high: 16, ultra: 28 };
+                const table = isMobile() ? mobile : desktop;
+                return table[config.intensity] || table.medium;
+            }
+
+            function resetParticle(particle, fromTop = true) {
+                particle.x = Math.random() * width;
+                particle.y = fromTop ? Math.random() * height - height : Math.random() * height;
+                particle.size = (Math.random() * 5 + 4) * config.size;
+                particle.speedY = (Math.random() * 0.8 + 0.45) * config.speed;
+                particle.speedX = (Math.random() * 1.2 - 0.6) * config.speed;
+                particle.rotation = Math.random() * Math.PI * 2;
+                particle.rotationSpeed = (Math.random() * 0.04 - 0.02) * config.speed;
+                particle.angle = Math.random() * Math.PI * 2;
+                particle.angleSpeed = Math.random() * 0.025 + 0.01;
+                particle.opacity = config.opacity * (Math.random() * 0.5 + 0.5);
+                particle.colorIndex = Math.floor(Math.random() * 6);
+            }
+
+            function createParticle() {
+                const particle = {};
+                resetParticle(particle, false);
+                return particle;
+            }
+
+            function rebuildParticles() {
+                particles = [];
+                if (!config.enabled || config.type === 'none') return;
+                for (let i = 0; i < particleTotal(); i++) particles.push(createParticle());
+            }
+
+            function drawSakura(p) {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.beginPath();
+                const s = p.size;
+                ctx.moveTo(0, s * -0.5);
+                ctx.bezierCurveTo(s * 0.4, s * -0.6, s, s * -0.2, s * 0.8, s * 0.4);
+                ctx.bezierCurveTo(s * 0.6, s, s * 0.2, s * 0.8, 0, s);
+                ctx.bezierCurveTo(s * -0.2, s * 0.8, s * -0.6, s, s * -0.8, s * 0.4);
+                ctx.bezierCurveTo(s * -1, s * -0.2, s * -0.4, s * -0.6, 0, s * -0.5);
+                const gradient = ctx.createLinearGradient(0, -s, 0, s);
+                gradient.addColorStop(0, `rgba(255,230,240,${p.opacity})`);
+                gradient.addColorStop(1, `rgba(248,160,185,${p.opacity * 0.8})`);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawSnow(p) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(1.5, p.size * 0.45), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${p.opacity})`;
+                ctx.shadowColor = 'rgba(255,255,255,.9)';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawTextParticle(p, char, color) {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = color;
+                ctx.font = `${Math.max(10, p.size * 1.6)}px serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(char, 0, 0);
+                ctx.restore();
+            }
+
+            function drawStar(p) {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = '#D4AF37';
+                ctx.beginPath();
+                const spikes = 5;
+                const outer = p.size;
+                const inner = p.size * 0.45;
+                for (let i = 0; i < spikes * 2; i++) {
+                    const r = i % 2 === 0 ? outer : inner;
+                    const a = (Math.PI / spikes) * i;
+                    ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawBubble(p) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(4, p.size), 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255,255,255,${p.opacity})`;
+                ctx.fillStyle = `rgba(248,200,220,${p.opacity * 0.22})`;
+                ctx.lineWidth = 1.5;
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function drawConfetti(p) {
+                const colors = ['#F8C8DC', '#D4AF37', '#E5A9B4', '#8F9779', '#FFFFFF', '#FADADD'];
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = colors[p.colorIndex] || colors[0];
+                ctx.fillRect(-p.size * 0.4, -p.size * 0.8, p.size * 0.8, p.size * 1.6);
+                ctx.restore();
+            }
+
+            function drawFirefly(p) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(1.5, p.size * 0.28), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,229,120,${p.opacity})`;
+                ctx.shadowColor = 'rgba(255,229,120,.9)';
+                ctx.shadowBlur = 14;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawParticle(p) {
+                if (config.type === 'snow') drawSnow(p);
+                else if (config.type === 'hearts') drawTextParticle(p, '♥', '#E5A9B4');
+                else if (config.type === 'stars') drawStar(p);
+                else if (config.type === 'bubbles') drawBubble(p);
+                else if (config.type === 'confetti') drawConfetti(p);
+                else if (config.type === 'fireflies') drawFirefly(p);
+                else if (config.type === 'glitter') drawTextParticle(p, '✦', '#D4AF37');
+                else drawSakura(p);
+            }
+
+            function updateParticle(p) {
+                const reverse = config.type === 'bubbles' || config.type === 'fireflies';
+                const drift = Math.sin(p.angle) * (config.type === 'confetti' ? 1.1 : 0.55) * config.speed;
+                p.y += reverse ? -p.speedY : p.speedY;
+                p.x += p.speedX + drift;
+                p.angle += p.angleSpeed;
+                p.rotation += p.rotationSpeed;
+                if (!reverse && p.y > height + p.size) resetParticle(p, true);
+                if (reverse && p.y < -p.size) { resetParticle(p, false); p.y = height + p.size; }
+                if (p.x > width + p.size) p.x = -p.size;
+                if (p.x < -p.size) p.x = width + p.size;
+            }
+
+            function animate() {
+                animationFrame = null;
+                if (!config.enabled || config.type === 'none') return;
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach((particle) => { updateParticle(particle); drawParticle(particle); });
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            function startAnimation() {
+                if (animationFrame || !config.enabled || config.type === 'none') return;
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            function stopAnimation() {
+                if (animationFrame) cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+                ctx.clearRect(0, 0, width, height);
+            }
+
+            window.setInvitationParticleEffect = function(effectSettings = {}) {
+                config.enabled = isOn(effectSettings.effectParticlesEnabled ?? 'on') && String(effectSettings.effectParticleType || 'sakura') !== 'none';
+                config.type = String(effectSettings.effectParticleType || 'sakura').toLowerCase();
+                config.intensity = String(effectSettings.effectParticleIntensity || 'medium').toLowerCase();
+                config.speed = clamp(effectSettings.effectParticleSpeed, 0.2, 5, 1);
+                config.opacity = clamp(effectSettings.effectParticleOpacity, 0, 1, 0.45);
+                config.size = clamp(effectSettings.effectParticleSize, 0.4, 3, 1);
+                canvas.style.display = config.enabled ? 'block' : 'none';
+                canvas.style.opacity = String(config.opacity);
+                stopAnimation();
+                rebuildParticles();
+                startAnimation();
+            };
+
+            rebuildParticles();
+            startAnimation();
+
             const originalOpenInvitation = window.openInvitation;
-            window.openInvitation = function() { originalOpenInvitation(); setTimeout(() => { document.getElementById('sakura-particle-system').style.zIndex = '90'; }, 2000); }
+            window.openInvitation = function() {
+                if (typeof originalOpenInvitation === 'function') originalOpenInvitation();
+                setTimeout(() => { canvas.style.zIndex = '90'; }, 2000);
+            };
         })();
     </script>
 
@@ -1384,6 +1680,756 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
         }
+
+
+        // =====================================================
+        // KONTROL UNDANGAN DIGITAL DARI DASHBOARD
+        // Data dibaca dari collection: undangan_digital
+        // RSVP/konfirmasi hadir dan ucapan tidak diubah.
+        // =====================================================
+        const UD_DEFAULTS = {
+            nama: 'Pengaturan Undangan Digital',
+            coupleShort: 'Mutiara & Destra',
+            eventDateText: '04 April 2027',
+            coverKicker: 'The Wedding Of',
+            heroSubtitle: 'We are getting married',
+            coverImage: 'https://wedding.destara.baby/Foto/Preweeding%205.png',
+            heroImage: 'https://wedding.destara.baby/Foto/Foto%20Prewedding%201.jpeg',
+            bridePhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=500&auto=format&fit=crop',
+            groomPhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500&auto=format&fit=crop',
+            brideLabel: 'The Bride',
+            brideName: 'Mutiara Devira Kirany',
+            brideParents: 'Putri dari Bapak Nama Ayah & Ibu Ayu Riani Wulandari',
+            brideInstagram: '@mutiara',
+            groomLabel: 'The Groom',
+            groomName: 'Destra Suci Irwanto',
+            groomParents: 'Putra dari Bapak Irwan Andrianto & Ibu Suciati Prihatin',
+            groomInstagram: '@destra',
+            ayatTitle: 'Doa Pembuka',
+            ayatText: '“Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu merasa tenteram kepadanya.”',
+            ayatSource: 'QS. Ar-Rum: 21',
+            greetingTitle: 'Assalamu’alaikum Warahmatullahi Wabarakatuh',
+            greetingText: 'Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara pernikahan putra dan putri kami. Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir, memberikan doa, dan menjadi bagian dari hari bahagia ini.',
+            akadTitle: 'Akad Nikah',
+            akadDate: 'Minggu, 04 April 2027',
+            akadTime: 'Pukul 08.00 WIB - Selesai',
+            akadIcon: 'fa-ring',
+            akadVenue: 'Masjid Raya Jakarta Barat',
+            akadAddress: 'Jl. Contoh Agama No. 1, Jakarta Barat',
+            akadCalendarLink: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Akad+Nikah+Mutiara+%26+Destra&dates=20270404T010000Z/20270404T040000Z&details=Kehadiran+Anda+sangat+berarti.&location=Masjid+Raya+Jakarta+Barat',
+            resepsiTitle: 'Resepsi',
+            resepsiDate: 'Minggu, 04 April 2027',
+            resepsiTime: 'Pukul 11.00 WIB - 14.00 WIB',
+            resepsiIcon: 'fa-champagne-glasses',
+            resepsiVenue: 'Grand Ballroom Jakarta Barat',
+            resepsiAddress: 'Jl. Contoh Resepsi No. 88, Jakarta Barat',
+            resepsiCalendarLink: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Resepsi+Pernikahan+Mutiara+%26+Destra&dates=20270404T040000Z/20270404T070000Z&details=Kehadiran+Anda+sangat+berarti.&location=Grand+Ballroom+Jakarta+Barat',
+            mapsLink: 'https://maps.google.com/?q=Jakarta+Barat',
+            mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24009761927!2d106.66470094760773!3d-6.16275817812542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f7aa2f9e403d%3A0xc3c544062cd10323!2sJakarta%20Barat%2C%20Kota%20Jakarta%20Barat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1714539123456!5m2!1sid!2sid',
+            liveStreamLink: 'https://youtube.com',
+            liveStreamText: 'Tonton Live YouTube',
+            quickMenuItemsText: 'Mempelai|#mempelai|fa-user-heart\nStory|#story|fa-heart\nAcara|#event|fa-calendar-days\nRundown|#rundown|fa-list-check\nGaleri|#gallery|fa-camera-retro\nRSVP|#rsvp-wishes|fa-qrcode',
+            storyItemsText: 'Desember 2024|Pertemuan Pertama|Berawal dari pertemuan sederhana, tumbuh rasa nyaman yang membuat kami ingin saling mengenal lebih jauh dan merajut asa bersama.\nJanuari 2026|Khitbah|Dengan niat baik dan restu keluarga, kami melangkah ke jenjang yang lebih serius untuk menyatukan dua keluarga dalam ikatan suci.\nApril 2027|Hari Bahagia|Dengan doa dan restu keluarga, kami akan memulai perjalanan baru dalam ikatan pernikahan.',
+            galleryImagesText: 'https://wedding.destara.baby/Foto/Foto%20Prewedding%201.jpeg\nhttps://wedding.destara.baby/Foto/Foto%20Wedding%204.png\nhttps://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600&auto=format&fit=crop\nhttps://wedding.destara.baby/Foto/preweding%206.png\nhttps://images.unsplash.com/photo-1537633552985-df8429e8048b?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1529636798458-92182e662485?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1509927083803-4bd519298ac4?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1520854221256-17451cc331bf?q=70&w=420&auto=format&fit=crop',
+            galleryVideoLink: 'https://wedding.destara.baby/Video/Prewedding.mp4',
+            galleryVideoText: 'Lihat Video',
+            rundownItemsText: '08.00 WIB|Akad Nikah|Prosesi ijab kabul dan doa bersama keluarga.|fa-ring\n10.00 WIB|Foto Keluarga|Sesi dokumentasi bersama keluarga dan kerabat dekat.|fa-camera-retro\n11.00 WIB|Resepsi|Penerimaan tamu, ramah tamah, dan makan siang.|fa-champagne-glasses\n14.00 WIB|Penutup|Ucapan terima kasih dari keluarga dan mempelai.|fa-heart',
+            locationCardsText: 'Area Parkir|Tersedia area parkir untuk tamu undangan. Ikuti arahan petugas saat tiba di lokasi.|fa-car\nPatokan Lokasi|Lokasi berada di area Jakarta Barat dan mudah diakses melalui Google Maps.|fa-location-crosshairs\nCheck-In QR|Tamu yang hadir dapat menunjukkan QR Code dari bagian RSVP kepada penerima tamu.|fa-user-check',
+            infoTamuText: 'Tunjukkan QR Code RSVP kepada penerima tamu.\nDatang sesuai waktu acara agar prosesi berjalan tertib.\nArea parkir tersedia di sekitar gedung acara.\nJumlah tamu mengikuti data pada link undangan.',
+            dresscodeTitle: 'Black',
+            dresscodeColorsText: '#000000',
+            dresscodeNote: 'Gunakan pakaian formal, batik, kebaya, atau dress yang nyaman. Warna di atas adalah warna wajib.',
+            bankAccountsText: 'BCA|1234567890|a.n Destra\nMandiri|0987654321|a.n Mutiara',
+            qrisImage: 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=QRIS-MUTIARA-DESTRA',
+            ewalletNumber: '081234567890',
+            hashtagsText: '#Desahanasmara, #MDWedding2027',
+            faqItemsText: 'Apakah tamu boleh membawa pasangan?|Silakan menyesuaikan dengan jumlah tamu yang tertera pada link undangan atau RSVP.\nApakah wajib menunjukkan QR Code?|Ya. QR Code membantu penerima tamu melakukan pendataan lebih cepat dan rapi.\nApakah tersedia live streaming?|Tersedia. Tautan live streaming dapat dibuka pada bagian Wedding Event.\nJam berapa sebaiknya tamu hadir?|Tamu resepsi dapat hadir mulai pukul 11.00 WIB. Untuk keluarga inti, silakan hadir lebih awal.\nApakah tersedia area parkir?|Tersedia area parkir di sekitar lokasi. Ikuti arahan petugas agar proses masuk lebih tertib.\nApakah ada dress code khusus?|Dress code yang diharuskan adalah Hitam.\nApakah boleh mengirim hadiah secara digital?|Boleh. Informasi rekening, QRIS, dan e-wallet tersedia pada bagian Wedding Gift.',
+            extraElementsText: '',
+            customBuilderText: '',
+            designPackText: '[tema]\npreset=sakura\nmode=gradient\n\n[warna]\nprimary=#E5A9B4\nsecondary=#FADADD\naccent=#D4AF37\nbg=#FFF5F7\nbg2=#FFFFFF\ntext=#2C3E50\nmuted=#64748B\ncard=rgba(255,255,255,.62)\nborder=rgba(255,255,255,.75)\n\n[font]\nheading=cormorant\nbody=montserrat\n\n[layout]\nwidth=72rem\nsectionPadding=5rem\nradius=2rem\nbuttonRadius=999px\ncardBlur=18px\nshadow=soft\ntextAlign=center\n\n[cover]\ncoverOverlay=linear-gradient(to bottom, rgba(26,18,21,.30), rgba(26,18,21,.80))\nheroOverlay=linear-gradient(to bottom, rgba(26,18,21,.60), rgba(26,18,21,.20), #FFF5F7)\nheroPosition=center\n\n[section]\nhideSections=\norder=menu,ayat,mempelai,sambutan,story,gallery,event,dresscode,rundown,info-tamu,gift,faq\n\n[media]\nimageRadius=1.5rem\ngalleryMode=grid',
+            footerText: 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.',
+            effectParticlesEnabled: 'on',
+            effectParticleType: 'sakura',
+            effectParticleIntensity: 'medium',
+            effectParticleSpeed: '1',
+            effectParticleOpacity: '0.45',
+            effectParticleSize: '1',
+            effectAosEnabled: 'on',
+            effectAosType: 'default',
+            effectAosDuration: '700',
+            effectAosOnce: 'true',
+            effectCoverTransition: 'cinematic',
+            effectParallaxEnabled: 'on',
+            effectHoverEnabled: 'on',
+            effectProgressBar: 'on',
+            effectFloatingNav: 'on',
+            effectButtonShine: 'on',
+            effectAutoScrollEnabled: 'on',
+            effectAutoScrollMobileSpeed: '42',
+            effectAutoScrollDesktopSpeed: '56',
+            effectAutoScrollResumeDelay: '2200',
+            effectMusicSpin: 'on'
+        };
+
+        function udClean(value) { return value === undefined || value === null ? '' : String(value).trim(); }
+        function udGet(settings, key) { return udClean(settings[key]) || UD_DEFAULTS[key] || ''; }
+        function udEscape(value) { return safeText(value, ''); }
+        function udAttr(value) { return udEscape(value).replace(/`/g, '&#096;'); }
+        function udLines(text) { return udClean(text).split(/\r?\n/).map(line => line.trim()).filter(Boolean); }
+        function udLineParts(text, fallbackText) {
+            const source = udClean(text) || fallbackText;
+            return udLines(source).map(line => line.split('|').map(part => part.trim()));
+        }
+        function udSplitComma(text, fallbackText) {
+            const source = udClean(text) || fallbackText;
+            return source.split(',').map(item => item.trim()).filter(Boolean);
+        }
+        function udSlugify(value, fallback = 'section') {
+            const slug = udClean(value).toLowerCase()
+                .replace(/[^a-z0-9À-ɏḀ-ỿ]+/gi, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 56);
+            return slug || fallback;
+        }
+        function udSafeUrl(value) {
+            const url = udClean(value);
+            if (!url) return '';
+            if (/^(https?:|mailto:|tel:|#)/i.test(url)) return url;
+            return '';
+        }
+        function udSplitList(value) {
+            return udClean(value).split(/\s*[;•]\s*/).map(item => item.trim()).filter(Boolean);
+        }
+        function udYouTubeEmbed(value) {
+            const url = udClean(value);
+            const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+            return match ? `https://www.youtube.com/embed/${encodeURIComponent(match[1])}` : '';
+        }
+        function udSetText(selector, value) {
+            const el = document.querySelector(selector);
+            if (el) el.textContent = value;
+        }
+        function udSetHTML(selector, html) {
+            const el = document.querySelector(selector);
+            if (el) el.innerHTML = html;
+        }
+        function udSetHref(selector, href) {
+            const el = document.querySelector(selector);
+            if (el && href) el.setAttribute('href', href);
+        }
+        function udSetImage(selector, src, alt = '') {
+            const el = document.querySelector(selector);
+            if (el && src) { el.src = src; if (alt) el.alt = alt; }
+        }
+        function udCoupleHTML(coupleShort) {
+            const parts = String(coupleShort || '').split('&').map(part => part.trim()).filter(Boolean);
+            if (parts.length >= 2) return `${udEscape(parts[0])} <br><span class="text-4xl md:text-6xl text-gold">&</span> ${udEscape(parts.slice(1).join(' & '))}`;
+            return udEscape(coupleShort || UD_DEFAULTS.coupleShort);
+        }
+        function udNormalizeInstagram(value) {
+            const raw = udClean(value);
+            if (!raw) return { label: '', href: '' };
+            if (raw.startsWith('http')) return { label: raw.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@').replace(/\/$/, ''), href: raw };
+            const username = raw.startsWith('@') ? raw.slice(1) : raw;
+            return { label: '@' + username, href: 'https://instagram.com/' + encodeURIComponent(username) };
+        }
+
+        function udRenderQuickMenu(settings) {
+            const items = udLineParts(udGet(settings, 'quickMenuItemsText'), UD_DEFAULTS.quickMenuItemsText)
+                .map(parts => ({ label: parts[0] || 'Menu', href: parts[1] || '#hero', icon: parts[2] || 'fa-circle' }));
+            const grid = document.querySelector('#menu .grid');
+            if (grid) {
+                grid.innerHTML = items.map((item, index) => `
+                    <a href="${udAttr(item.href)}" class="soft-card p-4 text-center hover:-translate-y-1 transition-all" data-aos="zoom-in" data-aos-delay="${index * 50}">
+                        <i class="fa-solid ${udAttr(item.icon)} ${index % 2 ? 'text-[#E5A9B4]' : 'text-gold'} text-xl mb-2"></i>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-500">${udEscape(item.label)}</p>
+                    </a>`).join('');
+            }
+            const floatingNav = document.getElementById('floating-nav');
+            if (floatingNav) {
+                floatingNav.innerHTML = items.slice(0, 6).map(item => `
+                    <a href="${udAttr(item.href)}" class="text-gray-400 hover:text-gold hover:scale-110 transition-all duration-300" title="${udAttr(item.label)}"><i class="fa-solid ${udAttr(item.icon)} text-lg"></i></a>`).join('');
+            }
+        }
+
+        function udRenderCouple(settings) {
+            const brideIG = udNormalizeInstagram(udGet(settings, 'brideInstagram'));
+            const groomIG = udNormalizeInstagram(udGet(settings, 'groomInstagram'));
+            udSetImage('#mempelai .grid > div:nth-child(1) img', udGet(settings, 'bridePhoto'), udGet(settings, 'brideName'));
+            udSetImage('#mempelai .grid > div:nth-child(2) img', udGet(settings, 'groomPhoto'), udGet(settings, 'groomName'));
+            udSetText('#mempelai .grid > div:nth-child(1) p.text-xs', udGet(settings, 'brideLabel'));
+            udSetText('#mempelai .grid > div:nth-child(2) p.text-xs', udGet(settings, 'groomLabel'));
+            udSetText('#mempelai .grid > div:nth-child(1) h3', udGet(settings, 'brideName'));
+            udSetText('#mempelai .grid > div:nth-child(2) h3', udGet(settings, 'groomName'));
+            const brideParents = document.querySelector('#mempelai .grid > div:nth-child(1) h3 + p');
+            const groomParents = document.querySelector('#mempelai .grid > div:nth-child(2) h3 + p');
+            if (brideParents) brideParents.textContent = udGet(settings, 'brideParents');
+            if (groomParents) groomParents.textContent = udGet(settings, 'groomParents');
+            const brideLink = document.querySelector('#mempelai .grid > div:nth-child(1) a');
+            const groomLink = document.querySelector('#mempelai .grid > div:nth-child(2) a');
+            if (brideLink && brideIG.href) { brideLink.href = brideIG.href; brideLink.innerHTML = `<i class="fa-brands fa-instagram"></i> ${udEscape(brideIG.label)}`; }
+            if (groomLink && groomIG.href) { groomLink.href = groomIG.href; groomLink.innerHTML = `<i class="fa-brands fa-instagram"></i> ${udEscape(groomIG.label)}`; }
+        }
+
+        function udRenderStory(settings) {
+            const items = udLineParts(udGet(settings, 'storyItemsText'), UD_DEFAULTS.storyItemsText)
+                .map(parts => ({ date: parts[0] || '', title: parts[1] || '', text: parts.slice(2).join('|') || '' }));
+            const container = document.querySelector('#story .timeline-line');
+            if (!container) return;
+            container.innerHTML = items.map((item, index) => {
+                const isLeft = index % 2 === 0;
+                const dot = index % 2 === 0 ? 'bg-gold' : 'bg-[#E5A9B4]';
+                return `
+                    <div class="flex flex-col md:flex-row items-center w-full mb-16 relative" data-aos="fade-up">
+                        ${isLeft ? '' : '<div class="md:w-1/2 hidden md:block"></div>'}
+                        <div class="md:w-1/2 ${isLeft ? 'flex justify-start md:justify-end pl-12 md:pl-0 md:pr-12 text-left md:text-right' : 'pl-12 md:pl-12 text-left'} w-full">
+                            <div class="glass-panel p-8 rounded-3xl w-full hover:-translate-y-2 transition-transform duration-500">
+                                <span class="inline-block px-3 py-1 ${index % 2 === 0 ? 'bg-gold/10 text-gold' : 'bg-[#E5A9B4]/20 text-[#E5A9B4]'} rounded-full font-bold text-xs uppercase tracking-wide mb-3">${udEscape(item.date)}</span>
+                                <h4 class="font-serif text-3xl mb-3 text-gray-800 font-bold">${udEscape(item.title)}</h4>
+                                <p class="text-sm text-gray-600 leading-relaxed font-light">${udEscape(item.text)}</p>
+                            </div>
+                        </div>
+                        ${isLeft ? '<div class="md:w-1/2 hidden md:block"></div>' : ''}
+                        <div class="absolute left-[11px] md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 ${dot} rounded-full ring-8 ring-[#FFF5F7] z-10 shadow-lg"></div>
+                    </div>`;
+            }).join('');
+        }
+
+        function udRenderGallery(settings) {
+            const images = udLines(udGet(settings, 'galleryImagesText') || UD_DEFAULTS.galleryImagesText);
+            const grids = document.querySelectorAll('#gallery .grid');
+            if (grids[0]) {
+                const main = images.slice(0, 4);
+                grids[0].innerHTML = main.map((url, index) => {
+                    const bigClass = index === 0 ? 'col-span-2 md:col-span-1 row-span-2' : (index === 3 ? 'col-span-2 md:col-span-2' : '');
+                    const imgClass = index === 0 ? 'w-full h-full object-cover rounded-xl' : (index === 3 ? 'w-full h-[250px] object-cover rounded-xl' : 'w-full h-full object-cover rounded-xl aspect-square');
+                    return `<div class="img-zoom-container relative cursor-pointer rounded-2xl ${bigClass} glass-panel p-2 shadow-sm" data-aos="zoom-in" data-aos-delay="${index * 100}" onclick="openLightbox('${udAttr(url)}')"><img src="${udAttr(url)}" loading="lazy" class="${imgClass}" alt="Gallery"><div class="gallery-overlay absolute inset-0 flex items-center justify-center rounded-xl m-2"><i class="fa-solid fa-expand text-white text-3xl opacity-80"></i></div></div>`;
+                }).join('');
+            }
+            if (grids[1]) {
+                grids[1].innerHTML = images.slice(4).map((url, index) => `<div class="img-zoom-container relative cursor-pointer rounded-2xl glass-panel p-2" data-aos="zoom-in" data-aos-delay="${index * 80}" onclick="openLightbox('${udAttr(url)}')"><img src="${udAttr(url)}" loading="lazy" class="w-full h-44 object-cover rounded-xl" alt="Album"></div>`).join('');
+            }
+            udSetHref('#gallery .soft-card a', udGet(settings, 'galleryVideoLink'));
+            const videoText = udGet(settings, 'galleryVideoText');
+            const videoBtn = document.querySelector('#gallery .soft-card a');
+            if (videoBtn && videoText) videoBtn.innerHTML = `<i class="fa-brands fa-youtube mr-2"></i> ${udEscape(videoText)}`;
+        }
+
+        function udEventCard(title, date, time, icon, venue, address, calendarLink, reverse = false) {
+            return `
+                <div class="glass-panel p-10 rounded-[2rem] text-center shadow-lg relative overflow-hidden group" data-aos="fade-up">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${reverse ? 'from-[#E5A9B4] to-gold' : 'from-gold to-[#E5A9B4]'}"></div>
+                    <i class="fa-solid ${udAttr(icon || 'fa-calendar-check')} text-5xl ${reverse ? 'text-[#E5A9B4]' : 'text-gold'} mb-6 opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
+                    <h3 class="font-serif text-4xl font-bold mb-3 text-gray-800">${udEscape(title)}</h3>
+                    <p class="${reverse ? 'text-gold' : 'text-[#E5A9B4]'} font-bold text-lg mb-2">${udEscape(date)}</p>
+                    <p class="text-gray-500 mb-6 font-medium tracking-wide">${udEscape(time)}</p>
+                    <div class="bg-white/50 border border-white p-5 rounded-2xl text-sm text-gray-700 shadow-inner mb-6">
+                        <span class="font-bold text-base block mb-1 text-gray-800">${udEscape(venue)}</span>
+                        ${udEscape(address)}
+                    </div>
+                    ${calendarLink ? `<a href="${udAttr(calendarLink)}" target="_blank" class="inline-block px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider rounded-full transition-colors border border-gray-200 shadow-sm"><i class="fa-regular fa-calendar-plus mr-2"></i> Simpan ke Kalender</a>` : ''}
+                </div>`;
+        }
+
+        function udRenderEvent(settings) {
+            const eventGrid = document.querySelector('#event .grid.md\\:grid-cols-2') || document.querySelector('#event .grid');
+            if (eventGrid) {
+                eventGrid.innerHTML = udEventCard(udGet(settings, 'akadTitle'), udGet(settings, 'akadDate'), udGet(settings, 'akadTime'), udGet(settings, 'akadIcon'), udGet(settings, 'akadVenue'), udGet(settings, 'akadAddress'), udGet(settings, 'akadCalendarLink'))
+                    + udEventCard(udGet(settings, 'resepsiTitle'), udGet(settings, 'resepsiDate'), udGet(settings, 'resepsiTime'), udGet(settings, 'resepsiIcon'), udGet(settings, 'resepsiVenue'), udGet(settings, 'resepsiAddress'), udGet(settings, 'resepsiCalendarLink'), true);
+            }
+            const iframe = document.querySelector('#event iframe');
+            if (iframe && udGet(settings, 'mapsEmbed')) iframe.src = udGet(settings, 'mapsEmbed');
+            udSetHref('#event iframe + * a, #event .text-center.pb-2 a', udGet(settings, 'mapsLink'));
+            const locationGrid = document.querySelector('#event .grid.md\\:grid-cols-3');
+            if (locationGrid) {
+                const items = udLineParts(udGet(settings, 'locationCardsText'), UD_DEFAULTS.locationCardsText);
+                locationGrid.innerHTML = items.map((parts, index) => `
+                    <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <div class="icon-pill mx-auto mb-4"><i class="fa-solid ${udAttr(parts[2] || 'fa-circle-info')}"></i></div>
+                        <h4 class="font-serif text-2xl font-bold text-gray-800 mb-2">${udEscape(parts[0] || 'Info')}</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">${udEscape(parts[1] || '')}</p>
+                    </div>`).join('');
+            }
+            const liveBtn = document.querySelector('#event .glass-panel.mt-10 a');
+            if (liveBtn) { liveBtn.href = udGet(settings, 'liveStreamLink'); liveBtn.innerHTML = `<i class="fa-brands fa-youtube mr-2 text-lg"></i> ${udEscape(udGet(settings, 'liveStreamText'))}`; }
+        }
+
+        function udRenderDresscode(settings) {
+            const colors = udSplitComma(udGet(settings, 'dresscodeColorsText'), UD_DEFAULTS.dresscodeColorsText);
+            const colorWrap = document.querySelector('#dresscode .flex.justify-center');
+            if (colorWrap) colorWrap.innerHTML = colors.map(color => `<div class="color-dot" style="background:${udAttr(color)}"></div>`).join('');
+            udSetText('#dresscode .glass-panel h3', udGet(settings, 'dresscodeTitle'));
+            udSetText('#dresscode .glass-panel h3 + p', udGet(settings, 'dresscodeNote'));
+        }
+
+        function udRenderRundown(settings) {
+            const items = udLineParts(udGet(settings, 'rundownItemsText'), UD_DEFAULTS.rundownItemsText);
+            const grid = document.querySelector('#rundown .grid');
+            if (!grid) return;
+            grid.innerHTML = items.map((parts, index) => `
+                <div class="soft-card p-6 text-center" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid ${udAttr(parts[3] || 'fa-calendar-check')} text-2xl"></i></div>
+                    <p class="font-bold text-gold mb-1">${udEscape(parts[0] || '')}</p>
+                    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">${udEscape(parts[1] || '')}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">${udEscape(parts[2] || '')}</p>
+                </div>`).join('');
+        }
+
+        function udRenderInfoTamu(settings) {
+            const notes = udLines(udGet(settings, 'infoTamuText') || UD_DEFAULTS.infoTamuText);
+            const noteWrap = document.querySelector('#info-tamu .space-y-4');
+            if (noteWrap) noteWrap.innerHTML = notes.map(note => `<p><i class="fa-solid fa-circle-info text-gold mr-2"></i> ${udEscape(note)}</p>`).join('');
+            const hashtags = udSplitComma(udGet(settings, 'hashtagsText'), UD_DEFAULTS.hashtagsText);
+            const hashWrap = document.querySelector('#info-tamu .flex.flex-wrap');
+            if (hashWrap) hashWrap.innerHTML = hashtags.map(tag => `<span class="px-5 py-3 bg-white/70 border border-white rounded-full text-sm font-bold text-gray-700">${udEscape(tag)}</span>`).join('');
+            const mainHash = document.getElementById('wedding-hashtag');
+            if (mainHash && hashtags[0]) mainHash.textContent = hashtags[0];
+        }
+
+        function udRenderGift(settings) {
+            const accounts = udLineParts(udGet(settings, 'bankAccountsText'), UD_DEFAULTS.bankAccountsText);
+            const bankWrap = document.querySelector('#gift .flex.flex-col');
+            if (bankWrap) {
+                bankWrap.innerHTML = accounts.map((parts, index) => {
+                    const id = `rek-digital-${index}`;
+                    return `<div class="glass-panel p-10 rounded-[2.5rem] w-full sm:w-1/2 relative overflow-hidden group shadow-xl hover:shadow-2xl">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${index % 2 ? 'from-[#E5A9B4]/40' : 'from-gold/30'} to-transparent rounded-bl-full transition-transform group-hover:scale-[2] duration-700"></div>
+                        <h3 class="font-black text-2xl text-gray-800 mb-2 tracking-tight">${udEscape(parts[0] || 'Bank')}</h3>
+                        <p id="${id}" class="font-mono text-3xl ${index % 2 ? 'text-[#E5A9B4]' : 'text-gold'} font-bold tracking-widest mb-2">${udEscape(parts[1] || '')}</p>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">${udEscape(parts[2] || '')}</p>
+                        <button onclick="copyToClipboard('${id}')" class="px-8 py-3 bg-gray-800 text-white rounded-full text-xs font-bold hover:bg-gold transition-colors uppercase tracking-widest shadow-lg hover:-translate-y-1 duration-300"><i class="fa-regular fa-copy mr-2 text-sm"></i> Salin Nomor</button>
+                    </div>`;
+                }).join('');
+            }
+            udSetImage('#qris img', udGet(settings, 'qrisImage'), 'QRIS');
+            udSetText('#ewallet-number', udGet(settings, 'ewalletNumber'));
+        }
+
+        function udRenderFAQ(settings) {
+            const items = udLineParts(udGet(settings, 'faqItemsText'), UD_DEFAULTS.faqItemsText);
+            const wrap = document.querySelector('#faq .space-y-4');
+            if (!wrap) return;
+            wrap.innerHTML = items.map(parts => `
+                <details class="faq-item glass-panel p-6 rounded-2xl" data-aos="fade-up">
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">${udEscape(parts[0] || 'Pertanyaan')}<i class="fa-solid fa-chevron-down transition-transform"></i></summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">${udEscape(parts.slice(1).join('|') || '')}</p>
+                </details>`).join('');
+        }
+
+        function udRenderExtraElements(settings) {
+            const items = udLineParts(udGet(settings, 'extraElementsText'), '');
+            let section = document.getElementById('custom-elements');
+            if (!items.length) { if (section) section.remove(); return; }
+            if (!section) {
+                section = document.createElement('section');
+                section.id = 'custom-elements';
+                section.className = 'py-20 px-6 relative z-10';
+                const anchor = document.getElementById('rsvp-wishes') || document.querySelector('footer');
+                if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(section, anchor);
+            }
+            section.innerHTML = `
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <span class="section-badge" data-aos="fade-up">Tambahan</span>
+                        <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">Info Tambahan</h2>
+                    </div>
+                    <div class="grid md:grid-cols-${Math.min(Math.max(items.length, 1), 3)} gap-6">
+                        ${items.map((parts, index) => `
+                            <div id="${udAttr((parts[3] || '').replace('#', '') || 'custom-element-' + index)}" class="soft-card p-8 text-center" data-aos="fade-up" data-aos-delay="${index * 100}">
+                                <div class="icon-pill mx-auto mb-4"><i class="fa-solid ${udAttr(parts[2] || 'fa-star')}"></i></div>
+                                <h3 class="font-serif text-3xl font-bold text-gray-800 mb-3">${udEscape(parts[0] || 'Info')}</h3>
+                                <p class="text-sm text-gray-500 leading-relaxed">${udEscape(parts[1] || '')}</p>
+                            </div>`).join('')}
+                    </div>
+                </div>`;
+        }
+
+        function udParseCustomBuilder(settings) {
+            const rows = udLines(udGet(settings, 'customBuilderText'));
+            const groups = [];
+            const groupIndex = new Map();
+            rows.forEach((line, index) => {
+                if (/^\s*(kategori\s*\|\s*tipe|\/\/)/i.test(line)) return;
+                const parts = line.split('|').map(part => part.trim());
+                if (!parts.length) return;
+                const category = parts[0] || 'Custom';
+                const type = (parts[1] || 'card').toLowerCase();
+                const status = (parts[7] || 'on').toLowerCase();
+                if (status === 'off' || status === 'hide' || status === 'false' || status === '0') return;
+                const anchor = (parts[6] || '').replace(/^#/, '');
+                const item = {
+                    category,
+                    type,
+                    title: parts[2] || '',
+                    body: parts[3] || '',
+                    icon: parts[4] || 'fa-star',
+                    media: parts[5] || '',
+                    anchor,
+                    index
+                };
+                const key = category.toLowerCase();
+                if (!groupIndex.has(key)) {
+                    groupIndex.set(key, groups.length);
+                    groups.push({ title: category, id: anchor || udSlugify(category, 'custom-' + groups.length), items: [] });
+                }
+                groups[groupIndex.get(key)].items.push(item);
+            });
+            return groups;
+        }
+
+        function udRenderCustomItem(item, index) {
+            const icon = udAttr(item.icon || 'fa-star');
+            const title = udEscape(item.title || 'Info');
+            const body = udEscape(item.body || '');
+            const media = udSafeUrl(item.media);
+            const delay = Math.min(index * 80, 400);
+            const common = `data-aos="fade-up" data-aos-delay="${delay}"`;
+            if (item.type === 'foto' || item.type === 'image' || item.type === 'gambar') {
+                return `<article class="soft-card overflow-hidden" ${common}>
+                    ${media ? `<img src="${udAttr(media)}" alt="${title}" class="w-full h-64 object-cover">` : ''}
+                    <div class="p-7 text-center"><h3 class="font-serif text-3xl font-bold text-gray-800 mb-3">${title}</h3><p class="text-sm text-gray-500 leading-relaxed">${body}</p></div>
+                </article>`;
+            }
+            if (item.type === 'video') {
+                const youtube = udYouTubeEmbed(media);
+                const isVideoFile = /\.(mp4|webm|ogg)(\?|#|$)/i.test(media);
+                return `<article class="soft-card p-5" ${common}>
+                    <div class="overflow-hidden rounded-[1.5rem] bg-black/5">
+                        ${youtube ? `<iframe src="${udAttr(youtube)}" title="${title}" class="w-full aspect-video" allowfullscreen loading="lazy"></iframe>` : (isVideoFile ? `<video src="${udAttr(media)}" controls class="w-full rounded-[1.5rem]"></video>` : `<a href="${udAttr(media || '#') }" target="_blank" rel="noopener" class="block p-10 text-center font-bold text-gold"><i class="fa-solid fa-play mr-2"></i> Buka Video</a>`)}
+                    </div>
+                    <div class="pt-5 text-center"><h3 class="font-serif text-3xl font-bold text-gray-800 mb-2">${title}</h3><p class="text-sm text-gray-500 leading-relaxed">${body}</p></div>
+                </article>`;
+            }
+            if (item.type === 'quote' || item.type === 'kutipan') {
+                return `<blockquote class="glass-panel p-8 rounded-[2rem] text-center" ${common}>
+                    <i class="fa-solid ${icon} text-gold text-2xl mb-4"></i>
+                    <p class="font-serif text-2xl md:text-3xl text-gray-700 leading-relaxed mb-4">“${body || title}”</p>
+                    ${item.title && item.body ? `<footer class="text-xs font-bold uppercase tracking-widest text-gray-400">${title}</footer>` : ''}
+                </blockquote>`;
+            }
+            if (item.type === 'button' || item.type === 'link' || item.type === 'tombol') {
+                return `<article class="soft-card p-8 text-center" ${common}>
+                    <div class="icon-pill mx-auto mb-4"><i class="fa-solid ${icon}"></i></div>
+                    <h3 class="font-serif text-3xl font-bold text-gray-800 mb-3">${title}</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-6">${body}</p>
+                    ${media ? `<a href="${udAttr(media)}" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-7 py-3 rounded-full bg-gray-800 text-white text-xs font-black uppercase tracking-widest hover:bg-gold transition-colors"><i class="fa-solid ${icon} mr-2"></i> Buka</a>` : ''}
+                </article>`;
+            }
+            if (item.type === 'list' || item.type === 'daftar') {
+                const entries = udSplitList(item.body);
+                return `<article class="soft-card p-8" ${common}>
+                    <div class="icon-pill mb-5"><i class="fa-solid ${icon}"></i></div>
+                    <h3 class="font-serif text-3xl font-bold text-gray-800 mb-5">${title}</h3>
+                    <ul class="space-y-3 text-sm text-gray-500">${entries.map(entry => `<li class="flex gap-3"><i class="fa-solid fa-check text-gold mt-1"></i><span>${udEscape(entry)}</span></li>`).join('')}</ul>
+                </article>`;
+            }
+            if (item.type === 'timeline' || item.type === 'alur') {
+                return `<article class="glass-panel p-7 rounded-[2rem]" ${common}>
+                    <div class="flex gap-4"><div class="icon-pill shrink-0"><i class="fa-solid ${icon}"></i></div><div><h3 class="font-serif text-2xl font-bold text-gray-800 mb-2">${title}</h3><p class="text-sm text-gray-500 leading-relaxed">${body}</p></div></div>
+                </article>`;
+            }
+            if (item.type === 'faq' || item.type === 'accordion') {
+                return `<details class="faq-item glass-panel p-6 rounded-2xl" ${common}>
+                    <summary class="cursor-pointer flex justify-between items-center font-bold text-gray-800">${title}<i class="fa-solid fa-chevron-down transition-transform"></i></summary>
+                    <p class="text-sm text-gray-500 mt-4 leading-relaxed">${body}</p>
+                </details>`;
+            }
+            if (item.type === 'embed' || item.type === 'iframe') {
+                return `<article class="soft-card p-5" ${common}>
+                    ${media ? `<iframe src="${udAttr(media)}" title="${title}" class="w-full aspect-video rounded-[1.5rem]" loading="lazy"></iframe>` : ''}
+                    <div class="pt-5 text-center"><h3 class="font-serif text-3xl font-bold text-gray-800 mb-2">${title}</h3><p class="text-sm text-gray-500 leading-relaxed">${body}</p></div>
+                </article>`;
+            }
+            if (item.type === 'spacer' || item.type === 'teks') {
+                return `<article class="max-w-3xl mx-auto text-center py-4" ${common}>
+                    <h3 class="font-serif text-4xl font-bold text-gray-800 mb-4">${title}</h3><p class="text-sm text-gray-500 leading-relaxed">${body}</p>
+                </article>`;
+            }
+            return `<article class="soft-card p-8 text-center" ${common}>
+                <div class="icon-pill mx-auto mb-4"><i class="fa-solid ${icon}"></i></div>
+                <h3 class="font-serif text-3xl font-bold text-gray-800 mb-3">${title}</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">${body}</p>
+                ${media ? `<a href="${udAttr(media)}" target="_blank" rel="noopener" class="inline-block mt-5 text-xs font-black uppercase tracking-widest text-gold">Lihat Detail</a>` : ''}
+            </article>`;
+        }
+
+        function udRenderCustomBuilder(settings) {
+            document.querySelectorAll('[data-ud-builder-section="1"]').forEach(section => section.remove());
+            const groups = udParseCustomBuilder(settings);
+            if (!groups.length) return;
+            const anchor = document.getElementById('rsvp-wishes') || document.querySelector('footer');
+            if (!anchor || !anchor.parentNode) return;
+            const fragment = document.createDocumentFragment();
+            groups.forEach((group, groupIndex) => {
+                const section = document.createElement('section');
+                section.id = udAttr(group.id);
+                section.setAttribute('data-ud-builder-section', '1');
+                section.className = 'py-20 px-6 relative z-10';
+                const isSingleWide = group.items.length === 1 || group.items.some(item => ['video', 'embed', 'quote', 'spacer'].includes(item.type));
+                section.innerHTML = `
+                    <div class="max-w-6xl mx-auto">
+                        <div class="text-center mb-12">
+                            <span class="section-badge" data-aos="fade-up">Custom</span>
+                            <h2 class="font-serif text-5xl md:text-6xl text-gray-800 font-bold mt-4" data-aos="fade-up">${udEscape(group.title)}</h2>
+                        </div>
+                        <div class="${isSingleWide ? 'space-y-6' : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'}">
+                            ${group.items.map((item, index) => udRenderCustomItem(item, index + groupIndex)).join('')}
+                        </div>
+                    </div>`;
+                fragment.appendChild(section);
+            });
+            anchor.parentNode.insertBefore(fragment, anchor);
+        }
+
+
+
+
+
+        const UD_THEME_PRESETS = {
+            sakura: { primary: '#E5A9B4', secondary: '#FADADD', accent: '#D4AF37', bg: '#FFF5F7', bg2: '#FFFFFF', text: '#2C3E50', muted: '#64748B', card: 'rgba(255,255,255,.62)', border: 'rgba(255,255,255,.75)' },
+            gold: { primary: '#C89B3C', secondary: '#FFF2C6', accent: '#9A6B16', bg: '#FFF9EB', bg2: '#FFFFFF', text: '#3A2A0B', muted: '#7C6A3B', card: 'rgba(255,255,255,.72)', border: 'rgba(201,155,60,.20)' },
+            sage: { primary: '#8F9779', secondary: '#E6EAD8', accent: '#C9A24D', bg: '#F7FAF1', bg2: '#FFFFFF', text: '#263222', muted: '#68745E', card: 'rgba(255,255,255,.68)', border: 'rgba(143,151,121,.22)' },
+            lavender: { primary: '#A78BFA', secondary: '#EEE7FF', accent: '#C084FC', bg: '#FAF7FF', bg2: '#FFFFFF', text: '#2E2343', muted: '#6B5B7B', card: 'rgba(255,255,255,.70)', border: 'rgba(167,139,250,.20)' },
+            emerald: { primary: '#10B981', secondary: '#D1FAE5', accent: '#D4AF37', bg: '#F0FDF4', bg2: '#FFFFFF', text: '#103B2A', muted: '#537768', card: 'rgba(255,255,255,.68)', border: 'rgba(16,185,129,.18)' },
+            royal: { primary: '#2937A3', secondary: '#E7EAFF', accent: '#D4AF37', bg: '#F5F6FF', bg2: '#FFFFFF', text: '#172554', muted: '#64748B', card: 'rgba(255,255,255,.70)', border: 'rgba(41,55,163,.18)' },
+            mono: { primary: '#111827', secondary: '#E5E7EB', accent: '#6B7280', bg: '#F9FAFB', bg2: '#FFFFFF', text: '#111827', muted: '#6B7280', card: 'rgba(255,255,255,.78)', border: 'rgba(17,24,39,.12)' },
+            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: 'rgba(30,23,30,.78)', border: 'rgba(255,255,255,.14)' }
+        };
+
+        function udParsePack(text) {
+            const result = {};
+            udLines(text).forEach((rawLine) => {
+                const line = rawLine.replace(/^[-*]\s*/, '').trim();
+                if (!line || /^\/\//.test(line) || /^#\s/.test(line) || /^\[[^\]]+\]$/.test(line)) return;
+                const match = line.match(/^([^:=]+)\s*[:=]\s*(.*)$/);
+                if (!match) return;
+                const key = match[1].trim().toLowerCase().replace(/[\s_-]+/g, '');
+                result[key] = match[2].trim();
+            });
+            return result;
+        }
+
+        function udCssColor(value, fallback) {
+            const color = udClean(value) || fallback;
+            if (window.CSS && CSS.supports && CSS.supports('color', color)) return color;
+            if (/^(rgba?|hsla?)\(/i.test(color) || /^#[0-9a-f]{3,8}$/i.test(color)) return color;
+            return fallback;
+        }
+
+        function udCssLength(value, fallback) {
+            const v = udClean(value);
+            if (!v) return fallback;
+            if (/^\d+(\.\d+)?(px|rem|em|vh|vw|%)$/i.test(v)) return v;
+            if (/^\d+(\.\d+)?$/.test(v)) return v + 'rem';
+            return fallback;
+        }
+
+        function udFontName(value, fallback) {
+            const key = udClean(value).toLowerCase();
+            const map = {
+                cormorant: '"Cormorant Garamond"', montserrat: 'Montserrat', playfair: '"Playfair Display"', inter: 'Inter', greatvibes: '"Great Vibes"', dancing: '"Dancing Script"', lora: 'Lora', poppins: 'Poppins', serif: 'serif', sans: 'sans-serif', system: 'system-ui'
+            };
+            if (map[key]) return map[key];
+            if (/^[a-z0-9\s,"'-]+$/i.test(value || '')) return value;
+            return fallback;
+        }
+
+        function udPackValue(pack, ...keys) {
+            for (const key of keys) {
+                const normalized = String(key).toLowerCase().replace(/[\s_-]+/g, '');
+                if (pack[normalized] !== undefined) return pack[normalized];
+            }
+            return '';
+        }
+
+        function udApplyDesignPack(settings) {
+            const pack = udParsePack(udGet(settings, 'designPackText'));
+            const presetName = (udPackValue(pack, 'preset', 'tema') || 'sakura').toLowerCase();
+            const preset = UD_THEME_PRESETS[presetName] || UD_THEME_PRESETS.sakura;
+            const root = document.documentElement;
+            const primary = udCssColor(udPackValue(pack, 'primary', 'warnautama'), preset.primary);
+            const secondary = udCssColor(udPackValue(pack, 'secondary', 'warnasecondary'), preset.secondary);
+            const accent = udCssColor(udPackValue(pack, 'accent', 'gold', 'aksen'), preset.accent);
+            const bg = udCssColor(udPackValue(pack, 'bg', 'background'), preset.bg);
+            const bg2 = udCssColor(udPackValue(pack, 'bg2', 'background2'), preset.bg2);
+            const text = udCssColor(udPackValue(pack, 'text', 'teks'), preset.text);
+            const muted = udCssColor(udPackValue(pack, 'muted', 'teksmuted'), preset.muted);
+            const card = udPackValue(pack, 'card', 'cardbg') || preset.card;
+            const border = udPackValue(pack, 'border', 'cardborder') || preset.border;
+            root.style.setProperty('--ud-primary', primary);
+            root.style.setProperty('--ud-secondary', secondary);
+            root.style.setProperty('--ud-accent', accent);
+            root.style.setProperty('--ud-bg', bg);
+            root.style.setProperty('--ud-bg-2', bg2);
+            root.style.setProperty('--ud-text', text);
+            root.style.setProperty('--ud-muted', muted);
+            root.style.setProperty('--ud-card-bg', card);
+            root.style.setProperty('--ud-card-border', border);
+            root.style.setProperty('--ud-card-radius', udCssLength(udPackValue(pack, 'radius', 'cardradius'), '2rem'));
+            root.style.setProperty('--ud-button-radius', udCssLength(udPackValue(pack, 'buttonradius', 'tombolradius'), '999px'));
+            root.style.setProperty('--ud-section-py', udCssLength(udPackValue(pack, 'sectionpadding', 'jaraksection'), '5rem'));
+            root.style.setProperty('--ud-content-width', udCssLength(udPackValue(pack, 'width', 'contentwidth', 'lebar'), '72rem'));
+            root.style.setProperty('--ud-card-blur', udCssLength(udPackValue(pack, 'cardblur', 'blur'), '18px'));
+            root.style.setProperty('--ud-image-radius', udCssLength(udPackValue(pack, 'imageradius', 'fotoradius'), '1.5rem'));
+            const shadow = (udPackValue(pack, 'shadow', 'bayangan') || 'soft').toLowerCase();
+            const shadowMap = {
+                none: 'none', off: 'none', soft: `0 10px 30px color-mix(in srgb, ${primary} 14%, transparent)`, medium: `0 16px 45px color-mix(in srgb, ${primary} 22%, transparent)`, strong: `0 24px 70px color-mix(in srgb, ${primary} 32%, transparent)`
+            };
+            root.style.setProperty('--ud-card-shadow', shadowMap[shadow] || shadowMap.soft);
+            root.style.setProperty('--ud-heading-font', udFontName(udPackValue(pack, 'heading', 'headingfont', 'judulfont'), '"Cormorant Garamond"'));
+            root.style.setProperty('--ud-body-font', udFontName(udPackValue(pack, 'body', 'bodyfont', 'teksfont'), 'Montserrat'));
+
+            const mode = (udPackValue(pack, 'mode', 'backgroundmode') || 'gradient').toLowerCase();
+            ['solid', 'radial', 'dark'].forEach(name => document.body.classList.toggle(`ud-bg-${name}`, mode === name || (presetName === 'dark' && name === 'dark')));
+            const align = (udPackValue(pack, 'textalign', 'align') || 'center').toLowerCase();
+            document.body.classList.toggle('ud-text-left', align === 'left' || align === 'kiri');
+            document.body.classList.toggle('ud-text-right', align === 'right' || align === 'kanan');
+            const cardStyle = (udPackValue(pack, 'cardstyle', 'kartu') || 'glass').toLowerCase();
+            ['flat', 'solid', 'outline'].forEach(name => document.body.classList.toggle(`ud-card-${name}`, cardStyle === name));
+            const buttonStyle = (udPackValue(pack, 'buttonstyle', 'tombol') || 'gradient').toLowerCase();
+            ['outline', 'solid'].forEach(name => document.body.classList.toggle(`ud-button-${name}`, buttonStyle === name));
+            const galleryMode = (udPackValue(pack, 'gallerymode', 'galerimode') || 'grid').toLowerCase();
+            document.body.classList.toggle('ud-gallery-masonry', galleryMode === 'masonry');
+
+            const heroOverlay = document.querySelector('#hero > div.absolute.inset-0');
+            const heroOverlayValue = udPackValue(pack, 'herooverlay');
+            if (heroOverlay && heroOverlayValue) heroOverlay.style.background = heroOverlayValue;
+            const coverOverlay = document.querySelector('#cover-screen > div.absolute');
+            const coverOverlayValue = udPackValue(pack, 'coveroverlay');
+            if (coverOverlay && coverOverlayValue) coverOverlay.style.background = coverOverlayValue;
+            const hero = document.querySelector('.parallax-bg');
+            const heroPosition = udPackValue(pack, 'heroposition', 'fotoposition');
+            if (hero && heroPosition) hero.style.backgroundPosition = heroPosition;
+
+            udApplySectionPackControls(pack);
+        }
+
+        function udApplySectionPackControls(pack) {
+            document.querySelectorAll('[data-ud-pack-hidden="1"]').forEach(el => { el.style.display = ''; delete el.dataset.udPackHidden; });
+            const hideRaw = udPackValue(pack, 'hidesections', 'sembunyikan', 'hide');
+            udSplitComma(hideRaw, '').forEach((sectionName) => {
+                const id = sectionName.replace(/^#/, '').trim();
+                if (!id) return;
+                const el = document.getElementById(id);
+                if (el) { el.style.display = 'none'; el.dataset.udPackHidden = '1'; }
+            });
+            const orderRaw = udPackValue(pack, 'order', 'urutan');
+            const order = udSplitComma(orderRaw, '');
+            if (!order.length) return;
+            const anchor = document.getElementById('rsvp-wishes') || document.querySelector('footer');
+            if (!anchor || !anchor.parentNode) return;
+            order.forEach((sectionName) => {
+                const id = sectionName.replace(/^#/, '').trim();
+                const el = document.getElementById(id);
+                if (el && el.parentNode === anchor.parentNode && el !== anchor) anchor.parentNode.insertBefore(el, anchor);
+            });
+        }
+
+
+        function udIsOn(settings, key) {
+            return !['off', 'false', '0', 'no', 'none'].includes(String(udGet(settings, key)).toLowerCase());
+        }
+
+        function udNumber(settings, key, fallback, min, max) {
+            const number = Number(udGet(settings, key));
+            if (!Number.isFinite(number)) return fallback;
+            return Math.min(Math.max(number, min), max);
+        }
+
+        function udApplyAosEffect(settings) {
+            const enabled = udIsOn(settings, 'effectAosEnabled');
+            const selected = udGet(settings, 'effectAosType') || 'default';
+            document.body.classList.toggle('ud-disable-aos', !enabled);
+            document.querySelectorAll('[data-aos]').forEach((el) => {
+                if (!el.dataset.udOriginalAos) el.dataset.udOriginalAos = el.getAttribute('data-aos') || 'fade-up';
+                const nextAos = selected === 'default' ? el.dataset.udOriginalAos : selected;
+                if (enabled) el.setAttribute('data-aos', nextAos);
+            });
+            if (window.AOS) {
+                window.AOS.init({
+                    duration: udNumber(settings, 'effectAosDuration', window.innerWidth < 768 ? 500 : 700, 100, 3000),
+                    once: String(udGet(settings, 'effectAosOnce')).toLowerCase() !== 'false',
+                    offset: 30,
+                    easing: 'ease-out-cubic',
+                    throttleDelay: 120,
+                    debounceDelay: 80,
+                    disable: function () { return !enabled || window.innerWidth < 340; }
+                });
+                setTimeout(() => {
+                    if (window.AOS && typeof window.AOS.refreshHard === 'function') window.AOS.refreshHard();
+                    else if (window.AOS && typeof window.AOS.refresh === 'function') window.AOS.refresh();
+                }, 100);
+            }
+        }
+
+        function applyInvitationEffects(settings) {
+            const coverEffect = udGet(settings, 'effectCoverTransition') || 'cinematic';
+            ['cinematic', 'fade', 'slide', 'zoom', 'blur', 'none'].forEach((name) => {
+                document.body.classList.toggle(`ud-cover-effect-${name}`, coverEffect === name);
+            });
+            document.body.classList.toggle('ud-disable-parallax', !udIsOn(settings, 'effectParallaxEnabled'));
+            document.body.classList.toggle('ud-disable-hover', !udIsOn(settings, 'effectHoverEnabled'));
+            document.body.classList.toggle('ud-disable-progress', !udIsOn(settings, 'effectProgressBar'));
+            document.body.classList.toggle('ud-disable-floating-nav', !udIsOn(settings, 'effectFloatingNav'));
+            document.body.classList.toggle('ud-disable-button-shine', !udIsOn(settings, 'effectButtonShine'));
+            document.body.classList.toggle('ud-disable-music-spin', !udIsOn(settings, 'effectMusicSpin'));
+
+            if (typeof window.setAutoScrollOptions === 'function') window.setAutoScrollOptions(settings);
+            if (typeof window.setInvitationParticleEffect === 'function') window.setInvitationParticleEffect(settings);
+            udApplyAosEffect(settings);
+        }
+
+        function applyUndanganDigitalSettings(rawSettings = {}) {
+            if (isCheckInMode) return;
+            const settings = { ...UD_DEFAULTS, ...rawSettings };
+            udApplyDesignPack(settings);
+            const couple = udGet(settings, 'coupleShort');
+            document.title = `The Wedding of ${couple} - Premium Edition`;
+            document.documentElement.style.setProperty('--ud-cover-image', `url('${udGet(settings, 'coverImage')}')`);
+
+            const cover = document.getElementById('cover-screen');
+            if (cover && udGet(settings, 'coverImage')) cover.style.backgroundImage = `url('${udGet(settings, 'coverImage')}')`;
+            const hero = document.querySelector('.parallax-bg');
+            if (hero && udGet(settings, 'heroImage')) hero.style.backgroundImage = `url('${udGet(settings, 'heroImage')}')`;
+
+            udSetText('#cover-screen .relative > p', udGet(settings, 'coverKicker'));
+            udSetHTML('#cover-screen h1', udCoupleHTML(couple));
+            udSetText('#hero .relative > p', udGet(settings, 'heroSubtitle'));
+            udSetText('#hero h2', couple);
+            udSetText('#hero .relative > h2 + p', udGet(settings, 'eventDateText'));
+            udSetText('footer h2', couple);
+            udSetText('footer .relative.z-20 > p', udGet(settings, 'footerText'));
+
+            udRenderQuickMenu(settings);
+            udSetText('#ayat .section-badge', udGet(settings, 'ayatTitle'));
+            udSetText('#ayat p.font-serif', udGet(settings, 'ayatText'));
+            udSetText('#ayat p.text-sm', udGet(settings, 'ayatSource'));
+            udRenderCouple(settings);
+            udSetText('#sambutan h2', udGet(settings, 'greetingTitle'));
+            udSetText('#sambutan h2 + p', udGet(settings, 'greetingText'));
+            udRenderStory(settings);
+            udRenderGallery(settings);
+            udRenderEvent(settings);
+            udRenderDresscode(settings);
+            udRenderRundown(settings);
+            udRenderInfoTamu(settings);
+            udRenderGift(settings);
+            udRenderFAQ(settings);
+            udRenderExtraElements(settings);
+            udRenderCustomBuilder(settings);
+            applyInvitationEffects(settings);
+        }
+
+        onSnapshot(collection(db, "undangan_digital"), (snapshot) => {
+            let latestSettings = null;
+            snapshot.forEach((docSnap) => {
+                if (!latestSettings) latestSettings = docSnap.data();
+            });
+            applyUndanganDigitalSettings(latestSettings || {});
+        }, (error) => {
+            console.warn('Pengaturan undangan digital belum dapat dibaca:', error);
+            applyUndanganDigitalSettings({});
+        });
 
         function renderCheckInPage(data, id) {
             const nama = safeText(data.nama, 'Tamu Undangan');
