@@ -1316,9 +1316,9 @@
 
         // =====================================================
         // R2 DRAG & DROP UPLOAD
-        // Upload file ke Cloudflare R2 bucket wedding lewat Worker.
+        // Upload file lewat endpoint penyimpanan.
         // Endpoint Worker: floral-king-5d3adestara-upload.destra751.workers.dev/upload
-        // Tidak menyimpan token Cloudflare di HTML.
+        // Tidak menyimpan token akses di HTML.
         // =====================================================
         window.R2_UPLOAD_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/upload';
         window.R2_DELETE_ENDPOINT = 'https://floral-king-5d3adestara-upload.destra751.workers.dev/delete';
@@ -1343,6 +1343,21 @@
             if (name.endsWith('.mp3') || name.endsWith('.wav') || name.endsWith('.m4a') || name.endsWith('.ogg')) return 'audio';
             if (name.endsWith('.mp4') || name.endsWith('.mov') || name.endsWith('.avi') || name.endsWith('.mkv')) return 'video';
             return 'dokumen';
+        }
+
+        function inferJenisFileFromUrl(value) {
+            const raw = String(value || '').toLowerCase().split('?')[0].split('#')[0];
+            if (!raw) return 'link';
+            if (/\.(jpg|jpeg|png|gif|webp|svg|bmp|heic|heif)$/i.test(raw)) return 'foto';
+            if (/\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(raw)) return 'video';
+            if (/\.(mp3|wav|m4a|ogg|aac|flac)$/i.test(raw)) return 'audio';
+            if (/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv|zip|rar)$/i.test(raw)) return 'dokumen';
+            return 'link';
+        }
+
+        function setDokumenJenisFileAuto(value) {
+            const jenisInput = document.getElementById('inputJenisFile');
+            if (jenisInput) jenisInput.value = value || 'link';
         }
 
         function setR2UploadStatus(zoneKey, message, type = 'info') {
@@ -1424,7 +1439,7 @@
                     return decodeURIComponent(fileMatch[1]).replace(/^\/+/, '');
                 }
 
-                // Untuk public R2 URL seperti:
+                // Untuk URL file dari endpoint penyimpanan seperti:
                 // https://...r2.dev/destara/dokumen/2026/05-11/nama-file.png
                 // path URL adalah object key yang harus dikirim ke Worker delete.
                 return decodeURIComponent(parsed.pathname || '')
@@ -1439,16 +1454,23 @@
             if (!folderId || !window.R2_FOLDER_ENDPOINT) return true;
 
             const folderPath = getR2FolderPathByFolderId(folderId);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 7000);
+
             try {
                 const response = await fetch(window.R2_FOLDER_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
                     body: JSON.stringify({
                         category: 'dokumen',
                         folderId,
                         parentId: parentId || '',
                         folderName: folderName || '',
-                        folderPath
+                        folderPath,
+                        folderKey: folderPath,
+                        key: folderPath,
+                        path: folderPath
                     })
                 });
                 const data = await response.json().catch(() => ({}));
@@ -1456,6 +1478,8 @@
             } catch (error) {
                 console.warn('Marker folder R2 belum tersedia atau gagal dibuat:', error);
                 return false;
+            } finally {
+                clearTimeout(timeoutId);
             }
         }
 
@@ -1486,7 +1510,7 @@
             formData.append('originalName', file.name);
 
             window.r2Uploading = true;
-            setR2UploadStatus(zoneKey, `Mengupload ${file.name} (${formatFileSize(file.size)}) ke Cloudflare R2...`, 'info');
+            setR2UploadStatus(zoneKey, `Mengupload ${file.name} (${formatFileSize(file.size)})...`, 'info');
 
             try {
                 const response = await fetch(window.R2_UPLOAD_ENDPOINT, {
@@ -1497,7 +1521,7 @@
 
                 if (!response.ok || !data.success) {
                     console.error('Upload R2 gagal:', data);
-                    const errMsg = data.error || 'Upload ke Cloudflare R2 gagal.';
+                    const errMsg = data.error || 'Upload file gagal.';
                     setR2UploadStatus(zoneKey, errMsg, 'error');
                     showToast(errMsg, 'error');
                     return null;
@@ -1505,12 +1529,12 @@
 
                 data.key = data.key || data.r2Key || targetKey;
                 setR2UploadStatus(zoneKey, `Upload selesai: ${data.fileName || file.name}`, 'success');
-                showToast('File berhasil diupload ke Cloudflare R2.');
+                showToast('File berhasil diupload.');
                 return data;
             } catch (error) {
                 console.error('Upload R2 error:', error);
-                setR2UploadStatus(zoneKey, 'Upload gagal. Pastikan Worker R2 sudah aktif dan CORS benar.', 'error');
-                showToast('Upload gagal. Cek koneksi atau Worker R2.', 'error');
+                setR2UploadStatus(zoneKey, 'Upload gagal. Coba ulangi atau cek koneksi.', 'error');
+                showToast('Upload gagal. Cek koneksi lalu coba lagi.', 'error');
                 return null;
             } finally {
                 window.r2Uploading = false;
@@ -1526,7 +1550,7 @@
             const endpointHost = (() => {
                 try { return new URL(window.R2_UPLOAD_ENDPOINT).hostname; } catch (error) { return ''; }
             })();
-            const isR2File = item?.storageProvider === 'cloudflare_r2' || Boolean(item?.r2Key) || (endpointHost && String(sourceUrl).includes(endpointHost));
+            const isR2File = item?.storageProvider === 'managed_upload' || item?.storageProvider === 'cloudflare_r2' || Boolean(item?.r2Key) || (endpointHost && String(sourceUrl).includes(endpointHost));
 
             if (!isR2File || !key) return true;
 
@@ -1540,7 +1564,7 @@
 
                 if (!response.ok || data.success === false) {
                     if (!options.silent) {
-                        showToast(data.error || 'Gagal menghapus file di Cloudflare R2.', 'error');
+                        showToast(data.error || 'Gagal menghapus file utama.', 'error');
                     }
                     return false;
                 }
@@ -1549,7 +1573,7 @@
             } catch (error) {
                 console.error('Delete R2 error:', error);
                 if (!options.silent) {
-                    showToast('Gagal menghapus file di Cloudflare R2. Data web tidak dihapus agar tidak yatim.', 'error');
+                    showToast('Gagal menghapus file utama. Data web tidak dihapus agar tidak tertinggal.', 'error');
                 }
                 return false;
             }
@@ -1566,8 +1590,8 @@
 
                 if (urlInput) urlInput.value = data.fileUrl;
                 if (nameInput && !nameInput.value) nameInput.value = (data.fileName || file.name || 'File').replace(/\.[^/.]+$/, '');
-                if (jenisInput) jenisInput.value = inferJenisFileFromUpload(file);
-                if (catatanInput && !catatanInput.value) catatanInput.value = `Upload R2: ${data.key || data.fileName || file.name}`;
+                setDokumenJenisFileAuto(inferJenisFileFromUpload(file));
+                // Catatan tidak diisi otomatis agar tetap sesuai input pengguna.
             }
 
             if (zoneKey === 'izin') {
@@ -1579,7 +1603,7 @@
                 if (urlInput) urlInput.value = data.fileUrl;
                 if (nameInput && !nameInput.value) nameInput.value = (data.fileName || file.name || 'Dokumen').replace(/\.[^/.]+$/, '');
                 if (statusInput && statusInput.value === 'belum') statusInput.value = 'proses';
-                if (catatanInput && !catatanInput.value) catatanInput.value = `Scan/file tersimpan di Cloudflare R2. Key: ${data.key || '-'}`;
+                // Catatan tidak diisi otomatis agar tetap sesuai input pengguna.
             }
         }
 
@@ -1601,7 +1625,7 @@
             const nameInput = document.getElementById('inputNamaFile');
             const jenisInput = document.getElementById('inputJenisFile');
             if (nameInput && !nameInput.value) nameInput.value = file.name.replace(/\.[^/.]+$/, '');
-            if (jenisInput) jenisInput.value = inferJenisFileFromUpload(file);
+            setDokumenJenisFileAuto(inferJenisFileFromUpload(file));
 
             setR2UploadStatus('dokumen', `File dipilih: ${file.name} (${formatFileSize(file.size)}). Klik Simpan Data untuk upload.`, 'info');
             setR2CancelButton('dokumen', true);
@@ -1613,6 +1637,10 @@
             }
             const input = document.getElementById(`r2-file-input-${zoneKey}`);
             if (input) input.value = '';
+            if (zoneKey === 'dokumen') {
+                const urlInput = document.getElementById('inputUrlFile');
+                setDokumenJenisFileAuto(inferJenisFileFromUrl(urlInput ? urlInput.value : ''));
+            }
             setR2UploadStatus(zoneKey, 'Belum ada file dipilih.', 'info');
             setR2CancelButton(zoneKey, false);
         }
@@ -1660,6 +1688,18 @@
                     if (file) await window.handleR2FileUpload(file, zoneKey);
                 });
             });
+
+            const urlInput = document.getElementById('inputUrlFile');
+            if (urlInput && urlInput.dataset.autoJenisReady !== 'true') {
+                urlInput.dataset.autoJenisReady = 'true';
+                const syncJenisFromUrl = () => {
+                    if (!window.pendingR2Files?.dokumen?.file) {
+                        setDokumenJenisFileAuto(inferJenisFileFromUrl(urlInput.value));
+                    }
+                };
+                urlInput.addEventListener('input', syncJenisFromUrl);
+                urlInput.addEventListener('change', syncJenisFromUrl);
+            }
         }
 
         window.copyUndangan = function(nama, id) {
@@ -1860,7 +1900,15 @@
                         tanggalBuat: new Date().toISOString()
                     });
                     await loadFolders();
-                    await ensureR2FolderMarker(newFolderRef.id, nama.trim(), parentId);
+
+                    // Jangan tahan tombol "Membuat..." hanya karena marker folder lambat/gagal.
+                    // Folder web tetap tersimpan dulu, marker dibuat di background.
+                    ensureR2FolderMarker(newFolderRef.id, nama.trim(), parentId).then((ok) => {
+                        if (!ok) {
+                            showToast('Folder web tersimpan, tapi sinkron folder belum berhasil.', 'error');
+                        }
+                    });
+
                     showToast('Folder berhasil dibuat!', 'success');
                 }
                 
@@ -1928,7 +1976,7 @@
 
                     const r2DeleteResults = await Promise.all(filesToDelete.map(file => window.deleteR2Object(file, { silent: true })));
                     if (r2DeleteResults.some(result => result === false)) {
-                        showToast('Ada file Cloudflare R2 yang gagal dihapus. Folder web tidak dihapus agar data tetap aman.', 'error');
+                        showToast('Ada file utama yang gagal dihapus. Folder web tidak dihapus agar data tetap aman.', 'error');
                         return;
                     }
 
@@ -2975,7 +3023,7 @@
                         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-1">
                             <div>
                                 <h4 class="text-base font-black text-gray-800"><i class="fa-solid fa-file-circle-plus text-lavender mr-2"></i> Tambah File / Media Baru</h4>
-                                <p class="text-xs text-gray-400 mt-1">Link bisa dari Cloudflare, Google Drive, YouTube, atau storage lain.</p>
+                                <p class="text-xs text-gray-400 mt-1">Link bisa dari upload file, Google Drive, YouTube, atau storage lain.</p>
                             </div>
                             <span class="hidden md:inline-flex text-[10px] font-bold px-3 py-1 rounded-full bg-lavender-light text-lavender-dark">Tersimpan di folder aktif</span>
                         </div>
@@ -2988,8 +3036,8 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Jenis File</label>
-                        <select id="inputJenisFile" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Jenis File Otomatis</label>
+                        <select id="inputJenisFile" disabled title="Jenis file terdeteksi otomatis dari file atau link" class="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-lavender transition cursor-not-allowed opacity-90">
                             <option value="foto">🖼️ Foto / Gambar</option>
                             <option value="video">🎥 Video</option>
                             <option value="dokumen">📄 Dokumen PDF / Excel</option>
@@ -2998,12 +3046,12 @@
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload File Otomatis ke Cloudflare R2</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload File Otomatis</label>
                         <div data-r2-dropzone="dokumen" class="cursor-pointer rounded-3xl border-2 border-dashed border-lavender-light bg-lavender-light/20 p-6 text-center transition hover:border-lavender hover:bg-lavender-light/35">
                             <input type="file" id="r2-file-input-dokumen" class="hidden">
                             <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl text-lavender-dark shadow-sm"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                             <p class="text-sm font-black text-slate-800">Drag & drop file ke sini</p>
-                            <p class="mt-1 text-xs font-semibold text-slate-400">File baru dipilih dulu. Upload ke Cloudflare R2 baru jalan saat klik Simpan Data.</p>
+                            <p class="mt-1 text-xs font-semibold text-slate-400">File baru dipilih dulu. Upload baru jalan saat klik Simpan Data.</p>
                             <p id="r2-upload-status-dokumen" class="mt-3 text-xs font-bold text-slate-500">Belum ada file dipilih.</p>
                             <button type="button" id="r2-cancel-dokumen" onclick="event.stopPropagation(); cancelPendingR2File('dokumen')" class="hidden mt-3 px-4 py-2 rounded-2xl bg-white text-red-500 border border-red-100 text-xs font-black hover:bg-red-50 transition"><i class="fa-solid fa-xmark mr-1"></i> Batal Pilih File</button>
                         </div>
@@ -3149,7 +3197,7 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload Scan / File ke Cloudflare R2</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Upload Scan / File</label>
                         <div data-r2-dropzone="izin" class="cursor-pointer rounded-3xl border-2 border-dashed border-teal-200 bg-teal-50/60 p-6 text-center transition hover:border-teal-400 hover:bg-teal-50">
                             <input type="file" id="r2-file-input-izin" class="hidden">
                             <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl text-teal-600 shadow-sm"><i class="fa-solid fa-file-arrow-up"></i></div>
@@ -3492,7 +3540,7 @@
                     penanggungJawab: document.getElementById('inputPenanggungJawabDoc').value.trim(),
                     nomorSurat: document.getElementById('inputNomorSuratDoc').value.trim(),
                     linkFile: document.getElementById('inputLinkFileDoc').value.trim(),
-                    storageProvider: document.getElementById('inputLinkFileDoc').value.includes('/file/') ? 'cloudflare_r2' : 'external_link',
+                    storageProvider: document.getElementById('inputLinkFileDoc').value.includes('/file/') ? 'managed_upload' : 'external_link',
                     tanggal: document.getElementById('inputTanggalDoc').value,
                     catatan: document.getElementById('inputCatatanDoc').value.trim(),
                     tanggalUpdate: new Date().toISOString(),
@@ -3510,7 +3558,7 @@
                 const pendingUpload = window.pendingR2Files?.dokumen || null;
                 const namaFileValue = document.getElementById('inputNamaFile').value.trim();
                 let finalUrl = document.getElementById('inputUrlFile').value.trim();
-                let finalStorageProvider = finalUrl.includes('/file/') ? 'cloudflare_r2' : 'external_link';
+                let finalStorageProvider = finalUrl.includes('/file/') ? 'managed_upload' : 'external_link';
                 let finalR2Key = existingDokumen?.r2Key || '';
                 let finalR2FileName = existingDokumen?.r2FileName || '';
 
@@ -3526,10 +3574,10 @@
                     }
 
                     finalUrl = uploadData.fileUrl;
-                    finalStorageProvider = 'cloudflare_r2';
+                    finalStorageProvider = 'managed_upload';
                     finalR2Key = extractR2KeyFromUrl(uploadData.fileUrl) || uploadData.key || uploadData.r2Key || '';
                     finalR2FileName = uploadData.fileName || pendingUpload.file.name || '';
-                    uploadedR2DataForRollback = { storageProvider: 'cloudflare_r2', r2Key: finalR2Key, key: finalR2Key, url: finalUrl };
+                    uploadedR2DataForRollback = { storageProvider: 'managed_upload', r2Key: finalR2Key, key: finalR2Key, url: finalUrl };
                     window.applyR2UploadedFileToForm('dokumen', pendingUpload.file, uploadData);
                 }
 
@@ -3541,7 +3589,7 @@
 
                 itemData = {
                     namaFile: namaFileValue,
-                    jenisFile: document.getElementById('inputJenisFile').value,
+                    jenisFile: pendingUpload?.file ? inferJenisFileFromUpload(pendingUpload.file) : inferJenisFileFromUrl(finalUrl),
                     url: finalUrl,
                     storageProvider: finalStorageProvider,
                     r2Key: finalR2Key,
@@ -3610,7 +3658,7 @@
 
                 await deleteDoc(doc(db, categoryId, id));
                 await loadData(categoryId);
-                showToast(categoryId === 'dokumen' ? 'Data web dan file Cloudflare berhasil dihapus!' : 'Data berhasil dihapus!');
+                showToast(categoryId === 'dokumen' ? 'Data web dan file utama berhasil dihapus!' : 'Data berhasil dihapus!');
             } catch (error) {
                 console.error('Gagal menghapus data:', error);
                 showToast('Gagal menghapus data: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
@@ -5571,7 +5619,7 @@
             }
             if (activeMenu === 'dokumen') {
                 const jenis = document.getElementById('inputJenisFile');
-                if(jenis) jenis.value = 'foto';
+                if(jenis) jenis.value = 'link';
                 if (window.cancelPendingR2File) {
                     window.cancelPendingR2File('dokumen');
                 }
