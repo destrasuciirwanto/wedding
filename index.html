@@ -1292,6 +1292,410 @@
         @media (prefers-reduced-motion: reduce) { .ud-media-btn { transition: none !important; } .ud-media-btn:hover { transform: none !important; } }
 
 
+        /* =====================================================
+           UNDANGAN DIGITAL LIVE PREVIEW V8
+           Mini preview, modal perbesar, dan tombol lompat cepat.
+           Hanya untuk menu Undangan Digital.
+        ===================================================== */
+        .ud-live-preview-wrap {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+        }
+        .ud-live-preview-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+        .ud-live-preview-toolbar-title {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            min-height: 34px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.10);
+            color: rgba(255,255,255,.86);
+            padding: .5rem .75rem;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+        }
+        .ud-live-preview-toolbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: .5rem;
+            flex-wrap: wrap;
+        }
+        .ud-live-preview-tool-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            min-height: 34px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.12);
+            color: white;
+            padding: .52rem .78rem;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            transition: transform .16s ease, background .16s ease, border-color .16s ease;
+            backdrop-filter: blur(10px);
+        }
+        .ud-live-preview-tool-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,.18);
+            border-color: rgba(255,255,255,.28);
+        }
+        .ud-studio-mini-preview {
+            min-height: 260px;
+            height: clamp(260px, 34vw, 360px);
+            max-height: 420px;
+            width: 100%;
+        }
+        .ud-studio-mini-preview.ud-live-preview-open {
+            display: block !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            text-align: initial !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .ud-live-preview-device {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--ud-preview-bg, #FFF5F7), #fff);
+            color: var(--ud-preview-text, #1f2937);
+            scroll-behavior: smooth;
+        }
+        .ud-live-preview-device::-webkit-scrollbar { width: 5px; }
+        .ud-live-preview-device::-webkit-scrollbar-track { background: rgba(255,255,255,.15); }
+        .ud-live-preview-device::-webkit-scrollbar-thumb { background: rgba(255,255,255,.55); border-radius: 999px; }
+        .ud-live-preview-cover {
+            min-height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1.5rem;
+            overflow: hidden;
+            color: white;
+            background-size: cover !important;
+            background-position: center !important;
+        }
+        .ud-live-preview-cover:before,
+        .ud-live-section.hero-preview:before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(15,23,42,.34), rgba(15,23,42,.78));
+            pointer-events: none;
+        }
+        .ud-live-preview-cover > *,
+        .ud-live-section.hero-preview > * { position: relative; z-index: 1; }
+        .ud-live-preview-kicker,
+        .ud-live-section-label {
+            font-size: 9px;
+            font-weight: 950;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            opacity: .82;
+        }
+        .ud-live-preview-title {
+            margin-top: .85rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5.2vw, 3.4rem);
+            line-height: .95;
+            font-weight: 900;
+            overflow-wrap: anywhere;
+        }
+        .ud-live-preview-date {
+            margin-top: 1rem;
+            font-size: 10px;
+            line-height: 1.5;
+            font-weight: 900;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            opacity: .80;
+        }
+        .ud-live-preview-open-btn {
+            margin-top: 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            border-radius: 999px;
+            padding: .85rem 1.15rem;
+            color: white;
+            font-size: 10px;
+            font-weight: 950;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            box-shadow: 0 16px 30px rgba(15,23,42,.22);
+        }
+        .ud-live-preview-body {
+            background:
+                radial-gradient(circle at top, color-mix(in srgb, var(--ud-preview-primary, #E5A9B4) 26%, transparent), transparent 30%),
+                linear-gradient(135deg, var(--ud-preview-bg, #FFF5F7), #fff);
+            min-height: 100%;
+        }
+        .ud-live-preview-nav {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            gap: .45rem;
+            overflow-x: auto;
+            padding: .65rem .85rem;
+            background: rgba(255,255,255,.78);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226,232,240,.72);
+        }
+        .ud-live-preview-nav a {
+            flex: 0 0 auto;
+            border-radius: 999px;
+            padding: .42rem .68rem;
+            background: rgba(255,255,255,.82);
+            border: 1px solid rgba(226,232,240,.88);
+            color: #475569;
+            font-size: 9px;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            text-decoration: none;
+        }
+        .ud-live-section {
+            padding: 1.15rem .95rem;
+            border-bottom: 1px solid rgba(226,232,240,.64);
+        }
+        .ud-live-section.hero-preview {
+            min-height: 280px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            background-size: cover !important;
+            background-position: center !important;
+        }
+        .ud-live-section h4 {
+            margin: .35rem 0 .75rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            line-height: 1;
+            font-weight: 900;
+            color: inherit;
+        }
+        .ud-live-section p,
+        .ud-live-section li {
+            font-size: 11px;
+            line-height: 1.65;
+            color: #64748b;
+        }
+        .ud-live-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .7rem;
+        }
+        .ud-live-card {
+            min-width: 0;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(226,232,240,.82);
+            background: rgba(255,255,255,.78);
+            padding: .85rem;
+            box-shadow: 0 10px 26px rgba(15,23,42,.05);
+        }
+        .ud-live-card b {
+            display: block;
+            font-size: 12px;
+            color: #334155;
+            overflow-wrap: anywhere;
+        }
+        .ud-live-card small {
+            display: block;
+            margin-top: .2rem;
+            color: #64748b;
+            font-size: 10px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+        .ud-live-avatar {
+            width: 82px;
+            height: 82px;
+            margin: 0 auto .7rem;
+            border-radius: 999px;
+            border: 3px solid white;
+            box-shadow: 0 12px 30px rgba(15,23,42,.10);
+            object-fit: cover;
+            background: #f8fafc;
+        }
+        .ud-live-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: .45rem;
+        }
+        .ud-live-gallery img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: .9rem;
+            background: #f1f5f9;
+        }
+        .ud-live-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: .65rem;
+        }
+        .ud-live-timeline-item {
+            position: relative;
+            border-radius: 1.1rem;
+            border: 1px solid rgba(226,232,240,.82);
+            background: rgba(255,255,255,.76);
+            padding: .75rem;
+        }
+        .ud-live-empty {
+            border-radius: 1rem;
+            border: 1px dashed rgba(148,163,184,.55);
+            padding: .8rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 800;
+        }
+        .ud-live-preview-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(.75rem, 2vw, 1.5rem);
+            background: rgba(15,23,42,.62);
+            backdrop-filter: blur(12px);
+        }
+        .ud-live-preview-modal.hidden { display: none !important; }
+        .ud-live-preview-modal-shell {
+            position: relative;
+            width: min(1040px, 96vw);
+            height: min(90vh, 900px);
+            border-radius: 2rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.22);
+            background: white;
+            box-shadow: 0 32px 90px rgba(15,23,42,.34);
+        }
+        .ud-live-preview-modal-head {
+            position: absolute;
+            top: .75rem;
+            left: .75rem;
+            right: .75rem;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            pointer-events: none;
+        }
+        .ud-live-preview-modal-title {
+            pointer-events: auto;
+            border-radius: 999px;
+            background: rgba(15,23,42,.58);
+            color: white;
+            padding: .6rem .8rem;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            backdrop-filter: blur(12px);
+        }
+        .ud-live-preview-modal-close {
+            pointer-events: auto;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            background: rgba(15,23,42,.70);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 34px rgba(15,23,42,.22);
+        }
+        #ud-live-preview-zoom-body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #ud-live-preview-zoom-body .ud-live-preview-device {
+            border-radius: 0;
+            height: 100%;
+        }
+        .ud-live-jump-toggle {
+            position: fixed;
+            right: max(1rem, env(safe-area-inset-right));
+            bottom: max(1.15rem, calc(1.15rem + env(safe-area-inset-bottom)));
+            z-index: 80;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .55rem;
+            min-height: 48px;
+            max-width: min(280px, calc(100vw - 2rem));
+            border-radius: 999px;
+            padding: .8rem 1rem;
+            background: linear-gradient(135deg, #7C3AED, #D946EF);
+            color: white;
+            box-shadow: 0 18px 44px rgba(124,58,237,.30);
+            font-size: 11px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .ud-live-jump-toggle:hover { transform: translateY(-2px); box-shadow: 0 24px 54px rgba(124,58,237,.36); }
+        .ud-live-jump-toggle.is-return { background: linear-gradient(135deg, #0f172a, #7C3AED); }
+        @media (max-width: 768px) {
+            .ud-live-preview-toolbar { align-items: stretch; }
+            .ud-live-preview-toolbar-title { width: 100%; justify-content: center; }
+            .ud-live-preview-toolbar-actions { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .ud-live-preview-tool-btn { width: 100%; padding-left: .55rem; padding-right: .55rem; white-space: normal; line-height: 1.25; }
+            .ud-studio-mini-preview { height: 360px; max-height: 62vh; }
+            .ud-live-card-grid { grid-template-columns: 1fr; }
+            .ud-live-gallery { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .ud-live-jump-toggle { right: .75rem; bottom: max(.85rem, calc(.85rem + env(safe-area-inset-bottom))); min-height: 46px; padding: .75rem .85rem; font-size: 10px; }
+        }
+        @media (max-width: 420px) {
+            .ud-live-jump-toggle span { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .ud-live-preview-modal-shell { width: 100vw; height: 100vh; border-radius: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ud-live-preview-tool-btn,
+            .ud-live-jump-toggle { transition: none !important; }
+            .ud-live-preview-tool-btn:hover,
+            .ud-live-jump-toggle:hover { transform: none !important; }
+        }
+
+
     </style>
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
@@ -3389,6 +3793,258 @@
                 if (date) date.textContent = udDashGet('inputUDEventDateText', '04 April 2027') || '04 April 2027';
                 if (btn) btn.style.background = `linear-gradient(135deg, ${primary}, ${accent})`;
             }
+            if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+            if (window.syncUDLiveJumpButton) window.syncUDLiveJumpButton();
+        };
+
+
+        window.udLivePreviewState = window.udLivePreviewState || { opened: false, zoomOpen: false, jumpReturnTop: null, jumpedToLive: false };
+
+        function udLiveValue(id, fallback = '') {
+            const el = document.getElementById(id);
+            const val = el ? String(el.value || '').trim() : '';
+            return val || fallback || '';
+        }
+
+        function udLiveLines(id, limit = 12) {
+            return udLiveValue(id).split(/\n+/).map(line => line.trim()).filter(Boolean).slice(0, limit);
+        }
+
+        function udLiveFirstImage(text) {
+            const line = String(text || '').split(/\n+/).map(v => v.trim()).find(Boolean) || '';
+            return line.split('|').map(v => v.trim()).find(v => /^https?:\/\//i.test(v)) || line;
+        }
+
+        function udLiveImageTag(src, alt = '') {
+            const safe = String(src || '').trim();
+            if (!safe || !/^https?:\/\//i.test(safe)) return '';
+            return `<img src="${escapeHTML(safe)}" alt="${escapeHTML(alt)}" loading="lazy" onerror="this.style.display='none'">`;
+        }
+
+        function udLiveGetPreviewData() {
+            const primary = udLiveValue('inputUDColorPrimary', '#E5A9B4');
+            const accent = udLiveValue('inputUDColorAccent', '#D4AF37');
+            const bg = udLiveValue('inputUDColorBg', '#FFF5F7');
+            const textColor = udLiveValue('inputUDColorText', '#2C3E50');
+            const couple = udLiveValue('inputUDCoupleShort', 'Mutiara & Destra');
+            const eventDate = udLiveValue('inputUDEventDateText', '04 April 2027');
+            const coverKicker = udLiveValue('inputUDCoverKicker', 'The Wedding Of');
+            const heroSubtitle = udLiveValue('inputUDHeroSubtitle', 'We are getting married');
+            const coverImage = udLiveValue('inputUDCoverImage') || udLiveValue('inputUDHeroImage');
+            const heroImage = udLiveValue('inputUDHeroImage') || coverImage;
+            const bridePhoto = udLiveValue('inputUDBridePhoto');
+            const groomPhoto = udLiveValue('inputUDGroomPhoto');
+            const galleryLines = udLiveLines('inputUDGalleryImagesText', 9);
+            return { primary, accent, bg, textColor, couple, eventDate, coverKicker, heroSubtitle, coverImage, heroImage, bridePhoto, groomPhoto, galleryLines };
+        }
+
+        function udLiveBuildCoverHTML(data, isZoom = false) {
+            const bgStyle = data.coverImage
+                ? `linear-gradient(to bottom, rgba(15,23,42,.26), rgba(15,23,42,.76)), url('${escapeHTML(data.coverImage)}')`
+                : `linear-gradient(to bottom, rgba(15,23,42,.25), rgba(15,23,42,.78)), radial-gradient(circle at top, ${escapeHTML(data.primary)}66, transparent 42%), linear-gradient(135deg, ${escapeHTML(data.bg)}, #111827)`;
+            return `<div class="ud-live-preview-device" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
+                <div class="ud-live-preview-cover" style="background:${bgStyle};">
+                    <p class="ud-live-preview-kicker">${escapeHTML(data.coverKicker)}</p>
+                    <h4 class="ud-live-preview-title">${escapeHTML(data.couple)}</h4>
+                    <p class="ud-live-preview-date">${escapeHTML(data.eventDate)}</p>
+                    <button type="button" onclick="openUDLivePreview();${isZoom ? 'renderUDLivePreview(true);' : ''}" class="ud-live-preview-open-btn" style="background:linear-gradient(135deg, ${escapeHTML(data.primary)}, ${escapeHTML(data.accent)});"><i class="fa-regular fa-envelope-open"></i> Buka Undangan</button>
+                </div>
+            </div>`;
+        }
+
+        function udLiveBuildOpenedHTML(data) {
+            const heroBg = data.heroImage
+                ? `linear-gradient(to bottom, rgba(15,23,42,.30), rgba(15,23,42,.74)), url('${escapeHTML(data.heroImage)}')`
+                : `linear-gradient(to bottom, rgba(15,23,42,.28), rgba(15,23,42,.74)), radial-gradient(circle at top, ${escapeHTML(data.primary)}66, transparent 44%), linear-gradient(135deg, ${escapeHTML(data.bg)}, #111827)`;
+            const quickMenu = udLiveLines('inputUDQuickMenuItemsText', 8).map(line => {
+                const [label = '', href = '#'] = line.split('|').map(v => v.trim());
+                return `<a href="${escapeHTML(href || '#')}">${escapeHTML(label || 'Menu')}</a>`;
+            }).join('') || `<a href="#mempelai">Mempelai</a><a href="#event">Acara</a><a href="#gallery">Galeri</a><a href="#gift">Gift</a>`;
+            const story = udLiveLines('inputUDStoryItemsText', 5).map(line => {
+                const parts = line.split('|').map(v => v.trim());
+                return `<div class="ud-live-timeline-item"><b>${escapeHTML(parts[0] || 'Cerita')}</b><small>${escapeHTML(parts[1] || '')}</small><p class="mt-1">${escapeHTML(parts[2] || line)}</p></div>`;
+            }).join('') || `<div class="ud-live-empty">Cerita belum diisi.</div>`;
+            const gallery = data.galleryLines.map((line, idx) => {
+                const src = udLiveFirstImage(line);
+                return udLiveImageTag(src, `Galeri ${idx + 1}`);
+            }).filter(Boolean).join('') || `<div class="ud-live-empty" style="grid-column:1/-1;">Galeri foto belum diisi.</div>`;
+            const rundown = udLiveLines('inputUDRundownItemsText', 5).map(line => {
+                const parts = line.split('|').map(v => v.trim());
+                return `<div class="ud-live-card"><b>${escapeHTML(parts[0] || 'Waktu')}</b><small>${escapeHTML(parts[1] || line)}</small></div>`;
+            }).join('');
+            const faq = udLiveLines('inputUDFAQItemsText', 4).map(line => {
+                const parts = line.split('|').map(v => v.trim());
+                return `<div class="ud-live-card"><b>${escapeHTML(parts[0] || 'Pertanyaan')}</b><small>${escapeHTML(parts[1] || '')}</small></div>`;
+            }).join('');
+            const qris = udLiveValue('inputUDQrisImage');
+            return `<div class="ud-live-preview-device" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
+                <div class="ud-live-preview-body">
+                    <nav class="ud-live-preview-nav">${quickMenu}</nav>
+                    <section class="ud-live-section hero-preview" style="background:${heroBg};">
+                        <p class="ud-live-section-label">${escapeHTML(data.heroSubtitle)}</p>
+                        <h4>${escapeHTML(data.couple)}</h4>
+                        <p style="color:rgba(255,255,255,.78);font-weight:900;letter-spacing:.18em;text-transform:uppercase;">${escapeHTML(data.eventDate)}</p>
+                    </section>
+                    <section id="mempelai" class="ud-live-section">
+                        <p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Mempelai</p>
+                        <h4 style="color:${escapeHTML(data.textColor)};">Pengantin</h4>
+                        <div class="ud-live-card-grid">
+                            <div class="ud-live-card text-center">${data.bridePhoto ? `<img class="ud-live-avatar" src="${escapeHTML(data.bridePhoto)}" alt="Bride" onerror="this.style.display='none'">` : ''}<b>${escapeHTML(udLiveValue('inputUDBrideName', 'Mutiara Devira Kirany'))}</b><small>${escapeHTML(udLiveValue('inputUDBrideParents', 'Putri dari keluarga tercinta'))}</small></div>
+                            <div class="ud-live-card text-center">${data.groomPhoto ? `<img class="ud-live-avatar" src="${escapeHTML(data.groomPhoto)}" alt="Groom" onerror="this.style.display='none'">` : ''}<b>${escapeHTML(udLiveValue('inputUDGroomName', 'Destra Suci Irwanto'))}</b><small>${escapeHTML(udLiveValue('inputUDGroomParents', 'Putra dari keluarga tercinta'))}</small></div>
+                        </div>
+                    </section>
+                    <section id="story" class="ud-live-section">
+                        <p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Love Story</p>
+                        <h4 style="color:${escapeHTML(data.textColor)};">Cerita Kami</h4>
+                        <div class="ud-live-timeline">${story}</div>
+                    </section>
+                    <section id="event" class="ud-live-section">
+                        <p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Acara</p>
+                        <h4 style="color:${escapeHTML(data.textColor)};">Detail Acara</h4>
+                        <div class="ud-live-card-grid">
+                            <div class="ud-live-card"><b>${escapeHTML(udLiveValue('inputUDAkadTitle', 'Akad Nikah'))}</b><small>${escapeHTML(udLiveValue('inputUDAkadDate', '-'))} · ${escapeHTML(udLiveValue('inputUDAkadTime', '-'))}</small><p>${escapeHTML(udLiveValue('inputUDAkadVenue', 'Lokasi akad belum diisi'))}</p></div>
+                            <div class="ud-live-card"><b>${escapeHTML(udLiveValue('inputUDResepsiTitle', 'Resepsi'))}</b><small>${escapeHTML(udLiveValue('inputUDResepsiDate', '-'))} · ${escapeHTML(udLiveValue('inputUDResepsiTime', '-'))}</small><p>${escapeHTML(udLiveValue('inputUDResepsiVenue', 'Lokasi resepsi belum diisi'))}</p></div>
+                        </div>
+                    </section>
+                    ${rundown ? `<section id="rundown" class="ud-live-section"><p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Rundown</p><h4 style="color:${escapeHTML(data.textColor)};">Susunan Acara</h4><div class="ud-live-card-grid">${rundown}</div></section>` : ''}
+                    <section id="gallery" class="ud-live-section">
+                        <p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Gallery</p>
+                        <h4 style="color:${escapeHTML(data.textColor)};">Momen Indah</h4>
+                        <div class="ud-live-gallery">${gallery}</div>
+                    </section>
+                    <section id="gift" class="ud-live-section">
+                        <p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">Wedding Gift</p>
+                        <h4 style="color:${escapeHTML(data.textColor)};">Kirim Hadiah</h4>
+                        <div class="ud-live-card-grid">
+                            <div class="ud-live-card"><b>${escapeHTML(udLiveValue('inputUDBankName', 'Bank / E-Wallet'))}</b><small>${escapeHTML(udLiveValue('inputUDBankNumber', 'Nomor rekening belum diisi'))}</small></div>
+                            <div class="ud-live-card text-center">${qris ? `<img src="${escapeHTML(qris)}" alt="QRIS" loading="lazy" style="width:92px;height:92px;object-fit:cover;border-radius:1rem;margin:0 auto .5rem;" onerror="this.style.display='none'">` : '<i class="fa-solid fa-qrcode text-4xl text-slate-300"></i>'}<small>QRIS / Hadiah Digital</small></div>
+                        </div>
+                    </section>
+                    ${faq ? `<section id="faq" class="ud-live-section"><p class="ud-live-section-label" style="color:${escapeHTML(data.primary)};">FAQ</p><h4 style="color:${escapeHTML(data.textColor)};">Informasi Tamu</h4><div class="ud-live-card-grid">${faq}</div></section>` : ''}
+                    <section class="ud-live-section text-center" style="padding-bottom:2rem;"><p>Terima kasih atas doa dan restunya.</p><h4 style="color:${escapeHTML(data.textColor)};">${escapeHTML(data.couple)}</h4></section>
+                </div>
+            </div>`;
+        }
+
+        window.renderUDLivePreview = function(forceZoom = false) {
+            if (activeMenu !== 'undangan_digital') return;
+            const data = udLiveGetPreviewData();
+            const state = window.udLivePreviewState || (window.udLivePreviewState = { opened: false });
+            const preview = document.getElementById('ud-studio-preview-card');
+            const html = state.opened ? udLiveBuildOpenedHTML(data) : udLiveBuildCoverHTML(data, false);
+            if (preview) {
+                preview.classList.toggle('ud-live-preview-open', !!state.opened);
+                preview.innerHTML = html;
+            }
+            const toggle = document.getElementById('ud-live-preview-toggle-btn');
+            if (toggle) {
+                toggle.innerHTML = state.opened
+                    ? '<i class="fa-solid fa-arrow-left"></i><span>Kembali</span>'
+                    : '<i class="fa-regular fa-envelope-open"></i><span>Buka</span>';
+                toggle.title = state.opened ? 'Kembali ke cover awal preview' : 'Buka preview undangan';
+            }
+            if ((forceZoom || state.zoomOpen) && document.getElementById('ud-live-preview-zoom-body')) {
+                const zoom = document.getElementById('ud-live-preview-zoom-body');
+                zoom.innerHTML = state.opened ? udLiveBuildOpenedHTML(data) : udLiveBuildCoverHTML(data, true);
+            }
+        };
+
+        window.openUDLivePreview = function() {
+            window.udLivePreviewState.opened = true;
+            window.renderUDLivePreview(false);
+        };
+
+        window.closeUDLivePreview = function() {
+            window.udLivePreviewState.opened = false;
+            window.renderUDLivePreview(false);
+        };
+
+        window.toggleUDLivePreviewOpen = function() {
+            window.udLivePreviewState.opened = !window.udLivePreviewState.opened;
+            window.renderUDLivePreview(false);
+        };
+
+        window.ensureUDPreviewZoomModal = function() {
+            let modal = document.getElementById('ud-live-preview-modal');
+            if (modal) return modal;
+            modal = document.createElement('div');
+            modal.id = 'ud-live-preview-modal';
+            modal.className = 'ud-live-preview-modal hidden';
+            modal.innerHTML = `<div class="ud-live-preview-modal-shell">
+                <div class="ud-live-preview-modal-head">
+                    <div class="ud-live-preview-modal-title"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Preview Besar</div>
+                    <button type="button" class="ud-live-preview-modal-close" onclick="closeUDPreviewZoom()" title="Tutup preview besar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="ud-live-preview-zoom-body"></div>
+            </div>`;
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) window.closeUDPreviewZoom();
+            });
+            document.body.appendChild(modal);
+            return modal;
+        };
+
+        window.openUDPreviewZoom = function() {
+            const modal = window.ensureUDPreviewZoomModal();
+            window.udLivePreviewState.zoomOpen = true;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            window.renderUDLivePreview(true);
+        };
+
+        window.closeUDPreviewZoom = function() {
+            const modal = document.getElementById('ud-live-preview-modal');
+            if (modal) modal.classList.add('hidden');
+            window.udLivePreviewState.zoomOpen = false;
+            document.body.style.overflow = '';
+        };
+
+        window.cleanupUDLiveFloatingButton = function() {
+            const btn = document.getElementById('ud-live-jump-toggle');
+            if (btn) btn.remove();
+            const modal = document.getElementById('ud-live-preview-modal');
+            if (modal) modal.classList.add('hidden');
+            if (window.udLivePreviewState) {
+                window.udLivePreviewState.jumpedToLive = false;
+                window.udLivePreviewState.zoomOpen = false;
+            }
+            document.body.style.overflow = '';
+        };
+
+        window.syncUDLiveJumpButton = function() {
+            if (activeMenu !== 'undangan_digital') return;
+            let btn = document.getElementById('ud-live-jump-toggle');
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.id = 'ud-live-jump-toggle';
+                btn.type = 'button';
+                btn.className = 'ud-live-jump-toggle';
+                btn.onclick = () => window.toggleUDLiveJump();
+                document.body.appendChild(btn);
+            }
+            const returning = !!window.udLivePreviewState?.jumpedToLive;
+            btn.classList.toggle('is-return', returning);
+            btn.innerHTML = returning
+                ? '<i class="fa-solid fa-arrow-down"></i><span>Kembali Edit</span>'
+                : '<i class="fa-solid fa-eye"></i><span>Lihat Live</span>';
+            btn.title = returning ? 'Kembali ke posisi edit terakhir' : 'Lompat ke layar live preview';
+        };
+
+        window.toggleUDLiveJump = function() {
+            const main = document.getElementById('main-content');
+            const anchor = document.getElementById('ud-live-preview-anchor') || document.getElementById('ud-studio-max');
+            if (!main || !anchor) return;
+            const state = window.udLivePreviewState || (window.udLivePreviewState = {});
+            if (!state.jumpedToLive) {
+                state.jumpReturnTop = main.scrollTop;
+                const targetTop = Math.max(0, anchor.offsetTop - 18);
+                main.scrollTo({ top: targetTop, behavior: 'smooth' });
+                state.jumpedToLive = true;
+            } else {
+                main.scrollTo({ top: Number(state.jumpReturnTop || 0), behavior: 'smooth' });
+                state.jumpedToLive = false;
+            }
+            window.syncUDLiveJumpButton();
         };
 
         window.applyUDExperienceMode = function(mode) {
@@ -3744,6 +4400,7 @@
                 }
                 const label = window.udLiveLabelFromField(el.id);
                 window.autoPublishUDDigitalChange(label, { fieldId: el.id, delay: event.type === 'input' ? 1200 : 650 });
+                if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
             };
             form.addEventListener('input', handler);
             form.addEventListener('change', handler);
@@ -3883,11 +4540,20 @@
                                     <p id="ud-studio-todo" class="mt-2 text-xs text-white/62">0/0 field penting terisi</p>
                                 </div>
                             </div>
-                            <div id="ud-studio-preview-card" class="ud-studio-mini-preview p-5 flex flex-col items-center justify-center text-center">
-                                <p class="text-[10px] uppercase tracking-[0.3em] text-white/72">The Wedding Of</p>
-                                <h4 data-preview-title class="mt-3 text-4xl font-black text-white leading-tight">Mutiara & Destra</h4>
-                                <p data-preview-date class="mt-3 text-xs uppercase tracking-[0.24em] text-white/70">04 April 2027</p>
-                                <button type="button" data-preview-button class="mt-6 rounded-full px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-xl">Buka Undangan</button>
+                            <div id="ud-live-preview-anchor" class="ud-live-preview-wrap">
+                                <div class="ud-live-preview-toolbar">
+                                    <div class="ud-live-preview-toolbar-title"><i class="fa-solid fa-mobile-screen-button"></i> Live Preview Undangan</div>
+                                    <div class="ud-live-preview-toolbar-actions">
+                                        <button type="button" id="ud-live-preview-toggle-btn" onclick="toggleUDLivePreviewOpen()" class="ud-live-preview-tool-btn"><i class="fa-regular fa-envelope-open"></i><span>Buka</span></button>
+                                        <button type="button" onclick="openUDPreviewZoom()" class="ud-live-preview-tool-btn"><i class="fa-solid fa-up-right-and-down-left-from-center"></i><span>Perbesar</span></button>
+                                    </div>
+                                </div>
+                                <div id="ud-studio-preview-card" class="ud-studio-mini-preview p-5 flex flex-col items-center justify-center text-center">
+                                    <p class="text-[10px] uppercase tracking-[0.3em] text-white/72">The Wedding Of</p>
+                                    <h4 data-preview-title class="mt-3 text-4xl font-black text-white leading-tight">Mutiara & Destra</h4>
+                                    <p data-preview-date class="mt-3 text-xs uppercase tracking-[0.24em] text-white/70">04 April 2027</p>
+                                    <button type="button" onclick="openUDLivePreview()" data-preview-button class="mt-6 rounded-full px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-xl">Buka Undangan</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4031,6 +4697,8 @@
                 });
             });
             window.refreshUDStudioPanel();
+            if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+            if (window.syncUDLiveJumpButton) window.syncUDLiveJumpButton();
             if (window.applyUDStudioManualFilter) window.applyUDStudioManualFilter({ mode: window.udStudioCurrentViewMode || 'all', query: window.udStudioCurrentSearch || '', scroll: false });
         };
 
@@ -4146,6 +4814,7 @@
 
         window.renderContent = async function() {
             const mainContent = document.getElementById('main-content');
+            if (activeMenu !== 'undangan_digital' && window.cleanupUDLiveFloatingButton) window.cleanupUDLiveFloatingButton();
             if (activeMenu === 'dashboard') {
                 await loadBudget();
                 await loadFolders();
