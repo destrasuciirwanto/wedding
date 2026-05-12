@@ -1772,6 +1772,364 @@
         }
     </style>
 
+
+    <style id="ud-live-preview-desktop-fit-v13">
+        /* V13: live preview dipaksa seperti desktop yang diperkecil dan tidak kepotong kanan. */
+        .ud-studio-mini-preview.ud-live-preview-open,
+        .ud-live-preview-modal-shell {
+            overflow: hidden !important;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode {
+            --ud-live-preview-scale: .58;
+            width: 100% !important;
+            height: 100% !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: #fff !important;
+            border-radius: inherit !important;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode > .ud-live-preview-body,
+        .ud-live-preview-device.ud-live-desktop-mode > .ud-live-preview-cover {
+            width: calc(100% / var(--ud-live-preview-scale)) !important;
+            min-width: calc(100% / var(--ud-live-preview-scale)) !important;
+            max-width: none !important;
+            min-height: calc(100% / var(--ud-live-preview-scale)) !important;
+            zoom: 1 !important;
+            transform: scale(var(--ud-live-preview-scale)) !important;
+            transform-origin: top left !important;
+            border-radius: 0 !important;
+        }
+        #ud-live-preview-modal .ud-live-preview-device.ud-live-desktop-mode {
+            --ud-live-preview-scale: .86;
+        }
+        @media (max-width: 1024px) {
+            .ud-live-preview-device.ud-live-desktop-mode { --ud-live-preview-scale: .50; }
+            #ud-live-preview-modal .ud-live-preview-device.ud-live-desktop-mode { --ud-live-preview-scale: .72; }
+        }
+        @media (max-width: 640px) {
+            .ud-live-preview-device.ud-live-desktop-mode { --ud-live-preview-scale: .42; }
+            #ud-live-preview-modal .ud-live-preview-device.ud-live-desktop-mode { --ud-live-preview-scale: .52; }
+        }
+        .ud-live-edit-actions-v13 {
+            position: sticky;
+            bottom: 0;
+            z-index: 12;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: .75rem;
+            padding: 1rem 0 0;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(226,232,240,.86);
+            background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.98));
+            backdrop-filter: blur(12px);
+        }
+        .ud-live-edit-actions-v13 button {
+            min-height: 44px;
+            border-radius: 1rem;
+            padding: .75rem 1rem;
+            font-size: 12px;
+            font-weight: 950;
+            transition: .16s ease;
+        }
+        .ud-live-edit-actions-v13 button:hover { transform: translateY(-1px); }
+        .ud-unsaved-modal-v13 {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15,23,42,.50);
+            backdrop-filter: blur(12px);
+        }
+        .ud-unsaved-modal-card-v13 {
+            width: min(520px, 100%);
+            border-radius: 2rem;
+            border: 1px solid rgba(255,255,255,.78);
+            background: rgba(255,255,255,.96);
+            box-shadow: 0 30px 100px rgba(15,23,42,.28);
+            overflow: hidden;
+        }
+        .ud-unsaved-modal-head-v13 {
+            padding: 1.25rem 1.25rem 1rem;
+            background:
+                radial-gradient(circle at 15% 0%, rgba(168,85,247,.22), transparent 35%),
+                linear-gradient(135deg, #fff, #faf5ff);
+        }
+        .ud-unsaved-modal-icon-v13 {
+            width: 52px;
+            height: 52px;
+            border-radius: 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            box-shadow: 0 16px 34px rgba(124,58,237,.24);
+        }
+        .ud-unsaved-modal-title-v13 { margin-top: .9rem; font-size: 1.15rem; font-weight: 950; color: #0f172a; }
+        .ud-unsaved-modal-text-v13 { margin-top: .45rem; font-size: .82rem; line-height: 1.7; color: #64748b; }
+        .ud-unsaved-modal-actions-v13 { display: grid; grid-template-columns: 1fr; gap: .65rem; padding: 1.15rem 1.25rem 1.25rem; }
+        @media (min-width: 520px) { .ud-unsaved-modal-actions-v13 { grid-template-columns: 1fr 1fr 1fr; } }
+        .ud-unsaved-modal-actions-v13 button { min-height: 44px; border-radius: 1rem; font-size: 12px; font-weight: 950; }
+        .ud-session-dirty-dot-v13 { display:inline-flex; align-items:center; gap:.35rem; color:#b45309; font-size:11px; font-weight:950; }
+        @media (max-width: 640px) {
+            .ud-live-edit-actions-v13 { justify-content: stretch; }
+            .ud-live-edit-actions-v13 button { flex: 1 1 100%; }
+        }
+    </style>
+
+
+    <style id="ud-v14-readonly-password-css">
+        .ud-editor-readonly-v14 { position: relative; }
+        .ud-editor-readonly-v14 input,
+        .ud-editor-readonly-v14 textarea,
+        .ud-editor-readonly-v14 select,
+        .ud-editor-readonly-v14 button:not([data-ud-allow-readonly="1"]):not(.ud-readonly-edit-v14):not(.ud-live-preview-tool-btn):not(.ud-live-preview-open-btn):not([data-preview-button]) {
+            filter: grayscale(.85);
+            opacity: .58;
+            cursor: not-allowed !important;
+        }
+        .ud-editor-readonly-v14 .ud-studio-action,
+        .ud-editor-readonly-v14 .ud-studio-pill,
+        .ud-editor-readonly-v14 .ud-template-card,
+        .ud-editor-readonly-v14 .ud-color-card,
+        .ud-editor-readonly-v14 .ud-check-card {
+            filter: grayscale(.75);
+            opacity: .62;
+            pointer-events: none;
+        }
+        .ud-readonly-banner-v14 {
+            position: relative;
+            z-index: 5;
+            overflow: hidden;
+            border-radius: 28px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            box-shadow: 0 18px 42px rgba(15,23,42,.055);
+        }
+        .ud-readonly-banner-v14.locked {
+            border: 1px solid rgba(148,163,184,.35);
+            background: linear-gradient(135deg, rgba(248,250,252,.96), rgba(241,245,249,.9));
+            color: #475569;
+        }
+        .ud-readonly-banner-v14.open {
+            border: 1px solid rgba(16,185,129,.28);
+            background: linear-gradient(135deg, rgba(236,253,245,.96), rgba(240,253,250,.9));
+            color: #047857;
+        }
+        .ud-readonly-icon-v14 {
+            width: 48px;
+            height: 48px;
+            border-radius: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: white;
+            box-shadow: 0 12px 28px rgba(15,23,42,.08);
+        }
+        .ud-readonly-kicker-v14 {
+            font-size: 10px;
+            font-weight: 950;
+            letter-spacing: .20em;
+            text-transform: uppercase;
+            opacity: .72;
+            margin-bottom: .2rem;
+        }
+        .ud-readonly-banner-v14 h4 {
+            font-size: 15px;
+            font-weight: 950;
+            color: #0f172a;
+            margin: 0;
+        }
+        .ud-readonly-banner-v14 p:not(.ud-readonly-kicker-v14) {
+            margin-top: .25rem;
+            font-size: 12px;
+            line-height: 1.6;
+            opacity: .82;
+        }
+        .ud-readonly-actions-v14 { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+        .ud-readonly-edit-v14 {
+            min-height: 42px;
+            padding: .75rem 1rem;
+            border-radius: 17px;
+            font-size: 11px;
+            font-weight: 950;
+            color: white;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            box-shadow: 0 16px 30px rgba(139,92,246,.22);
+            transition: .16s ease;
+        }
+        .ud-readonly-edit-v14:hover { transform: translateY(-1px); box-shadow: 0 20px 38px rgba(139,92,246,.27); }
+        .ud-readonly-live-v14 {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border-radius: 999px;
+            background: white;
+            border: 1px solid rgba(16,185,129,.22);
+            padding: .6rem .85rem;
+            font-size: 11px;
+            font-weight: 950;
+            color: #059669;
+        }
+        .ud-actions-disabled-v14 { opacity: .7; }
+        .ud-password-modal-v14 {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15,23,42,.48);
+            backdrop-filter: blur(14px);
+        }
+        .ud-password-card-v14 {
+            position: relative;
+            overflow: hidden;
+            width: min(430px, 100%);
+            border-radius: 34px;
+            padding: 1.5rem;
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(255,255,255,.84);
+            box-shadow: 0 30px 90px rgba(15,23,42,.25);
+            animation: udPasswordPopV14 .22s ease-out;
+        }
+        @keyframes udPasswordPopV14 { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .ud-password-glow-v14 {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -100px;
+            top: -120px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(217,70,239,.24), transparent 65%);
+            pointer-events: none;
+        }
+        .ud-password-close-v14 {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+            width: 38px;
+            height: 38px;
+            border-radius: 15px;
+            background: #f8fafc;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ud-password-icon-v14 {
+            position: relative;
+            z-index: 1;
+            width: 58px;
+            height: 58px;
+            border-radius: 23px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+            color: white;
+            font-size: 1.35rem;
+            box-shadow: 0 18px 34px rgba(139,92,246,.25);
+            margin-bottom: 1rem;
+        }
+        .ud-password-kicker-v14 {
+            position: relative;
+            z-index: 1;
+            color: #8b5cf6;
+            font-size: 10px;
+            font-weight: 950;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            margin-bottom: .4rem;
+        }
+        .ud-password-card-v14 h3 {
+            position: relative;
+            z-index: 1;
+            color: #0f172a;
+            font-size: 1.35rem;
+            line-height: 1.15;
+            font-weight: 950;
+            margin-bottom: .5rem;
+        }
+        .ud-password-desc-v14 {
+            position: relative;
+            z-index: 1;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 1.1rem;
+        }
+        .ud-password-input-wrap-v14 {
+            position: relative;
+            z-index: 1;
+        }
+        .ud-password-input-wrap-v14 i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a78bfa;
+        }
+        .ud-password-input-wrap-v14 input {
+            width: 100%;
+            min-height: 54px;
+            border-radius: 20px;
+            border: 1px solid rgba(203,213,225,.9);
+            background: rgba(248,250,252,.9);
+            padding: 0 1rem 0 3rem;
+            outline: none;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .ud-password-input-wrap-v14 input:focus {
+            background: white;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167,139,250,.17);
+        }
+        .ud-password-error-v14 {
+            position: relative;
+            z-index: 1;
+            margin-top: .75rem;
+            color: #e11d48;
+            font-size: 12px;
+            font-weight: 850;
+        }
+        .ud-password-actions-v14 {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .7rem;
+            margin-top: 1.15rem;
+        }
+        .ud-password-actions-v14 button {
+            min-height: 48px;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 950;
+        }
+        .ud-password-cancel-v14 { background: #f1f5f9; color: #64748b; }
+        .ud-password-open-v14 { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; box-shadow: 0 16px 30px rgba(139,92,246,.22); }
+        .ud-password-shake-v14 { animation: udShakeV14 .28s ease-in-out; border-color: #fb7185 !important; }
+        @keyframes udShakeV14 { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        @media (max-width: 768px) {
+            .ud-readonly-banner-v14 { flex-direction: column; align-items: flex-start; }
+            .ud-readonly-actions-v14, .ud-readonly-edit-v14 { width: 100%; }
+            .ud-readonly-edit-v14 { justify-content: center; }
+        }
+    </style>
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -4704,6 +5062,7 @@
 
         window.autoPublishUDDigitalChange = function(reason = 'Perubahan', options = {}) {
             if (activeMenu !== 'undangan_digital') return;
+            if (window.markUDThemeDirtyV13) window.markUDThemeDirtyV13();
             if (editId && window.isUDLockedTheme && window.isUDLockedTheme(editId) && !(window.canEditUDLockedDefaultTheme && window.canEditUDLockedDefaultTheme(editId))) {
                 if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password untuk dibuka.');
                 return;
@@ -7119,7 +7478,7 @@
                         <div class="relative z-10 p-6 md:p-7">
                             <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${formInner}
-                                ${categoryId === 'undangan_digital' ? '' : '<div class="md:col-span-2 flex justify-end gap-3 mt-3 pt-5 border-t border-gray-100"><button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button><button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button></div>'}
+                                ${categoryId === 'undangan_digital' ? '<div id="ud-edit-actions-v13" class="md:col-span-2 ud-live-edit-actions-v13"><div class="mr-auto flex items-center"><span id="ud-edit-dirty-indicator-v13" class="ud-session-dirty-dot-v13 hidden"><i class="fa-solid fa-circle-exclamation"></i> Ada perubahan belum disimpan</span></div><button type="button" onclick="cancelUDThemeEditing()" class="bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"><i class="fa-solid fa-arrow-rotate-left mr-1"></i> Batal Edit</button><button type="submit" id="btnSubmit" class="premium-action-btn bg-gradient-to-r from-lavender to-lavender-dark text-white hover:shadow-lg"><i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Perubahan</button></div>' : '<div class="md:col-span-2 flex justify-end gap-3 mt-3 pt-5 border-t border-gray-100"><button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button><button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button></div>'}
                             </form>
                         </div>
                     </div>
@@ -7130,6 +7489,10 @@
 
         window.handleFormSubmit = async function(e, categoryId) {
             e.preventDefault();
+            if (categoryId === 'undangan_digital' && window.udEditSessionV13 && window.udEditSessionV13.id && window.udEditSessionV13.id === editId) {
+                await window.commitUDThemeEditing({ silent: false });
+                return;
+            }
             const btnSubmit = document.getElementById('btnSubmit');
             const resetSubmitButton = () => {
                 if (btnSubmit) {
@@ -7729,6 +8092,165 @@
             }
         };
 
+
+
+        // =====================================================
+        // V13 - Sesi edit Undangan Digital
+        // Perubahan tetap live/autosave, tapi belum final sampai tombol Simpan Perubahan ditekan.
+        // Jika batal/pindah tanpa simpan, data dikembalikan ke snapshot sebelum klik Edit.
+        // =====================================================
+        window.udEditSessionV13 = window.udEditSessionV13 || {
+            id: null,
+            original: null,
+            dirty: false,
+            committed: true,
+            suppressDirty: false
+        };
+
+        window.cloneUDThemeForSessionV13 = function(item) {
+            if (!item) return null;
+            const clone = JSON.parse(JSON.stringify(item));
+            delete clone.__virtualDefault;
+            return clone;
+        };
+
+        window.stripUDThemeForWriteV13 = function(item) {
+            const data = window.cloneUDThemeForSessionV13(item) || {};
+            delete data.id;
+            delete data.__virtualDefault;
+            return data;
+        };
+
+        window.updateUDDirtyIndicatorV13 = function() {
+            const indicator = document.getElementById('ud-edit-dirty-indicator-v13');
+            if (indicator) indicator.classList.toggle('hidden', !(window.udEditSessionV13 && window.udEditSessionV13.dirty));
+            const btn = document.getElementById('btnSubmit');
+            if (btn && activeMenu === 'undangan_digital') {
+                btn.innerHTML = (window.udEditSessionV13 && window.udEditSessionV13.dirty)
+                    ? '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Perubahan'
+                    : '<i class="fa-solid fa-circle-check mr-1"></i> Sudah Disimpan';
+            }
+        };
+
+        window.startUDThemeEditSessionV13 = function(item) {
+            if (!item || !item.id) return;
+            window.udEditSessionV13 = {
+                id: item.id,
+                original: window.cloneUDThemeForSessionV13(item),
+                dirty: false,
+                committed: true,
+                suppressDirty: false
+            };
+            setTimeout(window.updateUDDirtyIndicatorV13, 80);
+        };
+
+        window.markUDThemeDirtyV13 = function() {
+            const session = window.udEditSessionV13;
+            if (!session || session.suppressDirty || activeMenu !== 'undangan_digital') return;
+            if (!editId || session.id !== editId) return;
+            session.dirty = true;
+            session.committed = false;
+            window.updateUDDirtyIndicatorV13();
+        };
+
+        window.showUDUnsavedDialogV13 = function() {
+            return new Promise((resolve) => {
+                const old = document.getElementById('ud-unsaved-modal-v13');
+                if (old) old.remove();
+                const modal = document.createElement('div');
+                modal.id = 'ud-unsaved-modal-v13';
+                modal.className = 'ud-unsaved-modal-v13';
+                modal.innerHTML = `
+                    <div class="ud-unsaved-modal-card-v13">
+                        <div class="ud-unsaved-modal-head-v13">
+                            <div class="ud-unsaved-modal-icon-v13"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <div class="ud-unsaved-modal-title-v13">Perubahan belum disimpan</div>
+                            <div class="ud-unsaved-modal-text-v13">Perubahan memang langsung tampil di live preview/web saat mode edit, tapi belum dikunci. Simpan untuk permanen, atau buang untuk kembali seperti sebelum tombol Edit diklik.</div>
+                        </div>
+                        <div class="ud-unsaved-modal-actions-v13">
+                            <button type="button" data-action="stay" class="bg-slate-100 text-slate-600 hover:bg-slate-200">Tetap Edit</button>
+                            <button type="button" data-action="discard" class="bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100">Buang Perubahan</button>
+                            <button type="button" data-action="save" class="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-500/20">Simpan</button>
+                        </div>
+                    </div>`;
+                modal.querySelectorAll('button[data-action]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = btn.dataset.action;
+                        modal.remove();
+                        resolve(action);
+                    });
+                });
+                document.body.appendChild(modal);
+            });
+        };
+
+        window.commitUDThemeEditing = async function({ silent = false } = {}) {
+            const session = window.udEditSessionV13;
+            if (!session || !session.id || !editId || session.id !== editId) return true;
+            if (window.publishUDDigitalNow) await window.publishUDDigitalNow('Simpan Perubahan');
+            const latest = (appData.items['undangan_digital'] || []).find(item => item.id === editId);
+            session.original = window.cloneUDThemeForSessionV13(latest || window.collectUDDigitalLiveData?.());
+            session.dirty = false;
+            session.committed = true;
+            window.updateUDDirtyIndicatorV13();
+            if (!silent) showToast('Perubahan tema sudah disimpan permanen.');
+            return true;
+        };
+
+        window.rollbackUDThemeEditing = async function({ silent = false, reopen = true } = {}) {
+            const session = window.udEditSessionV13;
+            if (!session || !session.id || !session.original) return true;
+            try {
+                session.suppressDirty = true;
+                const rollbackData = window.stripUDThemeForWriteV13(session.original);
+                await setDoc(doc(db, 'undangan_digital', session.id), rollbackData, { merge: false });
+                const idx = (appData.items['undangan_digital'] || []).findIndex(item => item.id === session.id);
+                if (idx >= 0) appData.items['undangan_digital'][idx] = { id: session.id, ...rollbackData };
+                await loadData('undangan_digital');
+                session.dirty = false;
+                session.committed = true;
+                window.updateUDDirtyIndicatorV13();
+                if (reopen) {
+                    const fn = window.openUDTheme;
+                    setTimeout(() => fn(session.id, { silent: true, scroll: false, skipGuard: true }), 80);
+                }
+                if (!silent) showToast('Perubahan dibatalkan. Tema kembali seperti sebelum Edit diklik.');
+                return true;
+            } catch (error) {
+                console.error('Gagal rollback tema:', error);
+                showToast('Gagal membatalkan perubahan: ' + (error.message || 'periksa koneksi/rules database'), 'error');
+                return false;
+            } finally {
+                if (window.udEditSessionV13) window.udEditSessionV13.suppressDirty = false;
+            }
+        };
+
+        window.cancelUDThemeEditing = async function() {
+            const session = window.udEditSessionV13;
+            if (!session || !session.dirty) {
+                showToast('Tidak ada perubahan yang perlu dibatalkan.');
+                return;
+            }
+            await window.rollbackUDThemeEditing({ silent: false, reopen: true });
+        };
+
+        window.guardUDThemeNavigationV13 = async function() {
+            const session = window.udEditSessionV13;
+            if (!session || !session.dirty || session.committed) return true;
+            const action = await window.showUDUnsavedDialogV13();
+            if (action === 'stay') return false;
+            if (action === 'save') return await window.commitUDThemeEditing({ silent: false });
+            if (action === 'discard') return await window.rollbackUDThemeEditing({ silent: false, reopen: false });
+            return false;
+        };
+
+        window.addEventListener('beforeunload', function(event) {
+            const session = window.udEditSessionV13;
+            if (session && session.dirty && !session.committed) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        });
         // HELPER KHUSUS RENDER FILE DOKUMEN 
         function escapeHtml(text) {
             return String(text || '').replace(/[&<>"]/g, function(m) {
@@ -7986,7 +8508,8 @@
                                     <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Update</p><p class="text-sm font-black text-gray-800 mt-1">${escapeHTML((item.tanggalUpdate || '').slice(0,10) || 'Belum ada')}</p></div>
                                 </div>
                                 <div class="relative z-10 mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    ${isLocked ? `<button type="button" onclick="openUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-black hover:bg-amber-100 transition"><i class="fa-solid fa-key mr-1"></i> Buka Template</button>` : `<button type="button" onclick="openUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-slate-900 text-white text-xs font-black hover:bg-slate-700 transition"><i class="fa-solid fa-folder-open mr-1"></i> Buka Tema</button>`}
+                                    ${isLocked ? `<button type="button" onclick="viewUDThemeV14('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-black hover:bg-amber-100 transition"><i class="fa-solid fa-eye mr-1"></i> Lihat Template</button>` : `<button type="button" onclick="viewUDThemeV14('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-slate-900 text-white text-xs font-black hover:bg-slate-700 transition"><i class="fa-solid fa-eye mr-1"></i> Lihat Tema</button>`}
+                                    ${isLocked ? `<button type="button" onclick="startUDThemeEditFromCardV14('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-black shadow-sm hover:shadow-md transition"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit Template</button>` : `<button type="button" onclick="startUDThemeEditFromCardV14('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-black shadow-sm hover:shadow-md transition"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit Tema</button>`}
                                     <button type="button" onclick="activateUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl ${isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100'} text-xs font-black transition" ${isActive ? 'disabled' : ''}><i class="fa-solid ${isActive ? 'fa-circle-check' : 'fa-broadcast-tower'} mr-1"></i> ${isActive ? 'Aktif Sekarang' : 'Pakai Tema Ini'}</button>
                                     <button type="button" onclick="duplicateUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-white text-violet-700 border border-violet-100 text-xs font-black hover:bg-violet-50 transition"><i class="fa-solid fa-copy mr-1"></i> ${isLocked ? 'Salin Template' : 'Duplikat'}</button>
                                     ${isLocked ? `<button type="button" disabled class="px-3 py-2.5 rounded-2xl bg-gray-50 text-gray-400 border border-gray-100 text-xs font-black cursor-not-allowed"><i class="fa-solid fa-shield-halved mr-1"></i> Aman</button>` : `<button type="button" onclick="deleteUDThemeCard('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 text-xs font-black hover:bg-rose-100 transition"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>`}
@@ -9873,6 +10396,343 @@
             }
         }
         
+
+
+        // =====================================================
+        // V13 wrappers: semua aksi yang meninggalkan editor akan tanya dulu jika perubahan belum disimpan.
+        // =====================================================
+        (function setupUDV13Guards(){
+            if (window.__udV13GuardsReady) return;
+            window.__udV13GuardsReady = true;
+
+            const originalOpenUDTheme = window.openUDTheme;
+            window.openUDTheme = async function(id, options = {}) {
+                if (!options.skipGuard && editId && id !== editId) {
+                    const ok = await window.guardUDThemeNavigationV13();
+                    if (!ok) return;
+                }
+                await originalOpenUDTheme(id, options);
+                const item = window.getUDThemeById ? window.getUDThemeById(id) : (appData.items['undangan_digital'] || []).find(row => row.id === id);
+                if (item && editId === id) window.startUDThemeEditSessionV13(item);
+                if (window.updateUDDirtyIndicatorV13) window.updateUDDirtyIndicatorV13();
+            };
+
+            const originalStartNewUDTheme = window.startNewUDTheme;
+            window.startNewUDTheme = async function() {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+                originalStartNewUDTheme();
+                window.udEditSessionV13 = { id: null, original: null, dirty: false, committed: true, suppressDirty: false };
+                if (window.updateUDDirtyIndicatorV13) window.updateUDDirtyIndicatorV13();
+            };
+
+            const originalActivateUDTheme = window.activateUDTheme;
+            window.activateUDTheme = async function(id) {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+                return originalActivateUDTheme(id);
+            };
+
+            const originalDuplicateUDTheme = window.duplicateUDTheme;
+            window.duplicateUDTheme = async function(id) {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+                return originalDuplicateUDTheme(id);
+            };
+
+            const originalDeleteUDThemeCard = window.deleteUDThemeCard;
+            window.deleteUDThemeCard = async function(id) {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+                return originalDeleteUDThemeCard(id);
+            };
+
+            const originalRenderContent = window.renderContent;
+            if (typeof originalRenderContent === 'function') {
+                window.renderContent = function() {
+                    if (activeMenu !== 'undangan_digital' && window.udEditSessionV13 && window.udEditSessionV13.dirty) {
+                        window.showUDUnsavedDialogV13().then(async action => {
+                            if (action === 'save') await window.commitUDThemeEditing({ silent: false });
+                            if (action === 'discard') await window.rollbackUDThemeEditing({ silent: false, reopen: false });
+                            if (action !== 'stay') originalRenderContent();
+                        });
+                        return;
+                    }
+                    return originalRenderContent();
+                };
+            }
+        })();
+
+        // =====================================================
+        // V14 - Mode lihat dulu, baru edit setelah tombol Edit.
+        // Khusus Template Web Default wajib password "destradanmutiara".
+        // Semua editor dikunci/abu-abu saat hanya memilih kartu tema.
+        // =====================================================
+        window.udThemeEditModeV14 = false;
+        window.udThemeReadOnlyIdV14 = null;
+        window.udThemePasswordOkV14 = false;
+        window.UD_DEFAULT_TEMPLATE_EDIT_PASSWORD = 'destradanmutiara';
+
+        window.isUDThemeCurrentlyEditableV14 = function() {
+            return Boolean(activeMenu === 'undangan_digital' && editId && window.udThemeEditModeV14 === true);
+        };
+
+        window.ensureUDDefaultThemeInMemoryV14 = function(id) {
+            if (id !== UD_DEFAULT_TEMPLATE_ID) return;
+            const raw = appData.items['undangan_digital'] || [];
+            if (!raw.some(item => item && item.id === UD_DEFAULT_TEMPLATE_ID)) {
+                const activeExists = raw.some(item => item && item.isActive === true);
+                raw.unshift(window.getUDDefaultTemplateData({ id: UD_DEFAULT_TEMPLATE_ID, __virtualDefault: true, isActive: !activeExists }));
+                appData.items['undangan_digital'] = raw;
+            }
+        };
+
+        window.showUDDefaultPasswordModalV14 = function() {
+            return new Promise((resolve) => {
+                const old = document.getElementById('ud-password-modal-v14');
+                if (old) old.remove();
+                const modal = document.createElement('div');
+                modal.id = 'ud-password-modal-v14';
+                modal.className = 'ud-password-modal-v14';
+                modal.innerHTML = `
+                    <div class="ud-password-card-v14">
+                        <button type="button" class="ud-password-close-v14" data-action="cancel"><i class="fa-solid fa-xmark"></i></button>
+                        <div class="ud-password-glow-v14"></div>
+                        <div class="ud-password-icon-v14"><i class="fa-solid fa-shield-heart"></i></div>
+                        <p class="ud-password-kicker-v14">AKSES TEMPLATE DEFAULT</p>
+                        <h3>Masukkan Password Edit</h3>
+                        <p class="ud-password-desc-v14">Template Web Default boleh dilihat, tetapi untuk mengubah isi/template wajib membuka mode edit terlebih dahulu.</p>
+                        <div class="ud-password-input-wrap-v14">
+                            <i class="fa-solid fa-lock"></i>
+                            <input id="ud-password-input-v14" type="password" autocomplete="current-password" placeholder="Masukkan password">
+                        </div>
+                        <p id="ud-password-error-v14" class="ud-password-error-v14 hidden"><i class="fa-solid fa-circle-exclamation"></i> Password salah. Coba lagi.</p>
+                        <div class="ud-password-actions-v14">
+                            <button type="button" data-action="cancel" class="ud-password-cancel-v14">Batal</button>
+                            <button type="button" data-action="open" class="ud-password-open-v14"><i class="fa-solid fa-lock-open mr-1"></i> Buka Edit</button>
+                        </div>
+                    </div>`;
+                const finish = (value) => { modal.remove(); resolve(value); };
+                const input = modal.querySelector('#ud-password-input-v14');
+                const err = modal.querySelector('#ud-password-error-v14');
+                modal.querySelectorAll('[data-action="cancel"]').forEach(btn => btn.addEventListener('click', () => finish(false)));
+                modal.querySelector('[data-action="open"]').addEventListener('click', () => {
+                    if ((input.value || '') === window.UD_DEFAULT_TEMPLATE_EDIT_PASSWORD) {
+                        window.udDefaultTemplateEditUnlocked = true;
+                        window.udThemePasswordOkV14 = true;
+                        finish(true);
+                    } else {
+                        err.classList.remove('hidden');
+                        input.classList.add('ud-password-shake-v14');
+                        setTimeout(() => input.classList.remove('ud-password-shake-v14'), 350);
+                        input.focus();
+                    }
+                });
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') modal.querySelector('[data-action="open"]').click();
+                    if (event.key === 'Escape') finish(false);
+                });
+                document.body.appendChild(modal);
+                setTimeout(() => input.focus(), 80);
+            });
+        };
+
+        window.setUDReadOnlyModeV14 = function(readOnly, message = '') {
+            const form = document.getElementById('itemForm');
+            if (!form || activeMenu !== 'undangan_digital') return;
+            let banner = document.getElementById('ud-readonly-banner-v14');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'ud-readonly-banner-v14';
+                banner.className = 'md:col-span-2 ud-readonly-banner-v14';
+                const studio = document.getElementById('ud-studio-max');
+                if (studio && studio.parentNode) studio.parentNode.insertBefore(banner, studio);
+                else form.prepend(banner);
+            }
+
+            form.classList.toggle('ud-editor-readonly-v14', !!readOnly);
+            const controls = form.querySelectorAll('input, textarea, select, button');
+            controls.forEach((el) => {
+                const keep = el.matches('[data-ud-allow-readonly="1"], .ud-live-preview-tool-btn, .ud-live-preview-open-btn, [data-preview-button]') || el.closest('[data-ud-allow-readonly="1"], .ud-live-preview-toolbar, .ud-studio-mini-preview');
+                if (keep) return;
+                if (readOnly) {
+                    if (el.disabled) el.dataset.udWasDisabledV14 = '1';
+                    el.disabled = true;
+                    el.setAttribute('aria-disabled', 'true');
+                    if ('readOnly' in el) el.readOnly = true;
+                } else {
+                    if (el.dataset.udWasDisabledV14 === '1') {
+                        delete el.dataset.udWasDisabledV14;
+                        return;
+                    }
+                    el.disabled = false;
+                    el.removeAttribute('aria-disabled');
+                    if ('readOnly' in el) el.readOnly = false;
+                }
+            });
+
+            const selected = window.getUDThemeById ? window.getUDThemeById(editId) : null;
+            const isDefault = selected && window.isUDLockedTheme && window.isUDLockedTheme(selected);
+            const title = readOnly ? 'Mode Lihat: editor terkunci' : 'Mode Edit aktif';
+            const icon = readOnly ? 'fa-eye' : 'fa-pen-to-square';
+            const tone = readOnly ? 'locked' : 'open';
+            banner.className = `md:col-span-2 ud-readonly-banner-v14 ${tone}`;
+            banner.innerHTML = `
+                <div class="ud-readonly-icon-v14"><i class="fa-solid ${icon}"></i></div>
+                <div class="min-w-0 flex-1">
+                    <p class="ud-readonly-kicker-v14">${readOnly ? 'TEMA DITAMPILKAN SAJA' : 'TEMA SEDANG DIEDIT'}</p>
+                    <h4>${title}</h4>
+                    <p>${escapeHTML(message || (readOnly ? 'Klik tombol Edit untuk mengubah tema. Semua field dan tombol pilihan dibuat abu-abu agar tidak berubah tanpa sengaja.' : 'Perubahan langsung tampil/live. Klik Simpan Perubahan untuk mengunci atau Batal Edit untuk mengembalikan.'))}</p>
+                </div>
+                <div class="ud-readonly-actions-v14" data-ud-allow-readonly="1">
+                    ${readOnly ? `<button type="button" onclick="startUDThemeEditFromCardV14('${editId}')" class="ud-readonly-edit-v14"><i class="fa-solid ${isDefault ? 'fa-key' : 'fa-pen'} mr-1"></i> ${isDefault ? 'Edit Template' : 'Edit Tema'}</button>` : `<span class="ud-readonly-live-v14"><i class="fa-solid fa-bolt"></i> Live Edit</span>`}
+                </div>`;
+
+            const actions = document.getElementById('ud-edit-actions-v13');
+            if (actions) {
+                actions.classList.toggle('ud-actions-disabled-v14', !!readOnly);
+                actions.querySelectorAll('button').forEach(btn => {
+                    btn.disabled = !!readOnly;
+                    btn.classList.toggle('opacity-45', !!readOnly);
+                    btn.classList.toggle('cursor-not-allowed', !!readOnly);
+                });
+            }
+            if (window.refreshUDLiveMonitor) {
+                window.refreshUDLiveMonitor(readOnly ? 'ready' : 'saving', readOnly ? 'Mode lihat. Klik Edit untuk mulai mengubah tema.' : 'Mode edit aktif. Perubahan live, simpan untuk mengunci.');
+            }
+        };
+
+        window.viewUDThemeV14 = async function(id, options = {}) {
+            if (!options.skipGuard && window.udThemeEditModeV14 && editId && id !== editId) {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+            }
+            window.ensureUDDefaultThemeInMemoryV14(id);
+            let item = window.getUDThemeById ? window.getUDThemeById(id) : (appData.items['undangan_digital'] || []).find(row => row.id === id);
+            if (!item) {
+                showToast('Tema undangan tidak ditemukan.', 'error');
+                return;
+            }
+            window.udThemeEditModeV14 = false;
+            window.udThemeReadOnlyIdV14 = id;
+            window.udDefaultTemplateEditUnlocked = false;
+            window.udThemePasswordOkV14 = false;
+            window.udEditSessionV13 = { id: null, original: null, dirty: false, committed: true, suppressDirty: false };
+            if (window.updateUDDirtyIndicatorV13) window.updateUDDirtyIndicatorV13();
+            editItem(id, 'undangan_digital');
+            setTimeout(() => window.setUDReadOnlyModeV14(true, `${item.nama || 'Tema'} dibuka untuk dilihat saja. Klik Edit untuk mengubah.`), 120);
+            if (!options.silent) showToast(`Tema "${item.nama || 'Undangan Digital'}" ditampilkan dalam mode lihat.`);
+            if (options.scroll !== false) {
+                const main = document.getElementById('main-content');
+                if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.startUDThemeEditFromCardV14 = async function(id, options = {}) {
+            if (!options.skipGuard && window.udThemeEditModeV14 && editId && id !== editId) {
+                const ok = await window.guardUDThemeNavigationV13();
+                if (!ok) return;
+            }
+            window.ensureUDDefaultThemeInMemoryV14(id);
+            let item = window.getUDThemeById ? window.getUDThemeById(id) : (appData.items['undangan_digital'] || []).find(row => row.id === id);
+            if (!item) {
+                showToast('Tema undangan tidak ditemukan.', 'error');
+                return;
+            }
+            const isDefault = window.isUDLockedTheme && window.isUDLockedTheme(item);
+            if (isDefault) {
+                const okPass = await window.showUDDefaultPasswordModalV14();
+                if (!okPass) {
+                    setTimeout(() => window.setUDReadOnlyModeV14(true, 'Template Web Default masih terkunci. Password diperlukan untuk edit.'), 80);
+                    return;
+                }
+                if (item.__virtualDefault === true || !(appData.items['undangan_digital'] || []).some(row => row.id === UD_DEFAULT_TEMPLATE_ID && !row.__virtualDefault)) {
+                    const now = new Date().toISOString();
+                    const defaultPayload = window.getUDDefaultTemplateData({ isActive: item.isActive === true, tanggalUpdate: now });
+                    delete defaultPayload.id;
+                    delete defaultPayload.__virtualDefault;
+                    await setDoc(doc(db, 'undangan_digital', UD_DEFAULT_TEMPLATE_ID), defaultPayload, { merge: true });
+                    await loadData('undangan_digital');
+                    item = window.getUDThemeById(UD_DEFAULT_TEMPLATE_ID) || window.getUDDefaultTemplateData({ id: UD_DEFAULT_TEMPLATE_ID });
+                }
+            } else {
+                window.udDefaultTemplateEditUnlocked = false;
+            }
+            window.udThemeEditModeV14 = true;
+            window.udThemeReadOnlyIdV14 = id;
+            editItem(id, 'undangan_digital');
+            const latest = window.getUDThemeById ? window.getUDThemeById(id) : item;
+            if (window.startUDThemeEditSessionV13) window.startUDThemeEditSessionV13(latest || item);
+            setTimeout(() => window.setUDReadOnlyModeV14(false, isDefault ? 'Password benar. Template Web Default sekarang bisa diedit penuh.' : 'Mode edit tema aktif. Perubahan live, simpan untuk mengunci.'), 120);
+            if (!options.silent) showToast(isDefault ? 'Template Web Default terbuka untuk edit.' : 'Mode edit tema aktif.');
+            if (options.scroll !== false) {
+                const main = document.getElementById('main-content');
+                if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        // Override openUDTheme dari versi lama: sekarang buka kartu = lihat saja.
+        window.openUDTheme = async function(id, options = {}) {
+            return window.viewUDThemeV14(id, options);
+        };
+
+        // Guard tambahan agar auto publish hanya berjalan ketika mode edit aktif.
+        (function setupUDV14LiveGuard(){
+            if (window.__udV14LiveGuardReady) return;
+            window.__udV14LiveGuardReady = true;
+            const originalAuto = window.autoPublishUDDigitalChange;
+            window.autoPublishUDDigitalChange = function(reason = 'Perubahan', options = {}) {
+                if (activeMenu === 'undangan_digital' && !window.isUDThemeCurrentlyEditableV14()) {
+                    if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode lihat. Klik Edit untuk mengubah tema.');
+                    return;
+                }
+                return originalAuto ? originalAuto.apply(this, arguments) : undefined;
+            };
+            const originalPublish = window.publishUDDigitalNow;
+            window.publishUDDigitalNow = async function(reason = 'Perubahan') {
+                if (activeMenu === 'undangan_digital' && !window.isUDThemeCurrentlyEditableV14()) {
+                    if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode lihat. Tidak ada perubahan yang disimpan.');
+                    return;
+                }
+                return originalPublish ? originalPublish.apply(this, arguments) : undefined;
+            };
+
+            const originalCommit = window.commitUDThemeEditing;
+            window.commitUDThemeEditing = async function(opts = {}) {
+                const result = originalCommit ? await originalCommit.apply(this, arguments) : true;
+                if (result && activeMenu === 'undangan_digital') {
+                    window.udThemeEditModeV14 = false;
+                    setTimeout(() => window.setUDReadOnlyModeV14(true, 'Perubahan sudah disimpan. Editor kembali terkunci agar aman.'), 120);
+                }
+                return result;
+            };
+
+            const originalRollback = window.rollbackUDThemeEditing;
+            window.rollbackUDThemeEditing = async function(opts = {}) {
+                const result = originalRollback ? await originalRollback.apply(this, arguments) : true;
+                if (result && activeMenu === 'undangan_digital') {
+                    window.udThemeEditModeV14 = false;
+                    setTimeout(() => window.setUDReadOnlyModeV14(true, 'Perubahan dibuang. Tema kembali ke kondisi sebelum Edit.'), 220);
+                }
+                return result;
+            };
+        })();
+
+        // Saat board dirender ulang, kalau ada tema terbuka namun tidak dalam edit, pastikan terkunci lagi.
+        window.applyUDV14PostRenderLock = function() {
+            if (activeMenu !== 'undangan_digital' || !editId) return;
+            if (!window.udThemeEditModeV14) setTimeout(() => window.setUDReadOnlyModeV14(true), 150);
+        };
+        const originalRenderTableV14 = window.renderTable;
+        if (typeof originalRenderTableV14 === 'function' && !originalRenderTableV14.__udV14Wrapped) {
+            window.renderTable = function(categoryId) {
+                const result = originalRenderTableV14.apply(this, arguments);
+                if (categoryId === 'undangan_digital') setTimeout(window.applyUDV14PostRenderLock, 200);
+                return result;
+            };
+            window.renderTable.__udV14Wrapped = true;
+        }
+
     </script>
 </body>
 </html>
