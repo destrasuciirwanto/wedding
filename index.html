@@ -1697,6 +1697,81 @@
 
 
     </style>
+
+    <style id="ud-live-preview-desktop-mode-v12">
+        /* V12: mini live preview dibuat seperti desktop yang diperkecil, bukan layout HP. */
+        .ud-studio-mini-preview.ud-live-preview-open {
+            background: #f8fafc !important;
+            border-radius: 30px !important;
+        }
+        .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode {
+            overflow: auto !important;
+            background: #fff !important;
+        }
+        .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-body,
+        .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-cover {
+            width: 960px;
+            min-height: 680px;
+            zoom: .55;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-nav {
+            position: sticky;
+            top: 0;
+            justify-content: center;
+            flex-wrap: wrap;
+            overflow: visible;
+            gap: .7rem;
+            padding: 1rem 1.25rem;
+            background: rgba(255,255,255,.92);
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-nav a {
+            padding: .6rem .95rem;
+            font-size: 10px;
+            letter-spacing: .12em;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-section.hero-preview {
+            min-height: 420px;
+            padding: 3.5rem 2rem;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-section.hero-preview h4 {
+            font-size: 3.3rem;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-section:not(.hero-preview) {
+            max-width: 860px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem 2.25rem;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-card-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+        .ud-live-preview-device.ud-live-desktop-mode .ud-live-gallery {
+            grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: .75rem;
+        }
+        #ud-live-preview-zoom-body .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-body,
+        #ud-live-preview-zoom-body .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-cover {
+            width: 100%;
+            min-height: 100%;
+            zoom: 1;
+        }
+        @media (max-width: 1024px) {
+            .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-body,
+            .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-cover {
+                width: 920px;
+                zoom: .46;
+            }
+        }
+        @media (max-width: 640px) {
+            .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-body,
+            .ud-studio-mini-preview.ud-live-preview-open .ud-live-preview-device.ud-live-desktop-mode .ud-live-preview-cover {
+                width: 860px;
+                zoom: .36;
+            }
+        }
+    </style>
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -2506,8 +2581,8 @@
 
 
         // =====================================================
-        // TEMPLATE WEB DEFAULT - EDIT TERBATAS DENGAN PASSWORD
-        // Khusus Template Web Default saja. Tema salinan/draft tetap full editor.
+        // TEMPLATE WEB DEFAULT - FULL EDITOR DENGAN PASSWORD
+        // Khusus Template Web Default saja tetap wajib password. Setelah benar, fitur editor tetap lengkap.
         // Password disamakan dengan password buka uang/nilai.
         // =====================================================
         window.UD_DEFAULT_TEMPLATE_EDIT_PASSWORD = 'destradanmutiara';
@@ -2526,7 +2601,7 @@
         };
 
         window.askUDDefaultTemplatePassword = function() {
-            const input = window.prompt('Masukkan password untuk edit terbatas Template Web Default:');
+            const input = window.prompt('Masukkan password untuk membuka editor Template Web Default:');
             if (input === null) return false;
             if (input !== window.UD_DEFAULT_TEMPLATE_EDIT_PASSWORD) {
                 showToast('Password salah. Template Web Default tidak dibuka.', 'error');
@@ -4022,7 +4097,7 @@
             const bgStyle = data.coverImage
                 ? `linear-gradient(to bottom, rgba(15,23,42,.26), rgba(15,23,42,.76)), url('${escapeHTML(data.coverImage)}')`
                 : `linear-gradient(to bottom, rgba(15,23,42,.25), rgba(15,23,42,.78)), radial-gradient(circle at top, ${escapeHTML(data.primary)}66, transparent 42%), linear-gradient(135deg, ${escapeHTML(data.bg)}, #111827)`;
-            return `<div class="ud-live-preview-device" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
+            return `<div class="ud-live-preview-device ud-live-desktop-mode" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
                 <div class="ud-live-preview-cover" style="background:${bgStyle};">
                     <p class="ud-live-preview-kicker">${escapeHTML(data.coverKicker)}</p>
                     <h4 class="ud-live-preview-title">${escapeHTML(data.couple)}</h4>
@@ -4057,7 +4132,7 @@
                 return `<div class="ud-live-card"><b>${escapeHTML(parts[0] || 'Pertanyaan')}</b><small>${escapeHTML(parts[1] || '')}</small></div>`;
             }).join('');
             const qris = udLiveValue('inputUDQrisImage');
-            return `<div class="ud-live-preview-device" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
+            return `<div class="ud-live-preview-device ud-live-desktop-mode" style="--ud-preview-primary:${escapeHTML(data.primary)};--ud-preview-bg:${escapeHTML(data.bg)};--ud-preview-text:${escapeHTML(data.textColor)};">
                 <div class="ud-live-preview-body">
                     <nav class="ud-live-preview-nav">${quickMenu}</nav>
                     <section class="ud-live-section hero-preview" style="background:${heroBg};">
@@ -4418,11 +4493,11 @@
             if (window.isUDLockedTheme && window.isUDLockedTheme(item)) {
                 if (!window.askUDDefaultTemplatePassword()) {
                     editId = null;
-                    if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password untuk edit terbatas.');
+                    if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password untuk dibuka.');
                     return;
                 }
 
-                // Kalau default masih virtual, buat dokumen default dulu agar bisa diedit terbatas.
+                // Kalau default masih virtual, buat dokumen default dulu agar bisa diedit setelah password.
                 if (item.__virtualDefault === true || !(appData.items['undangan_digital'] || []).some(row => row.id === UD_DEFAULT_TEMPLATE_ID)) {
                     const now = new Date().toISOString();
                     const defaultPayload = window.getUDDefaultTemplateData({ isActive: item.isActive === true, tanggalUpdate: now });
@@ -4435,8 +4510,8 @@
 
                 editItem(UD_DEFAULT_TEMPLATE_ID, 'undangan_digital');
                 if (window.applyUDDefaultTemplateRestrictedEditor) window.applyUDDefaultTemplateRestrictedEditor();
-                if (!options.silent) showToast('Template Web Default dibuka dalam mode edit terbatas.');
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', item.isActive ? 'Edit terbatas default aktif. Perubahan yang diizinkan langsung tampil di web.' : 'Edit terbatas default draft. Pakai tema ini jika ingin tampil di web.');
+                if (!options.silent) showToast('Template Web Default dibuka. Semua fitur editor aktif setelah password benar.');
+                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', item.isActive ? 'Template default aktif. Semua perubahan langsung tampil di web.' : 'Template default draft. Pakai tema ini jika ingin tampil di web.');
                 if (options.scroll !== false) {
                     const main = document.getElementById('main-content');
                     if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4504,7 +4579,7 @@
                 await Promise.all(tasks);
                 await loadData('undangan_digital');
                 if (!isDefaultTarget) window.openUDTheme(id, { silent: true, scroll: false });
-                else if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default sedang dipakai. Template terkunci dan tidak bisa diedit.');
+                else if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default sedang dipakai. Buka dengan password untuk mengedit.');
                 renderTable('undangan_digital');
                 showToast(`Tema "${target.nama || 'Undangan Digital'}" sekarang dipakai di web.`);
             } catch (error) {
@@ -4552,7 +4627,7 @@
         window.collectUDDigitalLiveData = function() {
             const existing = editId ? appData.items['undangan_digital'].find(i => i.id === editId) : null;
             if (existing && window.isUDLockedTheme && window.isUDLockedTheme(existing) && !(window.canEditUDLockedDefaultTheme && window.canEditUDLockedDefaultTheme(existing))) {
-                showToast('Template Web Default butuh password untuk edit terbatas.', 'error');
+                showToast('Template Web Default butuh password untuk dibuka.', 'error');
                 return null;
             }
             const v = (id, fallback = '') => {
@@ -4630,7 +4705,7 @@
         window.autoPublishUDDigitalChange = function(reason = 'Perubahan', options = {}) {
             if (activeMenu !== 'undangan_digital') return;
             if (editId && window.isUDLockedTheme && window.isUDLockedTheme(editId) && !(window.canEditUDLockedDefaultTheme && window.canEditUDLockedDefaultTheme(editId))) {
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password untuk edit terbatas.');
+                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password untuk dibuka.');
                 return;
             }
             const state = window.udLivePublishState;
@@ -4668,6 +4743,7 @@
         };
 
 
+        
         window.isUDDefaultRestrictedEditor = function() {
             return Boolean(activeMenu === 'undangan_digital' && editId === UD_DEFAULT_TEMPLATE_ID && window.udDefaultTemplateEditUnlocked === true);
         };
@@ -4675,62 +4751,37 @@
         window.applyUDDefaultTemplateRestrictedEditor = function() {
             const form = document.getElementById('itemForm');
             if (!form) return;
-            const restricted = window.isUDDefaultRestrictedEditor && window.isUDDefaultRestrictedEditor();
-            form.classList.toggle('ud-default-restricted-editor', restricted);
+            form.classList.remove('ud-default-restricted-editor');
 
             const oldBanner = document.getElementById('ud-default-restricted-banner');
             if (oldBanner) oldBanner.remove();
 
-            if (!restricted) {
-                form.querySelectorAll('[data-ud-default-hidden="1"]').forEach(el => { el.style.display = el.dataset.udOldDisplay || ''; el.removeAttribute('data-ud-default-hidden'); });
-                return;
-            }
+            // Pulihkan semua panel yang pernah disembunyikan versi lama.
+            form.querySelectorAll('[data-ud-default-hidden="1"]').forEach(el => {
+                el.style.display = el.dataset.udOldDisplay || '';
+                el.removeAttribute('data-ud-default-hidden');
+                el.removeAttribute('data-ud-old-display');
+            });
+
+            if (!(window.canEditUDLockedDefaultTheme && window.canEditUDLockedDefaultTheme(editId))) return;
 
             const studio = document.getElementById('ud-studio-max');
             if (studio) {
                 const banner = document.createElement('div');
                 banner.id = 'ud-default-restricted-banner';
-                banner.className = 'md:col-span-2 rounded-[28px] border border-amber-200 bg-amber-50 p-4 mb-4 text-amber-800';
-                banner.innerHTML = `<div class="flex flex-col md:flex-row md:items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-white flex items-center justify-center text-amber-600 shadow-sm"><i class="fa-solid fa-lock-open"></i></div><div><p class="text-[10px] font-black uppercase tracking-[0.22em]">Mode edit terbatas Template Web Default</p><p class="text-xs leading-6 mt-1">Password benar. Yang tersedia: Monitoring Mini Live Publish, Live Monitor, Material/Ornamen, isi dasar undangan, dan Tampilkan/Sembunyikan Section. Fitur cepat/paket/starter/advanced style disembunyikan khusus template default.</p></div></div>`;
+                banner.className = 'md:col-span-2 rounded-[28px] border border-emerald-200 bg-emerald-50 p-4 mb-4 text-emerald-800';
+                banner.innerHTML = `<div class="flex flex-col md:flex-row md:items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-white flex items-center justify-center text-emerald-600 shadow-sm"><i class="fa-solid fa-lock-open"></i></div><div><p class="text-[10px] font-black uppercase tracking-[0.22em]">Template Web Default terbuka</p><p class="text-xs leading-6 mt-1">Password benar. Semua fitur editor Undangan Digital aktif seperti tema lain. Default tetap tidak bisa dihapus, tapi isi/template bisa diedit dan autosave.</p></div></div>`;
                 studio.parentNode.insertBefore(banner, studio);
             }
 
-            const hideElement = (el) => {
-                if (!el || el.dataset.udDefaultHidden === '1') return;
-                el.dataset.udOldDisplay = el.style.display || '';
-                el.dataset.udDefaultHidden = '1';
-                el.style.display = 'none';
-            };
-            const textOf = (el) => String(el?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-
-            // Panel studio yang tidak boleh muncul di default terbatas.
-            document.querySelectorAll('#ud-studio-max .ud-studio-feature-panel, #ud-studio-max details.ud-sub-fold, #ud-studio-manual-separator, .ud-studio-manual-separator').forEach(el => {
-                const t = textOf(el);
-                const keep = /monitoring mini live publish|live preview undangan|material|ornamen|hiasan|tampilkan \/ sembunyikan section|status isi penting/.test(t);
-                const block = /mode sekali klik|starter content|paket section|cari fitur cepat|template layout siap pakai|warna & font|bentuk, card & tombol|cover & hero|kontrol efek|animasi|advanced|manual detail tetap lengkap/.test(t);
-                if (block && !keep) hideElement(el);
-            });
-
-            // Panel manual bawah: sisakan isi dasar/konten dan section visibility. Sembunyikan builder/advanced/efek.
-            form.querySelectorAll('details.ud-dashboard-fold').forEach((panel) => {
-                const t = textOf(panel.querySelector('summary') || panel);
-                const panelText = textOf(panel);
-                const keep = /data utama|mempelai|pengantin|ayat|doa|sambutan|acara|akad|resepsi|lokasi|maps|galeri|gallery|foto|video|musik|lagu|rundown|susunan|dress|gift|rekening|qris|faq|footer|quick menu|story|cerita|hashtag|tampilkan \/ sembunyikan|section/.test(t + ' ' + panelText);
-                const block = /custom builder|extra element|advanced|efek|animasi|template layout|mode sekali klik|starter|paket section/.test(t + ' ' + panelText);
-                if (block && !keep) hideElement(panel);
-            });
-
             const btn = document.getElementById('btnSubmit');
             if (btn) btn.innerHTML = '<i class="fa-solid fa-shield-heart mr-1"></i> Simpan Template Default';
-            if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode edit terbatas Template Web Default aktif.');
+            if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default terbuka. Semua fitur editor aktif dan perubahan tetap autosave.');
         };
 
         window.guardUDDefaultRestrictedFeature = function(label) {
-            if (window.isUDDefaultRestrictedEditor && window.isUDDefaultRestrictedEditor()) {
-                showToast(`${label} tidak tersedia untuk Template Web Default. Gunakan Material/Ornamen, isi dasar, atau Tampilkan/Sembunyikan Section.`, 'error');
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', `${label} diblokir di mode edit terbatas default.`);
-                return true;
-            }
+            // Mulai v12: Template Web Default tidak lagi dibatasi fiturnya.
+            // Password tetap wajib saat membuka template default.
             return false;
         };
 
@@ -7068,10 +7119,7 @@
                         <div class="relative z-10 p-6 md:p-7">
                             <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${formInner}
-                                <div class="md:col-span-2 flex justify-end gap-3 mt-3 pt-5 border-t border-gray-100">
-                                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button>
-                                    <button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button>
-                                </div>
+                                ${categoryId === 'undangan_digital' ? '' : '<div class="md:col-span-2 flex justify-end gap-3 mt-3 pt-5 border-t border-gray-100"><button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button><button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button></div>'}
                             </form>
                         </div>
                     </div>
@@ -7523,7 +7571,7 @@
 
             try {
                 if (categoryId === 'undangan_digital' && editId && window.isUDLockedTheme && window.isUDLockedTheme(editId) && !(window.canEditUDLockedDefaultTheme && window.canEditUDLockedDefaultTheme(editId))) {
-                    showToast('Template Web Default butuh password untuk edit terbatas.', 'error');
+                    showToast('Template Web Default butuh password untuk dibuka.', 'error');
                     return;
                 }
                 let savedUndanganThemeId = editId;
@@ -7898,7 +7946,7 @@
                                 <div>
                                     <p class="text-[10px] font-black uppercase tracking-[0.24em] text-lavender-dark mb-1">Bank Tema Undangan</p>
                                     <h3 class="text-xl md:text-2xl font-black text-gray-800">Pilih A/B/C/D tanpa menimpa tema lain</h3>
-                                    <p class="text-xs text-gray-500 mt-1 max-w-3xl">Web undangan tetap satu. Template Web Default bisa diedit terbatas dengan password. Salinan/draft tetap bisa diedit bebas tanpa menimpa tema lain.</p>
+                                    <p class="text-xs text-gray-500 mt-1 max-w-3xl">Web undangan tetap satu. Template Web Default bisa diedit penuh dengan password. Salinan/draft tetap bisa diedit bebas tanpa menimpa tema lain.</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-2 w-full xl:w-[430px]">
@@ -7934,7 +7982,7 @@
                                     </div>
                                 </div>
                                 <div class="relative z-10 mt-5 grid grid-cols-2 gap-3">
-                                    <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Status Web</p><p class="text-sm font-black ${isActive ? 'text-emerald-700' : (isLocked ? 'text-amber-700' : 'text-violet-700')} mt-1">${isActive ? 'Tampil di web' : (isLocked ? 'Default terbatas' : 'Tersimpan draft')}</p></div>
+                                    <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Status Web</p><p class="text-sm font-black ${isActive ? 'text-emerald-700' : (isLocked ? 'text-amber-700' : 'text-violet-700')} mt-1">${isActive ? 'Tampil di web' : (isLocked ? 'Template default' : 'Tersimpan draft')}</p></div>
                                     <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Update</p><p class="text-sm font-black text-gray-800 mt-1">${escapeHTML((item.tanggalUpdate || '').slice(0,10) || 'Belum ada')}</p></div>
                                 </div>
                                 <div class="relative z-10 mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -9602,7 +9650,7 @@
                 if (window.setupUDLiveEditing) window.setupUDLiveEditing();
                 const udSubmit = document.getElementById('btnSubmit');
                 if (udSubmit) udSubmit.innerHTML = (window.isUDLockedTheme && window.isUDLockedTheme(item)) ? '<i class="fa-solid fa-shield-heart mr-1"></i> Simpan Template Default' : (item.isActive ? '<i class="fa-solid fa-broadcast-tower mr-1"></i> Simpan Tema Aktif' : '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Draft Tema');
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', (window.isUDLockedTheme && window.isUDLockedTheme(item)) ? 'Template Web Default dimuat dalam mode edit terbatas.' : (item.isActive ? 'Tema aktif dimuat. Edit langsung tampil di web.' : 'Tema draft dimuat. Edit tersimpan tanpa mengubah web.'));
+                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', (window.isUDLockedTheme && window.isUDLockedTheme(item)) ? 'Template Web Default dimuat. Semua fitur editor aktif setelah password benar.' : (item.isActive ? 'Tema aktif dimuat. Edit langsung tampil di web.' : 'Tema draft dimuat. Edit tersimpan tanpa mengubah web.'));
                 if (window.updateUDActiveStates) window.updateUDActiveStates();
                 if (window.applyUDDefaultTemplateRestrictedEditor) setTimeout(() => window.applyUDDefaultTemplateRestrictedEditor(), 80);
             } else if(categoryId === 'mahar') {
