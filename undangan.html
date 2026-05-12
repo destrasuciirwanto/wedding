@@ -469,6 +469,314 @@
             body.ud-cover-huge #hero h2 { transform: scale(1.04); }
         }
 
+        /* =====================================================
+           SUPER MATERIAL DECOR PACK - dari dashboard Undangan Digital
+           Hanya aktif kalau designPackText memilih class ud-* di body.
+        ===================================================== */
+        body.ud-decor-none::before, body.ud-decor-none::after { display: none !important; }
+        body.ud-decor-soft { --ud-decor-opacity: .10; --ud-decor-size: 7rem; }
+        body.ud-decor-normal { --ud-decor-opacity: .16; --ud-decor-size: 9rem; }
+        body.ud-decor-extra { --ud-decor-opacity: .23; --ud-decor-size: 11rem; }
+        body.ud-decor-max { --ud-decor-opacity: .32; --ud-decor-size: 13rem; }
+        body[class*="ud-ornament-"]::before,
+        body[class*="ud-ornament-"]::after {
+            position: fixed;
+            z-index: 1;
+            pointer-events: none;
+            font-family: "Font Awesome 6 Free", serif;
+            font-weight: 900;
+            color: color-mix(in srgb, var(--ud-primary) 70%, var(--ud-accent));
+            opacity: var(--ud-decor-opacity, .16);
+            font-size: var(--ud-decor-size, 9rem);
+            line-height: 1;
+            filter: blur(.2px);
+        }
+        body[class*="ud-ornament-"]::before { left: -1.6rem; top: 14vh; transform: rotate(-14deg); }
+        body[class*="ud-ornament-"]::after { right: -1.2rem; bottom: 12vh; transform: rotate(12deg); }
+        body.ud-ornament-floral::before, body.ud-ornament-floral::after { content: "\273F"; }
+        body.ud-ornament-rose::before, body.ud-ornament-rose::after { content: "\273E"; }
+        body.ud-ornament-orchid::before, body.ud-ornament-orchid::after { content: "\2740"; }
+        body.ud-ornament-jasmine::before, body.ud-ornament-jasmine::after { content: "\2741"; }
+        body.ud-ornament-birds::before, body.ud-ornament-birds::after { content: "\f4ba"; }
+        body.ud-ornament-butterfly::before, body.ud-ornament-butterfly::after { content: "\2726"; }
+        body.ud-ornament-garden::before, body.ud-ornament-garden::after,
+        body.ud-ornament-leaf::before, body.ud-ornament-leaf::after { content: "\f06c"; }
+        body.ud-ornament-star::before, body.ud-ornament-star::after { content: "\f005"; }
+        body.ud-ornament-cloud::before, body.ud-ornament-cloud::after { content: "\f0c2"; }
+        body.ud-ornament-lantern::before, body.ud-ornament-lantern::after { content: "\2727"; }
+        body.ud-ornament-none::before, body.ud-ornament-none::after { display: none; }
+
+        body.ud-pattern-soft-flower { background-image: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--ud-primary) 14%, transparent) 0 3px, transparent 4px), radial-gradient(circle at 82% 28%, color-mix(in srgb, var(--ud-accent) 12%, transparent) 0 2px, transparent 3px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 46px 46px, 62px 62px, auto; }
+        body.ud-pattern-leaf { background-image: radial-gradient(ellipse at 20% 30%, color-mix(in srgb, var(--ud-primary) 16%, transparent), transparent 32%), radial-gradient(ellipse at 80% 60%, color-mix(in srgb, var(--ud-accent) 12%, transparent), transparent 32%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-cloud { background-image: radial-gradient(circle at 18% 14%, color-mix(in srgb, white 60%, transparent), transparent 24%), radial-gradient(circle at 74% 22%, color-mix(in srgb, var(--ud-secondary) 32%, transparent), transparent 28%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-sparkle { background-image: radial-gradient(circle at 25% 25%, color-mix(in srgb, var(--ud-accent) 35%, transparent) 0 1px, transparent 2px), radial-gradient(circle at 75% 35%, color-mix(in srgb, var(--ud-primary) 30%, transparent) 0 1px, transparent 2px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 34px 34px, 52px 52px, auto; }
+        body.ud-pattern-dots { background-image: radial-gradient(color-mix(in srgb, var(--ud-primary) 20%, transparent) 1px, transparent 1.5px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 24px 24px, auto; }
+        body.ud-pattern-grid { background-image: linear-gradient(color-mix(in srgb, var(--ud-primary) 12%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ud-primary) 12%, transparent) 1px, transparent 1px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 42px 42px, 42px 42px, auto; }
+        body.ud-pattern-arabesque { background-image: radial-gradient(circle at 0 0, color-mix(in srgb, var(--ud-accent) 14%, transparent) 0 2px, transparent 3px), radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ud-primary) 12%, transparent) 0 2px, transparent 3px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 38px 38px, 38px 38px, auto; }
+
+        body.ud-material-paper { --ud-card-bg: color-mix(in srgb, var(--ud-card-bg) 84%, #fffaf0) !important; }
+        body.ud-material-linen .glass-panel, body.ud-material-linen .soft-card { background-image: linear-gradient(45deg, rgba(255,255,255,.08) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,.08) 25%, transparent 25%) !important; background-size: 12px 12px !important; }
+        body.ud-material-silk .glass-panel, body.ud-material-silk .soft-card { background-image: linear-gradient(135deg, rgba(255,255,255,.30), transparent 38%, rgba(255,255,255,.18)) !important; }
+        body.ud-material-vellum .glass-panel, body.ud-material-vellum .soft-card { backdrop-filter: blur(calc(var(--ud-card-blur) + 8px)) saturate(1.15) !important; -webkit-backdrop-filter: blur(calc(var(--ud-card-blur) + 8px)) saturate(1.15) !important; }
+        body.ud-material-velvet { --ud-card-shadow: 0 24px 80px color-mix(in srgb, var(--ud-accent) 28%, transparent) !important; }
+
+        #cover-screen::before, #hero::before { pointer-events: none; }
+        body[class*="ud-corner-"] #cover-screen::before,
+        body[class*="ud-corner-"] #hero::before {
+            content: "";
+            position: absolute;
+            inset: .8rem;
+            z-index: 2;
+            border-radius: 2rem;
+            border: 1px solid color-mix(in srgb, var(--ud-accent) 34%, transparent);
+            opacity: .55;
+            box-shadow: inset 0 0 0 1px color-mix(in srgb, white 30%, transparent);
+        }
+        body.ud-corner-none #cover-screen::before, body.ud-corner-none #hero::before { display: none; }
+        body.ud-corner-lace #cover-screen::before, body.ud-corner-lace #hero::before { border-style: double; border-width: 4px; }
+        body.ud-corner-cloud #cover-screen::before, body.ud-corner-cloud #hero::before { border-radius: 3rem; border-style: dashed; }
+
+        body.ud-frame-soft-line section > .max-w-6xl, body.ud-frame-soft-line section > .max-w-4xl { outline: 1px solid color-mix(in srgb, var(--ud-primary) 12%, transparent); outline-offset: 1rem; }
+        body.ud-frame-gold-line section > .max-w-6xl, body.ud-frame-gold-line section > .max-w-4xl { outline: 1px solid color-mix(in srgb, var(--ud-accent) 38%, transparent); outline-offset: 1rem; }
+        body.ud-frame-double-line section > .max-w-6xl, body.ud-frame-double-line section > .max-w-4xl { outline: 3px double color-mix(in srgb, var(--ud-accent) 32%, transparent); outline-offset: 1rem; }
+        body.ud-frame-floral-frame section > .max-w-6xl, body.ud-frame-floral-frame section > .max-w-4xl,
+        body.ud-frame-botanical section > .max-w-6xl, body.ud-frame-botanical section > .max-w-4xl,
+        body.ud-frame-lace section > .max-w-6xl, body.ud-frame-lace section > .max-w-4xl,
+        body.ud-frame-royal-line section > .max-w-6xl, body.ud-frame-royal-line section > .max-w-4xl { border: 1px solid color-mix(in srgb, var(--ud-accent) 25%, transparent); border-radius: 2.2rem; padding-left: clamp(1rem, 3vw, 2rem); padding-right: clamp(1rem, 3vw, 2rem); }
+
+        body.ud-title-sparkle h2.font-serif::after, body.ud-title-sparkle h3.font-serif::after { content: "  \2726"; color: var(--ud-accent); }
+        body.ud-title-flower h2.font-serif::after, body.ud-title-flower h3.font-serif::after { content: "  \273F"; color: var(--ud-primary); }
+        body.ud-title-leaf h2.font-serif::after, body.ud-title-leaf h3.font-serif::after { content: "  \f06c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-primary); }
+        body.ud-title-wings h2.font-serif::after, body.ud-title-wings h3.font-serif::after { content: "  \f4ba"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-accent); }
+        body.ud-title-crown h2.font-serif::after, body.ud-title-crown h3.font-serif::after { content: "  \f521"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-accent); }
+
+        body.ud-divider-floral .fa-pagelines::before { content: "\273F"; }
+        body.ud-divider-birds .fa-pagelines::before { content: "\f4ba"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-butterfly .fa-pagelines::before { content: "\2726"; }
+        body.ud-divider-leaf .fa-pagelines::before { content: "\f06c"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-sparkle .fa-pagelines::before { content: "\2726"; }
+        body.ud-divider-ornate .fa-pagelines::before { content: "\2727"; }
+
+        body.ud-cardaccent-gold-line .glass-panel, body.ud-cardaccent-gold-line .soft-card { border-color: color-mix(in srgb, var(--ud-accent) 36%, white) !important; }
+        body.ud-cardaccent-left-line .glass-panel, body.ud-cardaccent-left-line .soft-card { border-left: 4px solid var(--ud-accent) !important; }
+        body.ud-cardaccent-double-line .glass-panel, body.ud-cardaccent-double-line .soft-card { border-style: double !important; border-width: 3px !important; }
+        body.ud-cardaccent-petal .glass-panel::after, body.ud-cardaccent-petal .soft-card::after { content: "\273F"; position: absolute; right: 1.2rem; top: 1rem; opacity: .18; color: var(--ud-primary); font-size: 2rem; pointer-events: none; }
+
+        body.ud-galleryhover-float .img-zoom-container:hover { transform: translateY(-6px); }
+        body.ud-galleryhover-shine .img-zoom-container::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent); transform:translateX(-120%); transition:.7s ease; pointer-events:none; }
+        body.ud-galleryhover-shine .img-zoom-container:hover::after { transform:translateX(120%); }
+        body.ud-galleryhover-lift .img-zoom-container:hover { transform: translateY(-3px) scale(1.01); }
+        body.ud-galleryhover-none .img-zoom-container img, body.ud-galleryhover-none .img-zoom-container:hover img { transform: none !important; }
+
+        body.ud-coupleframe-floral-ring #mempelai img, body.ud-coupleframe-leaf-ring #mempelai img { box-shadow: 0 0 0 8px color-mix(in srgb, var(--ud-primary) 18%, transparent), 0 18px 40px rgba(0,0,0,.14) !important; }
+        body.ud-coupleframe-halo #mempelai img { box-shadow: 0 0 34px color-mix(in srgb, var(--ud-accent) 55%, transparent) !important; }
+        body.ud-coupleframe-royal #mempelai img { border-color: var(--ud-accent) !important; box-shadow: 0 0 0 7px color-mix(in srgb, var(--ud-accent) 22%, transparent), 0 24px 60px rgba(0,0,0,.16) !important; }
+        body.ud-coupleframe-soft-shadow #mempelai img { box-shadow: 0 24px 54px color-mix(in srgb, var(--ud-primary) 30%, transparent) !important; }
+
+        body.ud-badge-ribbon .section-badge { border-radius: .45rem !important; box-shadow: 8px 8px 0 color-mix(in srgb, var(--ud-primary) 10%, transparent); }
+        body.ud-badge-outline .section-badge { background: transparent !important; border: 1px solid var(--ud-primary); }
+        body.ud-badge-leaf .section-badge::before { content: "\f06c  "; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-badge-soft .section-badge { background: color-mix(in srgb, var(--ud-secondary) 55%, white) !important; }
+
+        body.ud-menuicon-circle #menu a i { width: 2.2rem; height: 2.2rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--ud-primary) 15%, transparent); }
+        body.ud-menuicon-diamond #menu a i { width: 2.1rem; height: 2.1rem; transform: rotate(45deg); border-radius: .5rem; display: inline-flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--ud-accent) 16%, transparent); }
+        body.ud-menuicon-diamond #menu a i::before { transform: rotate(-45deg); }
+        body.ud-menuicon-floating #menu a i { filter: drop-shadow(0 10px 12px color-mix(in srgb, var(--ud-primary) 28%, transparent)); }
+        body.ud-menuicon-minimal #menu a i { background: none !important; width: auto !important; height: auto !important; }
+
+        body.ud-storyline-flower-dot .timeline-line::before { background: linear-gradient(to bottom, transparent, var(--ud-primary), var(--ud-accent), transparent) !important; }
+        body.ud-storyline-leaf .timeline-line::before { background: linear-gradient(to bottom, transparent, #8F9779, transparent) !important; }
+        body.ud-storyline-gold-line .timeline-line::before { background: linear-gradient(to bottom, transparent, var(--ud-accent), transparent) !important; }
+        body.ud-storyline-soft .timeline-line::before { opacity: .45; }
+        body.ud-storyline-minimal .timeline-line::before { background: #e5e7eb !important; }
+
+        body.ud-eventcard-royal #event .glass-panel { border-color: color-mix(in srgb, var(--ud-accent) 46%, white) !important; box-shadow: 0 26px 70px color-mix(in srgb, var(--ud-accent) 18%, transparent) !important; }
+        body.ud-eventcard-botanical #event .glass-panel { background-image: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--ud-primary) 15%, transparent), transparent 35%) !important; }
+        body.ud-eventcard-clean #event .glass-panel { box-shadow: none !important; backdrop-filter: none !important; }
+        body.ud-eventcard-glass #event .glass-panel { backdrop-filter: blur(24px) saturate(1.2) !important; -webkit-backdrop-filter: blur(24px) saturate(1.2) !important; }
+
+        body.ud-giftcard-luxury #gift .soft-card, body.ud-giftcard-luxury #gift .glass-panel { border-color: color-mix(in srgb, var(--ud-accent) 42%, white) !important; }
+        body.ud-giftcard-clean #gift .soft-card, body.ud-giftcard-clean #gift .glass-panel { box-shadow: none !important; }
+        body.ud-footer-floral footer::before, body.ud-footer-birds footer::before, body.ud-footer-leaf footer::before, body.ud-footer-sparkle footer::before, body.ud-footer-ornate footer::before, body.ud-footer-cloud footer::before { display: block; margin-bottom: 1.2rem; color: var(--ud-accent); opacity: .85; font-size: 2rem; }
+        body.ud-footer-floral footer::before { content: "\273F"; }
+        body.ud-footer-birds footer::before { content: "\f4ba"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-footer-leaf footer::before { content: "\f06c"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-footer-sparkle footer::before { content: "\2726"; }
+        body.ud-footer-ornate footer::before { content: "\2727"; }
+        body.ud-footer-cloud footer::before { content: "\f0c2"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+
+
+        /* ULTRA MATERIAL V2 - tambahan kategori besar dari dashboard */
+        body.ud-ornament-peony::before, body.ud-ornament-peony::after { content: "\2741"; }
+        body.ud-ornament-lotus::before, body.ud-ornament-lotus::after { content: "\273F"; }
+        body.ud-ornament-dove::before, body.ud-ornament-dove::after { content: "\f4ba"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-swan::before, body.ud-ornament-swan::after { content: "\f4ba"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-hummingbird::before, body.ud-ornament-hummingbird::after { content: "\f52d"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-olive::before, body.ud-ornament-olive::after,
+        body.ud-ornament-palm::before, body.ud-ornament-palm::after,
+        body.ud-ornament-fern::before, body.ud-ornament-fern::after { content: "\f06c"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-fairy::before, body.ud-ornament-fairy::after,
+        body.ud-ornament-sparkle::before, body.ud-ornament-sparkle::after,
+        body.ud-ornament-firefly::before, body.ud-ornament-firefly::after { content: "\2728"; }
+        body.ud-ornament-moon::before, body.ud-ornament-moon::after { content: "\f186"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-pearl::before, body.ud-ornament-pearl::after { content: "\25CF"; }
+        body.ud-ornament-chandelier::before, body.ud-ornament-chandelier::after { content: "\2726"; }
+        body.ud-ornament-lace::before, body.ud-ornament-lace::after { content: "\2727"; }
+        body.ud-ornament-marble::before, body.ud-ornament-marble::after { content: "\25C8"; }
+        body.ud-ornament-goldfoil::before, body.ud-ornament-goldfoil::after { content: "\2726"; color: var(--ud-accent); }
+        body.ud-ornament-watercolor::before, body.ud-ornament-watercolor::after { content: "\273F"; filter: blur(1.6px); }
+        body.ud-ornament-glass::before, body.ud-ornament-glass::after { content: "\25C7"; }
+        body.ud-ornament-batik::before, body.ud-ornament-batik::after,
+        body.ud-ornament-songket::before, body.ud-ornament-songket::after,
+        body.ud-ornament-jawa::before, body.ud-ornament-jawa::after,
+        body.ud-ornament-nusantara::before, body.ud-ornament-nusantara::after { content: "\2727"; }
+        body.ud-ornament-islamic::before, body.ud-ornament-islamic::after,
+        body.ud-ornament-mosque::before, body.ud-ornament-mosque::after { content: "\f678"; font-family: "Font Awesome 6 Free"; }
+        body.ud-ornament-beach::before, body.ud-ornament-beach::after { content: "\224B"; }
+        body.ud-ornament-rustic::before, body.ud-ornament-rustic::after { content: "\f06c"; font-family: "Font Awesome 6 Free"; color: #8F9779; }
+        body.ud-ornament-sunset::before, body.ud-ornament-sunset::after { content: "\2600"; color: var(--ud-accent); }
+        body.ud-ornament-monochrome::before, body.ud-ornament-monochrome::after { content: "\25CB"; }
+
+        body.ud-pattern-floral-dust { background-image: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--ud-primary) 18%, transparent) 0 2px, transparent 3px), radial-gradient(circle at 70% 42%, color-mix(in srgb, var(--ud-secondary) 28%, transparent) 0 3px, transparent 4px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 34px 34px, 52px 52px, auto; }
+        body.ud-pattern-petal-rain { background-image: radial-gradient(ellipse at 20% 10%, color-mix(in srgb, var(--ud-primary) 24%, transparent), transparent 18%), radial-gradient(ellipse at 80% 35%, color-mix(in srgb, var(--ud-secondary) 30%, transparent), transparent 22%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-garden-vine { background-image: linear-gradient(120deg, transparent 0 45%, color-mix(in srgb, #8F9779 10%, transparent) 45% 46%, transparent 46% 100%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 72px 72px, auto; }
+        body.ud-pattern-stars { background-image: radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--ud-accent) 45%, transparent) 0 1px, transparent 2px), radial-gradient(circle at 74% 38%, color-mix(in srgb, white 70%, transparent) 0 1px, transparent 2px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 42px 42px, 64px 64px, auto; }
+        body.ud-pattern-pearl { background-image: radial-gradient(circle, color-mix(in srgb, white 76%, var(--ud-primary)) 0 2px, transparent 3px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 36px 36px, auto; }
+        body.ud-pattern-bokeh, body.ud-pattern-gradient-orb { background-image: radial-gradient(circle at 18% 20%, color-mix(in srgb, var(--ud-primary) 30%, transparent), transparent 26%), radial-gradient(circle at 82% 26%, color-mix(in srgb, var(--ud-accent) 22%, transparent), transparent 26%), radial-gradient(circle at 50% 80%, color-mix(in srgb, var(--ud-secondary) 36%, transparent), transparent 30%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-watercolor { background-image: radial-gradient(ellipse at 12% 10%, color-mix(in srgb, var(--ud-primary) 26%, transparent), transparent 34%), radial-gradient(ellipse at 90% 28%, color-mix(in srgb, var(--ud-secondary) 38%, transparent), transparent 36%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-marble { background-image: linear-gradient(125deg, color-mix(in srgb, var(--ud-bg) 94%, white), color-mix(in srgb, var(--ud-primary) 7%, var(--ud-bg-2)) 45%, color-mix(in srgb, var(--ud-accent) 8%, var(--ud-bg)) 46%, var(--ud-bg-2)) !important; }
+        body.ud-pattern-lace { background-image: radial-gradient(circle at 0 50%, color-mix(in srgb, var(--ud-primary) 12%, transparent) 0 8px, transparent 9px), radial-gradient(circle at 100% 50%, color-mix(in srgb, var(--ud-accent) 10%, transparent) 0 8px, transparent 9px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 42px 42px, 42px 42px, auto; }
+        body.ud-pattern-batik, body.ud-pattern-songket { background-image: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--ud-accent) 18%, transparent) 0 3px, transparent 4px), radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--ud-primary) 18%, transparent) 0 3px, transparent 4px), linear-gradient(45deg, transparent 0 48%, color-mix(in srgb, var(--ud-accent) 10%, transparent) 48% 52%, transparent 52% 100%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 44px 44px, 44px 44px, 88px 88px, auto; }
+        body.ud-pattern-wave { background-image: radial-gradient(ellipse at 20% 100%, color-mix(in srgb, var(--ud-primary) 18%, transparent), transparent 34%), radial-gradient(ellipse at 80% 0%, color-mix(in srgb, var(--ud-accent) 12%, transparent), transparent 30%), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-diagonal { background-image: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ud-primary) 9%, transparent) 0 1px, transparent 1px 18px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; }
+        body.ud-pattern-confetti { background-image: radial-gradient(circle at 22% 28%, var(--ud-primary) 0 1px, transparent 2px), radial-gradient(circle at 72% 42%, var(--ud-accent) 0 1px, transparent 2px), linear-gradient(135deg, var(--ud-bg), var(--ud-bg-2)) !important; background-size: 38px 38px, 56px 56px, auto; }
+
+        body.ud-material-handmade .glass-panel, body.ud-material-handmade .soft-card { background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,.20), transparent 18%), linear-gradient(135deg, rgba(255,250,240,.28), transparent) !important; }
+        body.ud-material-canvas .glass-panel, body.ud-material-canvas .soft-card { background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 5px) !important; }
+        body.ud-material-satin .glass-panel, body.ud-material-satin .soft-card { background-image: linear-gradient(120deg, rgba(255,255,255,.34), transparent 42%, rgba(255,255,255,.22) 72%, transparent) !important; }
+        body.ud-material-glass .glass-panel, body.ud-material-glass .soft-card { background: color-mix(in srgb, var(--ud-card-bg) 54%, transparent) !important; backdrop-filter: blur(calc(var(--ud-card-blur) + 12px)) saturate(1.25) !important; -webkit-backdrop-filter: blur(calc(var(--ud-card-blur) + 12px)) saturate(1.25) !important; }
+        body.ud-material-marble .glass-panel, body.ud-material-marble .soft-card { background-image: linear-gradient(135deg, rgba(255,255,255,.28), transparent 36%, rgba(212,175,55,.08) 37%, transparent 40%) !important; }
+        body.ud-material-watercolor .glass-panel, body.ud-material-watercolor .soft-card { background-image: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ud-primary) 14%, transparent), transparent 32%), radial-gradient(circle at 100% 18%, color-mix(in srgb, var(--ud-secondary) 22%, transparent), transparent 36%) !important; }
+        body.ud-material-pearl .glass-panel, body.ud-material-pearl .soft-card { background: color-mix(in srgb, var(--ud-card-bg) 82%, white) !important; box-shadow: 0 18px 60px color-mix(in srgb, white 24%, var(--ud-primary)) !important; }
+        body.ud-material-goldfoil .glass-panel, body.ud-material-goldfoil .soft-card { border-color: color-mix(in srgb, var(--ud-accent) 42%, white) !important; box-shadow: 0 24px 70px color-mix(in srgb, var(--ud-accent) 18%, transparent) !important; }
+        body.ud-material-lace .glass-panel, body.ud-material-lace .soft-card { background-image: radial-gradient(circle at 0 50%, rgba(255,255,255,.18) 0 8px, transparent 9px), radial-gradient(circle at 100% 50%, rgba(255,255,255,.14) 0 8px, transparent 9px) !important; background-size: 38px 38px !important; }
+
+        body.ud-frame-garden-frame section > .max-w-6xl, body.ud-frame-garden-frame section > .max-w-4xl,
+        body.ud-frame-pearl-frame section > .max-w-6xl, body.ud-frame-pearl-frame section > .max-w-4xl,
+        body.ud-frame-watercolor-frame section > .max-w-6xl, body.ud-frame-watercolor-frame section > .max-w-4xl,
+        body.ud-frame-arch-frame section > .max-w-6xl, body.ud-frame-arch-frame section > .max-w-4xl,
+        body.ud-frame-mosque-arch section > .max-w-6xl, body.ud-frame-mosque-arch section > .max-w-4xl,
+        body.ud-frame-batik-frame section > .max-w-6xl, body.ud-frame-batik-frame section > .max-w-4xl,
+        body.ud-frame-songket-frame section > .max-w-6xl, body.ud-frame-songket-frame section > .max-w-4xl,
+        body.ud-frame-marble-frame section > .max-w-6xl, body.ud-frame-marble-frame section > .max-w-4xl,
+        body.ud-frame-ribbon-frame section > .max-w-6xl, body.ud-frame-ribbon-frame section > .max-w-4xl,
+        body.ud-frame-vintage-frame section > .max-w-6xl, body.ud-frame-vintage-frame section > .max-w-4xl { border: 1px solid color-mix(in srgb, var(--ud-accent) 25%, transparent); border-radius: 2.2rem; padding-left: clamp(1rem, 3vw, 2rem); padding-right: clamp(1rem, 3vw, 2rem); }
+        body.ud-frame-pearl-frame section > .max-w-6xl, body.ud-frame-pearl-frame section > .max-w-4xl { border-style: dotted; }
+        body.ud-frame-mosque-arch section > .max-w-6xl, body.ud-frame-arch-frame section > .max-w-6xl { border-radius: 3rem 3rem 1.5rem 1.5rem; }
+        body.ud-frame-batik-frame section > .max-w-6xl, body.ud-frame-songket-frame section > .max-w-6xl { border-style: double; }
+
+        body.ud-title-bouquet h2.font-serif::after, body.ud-title-bouquet h3.font-serif::after { content: "  \273F"; color: var(--ud-primary); }
+        body.ud-title-heart h2.font-serif::after, body.ud-title-heart h3.font-serif::after { content: "  \2665"; color: var(--ud-primary); }
+        body.ud-title-pearl h2.font-serif::after, body.ud-title-pearl h3.font-serif::after { content: "  \25CF"; color: white; text-shadow: 0 0 8px var(--ud-primary); }
+        body.ud-title-moon h2.font-serif::after, body.ud-title-moon h3.font-serif::after { content: "  \f186"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-accent); }
+        body.ud-title-arch h2.font-serif::after, body.ud-title-arch h3.font-serif::after { content: "  \f557"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-accent); }
+        body.ud-title-ribbon h2.font-serif::after, body.ud-title-ribbon h3.font-serif::after { content: "  \f4d6"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-primary); }
+        body.ud-title-diamond h2.font-serif::after, body.ud-title-diamond h3.font-serif::after { content: "  \f3a5"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--ud-accent); }
+
+        body.ud-divider-rose .fa-pagelines::before { content: "\273E"; }
+        body.ud-divider-dove .fa-pagelines::before { content: "\f4ba"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-pearl .fa-pagelines::before { content: "\25CF"; }
+        body.ud-divider-lace .fa-pagelines::before { content: "\2727"; }
+        body.ud-divider-arch .fa-pagelines::before { content: "\f557"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-batik .fa-pagelines::before { content: "\2727"; }
+        body.ud-divider-wave .fa-pagelines::before { content: "\224B"; }
+        body.ud-divider-ribbon .fa-pagelines::before { content: "\f4d6"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-moon .fa-pagelines::before { content: "\f186"; font-family: "Font Awesome 6 Free"; }
+        body.ud-divider-hearts .fa-pagelines::before { content: "\2665"; }
+        body.ud-divider-dots .fa-pagelines::before { content: "\2022"; }
+
+        body.ud-cardaccent-top-line .glass-panel, body.ud-cardaccent-top-line .soft-card { border-top: 4px solid var(--ud-accent) !important; }
+        body.ud-cardaccent-ribbon .glass-panel::after, body.ud-cardaccent-ribbon .soft-card::after { content: ""; position: absolute; top: 0; right: 1.5rem; width: 1.2rem; height: 3.2rem; background: linear-gradient(var(--ud-primary), var(--ud-accent)); border-radius: 0 0 .7rem .7rem; opacity: .24; pointer-events: none; }
+        body.ud-cardaccent-pearl .glass-panel, body.ud-cardaccent-pearl .soft-card { box-shadow: var(--ud-card-shadow), inset 0 0 0 1px color-mix(in srgb, white 62%, transparent) !important; }
+        body.ud-cardaccent-corner-glow .glass-panel, body.ud-cardaccent-corner-glow .soft-card { box-shadow: var(--ud-card-shadow), 0 0 38px color-mix(in srgb, var(--ud-primary) 16%, transparent) !important; }
+        body.ud-cardaccent-leaf-corner .glass-panel::after, body.ud-cardaccent-leaf-corner .soft-card::after { content: "\f06c"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 1.2rem; top: 1rem; opacity: .16; color: #8F9779; font-size: 2rem; pointer-events: none; }
+        body.ud-cardaccent-floral-corner .glass-panel::after, body.ud-cardaccent-floral-corner .soft-card::after { content: "\273F"; position: absolute; right: 1.2rem; top: 1rem; opacity: .18; color: var(--ud-primary); font-size: 2rem; pointer-events: none; }
+        body.ud-cardaccent-luxe-shadow .glass-panel, body.ud-cardaccent-luxe-shadow .soft-card { box-shadow: 0 28px 80px color-mix(in srgb, var(--ud-accent) 24%, transparent) !important; }
+        body.ud-cardaccent-watercolor .glass-panel, body.ud-cardaccent-watercolor .soft-card { background-image: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--ud-primary) 16%, transparent), transparent 30%) !important; }
+        body.ud-cardaccent-stamp .glass-panel, body.ud-cardaccent-stamp .soft-card { border-style: dashed !important; }
+
+        body.ud-galleryhover-soft-zoom .img-zoom-container:hover img { transform: scale(1.06) !important; }
+        body.ud-galleryhover-tilt .img-zoom-container:hover { transform: rotate(-1deg) translateY(-3px); }
+        body.ud-galleryhover-spotlight .img-zoom-container:hover { box-shadow: 0 24px 70px color-mix(in srgb, var(--ud-accent) 28%, transparent); }
+        body.ud-galleryhover-polaroid .img-zoom-container { padding: .5rem .5rem 1.2rem !important; background: white; transform: rotate(-.3deg); }
+        body.ud-galleryhover-grayscale .img-zoom-container img { filter: grayscale(.75); }
+        body.ud-galleryhover-grayscale .img-zoom-container:hover img { filter: grayscale(0); }
+
+        body.ud-coupleframe-pearl-ring #mempelai img { box-shadow: 0 0 0 8px color-mix(in srgb, white 70%, var(--ud-primary)), 0 20px 54px rgba(0,0,0,.12) !important; }
+        body.ud-coupleframe-flower-crown #mempelai img { box-shadow: 0 0 0 8px color-mix(in srgb, var(--ud-primary) 22%, transparent), 0 0 0 14px color-mix(in srgb, var(--ud-secondary) 22%, transparent) !important; }
+        body.ud-coupleframe-arch #mempelai img { border-radius: 50% 50% 8% 8% !important; }
+        body.ud-coupleframe-oval #mempelai img, body.ud-coupleframe-botanical-oval #mempelai img { border-radius: 44% !important; }
+        body.ud-coupleframe-polaroid #mempelai img { border-radius: .5rem !important; padding: .35rem; background: white; }
+        body.ud-coupleframe-double-gold #mempelai img { box-shadow: 0 0 0 4px white, 0 0 0 10px var(--ud-accent), 0 22px 56px rgba(0,0,0,.16) !important; }
+        body.ud-coupleframe-lace #mempelai img { border-style: double !important; border-color: var(--ud-primary) !important; }
+
+        body.ud-badge-flower .section-badge::before { content: "\273F  "; }
+        body.ud-badge-pearl .section-badge::before { content: "\25CF  "; color: white; }
+        body.ud-badge-arch .section-badge::before { content: "\f557  "; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-badge-stamp .section-badge { border-radius: .35rem !important; border: 1px dashed var(--ud-primary); }
+        body.ud-badge-goldbar .section-badge { background: var(--ud-accent) !important; color: white !important; }
+        body.ud-badge-minimal-line .section-badge { background: transparent !important; border-bottom: 1px solid var(--ud-primary); border-radius: 0 !important; }
+
+        body.ud-menuicon-square #menu a i, body.ud-menuicon-softbox #menu a i, body.ud-menuicon-pearl #menu a i, body.ud-menuicon-golddisc #menu a i, body.ud-menuicon-arch #menu a i { width: 2.2rem; height: 2.2rem; display: inline-flex; align-items: center; justify-content: center; }
+        body.ud-menuicon-square #menu a i { border-radius: .7rem; background: color-mix(in srgb, var(--ud-primary) 14%, transparent); }
+        body.ud-menuicon-softbox #menu a i { border-radius: .9rem; background: color-mix(in srgb, var(--ud-secondary) 40%, transparent); }
+        body.ud-menuicon-pearl #menu a i { border-radius: 999px; background: color-mix(in srgb, white 70%, var(--ud-primary)); }
+        body.ud-menuicon-golddisc #menu a i { border-radius: 999px; background: var(--ud-accent); color: white !important; }
+        body.ud-menuicon-arch #menu a i { border-radius: 1rem 1rem .45rem .45rem; background: color-mix(in srgb, var(--ud-accent) 14%, transparent); }
+
+        body.ud-storyline-vine .timeline-line::before { background: linear-gradient(to bottom, transparent, #8F9779, var(--ud-primary), transparent) !important; }
+        body.ud-storyline-pearl .timeline-line::before { background: radial-gradient(circle, white 0 3px, transparent 4px) 0 0/12px 20px repeat-y !important; }
+        body.ud-storyline-hearts .timeline-line::before { background: linear-gradient(to bottom, transparent, var(--ud-primary), transparent) !important; }
+        body.ud-storyline-dots .timeline-line::before { background: radial-gradient(circle, var(--ud-accent) 0 2px, transparent 3px) 0 0/8px 16px repeat-y !important; }
+        body.ud-storyline-arch .timeline-line::before { background: linear-gradient(to bottom, transparent, var(--ud-accent), var(--ud-primary), transparent) !important; }
+        body.ud-storyline-luxe .timeline-line::before { background: linear-gradient(to bottom, transparent, var(--ud-accent), white, var(--ud-accent), transparent) !important; }
+        body.ud-storyline-batik .timeline-line::before { background: repeating-linear-gradient(to bottom, var(--ud-accent) 0 8px, transparent 8px 15px) !important; }
+
+        body.ud-eventcard-arch #event .glass-panel, body.ud-eventcard-mosque #event .glass-panel { border-radius: 3rem 3rem 1.5rem 1.5rem !important; }
+        body.ud-eventcard-pearl #event .glass-panel { border-color: color-mix(in srgb, white 70%, var(--ud-primary)) !important; }
+        body.ud-eventcard-garden #event .glass-panel { background-image: radial-gradient(circle at 100% 0, color-mix(in srgb, #8F9779 18%, transparent), transparent 35%) !important; }
+        body.ud-eventcard-cinematic #event .glass-panel { box-shadow: 0 30px 90px rgba(15,23,42,.18) !important; }
+        body.ud-eventcard-ticket #event .glass-panel { border-style: dashed !important; }
+        body.ud-eventcard-magazine #event .glass-panel { border-radius: .75rem !important; box-shadow: none !important; }
+        body.ud-eventcard-watercolor #event .glass-panel { background-image: radial-gradient(circle at 0 0, color-mix(in srgb, var(--ud-primary) 18%, transparent), transparent 35%) !important; }
+
+        body.ud-giftcard-pearl #gift .soft-card, body.ud-giftcard-pearl #gift .glass-panel { border-color: color-mix(in srgb, white 70%, var(--ud-primary)) !important; }
+        body.ud-giftcard-envelope #gift .soft-card, body.ud-giftcard-envelope #gift .glass-panel { border-radius: 1rem !important; border-style: dashed !important; }
+        body.ud-giftcard-bank-card #gift .soft-card, body.ud-giftcard-bank-card #gift .glass-panel { border-radius: 1.2rem !important; }
+        body.ud-giftcard-qris-glow #gift .soft-card, body.ud-giftcard-qris-glow #gift .glass-panel { box-shadow: 0 24px 70px color-mix(in srgb, var(--ud-primary) 28%, transparent) !important; }
+        body.ud-giftcard-royal-box #gift .soft-card, body.ud-giftcard-royal-box #gift .glass-panel { border-style: double !important; border-width: 3px !important; }
+        body.ud-giftcard-minimal-line #gift .soft-card, body.ud-giftcard-minimal-line #gift .glass-panel { box-shadow: none !important; border-top: 3px solid var(--ud-accent) !important; }
+
+        body.ud-footer-rose footer::before, body.ud-footer-peony footer::before, body.ud-footer-butterfly footer::before, body.ud-footer-dove footer::before, body.ud-footer-pearl footer::before, body.ud-footer-moon footer::before, body.ud-footer-lantern footer::before, body.ud-footer-arch footer::before, body.ud-footer-batik footer::before, body.ud-footer-songket footer::before, body.ud-footer-lace footer::before, body.ud-footer-wave footer::before, body.ud-footer-heart footer::before { display: block; margin-bottom: 1.2rem; color: var(--ud-accent); opacity: .85; font-size: 2rem; }
+        body.ud-footer-rose footer::before { content: "\273E"; }
+        body.ud-footer-peony footer::before { content: "\2741"; }
+        body.ud-footer-butterfly footer::before { content: "\2726"; }
+        body.ud-footer-dove footer::before { content: "\f4ba"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-footer-pearl footer::before { content: "\25CF"; }
+        body.ud-footer-moon footer::before { content: "\f186"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-footer-lantern footer::before { content: "\2727"; }
+        body.ud-footer-arch footer::before { content: "\f557"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        body.ud-footer-batik footer::before, body.ud-footer-songket footer::before, body.ud-footer-lace footer::before { content: "\2727"; }
+        body.ud-footer-wave footer::before { content: "\224B"; }
+        body.ud-footer-heart footer::before { content: "\2665"; }
+
+
+        @media (max-width: 768px) {
+            body[class*="ud-ornament-"]::before, body[class*="ud-ornament-"]::after { font-size: calc(var(--ud-decor-size, 9rem) * .62); opacity: calc(var(--ud-decor-opacity, .16) * .75); }
+            body[class*="ud-corner-"] #cover-screen::before, body[class*="ud-corner-"] #hero::before { inset: .45rem; border-radius: 1.5rem; }
+            body.ud-frame-floral-frame section > .max-w-6xl, body.ud-frame-botanical section > .max-w-6xl, body.ud-frame-lace section > .max-w-6xl, body.ud-frame-royal-line section > .max-w-6xl { border: 0; padding-left: 1rem; padding-right: 1rem; }
+        }
+
 
     </style>
 
@@ -1643,7 +1951,14 @@
                 else if (config.type === 'bubbles') drawBubble(p);
                 else if (config.type === 'confetti') drawConfetti(p);
                 else if (config.type === 'fireflies') drawFirefly(p);
-                else if (config.type === 'glitter') drawTextParticle(p, '✦', '#D4AF37');
+                else if (config.type === 'glitter' || config.type === 'sparkle') drawTextParticle(p, '✦', '#D4AF37');
+                else if (config.type === 'flowers') drawTextParticle(p, '✿', '#E5A9B4');
+                else if (config.type === 'birds') drawTextParticle(p, '🕊️', '#FFFFFF');
+                else if (config.type === 'butterflies') drawTextParticle(p, '🦋', '#B084E6');
+                else if (config.type === 'leaves') drawTextParticle(p, '🍃', '#8F9779');
+                else if (config.type === 'pearls') drawTextParticle(p, '•', '#FFFFFF');
+                else if (config.type === 'lanterns') drawTextParticle(p, '✧', '#D4AF37');
+                else if (config.type === 'petal') drawSakura(p);
                 else drawSakura(p);
             }
 
@@ -1810,7 +2125,7 @@
             faqItemsText: 'Apakah tamu boleh membawa pasangan?|Silakan menyesuaikan dengan jumlah tamu yang tertera pada link undangan atau RSVP.\nApakah wajib menunjukkan QR Code?|Ya. QR Code membantu penerima tamu melakukan pendataan lebih cepat dan rapi.\nApakah tersedia live streaming?|Tersedia. Tautan live streaming dapat dibuka pada bagian Wedding Event.\nJam berapa sebaiknya tamu hadir?|Tamu resepsi dapat hadir mulai pukul 11.00 WIB. Untuk keluarga inti, silakan hadir lebih awal.\nApakah tersedia area parkir?|Tersedia area parkir di sekitar lokasi. Ikuti arahan petugas agar proses masuk lebih tertib.\nApakah ada dress code khusus?|Dress code yang diharuskan adalah Hitam.\nApakah boleh mengirim hadiah secara digital?|Boleh. Informasi rekening, QRIS, dan e-wallet tersedia pada bagian Wedding Gift.',
             extraElementsText: '',
             customBuilderText: '',
-            designPackText: '[tema]\npreset=sakura\nmode=gradient\n\n[warna]\nprimary=#E5A9B4\nsecondary=#FADADD\naccent=#D4AF37\nbg=#FFF5F7\nbg2=#FFFFFF\ntext=#2C3E50\nmuted=#64748B\ncard=rgba(255,255,255,.62)\nborder=rgba(255,255,255,.75)\n\n[font]\nheading=cormorant\nbody=montserrat\n\n[layout]\nwidth=72rem\nsectionPadding=5rem\nradius=2rem\nbuttonRadius=999px\ncardBlur=18px\nshadow=soft\ntextAlign=center\n\n[cover]\ncoverOverlay=linear-gradient(to bottom, rgba(26,18,21,.30), rgba(26,18,21,.80))\nheroOverlay=linear-gradient(to bottom, rgba(26,18,21,.60), rgba(26,18,21,.20), #FFF5F7)\nheroPosition=center\n\n[section]\nhideSections=\norder=menu,ayat,mempelai,sambutan,story,gallery,event,dresscode,rundown,info-tamu,gift,faq\n\n[media]\nimageRadius=1.5rem\ngalleryMode=grid',
+            designPackText: '[tema]\npreset=sakura\nmode=gradient\n\n[warna]\nprimary=#E5A9B4\nsecondary=#FADADD\naccent=#D4AF37\nbg=#FFF5F7\nbg2=#FFFFFF\ntext=#2C3E50\nmuted=#64748B\ncard=rgba(255,255,255,.62)\nborder=rgba(255,255,255,.75)\n\n[font]\nheading=cormorant\nbody=montserrat\n\n[layout]\nwidth=72rem\nsectionPadding=5rem\nradius=2rem\nbuttonRadius=999px\ncardBlur=18px\nshadow=soft\ntextAlign=center\n\n[cover]\ncoverOverlay=linear-gradient(to bottom, rgba(26,18,21,.30), rgba(26,18,21,.80))\nheroOverlay=linear-gradient(to bottom, rgba(26,18,21,.60), rgba(26,18,21,.20), #FFF5F7)\nheroPosition=center\n\n[section]\nhideSections=\norder=menu,ayat,mempelai,sambutan,story,gallery,event,dresscode,rundown,info-tamu,gift,faq\n\n[media]\nimageRadius=1.5rem\ngalleryMode=grid\ngalleryDensity=cozy\n\n[experience]\nnavStyle=bubble\ncoverScale=large\ncountdownStyle=glass\nsectionShape=soft\nreadability=comfort\ncontrast=normal\nmobileMode=balanced\ndecorDensity=normal\nornamentStyle=floral\ncornerDecor=floral\nbackgroundPattern=soft-flower\nframeStyle=soft-line\ndividerStyle=floral\ntitleOrnament=sparkle\nmaterialTexture=paper\ngalleryHover=zoom-glow\ncardAccent=gold-line\ncoupleFrame=floral-ring\niconSet=romantic\nsectionBadgeStyle=pill\nmenuIconStyle=circle\nstoryLineStyle=flower-dot\neventCardStyle=premium\ngiftCardStyle=luxury\nfooterDecor=floral',
             footerText: 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.',
             effectParticlesEnabled: 'on',
             effectParticleType: 'sakura',
@@ -2391,6 +2706,24 @@
             setPackClass('ud-readable-', udPackValue(pack, 'readability', 'keterbacaan'), ['normal', 'comfort', 'large'], 'comfort');
             document.body.classList.toggle('ud-high-contrast', (udPackValue(pack, 'contrast', 'kontras') || 'normal').toLowerCase() === 'high');
             setPackClass('ud-mobile-', udPackValue(pack, 'mobilemode', 'modehp'), ['balanced', 'fast', 'rich'], 'balanced');
+            setPackClass('ud-decor-', udPackValue(pack, 'decordensity', 'keramaianhiasan'), ['none', 'soft', 'normal', 'extra', 'max'], 'normal');
+            setPackClass('ud-ornament-', udPackValue(pack, 'ornamentstyle', 'ornamen', 'hiasan'), ['floral','rose','peony','orchid','jasmine','lotus','sakura','birds','dove','swan','hummingbird','butterfly','fairy','garden','leaf','olive','palm','fern','sparkle','star','moon','pearl','cloud','lantern','firefly','chandelier','lace','marble','goldfoil','watercolor','glass','batik','songket','jawa','nusantara','islamic','mosque','beach','rustic','sunset','monochrome','none'], 'floral');
+            setPackClass('ud-corner-', udPackValue(pack, 'cornerdecor', 'hiasansudut'), ['floral','rose','peony','lotus','birds','dove','butterfly','leaf','olive','palm','fern','lace','cloud','pearl','chandelier','marble','batik','songket','mosque','ribbon','none'], 'floral');
+            setPackClass('ud-pattern-', udPackValue(pack, 'backgroundpattern', 'polabg'), ['none','soft-flower','floral-dust','petal-rain','leaf','garden-vine','cloud','sparkle','stars','pearl','bokeh','watercolor','marble','lace','batik','songket','wave','gradient-orb','diagonal','confetti','dots','grid','arabesque'], 'soft-flower');
+            setPackClass('ud-frame-', udPackValue(pack, 'framestyle', 'bingkai'), ['none','soft-line','gold-line','double-line','floral-frame','botanical','garden-frame','lace','royal-line','pearl-frame','watercolor-frame','arch-frame','mosque-arch','batik-frame','songket-frame','marble-frame','ribbon-frame','vintage-frame'], 'soft-line');
+            setPackClass('ud-divider-', udPackValue(pack, 'dividerstyle', 'pemisah'), ['minimal','floral','rose','birds','dove','butterfly','leaf','pearl','lace','arch','batik','wave','ribbon','moon','hearts','dots','sparkle','ornate'], 'floral');
+            setPackClass('ud-title-', udPackValue(pack, 'titleornament', 'hiasanjudul'), ['none','sparkle','flower','bouquet','leaf','wings','heart','pearl','moon','arch','ribbon','diamond','crown'], 'sparkle');
+            setPackClass('ud-material-', udPackValue(pack, 'materialtexture', 'tekstur'), ['none','paper','handmade','linen','canvas','silk','satin','vellum','glass','velvet','marble','watercolor','pearl','goldfoil','lace'], 'paper');
+            setPackClass('ud-galleryhover-', udPackValue(pack, 'galleryhover', 'hovergaleri'), ['zoom-glow','soft-zoom','float','shine','lift','tilt','spotlight','polaroid','grayscale','none'], 'zoom-glow');
+            setPackClass('ud-cardaccent-', udPackValue(pack, 'cardaccent', 'aksenkartu'), ['none','gold-line','top-line','left-line','double-line','petal','ribbon','pearl','corner-glow','leaf-corner','floral-corner','luxe-shadow','watercolor','stamp'], 'gold-line');
+            setPackClass('ud-coupleframe-', udPackValue(pack, 'coupleframe', 'bingkaimempelai'), ['clean','floral-ring','leaf-ring','pearl-ring','flower-crown','halo','arch','oval','polaroid','double-gold','lace','botanical-oval','royal','soft-shadow'], 'floral-ring');
+            setPackClass('ud-iconset-', udPackValue(pack, 'iconset', 'ikon'), ['romantic','classic','nature','luxury','whimsical','islamic','adat','royal','softline','minimal'], 'romantic');
+            setPackClass('ud-badge-', udPackValue(pack, 'sectionbadgestyle', 'badgesection'), ['pill','ribbon','outline','leaf','flower','pearl','arch','stamp','goldbar','minimal-line','soft'], 'pill');
+            setPackClass('ud-menuicon-', udPackValue(pack, 'menuiconstyle', 'ikonmenu'), ['circle','square','diamond','arch','pearl','softbox','golddisc','floating','minimal'], 'circle');
+            setPackClass('ud-storyline-', udPackValue(pack, 'storylinestyle', 'garisstory'), ['gradient','flower-dot','leaf','vine','pearl','hearts','dots','arch','luxe','batik','gold-line','soft','minimal'], 'flower-dot');
+            setPackClass('ud-eventcard-', udPackValue(pack, 'eventcardstyle', 'kartuacara'), ['premium','glass','botanical','royal','arch','pearl','garden','cinematic','ticket','magazine','mosque','watercolor','clean'], 'premium');
+            setPackClass('ud-giftcard-', udPackValue(pack, 'giftcardstyle', 'kartugift'), ['luxury','soft','pearl','envelope','bank-card','qris-glow','royal-box','minimal-line','clean'], 'luxury');
+            setPackClass('ud-footer-', udPackValue(pack, 'footerdecor', 'hiasanfooter'), ['none','floral','rose','peony','butterfly','birds','dove','leaf','pearl','moon','lantern','arch','batik','songket','lace','wave','heart','sparkle','ornate','cloud'], 'floral');
 
             const heroOverlay = document.querySelector('#hero > div.absolute.inset-0');
             const heroOverlayValue = udPackValue(pack, 'herooverlay');
