@@ -2111,6 +2111,7 @@
             storyItemsText: 'Desember 2024|Pertemuan Pertama|Berawal dari pertemuan sederhana, tumbuh rasa nyaman yang membuat kami ingin saling mengenal lebih jauh dan merajut asa bersama.\nJanuari 2026|Khitbah|Dengan niat baik dan restu keluarga, kami melangkah ke jenjang yang lebih serius untuk menyatukan dua keluarga dalam ikatan suci.\nApril 2027|Hari Bahagia|Dengan doa dan restu keluarga, kami akan memulai perjalanan baru dalam ikatan pernikahan.',
             galleryImagesText: 'https://wedding.destara.baby/Foto/Foto%20Prewedding%201.jpeg\nhttps://wedding.destara.baby/Foto/Foto%20Wedding%204.png\nhttps://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600&auto=format&fit=crop\nhttps://wedding.destara.baby/Foto/preweding%206.png\nhttps://images.unsplash.com/photo-1537633552985-df8429e8048b?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1529636798458-92182e662485?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1509927083803-4bd519298ac4?q=70&w=420&auto=format&fit=crop\nhttps://images.unsplash.com/photo-1520854221256-17451cc331bf?q=70&w=420&auto=format&fit=crop',
             galleryVideoLink: 'https://wedding.destara.baby/Video/Prewedding.mp4',
+            bgMusicLink: 'https://pub-def94a3ac71846ed938ed5d9ab8afdbe.r2.dev/wedding-audio/My_Sunset_And_My_Dawn.mp3',
             galleryVideoText: 'Lihat Video',
             rundownItemsText: '08.00 WIB|Akad Nikah|Prosesi ijab kabul dan doa bersama keluarga.|fa-ring\n10.00 WIB|Foto Keluarga|Sesi dokumentasi bersama keluarga dan kerabat dekat.|fa-camera-retro\n11.00 WIB|Resepsi|Penerimaan tamu, ramah tamah, dan makan siang.|fa-champagne-glasses\n14.00 WIB|Penutup|Ucapan terima kasih dari keluarga dan mempelai.|fa-heart',
             locationCardsText: 'Area Parkir|Tersedia area parkir untuk tamu undangan. Ikuti arahan petugas saat tiba di lokasi.|fa-car\nPatokan Lokasi|Lokasi berada di area Jakarta Barat dan mudah diakses melalui Google Maps.|fa-location-crosshairs\nCheck-In QR|Tamu yang hadir dapat menunjukkan QR Code dari bagian RSVP kepada penerima tamu.|fa-user-check',
@@ -2825,6 +2826,13 @@
             if (cover && udGet(settings, 'coverImage')) cover.style.backgroundImage = `url('${udGet(settings, 'coverImage')}')`;
             const hero = document.querySelector('.parallax-bg');
             if (hero && udGet(settings, 'heroImage')) hero.style.backgroundImage = `url('${udGet(settings, 'heroImage')}')`;
+            const bgMusicUrl = udGet(settings, 'bgMusicLink');
+            const bgMusic = document.getElementById('bg-music');
+            const bgMusicSource = bgMusic ? bgMusic.querySelector('source') : null;
+            if (bgMusicSource && bgMusicUrl && bgMusicSource.getAttribute('src') !== bgMusicUrl) {
+                bgMusicSource.setAttribute('src', bgMusicUrl);
+                if (bgMusic) bgMusic.load();
+            }
 
             udSetText('#cover-screen .relative > p', udGet(settings, 'coverKicker'));
             udSetHTML('#cover-screen h1', udCoupleHTML(couple));
@@ -2855,11 +2863,14 @@
         }
 
         onSnapshot(collection(db, "undangan_digital"), (snapshot) => {
-            let latestSettings = null;
+            let firstSettings = null;
+            let activeSettings = null;
             snapshot.forEach((docSnap) => {
-                if (!latestSettings) latestSettings = docSnap.data();
+                const data = docSnap.data();
+                if (!firstSettings) firstSettings = data;
+                if (data && data.isActive === true && !activeSettings) activeSettings = data;
             });
-            applyUndanganDigitalSettings(latestSettings || {});
+            applyUndanganDigitalSettings(activeSettings || firstSettings || {});
         }, (error) => {
             console.warn('Pengaturan undangan digital belum dapat dibaca:', error);
             applyUndanganDigitalSettings({});
