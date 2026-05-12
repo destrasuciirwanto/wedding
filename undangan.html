@@ -409,6 +409,67 @@
         body.ud-bg-dark .glass-panel, body.ud-bg-dark .soft-card { color: var(--ud-text) !important; }
         body.ud-bg-dark .text-gray-800, body.ud-bg-dark .text-dark { color: var(--ud-text) !important; }
         body.ud-bg-dark .text-gray-600, body.ud-bg-dark .text-gray-500, body.ud-bg-dark .text-gray-400 { color: var(--ud-muted) !important; }
+
+
+        /* UNDANGAN DIGITAL STUDIO MAX - public rendering support */
+        body.ud-nav-hidden #floating-nav { display: none !important; }
+        body.ud-nav-compact #floating-nav {
+            gap: .95rem !important;
+            padding: .65rem 1rem !important;
+            border-radius: 1.25rem !important;
+            max-width: calc(100vw - 1rem);
+        }
+        body.ud-nav-glassbar #floating-nav {
+            border-radius: 1.35rem !important;
+            background: color-mix(in srgb, var(--ud-card-bg) 78%, transparent) !important;
+            border-color: color-mix(in srgb, var(--ud-accent) 35%, transparent) !important;
+        }
+        body.ud-cover-large #cover-screen h1,
+        body.ud-cover-large #hero h2 { transform: scale(1.04); transform-origin: center; }
+        body.ud-cover-huge #cover-screen h1,
+        body.ud-cover-huge #hero h2 { transform: scale(1.10); transform-origin: center; }
+        body.ud-countdown-minimal #hero .glass-panel {
+            box-shadow: none !important;
+            border: 1px solid color-mix(in srgb, var(--ud-accent) 28%, transparent) !important;
+            background: color-mix(in srgb, var(--ud-card-bg) 46%, transparent) !important;
+        }
+        body.ud-countdown-luxury #hero .glass-panel {
+            border-color: color-mix(in srgb, var(--ud-accent) 45%, transparent) !important;
+            box-shadow: 0 24px 70px color-mix(in srgb, var(--ud-accent) 24%, transparent) !important;
+        }
+        body.ud-countdown-heart #hero .glass-panel {
+            border-radius: 2.5rem !important;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--ud-primary) 18%, white), color-mix(in srgb, var(--ud-card-bg) 72%, transparent)) !important;
+        }
+        body.ud-countdown-botanical #hero .glass-panel {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--ud-secondary) 50%, transparent), color-mix(in srgb, var(--ud-card-bg) 78%, transparent)) !important;
+        }
+        body.ud-gallery-compact #gallery .grid { gap: .55rem !important; }
+        body.ud-gallery-spacious #gallery .grid { gap: 1.4rem !important; }
+        body.ud-section-clean .glass-panel,
+        body.ud-section-clean .soft-card { border-radius: 1.1rem !important; }
+        body.ud-section-floating .glass-panel,
+        body.ud-section-floating .soft-card { transform: translateZ(0); box-shadow: 0 18px 48px color-mix(in srgb, var(--ud-primary) 18%, transparent) !important; }
+        body.ud-section-editorial section .max-w-6xl,
+        body.ud-section-editorial section .max-w-4xl { border-left: 1px solid color-mix(in srgb, var(--ud-accent) 28%, transparent); padding-left: clamp(1rem, 3vw, 2rem); }
+        body.ud-readable-comfort p,
+        body.ud-readable-comfort li { line-height: 1.85 !important; }
+        body.ud-readable-large p,
+        body.ud-readable-large li,
+        body.ud-readable-large a,
+        body.ud-readable-large button { font-size: 1.02rem; line-height: 1.9 !important; }
+        body.ud-high-contrast { --ud-muted: color-mix(in srgb, var(--ud-text) 74%, #64748B) !important; }
+        body.ud-mobile-fast .glass-panel,
+        body.ud-mobile-fast .soft-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        @media (max-width: 768px) {
+            body.ud-mobile-fast #sakura-particle-system { display: none !important; }
+            body.ud-mobile-fast [data-aos] { opacity: 1 !important; transform: none !important; transition: none !important; }
+            body.ud-mobile-rich .glass-panel { backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important; }
+            body.ud-cover-huge #cover-screen h1,
+            body.ud-cover-huge #hero h2 { transform: scale(1.04); }
+        }
+
+
     </style>
 
 </head>
@@ -2317,6 +2378,19 @@
             ['outline', 'solid'].forEach(name => document.body.classList.toggle(`ud-button-${name}`, buttonStyle === name));
             const galleryMode = (udPackValue(pack, 'gallerymode', 'galerimode') || 'grid').toLowerCase();
             document.body.classList.toggle('ud-gallery-masonry', galleryMode === 'masonry');
+
+            const setPackClass = (prefix, value, allowed, fallback = '') => {
+                const selected = allowed.includes(String(value || '').toLowerCase()) ? String(value || '').toLowerCase() : fallback;
+                allowed.forEach(name => document.body.classList.toggle(prefix + name, selected === name));
+            };
+            setPackClass('ud-nav-', udPackValue(pack, 'navstyle', 'navigasi'), ['bubble', 'glassbar', 'compact', 'hidden'], 'bubble');
+            setPackClass('ud-cover-', udPackValue(pack, 'coverscale', 'ukurancover'), ['normal', 'large', 'huge'], 'large');
+            setPackClass('ud-countdown-', udPackValue(pack, 'countdownstyle', 'countdown'), ['glass', 'luxury', 'heart', 'minimal', 'botanical'], 'glass');
+            setPackClass('ud-gallery-', udPackValue(pack, 'gallerydensity', 'kepadatanGaleri'), ['compact', 'cozy', 'spacious'], 'cozy');
+            setPackClass('ud-section-', udPackValue(pack, 'sectionshape', 'bentuksection'), ['soft', 'clean', 'floating', 'editorial'], 'soft');
+            setPackClass('ud-readable-', udPackValue(pack, 'readability', 'keterbacaan'), ['normal', 'comfort', 'large'], 'comfort');
+            document.body.classList.toggle('ud-high-contrast', (udPackValue(pack, 'contrast', 'kontras') || 'normal').toLowerCase() === 'high');
+            setPackClass('ud-mobile-', udPackValue(pack, 'mobilemode', 'modehp'), ['balanced', 'fast', 'rich'], 'balanced');
 
             const heroOverlay = document.querySelector('#hero > div.absolute.inset-0');
             const heroOverlayValue = udPackValue(pack, 'herooverlay');
