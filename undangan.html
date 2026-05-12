@@ -406,6 +406,9 @@
         body.ud-gallery-masonry #gallery .grid { columns: 2; display: block; }
         body.ud-gallery-masonry #gallery .grid > * { break-inside: avoid; margin-bottom: 1rem; }
         @media (min-width: 768px) { body.ud-gallery-masonry #gallery .grid { columns: 3; } }
+        body.ud-bg-dark .glass-panel, body.ud-bg-dark .soft-card { color: var(--ud-text) !important; }
+        body.ud-bg-dark .text-gray-800, body.ud-bg-dark .text-dark { color: var(--ud-text) !important; }
+        body.ud-bg-dark .text-gray-600, body.ud-bg-dark .text-gray-500, body.ud-bg-dark .text-gray-400 { color: var(--ud-muted) !important; }
     </style>
 
 </head>
@@ -2193,7 +2196,31 @@
             emerald: { primary: '#10B981', secondary: '#D1FAE5', accent: '#D4AF37', bg: '#F0FDF4', bg2: '#FFFFFF', text: '#103B2A', muted: '#537768', card: 'rgba(255,255,255,.68)', border: 'rgba(16,185,129,.18)' },
             royal: { primary: '#2937A3', secondary: '#E7EAFF', accent: '#D4AF37', bg: '#F5F6FF', bg2: '#FFFFFF', text: '#172554', muted: '#64748B', card: 'rgba(255,255,255,.70)', border: 'rgba(41,55,163,.18)' },
             mono: { primary: '#111827', secondary: '#E5E7EB', accent: '#6B7280', bg: '#F9FAFB', bg2: '#FFFFFF', text: '#111827', muted: '#6B7280', card: 'rgba(255,255,255,.78)', border: 'rgba(17,24,39,.12)' },
-            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: 'rgba(30,23,30,.78)', border: 'rgba(255,255,255,.14)' }
+            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: 'rgba(30,23,30,.78)', border: 'rgba(255,255,255,.14)' },
+            rose_gold: { primary: '#BE5879', secondary: '#F9D5DA', accent: '#B76E79', bg: '#FFF1F4', bg2: '#FFFFFF', text: '#3B1F2B', muted: '#8A5F6D', card: 'rgba(255,255,255,.72)', border: 'rgba(190,88,121,.18)' },
+            champagne: { primary: '#BFA46A', secondary: '#FFF1D0', accent: '#F3C969', bg: '#FFF8EA', bg2: '#FFFFFF', text: '#3D3217', muted: '#7A6B45', card: 'rgba(255,255,255,.74)', border: 'rgba(191,164,106,.20)' },
+            terracotta: { primary: '#C76D4D', secondary: '#F5D0BE', accent: '#D69A62', bg: '#FFF4EE', bg2: '#FFFFFF', text: '#3F241A', muted: '#856555', card: 'rgba(255,255,255,.72)', border: 'rgba(199,109,77,.18)' },
+            dusty_blue: { primary: '#6B8FB3', secondary: '#DCEAF7', accent: '#C8A24B', bg: '#F3F8FC', bg2: '#FFFFFF', text: '#1E3448', muted: '#65798C', card: 'rgba(255,255,255,.72)', border: 'rgba(107,143,179,.20)' },
+            pearl: { primary: '#D9CBBF', secondary: '#F7EFE8', accent: '#C8A24B', bg: '#FFFCF8', bg2: '#FFFFFF', text: '#332D2A', muted: '#756C66', card: 'rgba(255,255,255,.78)', border: 'rgba(217,203,191,.28)' },
+            mocha: { primary: '#8B5E3C', secondary: '#EAD8C5', accent: '#D6A756', bg: '#FBF4ED', bg2: '#FFFFFF', text: '#332217', muted: '#7B6759', card: 'rgba(255,255,255,.72)', border: 'rgba(139,94,60,.20)' },
+            midnight: { primary: '#1E3A8A', secondary: '#DBEAFE', accent: '#D4AF37', bg: '#EEF4FF', bg2: '#FFFFFF', text: '#101E3D', muted: '#5E6B80', card: 'rgba(255,255,255,.72)', border: 'rgba(30,58,138,.18)' },
+            maroon: { primary: '#8A1538', secondary: '#F7D7E1', accent: '#D4AF37', bg: '#FFF1F5', bg2: '#FFFFFF', text: '#3F0D1E', muted: '#84596A', card: 'rgba(255,255,255,.72)', border: 'rgba(138,21,56,.18)' },
+            blush: { primary: '#F2A7B5', secondary: '#FFE4EC', accent: '#D4AF37', bg: '#FFF7FA', bg2: '#FFFFFF', text: '#3F2A32', muted: '#8C6673', card: 'rgba(255,255,255,.72)', border: 'rgba(242,167,181,.22)' },
+            ivory_green: { primary: '#6F7E4D', secondary: '#EEF2DC', accent: '#BFA46A', bg: '#FBFCF2', bg2: '#FFFFFF', text: '#26311F', muted: '#6F765B', card: 'rgba(255,255,255,.72)', border: 'rgba(111,126,77,.20)' },
+            ocean: { primary: '#0EA5A4', secondary: '#CCFBF1', accent: '#38BDF8', bg: '#F0FDFA', bg2: '#FFFFFF', text: '#123C3B', muted: '#4B7574', card: 'rgba(255,255,255,.72)', border: 'rgba(14,165,164,.18)' },
+            lilac: { primary: '#C084FC', secondary: '#F3E8FF', accent: '#E879F9', bg: '#FCF7FF', bg2: '#FFFFFF', text: '#3B2356', muted: '#7A5A92', card: 'rgba(255,255,255,.72)', border: 'rgba(192,132,252,.18)' },
+            sunset: { primary: '#F97316', secondary: '#FED7AA', accent: '#EC4899', bg: '#FFF7ED', bg2: '#FFFFFF', text: '#3C2412', muted: '#8B6A4F', card: 'rgba(255,255,255,.72)', border: 'rgba(249,115,22,.18)' },
+            sky: { primary: '#38BDF8', secondary: '#E0F2FE', accent: '#FBBF24', bg: '#F0F9FF', bg2: '#FFFFFF', text: '#123044', muted: '#5F7D91', card: 'rgba(255,255,255,.72)', border: 'rgba(56,189,248,.18)' },
+            forest: { primary: '#166534', secondary: '#DCFCE7', accent: '#BFA46A', bg: '#F3FBF5', bg2: '#FFFFFF', text: '#15301F', muted: '#5B7564', card: 'rgba(255,255,255,.72)', border: 'rgba(22,101,52,.18)' },
+            black_gold: { primary: '#111111', secondary: '#2A2416', accent: '#D4AF37', bg: '#0F0F10', bg2: '#1A1A1B', text: '#F8FAFC', muted: '#C5C5C5', card: 'rgba(25,25,25,.78)', border: 'rgba(212,175,55,.22)' },
+            white_luxe: { primary: '#D6C6B8', secondary: '#F8F4EF', accent: '#C8A24B', bg: '#FFFFFF', bg2: '#FAF7F2', text: '#232323', muted: '#77716B', card: 'rgba(255,255,255,.78)', border: 'rgba(214,198,184,.28)' },
+            modern_gray: { primary: '#64748B', secondary: '#E2E8F0', accent: '#94A3B8', bg: '#F8FAFC', bg2: '#FFFFFF', text: '#0F172A', muted: '#64748B', card: 'rgba(255,255,255,.78)', border: 'rgba(100,116,139,.14)' },
+            cyber: { primary: '#7C3AED', secondary: '#DBEAFE', accent: '#06B6D4', bg: '#F5F3FF', bg2: '#FFFFFF', text: '#241445', muted: '#6B5D82', card: 'rgba(255,255,255,.72)', border: 'rgba(124,58,237,.18)' },
+            garden: { primary: '#84A98C', secondary: '#E9F5DB', accent: '#DDB892', bg: '#FAFFF7', bg2: '#FFFFFF', text: '#253528', muted: '#667B6A', card: 'rgba(255,255,255,.72)', border: 'rgba(132,169,140,.20)' },
+            coffee: { primary: '#A47148', secondary: '#EDE0D4', accent: '#CB997E', bg: '#FBF6F1', bg2: '#FFFFFF', text: '#3C2A1E', muted: '#7F6C5B', card: 'rgba(255,255,255,.72)', border: 'rgba(164,113,72,.20)' },
+            coral: { primary: '#FB7185', secondary: '#FFE4E6', accent: '#F59E0B', bg: '#FFF7F8', bg2: '#FFFFFF', text: '#44242D', muted: '#8B6470', card: 'rgba(255,255,255,.72)', border: 'rgba(251,113,133,.20)' },
+            mint_gold: { primary: '#5EEAD4', secondary: '#CCFBF1', accent: '#D4AF37', bg: '#F0FDFA', bg2: '#FFFFFF', text: '#134E4A', muted: '#5C827F', card: 'rgba(255,255,255,.72)', border: 'rgba(94,234,212,.18)' },
+            violet_night: { primary: '#8B5CF6', secondary: '#2E1065', accent: '#F0ABFC', bg: '#160A2E', bg2: '#22123E', text: '#F8FAFC', muted: '#DDD6FE', card: 'rgba(38,20,63,.78)', border: 'rgba(240,171,252,.18)' }
         };
 
         function udParsePack(text) {
