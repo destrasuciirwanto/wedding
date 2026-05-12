@@ -696,6 +696,29 @@
         }
         .ud-check-card input { width: 1rem; height: 1rem; accent-color: #8b5cf6; }
 
+        .ud-template-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: .75rem;
+        }
+        @media (min-width: 768px) { .ud-template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (min-width: 1280px) { .ud-template-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .ud-template-card {
+            border: 1px solid rgba(226,232,240,.9);
+            background: rgba(255,255,255,.82);
+            border-radius: 1.25rem;
+            padding: .95rem;
+            text-align: left;
+            box-shadow: 0 10px 26px rgba(15,23,42,.04);
+            transition: .16s ease;
+        }
+        .ud-template-card:hover { transform: translateY(-1px); border-color: rgba(139,92,246,.45); box-shadow: 0 16px 34px rgba(15,23,42,.07); }
+        .ud-template-card b { display: block; font-size: 12px; color: #334155; }
+        .ud-template-card small { display: block; margin-top: .2rem; font-size: 11px; color: #64748b; line-height: 1.45; }
+        .ud-swatch-row { display: flex; gap: .35rem; margin-bottom: .65rem; }
+        .ud-swatch-dot { width: 1rem; height: 1rem; border-radius: 999px; border: 2px solid white; box-shadow: 0 4px 10px rgba(15,23,42,.12); }
+        @media (prefers-reduced-motion: reduce) { .ud-template-card { transition: none !important; } .ud-template-card:hover { transform: none !important; } }
+
     </style>
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
@@ -2013,8 +2036,54 @@
             emerald: { primary: '#10B981', secondary: '#D1FAE5', accent: '#D4AF37', bg: '#F0FDF4', bg2: '#FFFFFF', text: '#103B2A', muted: '#537768', card: '#FFFFFF' },
             royal: { primary: '#2937A3', secondary: '#E7EAFF', accent: '#D4AF37', bg: '#F5F6FF', bg2: '#FFFFFF', text: '#172554', muted: '#64748B', card: '#FFFFFF' },
             mono: { primary: '#111827', secondary: '#E5E7EB', accent: '#6B7280', bg: '#F9FAFB', bg2: '#FFFFFF', text: '#111827', muted: '#6B7280', card: '#FFFFFF' },
-            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: '#1E171E' }
+            dark: { primary: '#E5A9B4', secondary: '#241723', accent: '#D4AF37', bg: '#151017', bg2: '#231722', text: '#F8FAFC', muted: '#CBD5E1', card: '#1E171E' },
+            rose_gold: { primary: '#BE5879', secondary: '#F9D5DA', accent: '#B76E79', bg: '#FFF1F4', bg2: '#FFFFFF', text: '#3B1F2B', muted: '#8A5F6D', card: '#FFFFFF' },
+            champagne: { primary: '#BFA46A', secondary: '#FFF1D0', accent: '#F3C969', bg: '#FFF8EA', bg2: '#FFFFFF', text: '#3D3217', muted: '#7A6B45', card: '#FFFFFF' },
+            terracotta: { primary: '#C76D4D', secondary: '#F5D0BE', accent: '#D69A62', bg: '#FFF4EE', bg2: '#FFFFFF', text: '#3F241A', muted: '#856555', card: '#FFFFFF' },
+            dusty_blue: { primary: '#6B8FB3', secondary: '#DCEAF7', accent: '#C8A24B', bg: '#F3F8FC', bg2: '#FFFFFF', text: '#1E3448', muted: '#65798C', card: '#FFFFFF' },
+            pearl: { primary: '#D9CBBF', secondary: '#F7EFE8', accent: '#C8A24B', bg: '#FFFCF8', bg2: '#FFFFFF', text: '#332D2A', muted: '#756C66', card: '#FFFFFF' },
+            mocha: { primary: '#8B5E3C', secondary: '#EAD8C5', accent: '#D6A756', bg: '#FBF4ED', bg2: '#FFFFFF', text: '#332217', muted: '#7B6759', card: '#FFFFFF' },
+            midnight: { primary: '#1E3A8A', secondary: '#DBEAFE', accent: '#D4AF37', bg: '#EEF4FF', bg2: '#FFFFFF', text: '#101E3D', muted: '#5E6B80', card: '#FFFFFF' },
+            maroon: { primary: '#8A1538', secondary: '#F7D7E1', accent: '#D4AF37', bg: '#FFF1F5', bg2: '#FFFFFF', text: '#3F0D1E', muted: '#84596A', card: '#FFFFFF' },
+            blush: { primary: '#F2A7B5', secondary: '#FFE4EC', accent: '#D4AF37', bg: '#FFF7FA', bg2: '#FFFFFF', text: '#3F2A32', muted: '#8C6673', card: '#FFFFFF' },
+            ivory_green: { primary: '#6F7E4D', secondary: '#EEF2DC', accent: '#BFA46A', bg: '#FBFCF2', bg2: '#FFFFFF', text: '#26311F', muted: '#6F765B', card: '#FFFFFF' },
+            ocean: { primary: '#0EA5A4', secondary: '#CCFBF1', accent: '#38BDF8', bg: '#F0FDFA', bg2: '#FFFFFF', text: '#123C3B', muted: '#4B7574', card: '#FFFFFF' },
+            lilac: { primary: '#C084FC', secondary: '#F3E8FF', accent: '#E879F9', bg: '#FCF7FF', bg2: '#FFFFFF', text: '#3B2356', muted: '#7A5A92', card: '#FFFFFF' },
+            sunset: { primary: '#F97316', secondary: '#FED7AA', accent: '#EC4899', bg: '#FFF7ED', bg2: '#FFFFFF', text: '#3C2412', muted: '#8B6A4F', card: '#FFFFFF' },
+            sky: { primary: '#38BDF8', secondary: '#E0F2FE', accent: '#FBBF24', bg: '#F0F9FF', bg2: '#FFFFFF', text: '#123044', muted: '#5F7D91', card: '#FFFFFF' },
+            forest: { primary: '#166534', secondary: '#DCFCE7', accent: '#BFA46A', bg: '#F3FBF5', bg2: '#FFFFFF', text: '#15301F', muted: '#5B7564', card: '#FFFFFF' },
+            black_gold: { primary: '#111111', secondary: '#2A2416', accent: '#D4AF37', bg: '#0F0F10', bg2: '#1A1A1B', text: '#F8FAFC', muted: '#C5C5C5', card: '#191919' },
+            white_luxe: { primary: '#D6C6B8', secondary: '#F8F4EF', accent: '#C8A24B', bg: '#FFFFFF', bg2: '#FAF7F2', text: '#232323', muted: '#77716B', card: '#FFFFFF' },
+            modern_gray: { primary: '#64748B', secondary: '#E2E8F0', accent: '#94A3B8', bg: '#F8FAFC', bg2: '#FFFFFF', text: '#0F172A', muted: '#64748B', card: '#FFFFFF' },
+            cyber: { primary: '#7C3AED', secondary: '#DBEAFE', accent: '#06B6D4', bg: '#F5F3FF', bg2: '#FFFFFF', text: '#241445', muted: '#6B5D82', card: '#FFFFFF' },
+            garden: { primary: '#84A98C', secondary: '#E9F5DB', accent: '#DDB892', bg: '#FAFFF7', bg2: '#FFFFFF', text: '#253528', muted: '#667B6A', card: '#FFFFFF' },
+            coffee: { primary: '#A47148', secondary: '#EDE0D4', accent: '#CB997E', bg: '#FBF6F1', bg2: '#FFFFFF', text: '#3C2A1E', muted: '#7F6C5B', card: '#FFFFFF' },
+            coral: { primary: '#FB7185', secondary: '#FFE4E6', accent: '#F59E0B', bg: '#FFF7F8', bg2: '#FFFFFF', text: '#44242D', muted: '#8B6470', card: '#FFFFFF' },
+            mint_gold: { primary: '#5EEAD4', secondary: '#CCFBF1', accent: '#D4AF37', bg: '#F0FDFA', bg2: '#FFFFFF', text: '#134E4A', muted: '#5C827F', card: '#FFFFFF' },
+            violet_night: { primary: '#8B5CF6', secondary: '#2E1065', accent: '#F0ABFC', bg: '#160A2E', bg2: '#22123E', text: '#F8FAFC', muted: '#DDD6FE', card: '#26143F' }
         };
+
+        const UD_DASH_TEMPLATE_PRESETS = {
+            classic_elegant: { theme: 'sakura', mode: 'gradient', heading: 'cormorant', body: 'montserrat', sectionPadding: '5rem', width: '72rem', radius: '2rem', buttonRadius: '999px', cardBlur: '18px', shadow: 'soft', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.5rem', galleryMode: 'grid', coverOverlay: 'medium', heroOverlay: 'medium', order: 'default', hide: '' },
+            luxury_gold: { theme: 'black_gold', mode: 'dark', heading: 'playfair', body: 'inter', sectionPadding: '6.5rem', width: '72rem', radius: '1.75rem', buttonRadius: '999px', cardBlur: '16px', shadow: 'strong', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.25rem', galleryMode: 'grid', coverOverlay: 'dark', heroOverlay: 'dark', order: 'event_first', hide: '' },
+            romantic_sakura: { theme: 'blush', mode: 'radial', heading: 'greatvibes', body: 'poppins', sectionPadding: '5rem', width: '72rem', radius: '2.5rem', buttonRadius: '999px', cardBlur: '20px', shadow: 'soft', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '2rem', galleryMode: 'masonry', coverOverlay: 'soft', heroOverlay: 'medium', order: 'story_first', hide: '' },
+            minimalist_clean: { theme: 'mono', mode: 'solid', heading: 'playfair', body: 'inter', sectionPadding: '4rem', width: '64rem', radius: '1rem', buttonRadius: '1rem', cardBlur: '0px', shadow: 'none', cardStyle: 'solid', buttonStyle: 'outline', imageRadius: '1rem', galleryMode: 'grid', coverOverlay: 'soft', heroOverlay: 'soft', order: 'default', hide: 'keluarga,sambutan,social' },
+            natural_garden: { theme: 'garden', mode: 'gradient', heading: 'lora', body: 'poppins', sectionPadding: '5rem', width: '72rem', radius: '2rem', buttonRadius: '999px', cardBlur: '14px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'solid', imageRadius: '1.75rem', galleryMode: 'masonry', coverOverlay: 'soft', heroOverlay: 'soft', order: 'story_first', hide: '' },
+            royal_formal: { theme: 'royal', mode: 'gradient', heading: 'playfair', body: 'montserrat', sectionPadding: '6.5rem', width: '80rem', radius: '1.5rem', buttonRadius: '.9rem', cardBlur: '14px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.2rem', galleryMode: 'grid', coverOverlay: 'medium', heroOverlay: 'dark', order: 'event_first', hide: '' },
+            soft_lavender: { theme: 'lavender', mode: 'radial', heading: 'dancing', body: 'poppins', sectionPadding: '5rem', width: '72rem', radius: '2.25rem', buttonRadius: '999px', cardBlur: '18px', shadow: 'soft', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '2rem', galleryMode: 'masonry', coverOverlay: 'soft', heroOverlay: 'medium', order: 'default', hide: '' },
+            modern_bold: { theme: 'cyber', mode: 'gradient', heading: 'playfair', body: 'inter', sectionPadding: '4rem', width: '80rem', radius: '1.25rem', buttonRadius: '.9rem', cardBlur: '10px', shadow: 'strong', cardStyle: 'solid', buttonStyle: 'solid', imageRadius: '1rem', galleryMode: 'grid', coverOverlay: 'dark', heroOverlay: 'medium', order: 'event_first', hide: 'ayat' },
+            intimate_simple: { theme: 'pearl', mode: 'solid', heading: 'cormorant', body: 'lora', sectionPadding: '3.5rem', width: '64rem', radius: '1.5rem', buttonRadius: '999px', cardBlur: '0px', shadow: 'soft', cardStyle: 'solid', buttonStyle: 'outline', imageRadius: '1.25rem', galleryMode: 'grid', coverOverlay: 'soft', heroOverlay: 'soft', order: 'default', hide: 'qris,social,keluarga' },
+            photo_focused: { theme: 'white_luxe', mode: 'gradient', heading: 'playfair', body: 'montserrat', sectionPadding: '5rem', width: '80rem', radius: '2rem', buttonRadius: '999px', cardBlur: '12px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '2rem', galleryMode: 'masonry', coverOverlay: 'medium', heroOverlay: 'soft', order: 'gallery_first', hide: '' },
+            akad_priority: { theme: 'emerald', mode: 'gradient', heading: 'lora', body: 'poppins', sectionPadding: '5rem', width: '72rem', radius: '1.75rem', buttonRadius: '999px', cardBlur: '14px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.5rem', galleryMode: 'grid', coverOverlay: 'medium', heroOverlay: 'medium', order: 'event_first', hide: 'social' },
+            party_reception: { theme: 'sunset', mode: 'radial', heading: 'dancing', body: 'poppins', sectionPadding: '5rem', width: '80rem', radius: '2rem', buttonRadius: '999px', cardBlur: '16px', shadow: 'strong', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.75rem', galleryMode: 'masonry', coverOverlay: 'medium', heroOverlay: 'medium', order: 'event_first', hide: '' },
+            adat_warm: { theme: 'terracotta', mode: 'gradient', heading: 'lora', body: 'poppins', sectionPadding: '5rem', width: '72rem', radius: '1.75rem', buttonRadius: '999px', cardBlur: '16px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'solid', imageRadius: '1.5rem', galleryMode: 'grid', coverOverlay: 'medium', heroOverlay: 'medium', order: 'story_first', hide: '' },
+            elegant_blue: { theme: 'dusty_blue', mode: 'gradient', heading: 'playfair', body: 'inter', sectionPadding: '5rem', width: '72rem', radius: '1.5rem', buttonRadius: '999px', cardBlur: '14px', shadow: 'medium', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.25rem', galleryMode: 'grid', coverOverlay: 'medium', heroOverlay: 'medium', order: 'default', hide: '' },
+            dark_cinematic: { theme: 'violet_night', mode: 'dark', heading: 'greatvibes', body: 'inter', sectionPadding: '6.5rem', width: '72rem', radius: '2rem', buttonRadius: '999px', cardBlur: '18px', shadow: 'strong', cardStyle: 'glass', buttonStyle: 'gradient', imageRadius: '1.5rem', galleryMode: 'masonry', coverOverlay: 'dark', heroOverlay: 'dark', order: 'story_first', hide: '' }
+        };
+
+        function udDashApplySelectValues(values = {}) {
+            Object.entries(values).forEach(([id, value]) => udDashSet(id, value));
+        }
 
         function udDashGet(id, fallback = '') {
             const el = document.getElementById(id);
@@ -2104,14 +2173,19 @@
                 default: 'menu,ayat,mempelai,keluarga,sambutan,story,gallery,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
                 story_first: 'menu,ayat,story,mempelai,keluarga,sambutan,gallery,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
                 event_first: 'menu,ayat,event,mempelai,keluarga,sambutan,story,gallery,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
-                gallery_last: 'menu,ayat,mempelai,keluarga,sambutan,story,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,gallery,faq'
+                gallery_last: 'menu,ayat,mempelai,keluarga,sambutan,story,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,gallery,faq',
+                gallery_first: 'menu,gallery,ayat,mempelai,story,event,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
+                compact: 'menu,mempelai,event,rundown,gallery,info-tamu,gift,faq',
+                formal: 'ayat,mempelai,keluarga,sambutan,event,rundown,info-tamu,gallery,gift,faq',
+                reception: 'menu,event,gallery,dresscode,rundown,info-tamu,checkin,gift,qris,social,faq',
+                family_first: 'ayat,keluarga,sambutan,mempelai,story,event,gallery,rundown,info-tamu,gift,faq'
             };
             return map[preset] || map.default;
         }
 
         function udDashPresetFromOrder(orderRaw) {
             const clean = String(orderRaw || '').replace(/\s+/g, '');
-            for (const key of ['story_first', 'event_first', 'gallery_last', 'default']) {
+            for (const key of ['gallery_first', 'compact', 'formal', 'reception', 'family_first', 'story_first', 'event_first', 'gallery_last', 'default']) {
                 if (clean === udDashOrderFromPreset(key).replace(/\s+/g, '')) return key;
             }
             return 'default';
@@ -2127,8 +2201,46 @@
             udDashSet('inputUDColorBg2', preset.bg2);
             udDashSet('inputUDColorText', preset.text);
             udDashSet('inputUDColorMuted', preset.muted);
-            udDashSet('inputUDColorCard', udDashCssColorToHex(udDashPackValue(pack, 'card', 'cardBg'), preset.card));
+            udDashSet('inputUDColorCard', preset.card || '#FFFFFF');
             if (sync) window.syncUDDesignControlsToText();
+        };
+
+        window.applyUDTemplatePreset = function(sync = true) {
+            const templateName = udDashGet('inputUDTemplatePreset', 'classic_elegant');
+            const template = UD_DASH_TEMPLATE_PRESETS[templateName] || UD_DASH_TEMPLATE_PRESETS.classic_elegant;
+            if (template.theme) udDashSet('inputUDThemePreset', template.theme);
+            window.applyUDDesignPresetToPickers(false);
+            udDashApplySelectValues({
+                inputUDThemeMode: template.mode,
+                inputUDFontHeading: template.heading,
+                inputUDFontBody: template.body,
+                inputUDSectionPadding: template.sectionPadding,
+                inputUDContentWidth: template.width,
+                inputUDCardRadius: template.radius,
+                inputUDButtonRadius: template.buttonRadius,
+                inputUDCardBlur: template.cardBlur,
+                inputUDShadow: template.shadow,
+                inputUDCardStyle: template.cardStyle,
+                inputUDButtonStyle: template.buttonStyle,
+                inputUDImageRadius: template.imageRadius,
+                inputUDGalleryMode: template.galleryMode,
+                inputUDCoverOverlay: template.coverOverlay,
+                inputUDHeroOverlay: template.heroOverlay,
+                inputUDSectionOrderPreset: template.order
+            });
+            const hidden = String(template.hide || '').split(',').map(x => x.trim()).filter(Boolean);
+            document.querySelectorAll('.ud-section-hide').forEach((el) => { el.checked = hidden.includes(el.value); });
+            if (sync) window.syncUDDesignControlsToText();
+        };
+
+        window.setUDThemePreset = function(themeName) {
+            udDashSet('inputUDThemePreset', themeName);
+            window.applyUDDesignPresetToPickers(true);
+        };
+
+        window.setUDTemplatePreset = function(templateName) {
+            udDashSet('inputUDTemplatePreset', templateName);
+            window.applyUDTemplatePreset(true);
         };
 
         window.buildUDDesignPackFromControls = function() {
@@ -2139,6 +2251,7 @@
             const heroOverlay = udDashOverlay('hero-' + udDashGet('inputUDHeroOverlay', 'medium'), bg);
             const pack = [
                 '[tema]',
+                `template=${udDashGet('inputUDTemplatePreset', 'classic_elegant')}`,
                 `preset=${udDashGet('inputUDThemePreset', 'sakura')}`,
                 `mode=${udDashGet('inputUDThemeMode', 'gradient')}`,
                 '',
@@ -2214,6 +2327,7 @@
             const pack = parseUDDesignPackForDashboard(text);
             const presetName = (udDashPackValue(pack, 'preset', 'tema') || 'sakura').toLowerCase();
             const preset = UD_DASH_THEME_PRESETS[presetName] || UD_DASH_THEME_PRESETS.sakura;
+            udDashSet('inputUDTemplatePreset', udDashPackValue(pack, 'template', 'layoutTemplate', 'templatePreset') || 'classic_elegant');
             udDashSet('inputUDThemePreset', presetName);
             udDashSet('inputUDThemeMode', udDashPackValue(pack, 'mode', 'backgroundMode') || 'gradient');
             udDashSet('inputUDTextAlign', udDashPackValue(pack, 'textAlign', 'align') || 'center');
@@ -2254,7 +2368,11 @@
             form.querySelectorAll('.ud-design-control').forEach((el) => {
                 const eventName = el.type === 'checkbox' || el.tagName.toLowerCase() === 'select' ? 'change' : 'input';
                 el.addEventListener(eventName, () => {
-                    if (el.dataset.udPreset === '1') window.applyUDDesignPresetToPickers(false);
+                    if (el.dataset.udTemplate === '1') {
+                        window.applyUDTemplatePreset(false);
+                    } else if (el.dataset.udPreset === '1') {
+                        window.applyUDDesignPresetToPickers(false);
+                    }
                     window.syncUDDesignControlsToText();
                 });
             });
@@ -2265,7 +2383,7 @@
             const existing = document.getElementById('inputUDDesignPackText')?.value || '';
             if (existing.trim()) window.applyUDDesignPackTextToControls(existing);
             else {
-                window.applyUDDesignPresetToPickers(false);
+                window.applyUDTemplatePreset(false);
                 window.syncUDDesignControlsToText();
             }
         };
@@ -3053,9 +3171,17 @@
                             <details class="ud-sub-fold rounded-3xl bg-white/70 border border-white p-4">
                                 <summary><span><i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Tema Cepat</span><small>Pilih gaya dasar</small></summary>
                                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
-                                    <div class="lg:col-span-4"><label class="ultra-label">Tema Siap Pakai</label><select id="inputUDThemePreset" class="ultra-input ud-design-control" data-ud-preset="1"><option value="sakura">Romantis Sakura</option><option value="gold">Elegan Gold</option><option value="sage">Natural Sage</option><option value="lavender">Soft Lavender</option><option value="emerald">Emerald Fresh</option><option value="royal">Royal Blue</option><option value="mono">Minimalis Mono</option><option value="dark">Dark Luxury</option></select></div>
-                                    <div class="lg:col-span-4"><label class="ultra-label">Model Background</label><select id="inputUDThemeMode" class="ultra-input ud-design-control"><option value="gradient">Gradasi Lembut</option><option value="solid">Polos</option><option value="radial">Cahaya Tengah</option><option value="dark">Gelap Elegan</option></select></div>
-                                    <div class="lg:col-span-4"><label class="ultra-label">Arah Teks</label><select id="inputUDTextAlign" class="ultra-input ud-design-control"><option value="center">Tengah</option><option value="left">Kiri</option><option value="right">Kanan</option></select></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Template Layout Siap Pakai</label><select id="inputUDTemplatePreset" class="ultra-input ud-design-control" data-ud-template="1"><option value="classic_elegant">Classic Elegant</option><option value="luxury_gold">Luxury Gold</option><option value="romantic_sakura">Romantic Sakura</option><option value="minimalist_clean">Minimalist Clean</option><option value="natural_garden">Natural Garden</option><option value="royal_formal">Royal Formal</option><option value="soft_lavender">Soft Lavender</option><option value="modern_bold">Modern Bold</option><option value="intimate_simple">Intimate Simple</option><option value="photo_focused">Photo Focused</option><option value="akad_priority">Akad Priority</option><option value="party_reception">Party Reception</option><option value="adat_warm">Adat Warm</option><option value="elegant_blue">Elegant Blue</option><option value="dark_cinematic">Dark Cinematic</option></select><p class="ud-mini-hint mt-2">Template mengatur tema, font, card, galeri, dan urutan section sekaligus.</p></div>
+                                    <div class="lg:col-span-4"><label class="ultra-label">Tema Warna Siap Pakai</label><select id="inputUDThemePreset" class="ultra-input ud-design-control" data-ud-preset="1"><optgroup label="Romantis"><option value="sakura">Romantis Sakura</option><option value="rose_gold">Rose Gold</option><option value="blush">Blush Pink</option><option value="coral">Coral Romantic</option><option value="lilac">Lilac Dream</option></optgroup><optgroup label="Elegan"><option value="gold">Elegan Gold</option><option value="champagne">Champagne</option><option value="pearl">Pearl Ivory</option><option value="white_luxe">White Luxe</option><option value="black_gold">Black Gold</option><option value="dark">Dark Luxury</option></optgroup><optgroup label="Natural"><option value="sage">Natural Sage</option><option value="ivory_green">Ivory Green</option><option value="garden">Garden</option><option value="forest">Forest</option><option value="mint_gold">Mint Gold</option><option value="emerald">Emerald Fresh</option></optgroup><optgroup label="Modern"><option value="lavender">Soft Lavender</option><option value="royal">Royal Blue</option><option value="dusty_blue">Dusty Blue</option><option value="midnight">Midnight Blue</option><option value="sky">Sky Blue</option><option value="modern_gray">Modern Gray</option><option value="mono">Minimalis Mono</option><option value="cyber">Cyber Violet</option><option value="violet_night">Violet Night</option></optgroup><optgroup label="Warm"><option value="terracotta">Terracotta</option><option value="mocha">Mocha</option><option value="coffee">Coffee</option><option value="sunset">Sunset</option><option value="maroon">Maroon</option></optgroup></select></div>
+                                    <div class="lg:col-span-2"><label class="ultra-label">Model Background</label><select id="inputUDThemeMode" class="ultra-input ud-design-control"><option value="gradient">Gradasi Lembut</option><option value="solid">Polos</option><option value="radial">Cahaya Tengah</option><option value="dark">Gelap Elegan</option></select></div>
+                                    <div class="lg:col-span-2"><label class="ultra-label">Arah Teks</label><select id="inputUDTextAlign" class="ultra-input ud-design-control"><option value="center">Tengah</option><option value="left">Kiri</option><option value="right">Kanan</option></select></div>
+                                    <div class="lg:col-span-12">
+                                        <div class="ud-template-grid">
+                                            <button type="button" onclick="setUDTemplatePreset('luxury_gold')" class="ud-template-card"><span class="ud-swatch-row"><i class="ud-swatch-dot" style="background:#111111"></i><i class="ud-swatch-dot" style="background:#D4AF37"></i><i class="ud-swatch-dot" style="background:#FFFFFF"></i></span><b>Luxury Gold</b><small>Gelap, mewah, cocok untuk ballroom/resmi.</small></button>
+                                            <button type="button" onclick="setUDTemplatePreset('romantic_sakura')" class="ud-template-card"><span class="ud-swatch-row"><i class="ud-swatch-dot" style="background:#F2A7B5"></i><i class="ud-swatch-dot" style="background:#FFE4EC"></i><i class="ud-swatch-dot" style="background:#D4AF37"></i></span><b>Romantic Sakura</b><small>Soft, banyak ruang foto, galeri masonry.</small></button>
+                                            <button type="button" onclick="setUDTemplatePreset('minimalist_clean')" class="ud-template-card"><span class="ud-swatch-row"><i class="ud-swatch-dot" style="background:#111827"></i><i class="ud-swatch-dot" style="background:#E5E7EB"></i><i class="ud-swatch-dot" style="background:#FFFFFF"></i></span><b>Minimalist Clean</b><small>Rapi, ringan, section lebih sederhana.</small></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </details>
 
@@ -3126,7 +3252,7 @@
                                     <label class="ud-check-card"><input type="checkbox" value="faq" class="ud-section-hide ud-design-control"> FAQ</label>
                                 </div>
                                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4">
-                                    <div class="lg:col-span-6"><label class="ultra-label">Urutan Section</label><select id="inputUDSectionOrderPreset" class="ultra-input ud-design-control"><option value="default">Urutan Normal</option><option value="story_first">Love Story Sebelum Mempelai</option><option value="event_first">Acara Lebih Atas</option><option value="gallery_last">Galeri Dekat Akhir</option></select></div>
+                                    <div class="lg:col-span-6"><label class="ultra-label">Urutan Section</label><select id="inputUDSectionOrderPreset" class="ultra-input ud-design-control"><option value="default">Urutan Normal</option><option value="story_first">Love Story Sebelum Mempelai</option><option value="event_first">Acara Lebih Atas</option><option value="gallery_first">Galeri Lebih Atas</option><option value="gallery_last">Galeri Dekat Akhir</option><option value="compact">Ringkas / Simple</option><option value="formal">Formal Keluarga</option><option value="reception">Fokus Resepsi</option><option value="family_first">Keluarga Lebih Atas</option></select></div>
                                     <div class="lg:col-span-6 rounded-2xl bg-indigo-50 border border-indigo-100 p-4 ud-mini-hint"><b class="text-indigo-700">Irit database:</b> semua pilihan visual ini tetap diringkas otomatis ke field <b>designPackText</b>. Pengguna tidak perlu melihat atau mengetik kode warna.</div>
                                 </div>
                             </details>
