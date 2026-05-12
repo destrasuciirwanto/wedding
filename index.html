@@ -866,6 +866,18 @@
             border-color: #a78bfa;
             box-shadow: 0 0 0 4px rgba(167,139,250,.16);
         }
+
+        .ud-studio-mini-preview [data-preview-button] {
+            max-width: 100%;
+            white-space: normal;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+        .ud-studio-mini-preview [data-preview-title] {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
         .ud-studio-feature-panel {
             border-radius: 28px;
             border: 1px solid rgba(226,232,240,.84);
@@ -922,6 +934,175 @@
             color: #6D28D9;
             box-shadow: 0 10px 22px rgba(124,58,237,.10);
         }
+
+        /* =====================================================
+           ULTRA MATERIAL PRESET GROUPS - responsif desktop/tablet/HP
+           Panel ini hanya ada di menu Undangan Digital.
+        ===================================================== */
+        .ud-material-search-wrap {
+            position: relative;
+            margin-bottom: .9rem;
+        }
+        .ud-material-search-wrap i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+        .ud-material-search-input {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 18px;
+            border: 1px solid rgba(203,213,225,.9);
+            background: rgba(248,250,252,.85);
+            padding: 0 14px 0 42px;
+            font-size: 13px;
+            font-weight: 800;
+            outline: none;
+            transition: .16s ease;
+        }
+        .ud-material-search-input:focus {
+            background: #fff;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167,139,250,.16);
+        }
+        .ud-material-category {
+            border-radius: 28px;
+            border: 1px solid rgba(226,232,240,.82);
+            background: rgba(255,255,255,.72);
+            padding: 1rem;
+            box-shadow: 0 12px 30px rgba(15,23,42,.04);
+        }
+        .ud-material-category + .ud-material-category { margin-top: 1rem; }
+        .ud-material-category-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: .85rem;
+            margin-bottom: .85rem;
+        }
+        .ud-material-category-head b {
+            display: block;
+            font-size: 13px;
+            color: #1e293b;
+            font-weight: 950;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .ud-material-category-head small {
+            display: block;
+            margin-top: .2rem;
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.55;
+        }
+        .ud-material-count {
+            flex: 0 0 auto;
+            min-width: 2.2rem;
+            height: 2.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            color: #6d28d9;
+            background: #f5f3ff;
+            border: 1px solid #ede9fe;
+            font-size: 11px;
+            font-weight: 950;
+        }
+        .ud-material-card-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: .8rem;
+        }
+        @media (min-width: 720px) { .ud-material-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (min-width: 1280px) { .ud-material-card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .ud-material-card-grid .ud-studio-action {
+            min-height: 144px;
+            height: 100%;
+            word-break: break-word;
+        }
+        .ud-material-card-grid .ud-studio-action small { max-width: 100%; }
+        .ud-studio-action, .ud-studio-pill, .ud-studio-input, .ud-material-search-input {
+            -webkit-tap-highlight-color: transparent;
+        }
+        details.ud-collapsible-panel {
+            display: block;
+        }
+        details.ud-collapsible-panel > summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-radius: 22px;
+            padding: .9rem 1rem;
+            margin: -.25rem -.25rem 0;
+            background: linear-gradient(135deg, rgba(255,255,255,.90), rgba(245,243,255,.86));
+            border: 1px solid rgba(226,232,240,.86);
+            user-select: none;
+        }
+        details.ud-collapsible-panel > summary::-webkit-details-marker { display: none; }
+        details.ud-collapsible-panel > summary h5 {
+            margin: 0;
+            line-height: 1.35;
+        }
+        .ud-collapsible-status {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            min-height: 34px;
+            padding: .45rem .75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(167,139,250,.30);
+            background: rgba(245,243,255,.92);
+            color: #6d28d9;
+            font-size: 10px;
+            font-weight: 950;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .ud-collapsible-status i {
+            transition: transform .18s ease;
+        }
+        details.ud-collapsible-panel[open] .ud-collapsible-status i {
+            transform: rotate(180deg);
+        }
+        .ud-collapsible-body {
+            padding-top: 1rem;
+        }
+        @media (max-width: 640px) {
+            details.ud-collapsible-panel > summary {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: .75rem;
+                border-radius: 20px;
+                padding: .85rem;
+            }
+            .ud-collapsible-status {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        @media (max-width: 640px) {
+            .ud-studio-max { border-radius: 24px; }
+            .ud-studio-hero { border-radius: 22px; }
+            .ud-studio-action { border-radius: 20px; padding: .9rem; }
+            .ud-studio-icon { width: 38px; height: 38px; border-radius: 16px; margin-bottom: .65rem; }
+            .ud-studio-action b { font-size: 12px; }
+            .ud-studio-action small { font-size: 10.5px; }
+            .ud-studio-pill { width: 100%; justify-content: center; min-height: 40px; }
+            .ud-studio-control-grid { gap: .65rem; }
+            .ud-material-category { border-radius: 22px; padding: .85rem; }
+            .ud-material-category-head { flex-direction: column; }
+            .ud-material-count { width: auto; padding: 0 .75rem; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .ud-studio-action, .ud-studio-pill, .ud-studio-meter > span { transition: none !important; }
             .ud-studio-action:hover, .ud-studio-pill:hover { transform: none !important; }
@@ -2512,7 +2693,25 @@
                 `sectionShape=${udDashGet('inputUDSectionShape', 'soft')}`,
                 `readability=${udDashGet('inputUDReadabilityMode', 'comfort')}`,
                 `contrast=${udDashGet('inputUDContrastMode', 'normal')}`,
-                `mobileMode=${udDashGet('inputUDMobileMode', 'balanced')}`
+                `mobileMode=${udDashGet('inputUDMobileMode', 'balanced')}`,
+                `decorDensity=${udDashGet('inputUDDecorDensity', 'normal')}`,
+                `ornamentStyle=${udDashGet('inputUDOrnamentStyle', 'floral')}`,
+                `cornerDecor=${udDashGet('inputUDCornerDecor', 'floral')}`,
+                `backgroundPattern=${udDashGet('inputUDBackgroundPattern', 'soft-flower')}`,
+                `frameStyle=${udDashGet('inputUDFrameStyle', 'soft-line')}`,
+                `dividerStyle=${udDashGet('inputUDDividerStyle', 'floral')}`,
+                `titleOrnament=${udDashGet('inputUDTitleOrnament', 'sparkle')}`,
+                `materialTexture=${udDashGet('inputUDMaterialTexture', 'paper')}`,
+                `galleryHover=${udDashGet('inputUDGalleryHover', 'zoom-glow')}`,
+                `cardAccent=${udDashGet('inputUDCardAccent', 'gold-line')}`,
+                `coupleFrame=${udDashGet('inputUDCoupleFrame', 'floral-ring')}`,
+                `iconSet=${udDashGet('inputUDIconSet', 'romantic')}`,
+                `sectionBadgeStyle=${udDashGet('inputUDSectionBadgeStyle', 'pill')}`,
+                `menuIconStyle=${udDashGet('inputUDMenuIconStyle', 'circle')}`,
+                `storyLineStyle=${udDashGet('inputUDStoryLineStyle', 'flower-dot')}`,
+                `eventCardStyle=${udDashGet('inputUDEventCardStyle', 'premium')}`,
+                `giftCardStyle=${udDashGet('inputUDGiftCardStyle', 'luxury')}`,
+                `footerDecor=${udDashGet('inputUDFooterDecor', 'floral')}`
             ].join('\n');
             const target = document.getElementById('inputUDDesignPackText');
             if (target) target.value = pack;
@@ -2579,6 +2778,24 @@
             udDashSet('inputUDReadabilityMode', udDashPackValue(pack, 'readability', 'keterbacaan') || 'comfort');
             udDashSet('inputUDContrastMode', udDashPackValue(pack, 'contrast', 'kontras') || 'normal');
             udDashSet('inputUDMobileMode', udDashPackValue(pack, 'mobileMode', 'modeHp') || 'balanced');
+            udDashSet('inputUDDecorDensity', udDashPackValue(pack, 'decorDensity', 'keramaianHiasan') || 'normal');
+            udDashSet('inputUDOrnamentStyle', udDashPackValue(pack, 'ornamentStyle', 'ornamen', 'hiasan') || 'floral');
+            udDashSet('inputUDCornerDecor', udDashPackValue(pack, 'cornerDecor', 'hiasanSudut') || 'floral');
+            udDashSet('inputUDBackgroundPattern', udDashPackValue(pack, 'backgroundPattern', 'polaBg') || 'soft-flower');
+            udDashSet('inputUDFrameStyle', udDashPackValue(pack, 'frameStyle', 'bingkai') || 'soft-line');
+            udDashSet('inputUDDividerStyle', udDashPackValue(pack, 'dividerStyle', 'pemisah') || 'floral');
+            udDashSet('inputUDTitleOrnament', udDashPackValue(pack, 'titleOrnament', 'hiasanJudul') || 'sparkle');
+            udDashSet('inputUDMaterialTexture', udDashPackValue(pack, 'materialTexture', 'tekstur') || 'paper');
+            udDashSet('inputUDGalleryHover', udDashPackValue(pack, 'galleryHover', 'hoverGaleri') || 'zoom-glow');
+            udDashSet('inputUDCardAccent', udDashPackValue(pack, 'cardAccent', 'aksenKartu') || 'gold-line');
+            udDashSet('inputUDCoupleFrame', udDashPackValue(pack, 'coupleFrame', 'bingkaiMempelai') || 'floral-ring');
+            udDashSet('inputUDIconSet', udDashPackValue(pack, 'iconSet', 'ikon') || 'romantic');
+            udDashSet('inputUDSectionBadgeStyle', udDashPackValue(pack, 'sectionBadgeStyle', 'badgeSection') || 'pill');
+            udDashSet('inputUDMenuIconStyle', udDashPackValue(pack, 'menuIconStyle', 'ikonMenu') || 'circle');
+            udDashSet('inputUDStoryLineStyle', udDashPackValue(pack, 'storyLineStyle', 'garisStory') || 'flower-dot');
+            udDashSet('inputUDEventCardStyle', udDashPackValue(pack, 'eventCardStyle', 'kartuAcara') || 'premium');
+            udDashSet('inputUDGiftCardStyle', udDashPackValue(pack, 'giftCardStyle', 'kartuGift') || 'luxury');
+            udDashSet('inputUDFooterDecor', udDashPackValue(pack, 'footerDecor', 'hiasanFooter') || 'floral');
             udDashSet('inputUDCoverOverlay', udDashOverlayKeyFromValue(udDashPackValue(pack, 'coverOverlay')) || 'soft');
             udDashSet('inputUDHeroOverlay', udDashOverlayKeyFromValue(udDashPackValue(pack, 'heroOverlay'), true) || 'medium');
             udDashSet('inputUDHeroPosition', udDashPackValue(pack, 'heroPosition', 'fotoPosition') || 'center');
@@ -2611,6 +2828,226 @@
             adat_warm: { navStyle: 'glassbar', coverScale: 'large', countdownStyle: 'botanical', galleryDensity: 'cozy', sectionShape: 'editorial', readability: 'comfort', contrast: 'normal', mobileMode: 'balanced' },
             elegant_blue: { navStyle: 'glassbar', coverScale: 'large', countdownStyle: 'luxury', galleryDensity: 'cozy', sectionShape: 'editorial', readability: 'comfort', contrast: 'high', mobileMode: 'balanced' },
             dark_cinematic: { navStyle: 'glassbar', coverScale: 'huge', countdownStyle: 'luxury', galleryDensity: 'cozy', sectionShape: 'editorial', readability: 'comfort', contrast: 'high', mobileMode: 'balanced' }
+        };
+
+
+        const UD_DASH_MATERIAL_OPTION_SETS = {
+            inputUDOrnamentStyle: [
+                ['floral','Bunga Floral'], ['rose','Rose'], ['peony','Peony'], ['orchid','Orchid'], ['jasmine','Jasmine'], ['lotus','Lotus'], ['sakura','Sakura'],
+                ['birds','Burung'], ['dove','Dove / Merpati'], ['swan','Swan / Angsa'], ['hummingbird','Hummingbird'],
+                ['butterfly','Kupu-Kupu'], ['fairy','Fairy Sparkle'], ['garden','Garden'], ['leaf','Daun'], ['olive','Olive Leaf'], ['palm','Palm Leaf'], ['fern','Fern'],
+                ['sparkle','Sparkle'], ['star','Sparkle Star'], ['moon','Moonlight'], ['pearl','Pearl'], ['cloud','Cloud'], ['lantern','Lantern'], ['firefly','Firefly'],
+                ['chandelier','Chandelier'], ['lace','Lace'], ['marble','Marble'], ['goldfoil','Gold Foil'], ['watercolor','Watercolor'], ['glass','Glass'],
+                ['batik','Batik'], ['songket','Songket'], ['jawa','Jawa Classic'], ['nusantara','Nusantara'], ['islamic','Islamic Arch'], ['mosque','Mosque'],
+                ['beach','Beach Wave'], ['rustic','Rustic'], ['sunset','Sunset'], ['monochrome','Monochrome'], ['none','None']
+            ],
+            inputUDCornerDecor: [
+                ['floral','Floral Corner'], ['rose','Rose Corner'], ['peony','Peony Corner'], ['lotus','Lotus Corner'], ['birds','Bird Corner'], ['dove','Dove Corner'], ['butterfly','Butterfly Corner'],
+                ['leaf','Leaf Corner'], ['olive','Olive Corner'], ['palm','Palm Corner'], ['fern','Fern Corner'], ['lace','Lace Corner'], ['cloud','Cloud Corner'], ['pearl','Pearl Corner'],
+                ['chandelier','Chandelier Corner'], ['marble','Marble Corner'], ['batik','Batik Corner'], ['songket','Songket Corner'], ['mosque','Mosque Arch'], ['ribbon','Ribbon Corner'], ['none','None']
+            ],
+            inputUDBackgroundPattern: [
+                ['soft-flower','Soft Flower'], ['floral-dust','Floral Dust'], ['petal-rain','Petal Rain'], ['leaf','Leaf'], ['garden-vine','Garden Vine'], ['cloud','Cloud'], ['sparkle','Sparkle'],
+                ['stars','Stars'], ['pearl','Pearl Dots'], ['bokeh','Bokeh'], ['watercolor','Watercolor Wash'], ['marble','Marble'], ['lace','Lace Pattern'], ['batik','Batik'], ['songket','Songket'],
+                ['wave','Wave'], ['gradient-orb','Gradient Orb'], ['diagonal','Diagonal Line'], ['confetti','Confetti'], ['dots','Dots'], ['grid','Grid'], ['arabesque','Arabesque'], ['none','None']
+            ],
+            inputUDFrameStyle: [
+                ['soft-line','Soft Line'], ['gold-line','Gold Line'], ['double-line','Double Line'], ['floral-frame','Floral Frame'], ['botanical','Botanical'], ['garden-frame','Garden Frame'],
+                ['lace','Lace'], ['royal-line','Royal Line'], ['pearl-frame','Pearl Frame'], ['watercolor-frame','Watercolor Frame'], ['arch-frame','Arch Frame'], ['mosque-arch','Mosque Arch'],
+                ['batik-frame','Batik Frame'], ['songket-frame','Songket Frame'], ['marble-frame','Marble Frame'], ['ribbon-frame','Ribbon Frame'], ['vintage-frame','Vintage Frame'], ['none','None']
+            ],
+            inputUDDividerStyle: [
+                ['minimal','Minimal'], ['floral','Floral'], ['rose','Rose'], ['birds','Birds'], ['dove','Dove'], ['butterfly','Butterfly'], ['leaf','Leaf'], ['pearl','Pearl'], ['lace','Lace'],
+                ['arch','Arch'], ['batik','Batik'], ['wave','Wave'], ['ribbon','Ribbon'], ['moon','Moon'], ['hearts','Hearts'], ['dots','Dots'], ['sparkle','Sparkle'], ['ornate','Ornate']
+            ],
+            inputUDTitleOrnament: [
+                ['sparkle','Sparkle'], ['flower','Flower'], ['bouquet','Bouquet'], ['leaf','Leaf'], ['wings','Wings'], ['heart','Heart'], ['pearl','Pearl'], ['moon','Moon'], ['arch','Arch'], ['ribbon','Ribbon'], ['diamond','Diamond'], ['crown','Crown'], ['none','None']
+            ],
+            inputUDMaterialTexture: [
+                ['paper','Paper'], ['handmade','Handmade Paper'], ['linen','Linen'], ['canvas','Canvas'], ['silk','Silk'], ['satin','Satin'], ['vellum','Vellum'], ['glass','Glass'], ['velvet','Velvet'], ['marble','Marble'], ['watercolor','Watercolor'], ['pearl','Pearl'], ['goldfoil','Gold Foil'], ['lace','Lace'], ['none','None']
+            ],
+            inputUDGalleryHover: [
+                ['zoom-glow','Zoom Glow'], ['soft-zoom','Soft Zoom'], ['float','Float'], ['shine','Shine'], ['lift','Lift'], ['tilt','Tilt'], ['spotlight','Spotlight'], ['polaroid','Polaroid'], ['grayscale','Grayscale'], ['none','None']
+            ],
+            inputUDCardAccent: [
+                ['gold-line','Gold Line'], ['top-line','Top Line'], ['left-line','Left Line'], ['double-line','Double Line'], ['petal','Petal'], ['ribbon','Ribbon'], ['pearl','Pearl'], ['corner-glow','Corner Glow'], ['leaf-corner','Leaf Corner'], ['floral-corner','Floral Corner'], ['luxe-shadow','Luxe Shadow'], ['watercolor','Watercolor'], ['stamp','Stamp'], ['none','None']
+            ],
+            inputUDCoupleFrame: [
+                ['floral-ring','Floral Ring'], ['leaf-ring','Leaf Ring'], ['pearl-ring','Pearl Ring'], ['flower-crown','Flower Crown'], ['halo','Halo'], ['arch','Arch'], ['oval','Oval'], ['polaroid','Polaroid'], ['double-gold','Double Gold'], ['lace','Lace'], ['botanical-oval','Botanical Oval'], ['royal','Royal'], ['soft-shadow','Soft Shadow'], ['clean','Clean']
+            ],
+            inputUDIconSet: [
+                ['romantic','Romantic'], ['classic','Classic'], ['nature','Nature'], ['luxury','Luxury'], ['whimsical','Whimsical'], ['islamic','Islamic'], ['adat','Adat'], ['royal','Royal'], ['softline','Soft Line'], ['minimal','Minimal']
+            ],
+            inputUDSectionBadgeStyle: [
+                ['pill','Pill'], ['ribbon','Ribbon'], ['outline','Outline'], ['leaf','Leaf'], ['flower','Flower'], ['pearl','Pearl'], ['arch','Arch'], ['stamp','Stamp'], ['goldbar','Gold Bar'], ['minimal-line','Minimal Line'], ['soft','Soft']
+            ],
+            inputUDMenuIconStyle: [
+                ['circle','Circle'], ['square','Square'], ['diamond','Diamond'], ['arch','Arch'], ['pearl','Pearl'], ['softbox','Soft Box'], ['golddisc','Gold Disc'], ['floating','Floating'], ['minimal','Minimal']
+            ],
+            inputUDStoryLineStyle: [
+                ['gradient','Gradient'], ['flower-dot','Flower Dot'], ['leaf','Leaf'], ['vine','Vine'], ['pearl','Pearl'], ['hearts','Hearts'], ['dots','Dots'], ['arch','Arch'], ['luxe','Luxe'], ['batik','Batik'], ['gold-line','Gold Line'], ['soft','Soft'], ['minimal','Minimal']
+            ],
+            inputUDEventCardStyle: [
+                ['premium','Premium'], ['glass','Glass'], ['botanical','Botanical'], ['royal','Royal'], ['arch','Arch'], ['pearl','Pearl'], ['garden','Garden'], ['cinematic','Cinematic'], ['ticket','Ticket'], ['magazine','Magazine'], ['mosque','Mosque'], ['watercolor','Watercolor'], ['clean','Clean']
+            ],
+            inputUDGiftCardStyle: [
+                ['luxury','Luxury'], ['soft','Soft'], ['pearl','Pearl'], ['envelope','Envelope'], ['bank-card','Bank Card'], ['qris-glow','QRIS Glow'], ['royal-box','Royal Box'], ['minimal-line','Minimal Line'], ['clean','Clean']
+            ],
+            inputUDFooterDecor: [
+                ['floral','Floral'], ['rose','Rose'], ['peony','Peony'], ['butterfly','Butterfly'], ['birds','Birds'], ['dove','Dove'], ['leaf','Leaf'], ['pearl','Pearl'], ['moon','Moon'], ['lantern','Lantern'], ['arch','Arch'], ['batik','Batik'], ['songket','Songket'], ['lace','Lace'], ['wave','Wave'], ['heart','Heart'], ['sparkle','Sparkle'], ['ornate','Ornate'], ['cloud','Cloud'], ['none','None']
+            ]
+        };
+
+        const UD_DASH_MATERIAL_PRESETS = {
+            floral_max: { label: 'Floral Max', group: 'floral', icon: 'fa-spa', gradient: 'from-pink-500 to-rose-600', desc: 'Bunga besar, sudut floral, frame petal, badge flower, dan footer cantik.', decorDensity: 'max', ornamentStyle: 'floral', cornerDecor: 'floral', backgroundPattern: 'soft-flower', frameStyle: 'floral-frame', dividerStyle: 'floral', titleOrnament: 'flower', materialTexture: 'paper', galleryHover: 'zoom-glow', cardAccent: 'petal', coupleFrame: 'floral-ring', iconSet: 'romantic', sectionBadgeStyle: 'flower', menuIconStyle: 'circle', storyLineStyle: 'flower-dot', eventCardStyle: 'premium', giftCardStyle: 'luxury', footerDecor: 'floral' },
+            rose_garden: { label: 'Rose Garden', group: 'floral', icon: 'fa-seedling', gradient: 'from-rose-400 to-pink-700', desc: 'Rose corner, garden vine, frame floral, dan aksen romantis.', decorDensity: 'extra', ornamentStyle: 'rose', cornerDecor: 'rose', backgroundPattern: 'garden-vine', frameStyle: 'garden-frame', dividerStyle: 'rose', titleOrnament: 'bouquet', materialTexture: 'linen', galleryHover: 'soft-zoom', cardAccent: 'floral-corner', coupleFrame: 'flower-crown', iconSet: 'romantic', sectionBadgeStyle: 'flower', menuIconStyle: 'softbox', storyLineStyle: 'vine', eventCardStyle: 'garden', giftCardStyle: 'soft', footerDecor: 'rose' },
+            peony_blush: { label: 'Peony Blush', group: 'floral', icon: 'fa-fan', gradient: 'from-fuchsia-400 to-rose-500', desc: 'Peony soft, petal rain, pearl touch, cocok untuk undangan manis.', decorDensity: 'extra', ornamentStyle: 'peony', cornerDecor: 'peony', backgroundPattern: 'petal-rain', frameStyle: 'watercolor-frame', dividerStyle: 'floral', titleOrnament: 'bouquet', materialTexture: 'watercolor', galleryHover: 'shine', cardAccent: 'watercolor', coupleFrame: 'floral-ring', iconSet: 'whimsical', sectionBadgeStyle: 'soft', menuIconStyle: 'pearl', storyLineStyle: 'flower-dot', eventCardStyle: 'watercolor', giftCardStyle: 'soft', footerDecor: 'peony' },
+            orchid_luxury: { label: 'Orchid Luxury', group: 'floral', icon: 'fa-gem', gradient: 'from-purple-500 to-pink-500', desc: 'Orchid elegan, satin, shimmer, dan kartu premium.', decorDensity: 'extra', ornamentStyle: 'orchid', cornerDecor: 'floral', backgroundPattern: 'floral-dust', frameStyle: 'royal-line', dividerStyle: 'ornate', titleOrnament: 'diamond', materialTexture: 'satin', galleryHover: 'spotlight', cardAccent: 'luxe-shadow', coupleFrame: 'royal', iconSet: 'luxury', sectionBadgeStyle: 'goldbar', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'royal', giftCardStyle: 'royal-box', footerDecor: 'floral' },
+            jasmine_soft: { label: 'Jasmine Soft', group: 'floral', icon: 'fa-leaf', gradient: 'from-emerald-300 to-pink-300', desc: 'Jasmine halus, linen, daun kecil, dan tampilan ringan.', decorDensity: 'normal', ornamentStyle: 'jasmine', cornerDecor: 'leaf', backgroundPattern: 'soft-flower', frameStyle: 'soft-line', dividerStyle: 'leaf', titleOrnament: 'flower', materialTexture: 'linen', galleryHover: 'lift', cardAccent: 'leaf-corner', coupleFrame: 'leaf-ring', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'circle', storyLineStyle: 'leaf', eventCardStyle: 'botanical', giftCardStyle: 'soft', footerDecor: 'floral' },
+            lotus_serenity: { label: 'Lotus Serenity', group: 'floral', icon: 'fa-water', gradient: 'from-teal-300 to-violet-400', desc: 'Lotus, wave lembut, dan nuansa tenang untuk desain adem.', decorDensity: 'normal', ornamentStyle: 'lotus', cornerDecor: 'lotus', backgroundPattern: 'wave', frameStyle: 'arch-frame', dividerStyle: 'wave', titleOrnament: 'leaf', materialTexture: 'vellum', galleryHover: 'float', cardAccent: 'top-line', coupleFrame: 'oval', iconSet: 'softline', sectionBadgeStyle: 'arch', menuIconStyle: 'arch', storyLineStyle: 'soft', eventCardStyle: 'arch', giftCardStyle: 'minimal-line', footerDecor: 'wave' },
+
+            birds_love: { label: 'Birds Love', group: 'nature', icon: 'fa-dove', gradient: 'from-sky-500 to-indigo-600', desc: 'Burung, awan, wing title, dan gerakan ringan.', decorDensity: 'extra', ornamentStyle: 'birds', cornerDecor: 'birds', backgroundPattern: 'cloud', frameStyle: 'gold-line', dividerStyle: 'birds', titleOrnament: 'wings', materialTexture: 'vellum', galleryHover: 'float', cardAccent: 'gold-line', coupleFrame: 'halo', iconSet: 'classic', sectionBadgeStyle: 'pill', menuIconStyle: 'floating', storyLineStyle: 'gold-line', eventCardStyle: 'glass', giftCardStyle: 'soft', footerDecor: 'birds' },
+            dove_sky: { label: 'Dove Sky', group: 'nature', icon: 'fa-feather', gradient: 'from-cyan-400 to-blue-600', desc: 'Merpati, awan, cloud corner, dan nuansa langit bersih.', decorDensity: 'extra', ornamentStyle: 'dove', cornerDecor: 'dove', backgroundPattern: 'cloud', frameStyle: 'soft-line', dividerStyle: 'dove', titleOrnament: 'wings', materialTexture: 'glass', galleryHover: 'float', cardAccent: 'corner-glow', coupleFrame: 'halo', iconSet: 'softline', sectionBadgeStyle: 'soft', menuIconStyle: 'floating', storyLineStyle: 'soft', eventCardStyle: 'glass', giftCardStyle: 'envelope', footerDecor: 'dove' },
+            swan_lake: { label: 'Swan Lake', group: 'nature', icon: 'fa-water', gradient: 'from-blue-200 to-slate-500', desc: 'Angsa, pearl, dan frame bersih untuk tampilan dreamy.', decorDensity: 'normal', ornamentStyle: 'swan', cornerDecor: 'pearl', backgroundPattern: 'pearl', frameStyle: 'pearl-frame', dividerStyle: 'pearl', titleOrnament: 'pearl', materialTexture: 'pearl', galleryHover: 'spotlight', cardAccent: 'pearl', coupleFrame: 'pearl-ring', iconSet: 'classic', sectionBadgeStyle: 'pearl', menuIconStyle: 'pearl', storyLineStyle: 'pearl', eventCardStyle: 'pearl', giftCardStyle: 'pearl', footerDecor: 'pearl' },
+            hummingbird_garden: { label: 'Hummingbird Garden', group: 'nature', icon: 'fa-feather-pointed', gradient: 'from-lime-400 to-emerald-600', desc: 'Burung kecil, vine garden, dan nuansa botanical hidup.', decorDensity: 'extra', ornamentStyle: 'hummingbird', cornerDecor: 'leaf', backgroundPattern: 'garden-vine', frameStyle: 'botanical', dividerStyle: 'leaf', titleOrnament: 'leaf', materialTexture: 'linen', galleryHover: 'tilt', cardAccent: 'leaf-corner', coupleFrame: 'botanical-oval', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'circle', storyLineStyle: 'vine', eventCardStyle: 'garden', giftCardStyle: 'soft', footerDecor: 'leaf' },
+            botanical_garden: { label: 'Botanical Garden', group: 'nature', icon: 'fa-leaf', gradient: 'from-emerald-500 to-lime-600', desc: 'Daun, garden, linen, badge leaf, dan kartu botanical.', decorDensity: 'extra', ornamentStyle: 'garden', cornerDecor: 'leaf', backgroundPattern: 'leaf', frameStyle: 'botanical', dividerStyle: 'leaf', titleOrnament: 'leaf', materialTexture: 'linen', galleryHover: 'lift', cardAccent: 'left-line', coupleFrame: 'leaf-ring', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'circle', storyLineStyle: 'leaf', eventCardStyle: 'botanical', giftCardStyle: 'soft', footerDecor: 'leaf' },
+            olive_leaf: { label: 'Olive Leaf', group: 'nature', icon: 'fa-seedling', gradient: 'from-stone-400 to-green-700', desc: 'Olive, earth tone, clean botanical, dan elegan natural.', decorDensity: 'normal', ornamentStyle: 'olive', cornerDecor: 'olive', backgroundPattern: 'leaf', frameStyle: 'botanical', dividerStyle: 'leaf', titleOrnament: 'leaf', materialTexture: 'canvas', galleryHover: 'lift', cardAccent: 'left-line', coupleFrame: 'leaf-ring', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'minimal', storyLineStyle: 'leaf', eventCardStyle: 'botanical', giftCardStyle: 'clean', footerDecor: 'leaf' },
+
+            butterfly_soft: { label: 'Butterfly Soft', group: 'fantasy', icon: 'fa-wand-magic-sparkles', gradient: 'from-violet-500 to-fuchsia-600', desc: 'Kupu-kupu, sparkle, silk, hover shine, dan soft card.', decorDensity: 'extra', ornamentStyle: 'butterfly', cornerDecor: 'butterfly', backgroundPattern: 'sparkle', frameStyle: 'soft-line', dividerStyle: 'butterfly', titleOrnament: 'sparkle', materialTexture: 'silk', galleryHover: 'shine', cardAccent: 'petal', coupleFrame: 'soft-shadow', iconSet: 'romantic', sectionBadgeStyle: 'soft', menuIconStyle: 'floating', storyLineStyle: 'soft', eventCardStyle: 'glass', giftCardStyle: 'soft', footerDecor: 'sparkle' },
+            fairy_sparkle: { label: 'Fairy Sparkle', group: 'fantasy', icon: 'fa-sparkles', gradient: 'from-fuchsia-500 to-indigo-500', desc: 'Fairy, sparkle, bokeh, dan efek magical untuk undangan dreamy.', decorDensity: 'max', ornamentStyle: 'fairy', cornerDecor: 'butterfly', backgroundPattern: 'bokeh', frameStyle: 'watercolor-frame', dividerStyle: 'sparkle', titleOrnament: 'sparkle', materialTexture: 'silk', galleryHover: 'shine', cardAccent: 'corner-glow', coupleFrame: 'halo', iconSet: 'whimsical', sectionBadgeStyle: 'soft', menuIconStyle: 'floating', storyLineStyle: 'gradient', eventCardStyle: 'glass', giftCardStyle: 'qris-glow', footerDecor: 'sparkle' },
+            starry_night: { label: 'Starry Night', group: 'fantasy', icon: 'fa-star', gradient: 'from-slate-900 to-indigo-600', desc: 'Bintang malam, kontras tinggi, dan spotlight elegan.', decorDensity: 'extra', ornamentStyle: 'star', cornerDecor: 'pearl', backgroundPattern: 'stars', frameStyle: 'gold-line', dividerStyle: 'sparkle', titleOrnament: 'diamond', materialTexture: 'velvet', galleryHover: 'spotlight', cardAccent: 'luxe-shadow', coupleFrame: 'halo', iconSet: 'luxury', sectionBadgeStyle: 'goldbar', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'cinematic', giftCardStyle: 'luxury', footerDecor: 'sparkle' },
+            dreamy_cloud: { label: 'Dreamy Cloud', group: 'fantasy', icon: 'fa-cloud', gradient: 'from-cyan-400 to-blue-500', desc: 'Awan, vellum, halo, tampilan halus, dan footer cloud.', decorDensity: 'normal', ornamentStyle: 'cloud', cornerDecor: 'cloud', backgroundPattern: 'cloud', frameStyle: 'soft-line', dividerStyle: 'sparkle', titleOrnament: 'sparkle', materialTexture: 'vellum', galleryHover: 'float', cardAccent: 'none', coupleFrame: 'halo', iconSet: 'minimal', sectionBadgeStyle: 'soft', menuIconStyle: 'floating', storyLineStyle: 'soft', eventCardStyle: 'clean', giftCardStyle: 'clean', footerDecor: 'cloud' },
+            firefly_garden: { label: 'Firefly Garden', group: 'fantasy', icon: 'fa-lightbulb', gradient: 'from-yellow-400 to-emerald-700', desc: 'Kunang-kunang, garden night, glow card, dan hiasan lembut.', decorDensity: 'extra', ornamentStyle: 'firefly', cornerDecor: 'leaf', backgroundPattern: 'garden-vine', frameStyle: 'botanical', dividerStyle: 'sparkle', titleOrnament: 'sparkle', materialTexture: 'glass', galleryHover: 'spotlight', cardAccent: 'corner-glow', coupleFrame: 'halo', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'floating', storyLineStyle: 'gradient', eventCardStyle: 'glass', giftCardStyle: 'qris-glow', footerDecor: 'lantern' },
+            moonlight_pearl: { label: 'Moonlight Pearl', group: 'fantasy', icon: 'fa-moon', gradient: 'from-slate-500 to-purple-700', desc: 'Bulan, pearl dots, frame clean, dan ambience malam romantis.', decorDensity: 'normal', ornamentStyle: 'moon', cornerDecor: 'pearl', backgroundPattern: 'pearl', frameStyle: 'pearl-frame', dividerStyle: 'moon', titleOrnament: 'moon', materialTexture: 'pearl', galleryHover: 'spotlight', cardAccent: 'pearl', coupleFrame: 'pearl-ring', iconSet: 'luxury', sectionBadgeStyle: 'pearl', menuIconStyle: 'pearl', storyLineStyle: 'pearl', eventCardStyle: 'pearl', giftCardStyle: 'pearl', footerDecor: 'moon' },
+
+            royal_lace: { label: 'Royal Lace', group: 'luxury', icon: 'fa-crown', gradient: 'from-slate-900 to-amber-500', desc: 'Lace, rose, arabesque, royal frame, dan gold divider.', decorDensity: 'extra', ornamentStyle: 'rose', cornerDecor: 'lace', backgroundPattern: 'arabesque', frameStyle: 'royal-line', dividerStyle: 'ornate', titleOrnament: 'crown', materialTexture: 'velvet', galleryHover: 'zoom-glow', cardAccent: 'double-line', coupleFrame: 'royal', iconSet: 'classic', sectionBadgeStyle: 'ribbon', menuIconStyle: 'diamond', storyLineStyle: 'gold-line', eventCardStyle: 'royal', giftCardStyle: 'luxury', footerDecor: 'ornate' },
+            luxury_gold: { label: 'Luxury Gold', group: 'luxury', icon: 'fa-coins', gradient: 'from-yellow-500 to-amber-800', desc: 'Gold foil, royal line, badge goldbar, dan kartu mewah.', decorDensity: 'extra', ornamentStyle: 'goldfoil', cornerDecor: 'ribbon', backgroundPattern: 'arabesque', frameStyle: 'royal-line', dividerStyle: 'ornate', titleOrnament: 'crown', materialTexture: 'goldfoil', galleryHover: 'shine', cardAccent: 'luxe-shadow', coupleFrame: 'double-gold', iconSet: 'luxury', sectionBadgeStyle: 'goldbar', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'royal', giftCardStyle: 'royal-box', footerDecor: 'ornate' },
+            pearl_white: { label: 'Pearl White', group: 'luxury', icon: 'fa-circle', gradient: 'from-slate-200 to-pink-300', desc: 'Putih pearl, soft clean, bingkai mutiara, dan detail elegan.', decorDensity: 'normal', ornamentStyle: 'pearl', cornerDecor: 'pearl', backgroundPattern: 'pearl', frameStyle: 'pearl-frame', dividerStyle: 'pearl', titleOrnament: 'pearl', materialTexture: 'pearl', galleryHover: 'soft-zoom', cardAccent: 'pearl', coupleFrame: 'pearl-ring', iconSet: 'luxury', sectionBadgeStyle: 'pearl', menuIconStyle: 'pearl', storyLineStyle: 'pearl', eventCardStyle: 'pearl', giftCardStyle: 'pearl', footerDecor: 'pearl' },
+            chandelier_ballroom: { label: 'Chandelier Ballroom', group: 'luxury', icon: 'fa-lightbulb', gradient: 'from-yellow-300 to-stone-800', desc: 'Chandelier, ballroom, spotlight, dan nuansa pesta formal.', decorDensity: 'extra', ornamentStyle: 'chandelier', cornerDecor: 'chandelier', backgroundPattern: 'bokeh', frameStyle: 'vintage-frame', dividerStyle: 'ornate', titleOrnament: 'diamond', materialTexture: 'glass', galleryHover: 'spotlight', cardAccent: 'luxe-shadow', coupleFrame: 'royal', iconSet: 'luxury', sectionBadgeStyle: 'ribbon', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'cinematic', giftCardStyle: 'royal-box', footerDecor: 'lantern' },
+            velvet_royal: { label: 'Velvet Royal', group: 'luxury', icon: 'fa-chess-queen', gradient: 'from-purple-950 to-rose-800', desc: 'Velvet, royal card, deep tone, dan kesan sangat premium.', decorDensity: 'extra', ornamentStyle: 'lace', cornerDecor: 'lace', backgroundPattern: 'arabesque', frameStyle: 'royal-line', dividerStyle: 'ornate', titleOrnament: 'crown', materialTexture: 'velvet', galleryHover: 'spotlight', cardAccent: 'double-line', coupleFrame: 'royal', iconSet: 'royal', sectionBadgeStyle: 'ribbon', menuIconStyle: 'diamond', storyLineStyle: 'luxe', eventCardStyle: 'royal', giftCardStyle: 'royal-box', footerDecor: 'lace' },
+            marble_luxe: { label: 'Marble Luxe', group: 'luxury', icon: 'fa-gem', gradient: 'from-slate-200 to-slate-700', desc: 'Marble, clean luxury, dan gold line untuk visual modern mewah.', decorDensity: 'normal', ornamentStyle: 'marble', cornerDecor: 'marble', backgroundPattern: 'marble', frameStyle: 'marble-frame', dividerStyle: 'minimal', titleOrnament: 'diamond', materialTexture: 'marble', galleryHover: 'lift', cardAccent: 'gold-line', coupleFrame: 'double-gold', iconSet: 'luxury', sectionBadgeStyle: 'goldbar', menuIconStyle: 'diamond', storyLineStyle: 'gold-line', eventCardStyle: 'magazine', giftCardStyle: 'bank-card', footerDecor: 'ornate' },
+
+            batik_elegant: { label: 'Batik Elegant', group: 'adat', icon: 'fa-scroll', gradient: 'from-amber-800 to-yellow-500', desc: 'Batik pattern, frame adat, dan aksen tradisional elegan.', decorDensity: 'extra', ornamentStyle: 'batik', cornerDecor: 'batik', backgroundPattern: 'batik', frameStyle: 'batik-frame', dividerStyle: 'batik', titleOrnament: 'diamond', materialTexture: 'handmade', galleryHover: 'lift', cardAccent: 'stamp', coupleFrame: 'double-gold', iconSet: 'adat', sectionBadgeStyle: 'stamp', menuIconStyle: 'diamond', storyLineStyle: 'batik', eventCardStyle: 'ticket', giftCardStyle: 'bank-card', footerDecor: 'batik' },
+            songket_gold: { label: 'Songket Gold', group: 'adat', icon: 'fa-certificate', gradient: 'from-yellow-600 to-red-900', desc: 'Songket, emas hangat, dan desain mewah bernuansa adat.', decorDensity: 'extra', ornamentStyle: 'songket', cornerDecor: 'songket', backgroundPattern: 'songket', frameStyle: 'songket-frame', dividerStyle: 'ornate', titleOrnament: 'crown', materialTexture: 'goldfoil', galleryHover: 'shine', cardAccent: 'luxe-shadow', coupleFrame: 'royal', iconSet: 'adat', sectionBadgeStyle: 'goldbar', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'royal', giftCardStyle: 'royal-box', footerDecor: 'songket' },
+            jawa_classic: { label: 'Jawa Classic', group: 'adat', icon: 'fa-landmark', gradient: 'from-stone-700 to-amber-600', desc: 'Klasik Jawa, vintage frame, warm card, dan detail formal.', decorDensity: 'normal', ornamentStyle: 'jawa', cornerDecor: 'batik', backgroundPattern: 'batik', frameStyle: 'vintage-frame', dividerStyle: 'batik', titleOrnament: 'diamond', materialTexture: 'canvas', galleryHover: 'polaroid', cardAccent: 'stamp', coupleFrame: 'oval', iconSet: 'adat', sectionBadgeStyle: 'stamp', menuIconStyle: 'square', storyLineStyle: 'batik', eventCardStyle: 'ticket', giftCardStyle: 'envelope', footerDecor: 'batik' },
+            nusantara_warm: { label: 'Nusantara Warm', group: 'adat', icon: 'fa-sun', gradient: 'from-orange-500 to-amber-800', desc: 'Nusantara hangat, pattern lembut, dan aksen family-friendly.', decorDensity: 'normal', ornamentStyle: 'nusantara', cornerDecor: 'ribbon', backgroundPattern: 'diagonal', frameStyle: 'ribbon-frame', dividerStyle: 'ribbon', titleOrnament: 'ribbon', materialTexture: 'handmade', galleryHover: 'lift', cardAccent: 'ribbon', coupleFrame: 'oval', iconSet: 'adat', sectionBadgeStyle: 'ribbon', menuIconStyle: 'square', storyLineStyle: 'soft', eventCardStyle: 'ticket', giftCardStyle: 'envelope', footerDecor: 'heart' },
+            islamic_arch: { label: 'Islamic Arch', group: 'adat', icon: 'fa-archway', gradient: 'from-emerald-700 to-amber-500', desc: 'Arch islami, arabesque, dan tampilan nikah formal.', decorDensity: 'normal', ornamentStyle: 'islamic', cornerDecor: 'mosque', backgroundPattern: 'arabesque', frameStyle: 'mosque-arch', dividerStyle: 'arch', titleOrnament: 'arch', materialTexture: 'vellum', galleryHover: 'lift', cardAccent: 'top-line', coupleFrame: 'arch', iconSet: 'islamic', sectionBadgeStyle: 'arch', menuIconStyle: 'arch', storyLineStyle: 'arch', eventCardStyle: 'mosque', giftCardStyle: 'minimal-line', footerDecor: 'arch' },
+            mosque_gold: { label: 'Mosque Gold', group: 'adat', icon: 'fa-mosque', gradient: 'from-teal-800 to-yellow-600', desc: 'Masjid, gold accent, frame arch, dan kartu acara islami.', decorDensity: 'extra', ornamentStyle: 'mosque', cornerDecor: 'mosque', backgroundPattern: 'arabesque', frameStyle: 'mosque-arch', dividerStyle: 'arch', titleOrnament: 'arch', materialTexture: 'goldfoil', galleryHover: 'spotlight', cardAccent: 'gold-line', coupleFrame: 'arch', iconSet: 'islamic', sectionBadgeStyle: 'arch', menuIconStyle: 'arch', storyLineStyle: 'arch', eventCardStyle: 'mosque', giftCardStyle: 'royal-box', footerDecor: 'arch' },
+
+            clean_minimal: { label: 'Clean Minimal', group: 'modern', icon: 'fa-minus', gradient: 'from-slate-500 to-slate-900', desc: 'Semua hiasan dirapikan untuk undangan simpel dan ringan.', decorDensity: 'soft', ornamentStyle: 'none', cornerDecor: 'none', backgroundPattern: 'none', frameStyle: 'none', dividerStyle: 'minimal', titleOrnament: 'none', materialTexture: 'none', galleryHover: 'none', cardAccent: 'none', coupleFrame: 'clean', iconSet: 'minimal', sectionBadgeStyle: 'outline', menuIconStyle: 'minimal', storyLineStyle: 'minimal', eventCardStyle: 'clean', giftCardStyle: 'clean', footerDecor: 'none' },
+            modern_glass: { label: 'Modern Glass', group: 'modern', icon: 'fa-clone', gradient: 'from-cyan-500 to-violet-600', desc: 'Glassmorphism, bokeh, soft glow, dan tampilan digital modern.', decorDensity: 'normal', ornamentStyle: 'glass', cornerDecor: 'cloud', backgroundPattern: 'gradient-orb', frameStyle: 'soft-line', dividerStyle: 'minimal', titleOrnament: 'sparkle', materialTexture: 'glass', galleryHover: 'tilt', cardAccent: 'corner-glow', coupleFrame: 'halo', iconSet: 'softline', sectionBadgeStyle: 'soft', menuIconStyle: 'softbox', storyLineStyle: 'gradient', eventCardStyle: 'glass', giftCardStyle: 'qris-glow', footerDecor: 'sparkle' },
+            editorial_black: { label: 'Editorial Black', group: 'modern', icon: 'fa-newspaper', gradient: 'from-zinc-950 to-zinc-600', desc: 'Style magazine, kontras, clean line, dan komposisi tegas.', decorDensity: 'soft', ornamentStyle: 'monochrome', cornerDecor: 'none', backgroundPattern: 'diagonal', frameStyle: 'double-line', dividerStyle: 'minimal', titleOrnament: 'diamond', materialTexture: 'paper', galleryHover: 'grayscale', cardAccent: 'top-line', coupleFrame: 'clean', iconSet: 'minimal', sectionBadgeStyle: 'minimal-line', menuIconStyle: 'square', storyLineStyle: 'minimal', eventCardStyle: 'magazine', giftCardStyle: 'minimal-line', footerDecor: 'none' },
+            soft_neutral: { label: 'Soft Neutral', group: 'modern', icon: 'fa-circle-half-stroke', gradient: 'from-stone-300 to-stone-600', desc: 'Neutral soft, luas, ringan, dan aman untuk semua foto.', decorDensity: 'soft', ornamentStyle: 'leaf', cornerDecor: 'none', backgroundPattern: 'dots', frameStyle: 'soft-line', dividerStyle: 'minimal', titleOrnament: 'none', materialTexture: 'linen', galleryHover: 'lift', cardAccent: 'none', coupleFrame: 'soft-shadow', iconSet: 'minimal', sectionBadgeStyle: 'outline', menuIconStyle: 'minimal', storyLineStyle: 'soft', eventCardStyle: 'clean', giftCardStyle: 'clean', footerDecor: 'none' },
+            pastel_pop: { label: 'Pastel Pop', group: 'modern', icon: 'fa-palette', gradient: 'from-pink-300 to-sky-400', desc: 'Pastel playful, confetti, sparkle, dan kesan ceria.', decorDensity: 'extra', ornamentStyle: 'fairy', cornerDecor: 'butterfly', backgroundPattern: 'confetti', frameStyle: 'soft-line', dividerStyle: 'hearts', titleOrnament: 'heart', materialTexture: 'watercolor', galleryHover: 'shine', cardAccent: 'watercolor', coupleFrame: 'soft-shadow', iconSet: 'whimsical', sectionBadgeStyle: 'soft', menuIconStyle: 'circle', storyLineStyle: 'hearts', eventCardStyle: 'watercolor', giftCardStyle: 'soft', footerDecor: 'heart' },
+            monochrome_luxe: { label: 'Monochrome Luxe', group: 'modern', icon: 'fa-circle', gradient: 'from-black to-slate-500', desc: 'Hitam putih mewah dengan aksen gold clean.', decorDensity: 'soft', ornamentStyle: 'monochrome', cornerDecor: 'none', backgroundPattern: 'grid', frameStyle: 'gold-line', dividerStyle: 'minimal', titleOrnament: 'diamond', materialTexture: 'paper', galleryHover: 'grayscale', cardAccent: 'gold-line', coupleFrame: 'double-gold', iconSet: 'minimal', sectionBadgeStyle: 'goldbar', menuIconStyle: 'diamond', storyLineStyle: 'gold-line', eventCardStyle: 'magazine', giftCardStyle: 'bank-card', footerDecor: 'none' },
+
+            handmade_paper: { label: 'Handmade Paper', group: 'material', icon: 'fa-scroll', gradient: 'from-orange-200 to-stone-500', desc: 'Kertas handmade, tekstur natural, dan ornamen soft.', decorDensity: 'normal', ornamentStyle: 'floral', cornerDecor: 'leaf', backgroundPattern: 'floral-dust', frameStyle: 'soft-line', dividerStyle: 'leaf', titleOrnament: 'flower', materialTexture: 'handmade', galleryHover: 'lift', cardAccent: 'stamp', coupleFrame: 'soft-shadow', iconSet: 'nature', sectionBadgeStyle: 'stamp', menuIconStyle: 'softbox', storyLineStyle: 'soft', eventCardStyle: 'clean', giftCardStyle: 'envelope', footerDecor: 'floral' },
+            watercolor_art: { label: 'Watercolor Art', group: 'material', icon: 'fa-brush', gradient: 'from-pink-400 to-cyan-400', desc: 'Watercolor wash, frame lembut, dan kartu artistik.', decorDensity: 'extra', ornamentStyle: 'watercolor', cornerDecor: 'floral', backgroundPattern: 'watercolor', frameStyle: 'watercolor-frame', dividerStyle: 'floral', titleOrnament: 'flower', materialTexture: 'watercolor', galleryHover: 'soft-zoom', cardAccent: 'watercolor', coupleFrame: 'soft-shadow', iconSet: 'whimsical', sectionBadgeStyle: 'soft', menuIconStyle: 'softbox', storyLineStyle: 'gradient', eventCardStyle: 'watercolor', giftCardStyle: 'soft', footerDecor: 'floral' },
+            satin_glow: { label: 'Satin Glow', group: 'material', icon: 'fa-wand-magic-sparkles', gradient: 'from-rose-300 to-purple-600', desc: 'Satin halus, glow, dan permukaan kartu mewah.', decorDensity: 'normal', ornamentStyle: 'sparkle', cornerDecor: 'pearl', backgroundPattern: 'bokeh', frameStyle: 'pearl-frame', dividerStyle: 'sparkle', titleOrnament: 'sparkle', materialTexture: 'satin', galleryHover: 'shine', cardAccent: 'corner-glow', coupleFrame: 'halo', iconSet: 'luxury', sectionBadgeStyle: 'pearl', menuIconStyle: 'pearl', storyLineStyle: 'gradient', eventCardStyle: 'glass', giftCardStyle: 'pearl', footerDecor: 'sparkle' },
+            vellum_clean: { label: 'Vellum Clean', group: 'material', icon: 'fa-layer-group', gradient: 'from-white to-sky-400', desc: 'Vellum transparan, blur halus, dan layout bersih.', decorDensity: 'soft', ornamentStyle: 'cloud', cornerDecor: 'cloud', backgroundPattern: 'cloud', frameStyle: 'soft-line', dividerStyle: 'minimal', titleOrnament: 'none', materialTexture: 'vellum', galleryHover: 'float', cardAccent: 'none', coupleFrame: 'clean', iconSet: 'minimal', sectionBadgeStyle: 'outline', menuIconStyle: 'minimal', storyLineStyle: 'soft', eventCardStyle: 'glass', giftCardStyle: 'clean', footerDecor: 'cloud' },
+            lace_romantic: { label: 'Lace Romantic', group: 'material', icon: 'fa-ribbon', gradient: 'from-pink-200 to-rose-600', desc: 'Lace, ribbon, rose, dan efek romantis klasik.', decorDensity: 'extra', ornamentStyle: 'lace', cornerDecor: 'lace', backgroundPattern: 'lace', frameStyle: 'lace', dividerStyle: 'lace', titleOrnament: 'ribbon', materialTexture: 'lace', galleryHover: 'shine', cardAccent: 'ribbon', coupleFrame: 'lace', iconSet: 'romantic', sectionBadgeStyle: 'ribbon', menuIconStyle: 'diamond', storyLineStyle: 'hearts', eventCardStyle: 'royal', giftCardStyle: 'envelope', footerDecor: 'lace' },
+            goldfoil_premium: { label: 'Gold Foil Premium', group: 'material', icon: 'fa-award', gradient: 'from-yellow-300 to-yellow-700', desc: 'Gold foil, shimmer, royal accent, dan kesan mahal.', decorDensity: 'extra', ornamentStyle: 'goldfoil', cornerDecor: 'ribbon', backgroundPattern: 'sparkle', frameStyle: 'royal-line', dividerStyle: 'ornate', titleOrnament: 'crown', materialTexture: 'goldfoil', galleryHover: 'shine', cardAccent: 'luxe-shadow', coupleFrame: 'double-gold', iconSet: 'luxury', sectionBadgeStyle: 'goldbar', menuIconStyle: 'golddisc', storyLineStyle: 'luxe', eventCardStyle: 'royal', giftCardStyle: 'royal-box', footerDecor: 'ornate' },
+
+            garden_party: { label: 'Garden Party', group: 'seasonal', icon: 'fa-tree', gradient: 'from-green-400 to-pink-400', desc: 'Outdoor garden, hiasan daun, bunga, dan suasana pesta santai.', decorDensity: 'extra', ornamentStyle: 'garden', cornerDecor: 'leaf', backgroundPattern: 'garden-vine', frameStyle: 'garden-frame', dividerStyle: 'floral', titleOrnament: 'flower', materialTexture: 'linen', galleryHover: 'float', cardAccent: 'leaf-corner', coupleFrame: 'botanical-oval', iconSet: 'nature', sectionBadgeStyle: 'leaf', menuIconStyle: 'circle', storyLineStyle: 'vine', eventCardStyle: 'garden', giftCardStyle: 'soft', footerDecor: 'floral' },
+            beach_wave: { label: 'Beach Wave', group: 'seasonal', icon: 'fa-water', gradient: 'from-cyan-400 to-teal-700', desc: 'Wave, beach tone, clean card, dan nuansa pantai.', decorDensity: 'normal', ornamentStyle: 'beach', cornerDecor: 'cloud', backgroundPattern: 'wave', frameStyle: 'soft-line', dividerStyle: 'wave', titleOrnament: 'none', materialTexture: 'vellum', galleryHover: 'float', cardAccent: 'top-line', coupleFrame: 'halo', iconSet: 'softline', sectionBadgeStyle: 'soft', menuIconStyle: 'circle', storyLineStyle: 'soft', eventCardStyle: 'clean', giftCardStyle: 'minimal-line', footerDecor: 'wave' },
+            rustic_leaf: { label: 'Rustic Leaf', group: 'seasonal', icon: 'fa-wheat-awn', gradient: 'from-amber-700 to-green-800', desc: 'Rustic, daun kering, earth tone, dan kartu hangat.', decorDensity: 'normal', ornamentStyle: 'rustic', cornerDecor: 'fern', backgroundPattern: 'leaf', frameStyle: 'vintage-frame', dividerStyle: 'leaf', titleOrnament: 'leaf', materialTexture: 'canvas', galleryHover: 'polaroid', cardAccent: 'stamp', coupleFrame: 'oval', iconSet: 'nature', sectionBadgeStyle: 'stamp', menuIconStyle: 'square', storyLineStyle: 'leaf', eventCardStyle: 'ticket', giftCardStyle: 'envelope', footerDecor: 'leaf' },
+            cherry_sakura: { label: 'Cherry Sakura', group: 'seasonal', icon: 'fa-spa', gradient: 'from-pink-300 to-rose-600', desc: 'Sakura, petal rain, floral divider, dan soft romantic.', decorDensity: 'max', ornamentStyle: 'sakura', cornerDecor: 'floral', backgroundPattern: 'petal-rain', frameStyle: 'floral-frame', dividerStyle: 'floral', titleOrnament: 'flower', materialTexture: 'silk', galleryHover: 'shine', cardAccent: 'petal', coupleFrame: 'floral-ring', iconSet: 'romantic', sectionBadgeStyle: 'flower', menuIconStyle: 'circle', storyLineStyle: 'flower-dot', eventCardStyle: 'premium', giftCardStyle: 'soft', footerDecor: 'floral' },
+            winter_pearl: { label: 'Winter Pearl', group: 'seasonal', icon: 'fa-snowflake', gradient: 'from-sky-200 to-slate-500', desc: 'Pearl, snow clean, soft glow, dan nuansa putih dingin.', decorDensity: 'normal', ornamentStyle: 'pearl', cornerDecor: 'pearl', backgroundPattern: 'pearl', frameStyle: 'pearl-frame', dividerStyle: 'pearl', titleOrnament: 'pearl', materialTexture: 'pearl', galleryHover: 'spotlight', cardAccent: 'pearl', coupleFrame: 'pearl-ring', iconSet: 'classic', sectionBadgeStyle: 'pearl', menuIconStyle: 'pearl', storyLineStyle: 'pearl', eventCardStyle: 'pearl', giftCardStyle: 'pearl', footerDecor: 'pearl' },
+            sunset_romance: { label: 'Sunset Romance', group: 'seasonal', icon: 'fa-sun', gradient: 'from-orange-400 to-fuchsia-600', desc: 'Sunset, warm bokeh, heart divider, dan suasana romantis.', decorDensity: 'extra', ornamentStyle: 'sunset', cornerDecor: 'ribbon', backgroundPattern: 'gradient-orb', frameStyle: 'ribbon-frame', dividerStyle: 'hearts', titleOrnament: 'heart', materialTexture: 'satin', galleryHover: 'shine', cardAccent: 'ribbon', coupleFrame: 'halo', iconSet: 'romantic', sectionBadgeStyle: 'ribbon', menuIconStyle: 'floating', storyLineStyle: 'hearts', eventCardStyle: 'glass', giftCardStyle: 'envelope', footerDecor: 'heart' }
+        };
+
+        const UD_DASH_MATERIAL_GROUPS = [
+            { id: 'floral', title: 'Bunga & Floral', icon: 'fa-spa', desc: 'Bunga, rose, peony, orchid, jasmine, lotus, sakura.' },
+            { id: 'nature', title: 'Burung & Alam', icon: 'fa-dove', desc: 'Burung, merpati, swan, daun, garden, olive.' },
+            { id: 'fantasy', title: 'Kupu-Kupu & Dreamy', icon: 'fa-wand-magic-sparkles', desc: 'Butterfly, fairy, starry, cloud, firefly, moonlight.' },
+            { id: 'luxury', title: 'Luxury, Royal & Pearl', icon: 'fa-crown', desc: 'Lace, gold, pearl, chandelier, velvet, marble.' },
+            { id: 'adat', title: 'Adat, Islami & Nusantara', icon: 'fa-archway', desc: 'Batik, songket, Jawa, Nusantara, arch, masjid.' },
+            { id: 'modern', title: 'Modern & Minimal', icon: 'fa-palette', desc: 'Clean, glass, editorial, neutral, pastel, monochrome.' },
+            { id: 'material', title: 'Tekstur Material', icon: 'fa-layer-group', desc: 'Paper, watercolor, satin, vellum, lace, gold foil.' },
+            { id: 'seasonal', title: 'Seasonal & Venue', icon: 'fa-sun', desc: 'Garden party, beach, rustic, sakura, winter, sunset.' }
+        ];
+
+        window.ensureUDMaterialOptionSets = function() {
+            Object.entries(UD_DASH_MATERIAL_OPTION_SETS).forEach(([id, options]) => {
+                const select = document.getElementById(id);
+                if (!select) return;
+                const existing = new Set(Array.from(select.options).map(option => option.value));
+                options.forEach(([value, label]) => {
+                    if (!existing.has(value)) {
+                        select.appendChild(new Option(label, value));
+                        existing.add(value);
+                    }
+                });
+            });
+        };
+
+        window.renderUDMaterialPresetGroups = function() {
+            const root = document.getElementById('ud-material-preset-groups');
+            if (!root) return;
+            const query = String(document.getElementById('ud-material-search')?.value || '').toLowerCase().trim();
+            const chunks = UD_DASH_MATERIAL_GROUPS.map(group => {
+                const cards = Object.entries(UD_DASH_MATERIAL_PRESETS)
+                    .filter(([, preset]) => preset.group === group.id)
+                    .filter(([key, preset]) => !query || `${key} ${preset.label} ${preset.desc} ${group.title} ${group.desc}`.toLowerCase().includes(query))
+                    .map(([key, preset]) => `
+                        <button type="button" onclick="applyUDMaterialPreset('${key}')" class="ud-studio-action">
+                            <span class="ud-studio-icon bg-gradient-to-br ${preset.gradient || 'from-violet-500 to-fuchsia-600'}"><i class="fa-solid ${preset.icon || 'fa-wand-magic-sparkles'}"></i></span>
+                            <b>${escapeHTML(preset.label || key)}</b>
+                            <small>${escapeHTML(preset.desc || '')}</small>
+                        </button>
+                    `).join('');
+                if (!cards) return '';
+                const count = Object.values(UD_DASH_MATERIAL_PRESETS).filter(preset => preset.group === group.id).length;
+                return `
+                    <section class="ud-material-category" data-ud-material-group="${group.id}">
+                        <div class="ud-material-category-head">
+                            <div>
+                                <b><i class="fa-solid ${group.icon} text-violet-500 mr-2"></i>${escapeHTML(group.title)}</b>
+                                <small>${escapeHTML(group.desc)}</small>
+                            </div>
+                            <span class="ud-material-count">${count}</span>
+                        </div>
+                        <div class="ud-material-card-grid">${cards}</div>
+                    </section>
+                `;
+            }).join('');
+            root.innerHTML = chunks || `<div class="rounded-3xl border border-slate-200 bg-white/80 p-5 text-sm text-slate-500">Tidak ada preset yang cocok. Coba kata lain seperti bunga, burung, batik, pearl, glass, atau minimal.</div>`;
+        };
+
+        window.filterUDMaterialPresets = function() {
+            if (window.renderUDMaterialPresetGroups) window.renderUDMaterialPresetGroups();
+        };
+
+        window.applyUDMaterialPreset = function(presetName) {
+            if (window.ensureUDMaterialOptionSets) window.ensureUDMaterialOptionSets();
+            const preset = UD_DASH_MATERIAL_PRESETS[presetName];
+            if (!preset) {
+                showToast('Preset material tidak ditemukan.', 'error');
+                return;
+            }
+            udDashApplySelectValues({
+                inputUDDecorDensity: preset.decorDensity,
+                inputUDOrnamentStyle: preset.ornamentStyle,
+                inputUDCornerDecor: preset.cornerDecor,
+                inputUDBackgroundPattern: preset.backgroundPattern,
+                inputUDFrameStyle: preset.frameStyle,
+                inputUDDividerStyle: preset.dividerStyle,
+                inputUDTitleOrnament: preset.titleOrnament,
+                inputUDMaterialTexture: preset.materialTexture,
+                inputUDGalleryHover: preset.galleryHover,
+                inputUDCardAccent: preset.cardAccent,
+                inputUDCoupleFrame: preset.coupleFrame,
+                inputUDIconSet: preset.iconSet,
+                inputUDSectionBadgeStyle: preset.sectionBadgeStyle,
+                inputUDMenuIconStyle: preset.menuIconStyle,
+                inputUDStoryLineStyle: preset.storyLineStyle,
+                inputUDEventCardStyle: preset.eventCardStyle,
+                inputUDGiftCardStyle: preset.giftCardStyle,
+                inputUDFooterDecor: preset.footerDecor
+            });
+            if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
+            if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
+            showToast(`${preset.label || 'Material visual'} diterapkan. Klik Simpan untuk publish.`);
         };
 
         function udDashSetValueLoose(id, value) {
@@ -2783,7 +3220,7 @@
             const text = String(panel?.textContent || '').toLowerCase();
             const summary = String(panel?.querySelector('summary')?.textContent || '').toLowerCase();
             const combined = `${summary} ${text}`;
-            const isDesign = /tema|template|warna|color|font|layout|desain|style|visual|tampilan|efek|animasi|aos|particle|sakura|cover|overlay|hover|parallax|progress|navigasi|gallery mode|galeri mode|radius|shadow|blur/.test(combined);
+            const isDesign = /tema|template|warna|color|font|layout|desain|style|visual|tampilan|efek|animasi|aos|particle|sakura|cover|overlay|hover|parallax|progress|navigasi|gallery mode|galeri mode|radius|shadow|blur|ornamen|hiasan|bunga|burung|butterfly|kupu|botanical|lace|frame|bingkai|pattern|pola|material|tekstur|divider|badge/.test(combined);
             const isContent = /data utama|mempelai|pengantin|keluarga|orang tua|ayat|doa|sambutan|cerita|story|acara|akad|resepsi|tanggal|lokasi|map|rundown|susunan|galeri|gallery|foto|video|rsvp|ucapan|wish|gift|rekening|qris|faq|dress|dresscode|tamu|checkin|social|instagram|quote/.test(combined);
             const isBasic = index <= 3 || /data utama|mempelai|pengantin|acara|akad|resepsi|tanggal|lokasi|rsvp|foto|galeri|tema|warna|template/.test(combined);
             if (isDesign && !isContent) return 'design';
@@ -2965,6 +3402,25 @@
                         </div>
                     </div>
 
+                    <details id="ud-material-collapse" class="ud-studio-feature-panel ud-collapsible-panel">
+                        <summary aria-label="Buka atau tutup Material, ornamen dan hiasan sekali klik">
+                            <h5><i class="fa-solid fa-feather-pointed text-pink-500 mr-2"></i>Material, ornamen & hiasan sekali klik</h5>
+                            <span class="ud-collapsible-status"><i class="fa-solid fa-chevron-down"></i> Buka / Tutup</span>
+                        </summary>
+                        <div class="ud-collapsible-body">
+                            <p class="text-[11px] leading-6 text-slate-500 mb-3">Preset dibuat lebih banyak dan sudah dikategorikan. Semua pilihan tetap masuk ke designPackText, jadi tidak menambah collection baru.</p>
+                            <div class="ud-material-search-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="ud-material-search" type="text" class="ud-material-search-input" placeholder="Cari preset: bunga, burung, batik, songket, pearl, glass, minimal..." oninput="filterUDMaterialPresets(this.value)">
+                            </div>
+                            <div id="ud-material-preset-groups" class="space-y-4"></div>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <button type="button" onclick="setUDStudioViewMode('design')" class="ud-studio-pill"><i class="fa-solid fa-sliders"></i> Edit Semua Manual</button>
+                                <button type="button" onclick="resetUDStudioManualFilter()" class="ud-studio-pill"><i class="fa-solid fa-maximize"></i> Tampilkan Semua Field</button>
+                            </div>
+                        </div>
+                    </details>
+
                     <div class="ud-studio-feature-panel">
                         <h5><i class="fa-solid fa-sliders text-indigo-500 mr-2"></i>Advanced style mudah</h5>
                         <div class="ud-studio-control-grid">
@@ -2976,12 +3432,32 @@
                             <label><span class="ultra-label">Keterbacaan</span><select id="inputUDReadabilityMode" class="ud-studio-input ud-design-control"><option value="normal">Normal</option><option value="comfort">Lebih Nyaman</option><option value="large">Tulisan Besar</option></select></label>
                             <label><span class="ultra-label">Kontras</span><select id="inputUDContrastMode" class="ud-studio-input ud-design-control"><option value="normal">Normal</option><option value="high">Kontras Tinggi</option></select></label>
                             <label><span class="ultra-label">Mode HP</span><select id="inputUDMobileMode" class="ud-studio-input ud-design-control"><option value="balanced">Seimbang</option><option value="fast">Cepat/Ringan</option><option value="rich">Tetap Cantik</option></select></label>
+                            <label><span class="ultra-label">Keramaian Hiasan</span><select id="inputUDDecorDensity" class="ud-studio-input ud-design-control"><option value="none">Tanpa Hiasan</option><option value="soft">Soft</option><option value="normal">Normal</option><option value="extra">Extra</option><option value="max">Max Ramai</option></select></label>
+                            <label><span class="ultra-label">Ornamen Utama</span><select id="inputUDOrnamentStyle" class="ud-studio-input ud-design-control"><option value="floral">Bunga Floral</option><option value="birds">Burung</option><option value="butterfly">Kupu-Kupu</option><option value="garden">Garden</option><option value="sakura">Sakura</option><option value="rose">Rose</option><option value="orchid">Orchid</option><option value="jasmine">Jasmine</option><option value="leaf">Daun</option><option value="star">Sparkle Star</option><option value="cloud">Cloud</option><option value="lantern">Lantern</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Hiasan Sudut</span><select id="inputUDCornerDecor" class="ud-studio-input ud-design-control"><option value="floral">Floral Corner</option><option value="rose">Rose Corner</option><option value="birds">Bird Corner</option><option value="butterfly">Butterfly Corner</option><option value="leaf">Leaf Corner</option><option value="lace">Lace Corner</option><option value="cloud">Cloud Corner</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Pola Background</span><select id="inputUDBackgroundPattern" class="ud-studio-input ud-design-control"><option value="soft-flower">Soft Flower</option><option value="leaf">Leaf</option><option value="cloud">Cloud</option><option value="sparkle">Sparkle</option><option value="dots">Dots</option><option value="grid">Grid</option><option value="arabesque">Arabesque</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Bingkai Halaman</span><select id="inputUDFrameStyle" class="ud-studio-input ud-design-control"><option value="soft-line">Soft Line</option><option value="gold-line">Gold Line</option><option value="double-line">Double Line</option><option value="floral-frame">Floral Frame</option><option value="botanical">Botanical</option><option value="lace">Lace</option><option value="royal-line">Royal Line</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Divider Section</span><select id="inputUDDividerStyle" class="ud-studio-input ud-design-control"><option value="floral">Floral</option><option value="birds">Birds</option><option value="butterfly">Butterfly</option><option value="leaf">Leaf</option><option value="sparkle">Sparkle</option><option value="ornate">Ornate</option><option value="minimal">Minimal</option></select></label>
+                            <label><span class="ultra-label">Hiasan Judul</span><select id="inputUDTitleOrnament" class="ud-studio-input ud-design-control"><option value="sparkle">Sparkle</option><option value="flower">Flower</option><option value="leaf">Leaf</option><option value="wings">Wings</option><option value="crown">Crown</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Tekstur Material</span><select id="inputUDMaterialTexture" class="ud-studio-input ud-design-control"><option value="paper">Paper</option><option value="linen">Linen</option><option value="silk">Silk</option><option value="vellum">Vellum</option><option value="velvet">Velvet</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Hover Galeri</span><select id="inputUDGalleryHover" class="ud-studio-input ud-design-control"><option value="zoom-glow">Zoom Glow</option><option value="float">Float</option><option value="shine">Shine</option><option value="lift">Lift</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Aksen Kartu</span><select id="inputUDCardAccent" class="ud-studio-input ud-design-control"><option value="gold-line">Gold Line</option><option value="left-line">Left Line</option><option value="double-line">Double Line</option><option value="petal">Petal</option><option value="none">None</option></select></label>
+                            <label><span class="ultra-label">Bingkai Mempelai</span><select id="inputUDCoupleFrame" class="ud-studio-input ud-design-control"><option value="floral-ring">Floral Ring</option><option value="leaf-ring">Leaf Ring</option><option value="halo">Halo</option><option value="royal">Royal</option><option value="soft-shadow">Soft Shadow</option><option value="clean">Clean</option></select></label>
+                            <label><span class="ultra-label">Style Ikon</span><select id="inputUDIconSet" class="ud-studio-input ud-design-control"><option value="romantic">Romantic</option><option value="classic">Classic</option><option value="nature">Nature</option><option value="minimal">Minimal</option></select></label>
+                            <label><span class="ultra-label">Badge Section</span><select id="inputUDSectionBadgeStyle" class="ud-studio-input ud-design-control"><option value="pill">Pill</option><option value="ribbon">Ribbon</option><option value="outline">Outline</option><option value="leaf">Leaf</option><option value="soft">Soft</option></select></label>
+                            <label><span class="ultra-label">Ikon Menu</span><select id="inputUDMenuIconStyle" class="ud-studio-input ud-design-control"><option value="circle">Circle</option><option value="diamond">Diamond</option><option value="floating">Floating</option><option value="minimal">Minimal</option></select></label>
+                            <label><span class="ultra-label">Garis Love Story</span><select id="inputUDStoryLineStyle" class="ud-studio-input ud-design-control"><option value="flower-dot">Flower Dot</option><option value="leaf">Leaf</option><option value="gold-line">Gold Line</option><option value="soft">Soft</option><option value="minimal">Minimal</option></select></label>
+                            <label><span class="ultra-label">Kartu Acara</span><select id="inputUDEventCardStyle" class="ud-studio-input ud-design-control"><option value="premium">Premium</option><option value="glass">Glass</option><option value="botanical">Botanical</option><option value="royal">Royal</option><option value="clean">Clean</option></select></label>
+                            <label><span class="ultra-label">Kartu Gift</span><select id="inputUDGiftCardStyle" class="ud-studio-input ud-design-control"><option value="luxury">Luxury</option><option value="soft">Soft</option><option value="clean">Clean</option></select></label>
+                            <label><span class="ultra-label">Footer Decor</span><select id="inputUDFooterDecor" class="ud-studio-input ud-design-control"><option value="floral">Floral</option><option value="birds">Birds</option><option value="leaf">Leaf</option><option value="sparkle">Sparkle</option><option value="ornate">Ornate</option><option value="cloud">Cloud</option><option value="none">None</option></select></label>
                         </div>
                     </div>
                 </div>
             `;
             const firstFold = form.querySelector('details.ud-dashboard-fold') || form.firstElementChild;
             form.insertBefore(studio, firstFold);
+            if (window.ensureUDMaterialOptionSets) window.ensureUDMaterialOptionSets();
+            if (window.renderUDMaterialPresetGroups) window.renderUDMaterialPresetGroups();
             const manualSeparator = document.createElement('div');
             manualSeparator.id = 'ud-studio-manual-separator';
             manualSeparator.className = 'md:col-span-2 ud-studio-manual-separator';
@@ -3931,7 +4407,7 @@
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                             <div class="lg:col-span-3"><label class="ultra-label">Efek Partikel</label><select id="inputUDEffectParticlesEnabled" class="ultra-input"><option value="on" selected>Aktif</option><option value="off">Mati</option></select></div>
-                            <div class="lg:col-span-3"><label class="ultra-label">Pilihan Efek Partikel</label><select id="inputUDEffectParticleType" class="ultra-input"><option value="sakura" selected>Sakura / Kelopak</option><option value="snow">Salju</option><option value="hearts">Hati</option><option value="stars">Bintang</option><option value="bubbles">Bubble</option><option value="confetti">Confetti</option><option value="fireflies">Fireflies / Kunang-kunang</option><option value="glitter">Glitter</option><option value="none">Tidak Ada</option></select></div>
+                            <div class="lg:col-span-3"><label class="ultra-label">Pilihan Efek Partikel</label><select id="inputUDEffectParticleType" class="ultra-input"><option value="sakura" selected>Sakura / Kelopak</option><option value="snow">Salju</option><option value="hearts">Hati</option><option value="stars">Bintang</option><option value="bubbles">Bubble</option><option value="confetti">Confetti</option><option value="fireflies">Fireflies / Kunang-kunang</option><option value="glitter">Glitter</option><option value="sparkle">Sparkle</option><option value="flowers">Bunga Mini</option><option value="birds">Burung</option><option value="butterflies">Kupu-kupu</option><option value="leaves">Daun</option><option value="pearls">Pearl</option><option value="lanterns">Lantern</option><option value="none">Tidak Ada</option></select></div>
                             <div class="lg:col-span-2"><label class="ultra-label">Jumlah Partikel</label><select id="inputUDEffectParticleIntensity" class="ultra-input"><option value="low">Sedikit</option><option value="medium" selected>Normal</option><option value="high">Banyak</option><option value="ultra">Sangat Banyak</option></select></div>
                             <div class="lg:col-span-2"><label class="ultra-label">Kecepatan Partikel</label><input type="number" id="inputUDEffectParticleSpeed" min="0.2" max="5" step="0.1" value="1" class="ultra-input"></div>
                             <div class="lg:col-span-1"><label class="ultra-label">Opacity</label><input type="number" id="inputUDEffectParticleOpacity" min="0" max="1" step="0.05" value="0.45" class="ultra-input"></div>
