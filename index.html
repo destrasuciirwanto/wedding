@@ -1697,6 +1697,70 @@
 
 
     </style>
+
+
+    <style id="ud-v9-session-lock-css">
+        /* V9: Kunci kontrol editor Undangan Digital saat tidak sedang Edit / Buat Tema Baru. */
+        #itemForm.ud-session-locked-v9 .ud-studio-feature-panel,
+        #itemForm.ud-session-locked-v9 .ud-dashboard-fold,
+        #itemForm.ud-session-locked-v9 .ud-sub-fold,
+        #itemForm.ud-session-locked-v9 .ud-template-card,
+        #itemForm.ud-session-locked-v9 .ud-color-card,
+        #itemForm.ud-session-locked-v9 .ud-check-card,
+        #itemForm.ud-session-locked-v9 .ud-media-picker {
+            filter: grayscale(.88);
+            opacity: .54;
+        }
+        #itemForm.ud-session-locked-v9 input,
+        #itemForm.ud-session-locked-v9 textarea,
+        #itemForm.ud-session-locked-v9 select,
+        #itemForm.ud-session-locked-v9 button:not([onclick*="startNewUDTheme"]):not(.ud-live-preview-tool-btn):not(.ud-live-preview-open-btn):not([data-preview-button]) {
+            cursor: not-allowed !important;
+        }
+        #itemForm.ud-session-locked-v9 .ud-studio-action,
+        #itemForm.ud-session-locked-v9 .ud-studio-pill,
+        #itemForm.ud-session-locked-v9 .ud-template-card,
+        #itemForm.ud-session-locked-v9 .ud-check-card,
+        #itemForm.ud-session-locked-v9 .ud-color-card input,
+        #itemForm.ud-session-locked-v9 details.ud-collapsible-panel > summary,
+        #itemForm.ud-session-locked-v9 details.ud-dashboard-fold > summary,
+        #itemForm.ud-session-locked-v9 details.ud-sub-fold > summary {
+            pointer-events: none !important;
+        }
+        #itemForm.ud-session-locked-v9 button[onclick*="startNewUDTheme"],
+        #itemForm.ud-session-locked-v9 .ud-live-preview-tool-btn,
+        #itemForm.ud-session-locked-v9 .ud-live-preview-open-btn,
+        #itemForm.ud-session-locked-v9 [data-preview-button] {
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            filter: none !important;
+            cursor: pointer !important;
+        }
+        #itemForm.ud-session-locked-v9 .ud-session-lock-hint-v9 {
+            display: flex !important;
+        }
+        #itemForm.ud-session-unlocked-v9 .ud-session-lock-hint-v9 {
+            display: none !important;
+        }
+        .ud-session-lock-hint-v9 {
+            display: none;
+            grid-column: 1 / -1;
+            align-items: center;
+            gap: .7rem;
+            border-radius: 1.4rem;
+            border: 1px solid rgba(148,163,184,.25);
+            background: linear-gradient(135deg, rgba(248,250,252,.96), rgba(245,243,255,.9));
+            color: #64748b;
+            padding: .85rem 1rem;
+            font-size: 12px;
+            line-height: 1.6;
+            font-weight: 800;
+        }
+        .ud-session-lock-hint-v9 i {
+            color: #8b5cf6;
+        }
+    </style>
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -4376,22 +4440,227 @@
             });
         };
 
-        window.openUDTheme = function(id, options = {}) {
+        window.showUDDefaultEditPasswordModal = function() {
+            return new Promise((resolve) => {
+                const oldModal = document.getElementById('ud-default-password-modal-v6');
+                if (oldModal) oldModal.remove();
+
+                const modal = document.createElement('div');
+                modal.id = 'ud-default-password-modal-v6';
+                modal.className = 'fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-md';
+                modal.innerHTML = `
+                    <div class="relative w-full max-w-md overflow-hidden rounded-[2rem] bg-white shadow-2xl border border-white/80 fade-in">
+                        <div class="absolute -right-16 -top-20 h-44 w-44 rounded-full bg-violet-200/70 blur-2xl pointer-events-none"></div>
+                        <button type="button" data-ud-pass-cancel="1" class="absolute right-4 top-4 z-10 h-10 w-10 rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition" title="Tutup">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <div class="relative p-6 sm:p-7">
+                            <div class="h-16 w-16 rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center text-2xl shadow-xl shadow-violet-500/20 mb-5">
+                                <i class="fa-solid fa-key"></i>
+                            </div>
+                            <p class="text-[10px] font-black tracking-[0.24em] uppercase text-violet-600 mb-2">Akses Template Default</p>
+                            <h3 class="text-xl font-black text-slate-900 leading-tight">Masukkan password untuk edit Template Web Default</h3>
+                            <p class="mt-2 text-sm leading-6 text-slate-500">Template bawaan tetap bisa diedit, tapi harus dibuka dengan password dulu. Perubahan belum permanen sampai klik Simpan/Update.</p>
+
+                            <form id="ud-default-password-form-v6" class="mt-5 space-y-3">
+                                <label class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Password</label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-violet-400"></i>
+                                    <input id="ud-default-password-input-v6" type="password" autocomplete="off" class="w-full min-h-[54px] rounded-2xl border border-slate-200 bg-slate-50 pl-12 pr-12 text-sm font-bold outline-none focus:bg-white focus:border-violet-400 focus:ring-4 focus:ring-violet-100 transition" placeholder="Masukkan password">
+                                    <button type="button" id="ud-default-password-toggle-v6" class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl text-slate-400 hover:bg-white hover:text-violet-600 transition" title="Tampilkan password">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                                <p id="ud-default-password-error-v6" class="hidden text-xs font-bold text-rose-600"><i class="fa-solid fa-circle-exclamation mr-1"></i>Password salah. Coba ketik ulang.</p>
+                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                    <button type="button" data-ud-pass-cancel="1" class="min-h-[46px] rounded-2xl bg-slate-100 text-slate-600 text-xs font-black hover:bg-slate-200 transition">Batal</button>
+                                    <button type="submit" class="min-h-[46px] rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white text-xs font-black shadow-lg shadow-violet-500/20 hover:shadow-xl transition">
+                                        <i class="fa-solid fa-unlock-keyhole mr-1"></i> Buka Edit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>`;
+
+                document.body.appendChild(modal);
+
+                const input = document.getElementById('ud-default-password-input-v6');
+                const form = document.getElementById('ud-default-password-form-v6');
+                const error = document.getElementById('ud-default-password-error-v6');
+                const toggle = document.getElementById('ud-default-password-toggle-v6');
+
+                const close = (value) => {
+                    modal.remove();
+                    resolve(value);
+                };
+
+                modal.querySelectorAll('[data-ud-pass-cancel="1"]').forEach(btn => {
+                    btn.addEventListener('click', () => close(false));
+                });
+
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) close(false);
+                });
+
+                document.addEventListener('keydown', function escHandler(event) {
+                    if (!document.getElementById('ud-default-password-modal-v6')) {
+                        document.removeEventListener('keydown', escHandler);
+                        return;
+                    }
+                    if (event.key === 'Escape') {
+                        document.removeEventListener('keydown', escHandler);
+                        close(false);
+                    }
+                });
+
+                if (toggle && input) {
+                    toggle.addEventListener('click', () => {
+                        const hidden = input.type === 'password';
+                        input.type = hidden ? 'text' : 'password';
+                        toggle.innerHTML = `<i class="fa-solid ${hidden ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+                        input.focus();
+                    });
+                }
+
+                if (form && input) {
+                    form.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        const pass = String(input.value || '').trim();
+                        if (pass === 'destradanmutiara') {
+                            close(true);
+                            return;
+                        }
+                        if (error) error.classList.remove('hidden');
+                        input.classList.add('border-rose-300', 'ring-4', 'ring-rose-100');
+                        input.select();
+                    });
+                }
+
+                setTimeout(() => input && input.focus(), 80);
+            });
+        };
+
+        window.updateUDSubmitButtonModeV7 = function() {
+            if (activeMenu !== 'undangan_digital') return;
+            const btn = document.getElementById('btnSubmit');
+            const cancelBtn = document.getElementById('btnUDCancelAction');
+            if (!btn) return;
+
+            const isEditingTheme = Boolean(editId);
+            const isCreatingNewTheme = window.udCreatingNewThemeV8 === true;
+            const shouldShowActions = isEditingTheme || isCreatingNewTheme;
+
+            if (shouldShowActions) {
+                btn.classList.remove('hidden');
+                btn.style.display = '';
+                btn.disabled = false;
+                btn.innerHTML = isCreatingNewTheme
+                    ? '<i class="fa-solid fa-plus mr-1"></i> Simpan Tema'
+                    : '<i class="fa-solid fa-check mr-1"></i> Update Tema';
+                btn.title = isCreatingNewTheme
+                    ? 'Simpan tema baru ke database'
+                    : 'Update perubahan tema yang sedang diedit';
+
+                if (cancelBtn) {
+                    cancelBtn.classList.remove('hidden');
+                    cancelBtn.style.display = '';
+                    cancelBtn.disabled = false;
+                }
+            } else {
+                btn.classList.add('hidden');
+                btn.style.display = 'none';
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Tema';
+                btn.title = 'Klik Edit atau Buat Tema Baru dulu untuk menampilkan tombol aksi';
+
+                if (cancelBtn) {
+                    cancelBtn.classList.add('hidden');
+                    cancelBtn.style.display = 'none';
+                    cancelBtn.disabled = true;
+                }
+            }
+        };
+
+
+
+        window.updateUDSessionLockV9 = function() {
+            if (activeMenu !== 'undangan_digital') return;
+            const form = document.getElementById('itemForm');
+            if (!form) return;
+
+            const isEditingTheme = Boolean(editId);
+            const isCreatingNewTheme = window.udCreatingNewThemeV8 === true;
+            const unlocked = isEditingTheme || isCreatingNewTheme;
+
+            form.classList.toggle('ud-session-locked-v9', !unlocked);
+            form.classList.toggle('ud-session-unlocked-v9', unlocked);
+
+            const allowed = (el) => {
+                if (!el) return false;
+                if (el.id === 'btnSubmit' || el.id === 'btnUDCancelAction') return true;
+                if (el.matches('.ud-live-preview-tool-btn, .ud-live-preview-open-btn, [data-preview-button]')) return true;
+                const onclick = String(el.getAttribute('onclick') || '');
+                if (onclick.includes('startNewUDTheme')) return true;
+                if (el.closest('.ud-live-preview-toolbar, .ud-studio-mini-preview')) return true;
+                return false;
+            };
+
+            const controls = Array.from(form.querySelectorAll('input, textarea, select, button'));
+            controls.forEach((el) => {
+                if (!el.dataset.udV9OriginalDisabled) {
+                    el.dataset.udV9OriginalDisabled = el.disabled ? '1' : '0';
+                }
+
+                if (allowed(el)) {
+                    if (el.dataset.udV9OriginalDisabled !== '1') el.disabled = false;
+                    el.removeAttribute('aria-disabled');
+                    return;
+                }
+
+                if (!unlocked) {
+                    el.disabled = true;
+                    el.setAttribute('aria-disabled', 'true');
+                } else {
+                    el.disabled = el.dataset.udV9OriginalDisabled === '1';
+                    if (el.disabled) el.setAttribute('aria-disabled', 'true');
+                    else el.removeAttribute('aria-disabled');
+                }
+            });
+        };
+
+        const __updateUDSubmitButtonModeV7BeforeV9 = window.updateUDSubmitButtonModeV7;
+        window.updateUDSubmitButtonModeV7 = function() {
+            if (typeof __updateUDSubmitButtonModeV7BeforeV9 === 'function') {
+                __updateUDSubmitButtonModeV7BeforeV9.apply(this, arguments);
+            }
+            if (window.updateUDSessionLockV9) window.updateUDSessionLockV9();
+        };
+
+        window.openUDTheme = async function(id, options = {}) {
+            window.udCreatingNewThemeV8 = false;
             const item = window.getUDThemeById ? window.getUDThemeById(id) : (appData.items['undangan_digital'] || []).find(i => i.id === id);
             if (!item) {
                 showToast('Tema undangan tidak ditemukan.', 'error');
                 return;
             }
-            if (window.isUDLockedTheme && window.isUDLockedTheme(item)) {
-                editId = null;
-                if (!options.silent) showToast('Template Web Default terkunci. Klik Salin Template agar bisa diedit tanpa merusak template bawaan.', 'error');
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default terkunci. Salin dulu jika ingin mengedit.');
-                return;
+            const isLockedDefault = window.isUDLockedTheme && window.isUDLockedTheme(item);
+            if (isLockedDefault && !options.silent) {
+                const allowed = await window.showUDDefaultEditPasswordModal();
+                if (!allowed) {
+                    window.udDefaultTemplateEditUnlockedV7 = false;
+                    if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default butuh password sebelum bisa diedit.');
+                    return;
+                }
+                window.udDefaultTemplateEditUnlockedV7 = true;
+            } else if (!isLockedDefault) {
+                window.udDefaultTemplateEditUnlockedV7 = false;
             }
+
+            window.udEditSessionOriginal = JSON.parse(JSON.stringify(item || {}));
             editItem(id, 'undangan_digital');
-            if (!options.silent) showToast(`Tema "${item.nama || 'Undangan Digital'}" dibuka. Perubahan akan autosave ke tema ini.`);
+            if (!options.silent) showToast(isLockedDefault ? 'Template Web Default dibuka. Simpan/Update diperlukan agar perubahan permanen.' : `Tema "${item.nama || 'Undangan Digital'}" dibuka. Simpan/Update diperlukan agar perubahan permanen.`);
             if (window.refreshUDLiveMonitor) {
-                window.refreshUDLiveMonitor('ready', item.isActive ? 'Tema aktif dibuka. Edit akan langsung tampil di web.' : 'Tema draft dibuka. Edit tersimpan di draft dan tidak mengubah web sampai dipakai.');
+                window.refreshUDLiveMonitor('ready', item.isActive ? 'Tema aktif dibuka. Perubahan hanya sementara sampai klik Simpan/Update.' : 'Tema draft dibuka. Perubahan hanya sementara sampai klik Simpan/Update.');
             }
             if (options.scroll !== false) {
                 const main = document.getElementById('main-content');
@@ -4400,15 +4669,52 @@
         };
 
         window.startNewUDTheme = function() {
-            resetForm();
+            if (typeof window.resetForm === "function") window.resetForm();
             editId = null;
+            window.udCreatingNewThemeV8 = true;
+            window.udEditSessionOriginal = null;
+            window.udDefaultTemplateEditUnlockedV7 = false;
+
             const nameEl = document.getElementById('inputUDNamaPengaturan');
             if (nameEl) nameEl.value = `Tema Baru ${Math.max(1, (appData.items['undangan_digital'] || []).length + 1)}`;
-            const submit = document.getElementById('btnSubmit');
-            if (submit) submit.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Tema Baru';
+
+            if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
             if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
-            if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode tema baru. Ketik/edit apa saja untuk membuat draft baru otomatis.');
-            showToast('Mode tema baru siap. Tema akan tersimpan sebagai draft, bukan menimpa tema lain.');
+            if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+            if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+            if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode buat tema baru aktif. Klik Simpan Tema untuk menyimpan, atau Batal untuk membuang draft.');
+            showToast('Mode buat tema baru dibuka. Perubahan masih draft sampai klik Simpan Tema.');
+        };
+
+        window.cancelUDThemeSessionV8 = function() {
+            if (activeMenu !== 'undangan_digital') {
+                if (typeof window.resetForm === "function") window.resetForm();
+                return;
+            }
+
+            const originalTheme = window.udEditSessionOriginal ? JSON.parse(JSON.stringify(window.udEditSessionOriginal)) : null;
+            const activeTheme = (appData.items['undangan_digital'] || []).find(item => item && item.isActive === true) || (appData.items['undangan_digital'] || [])[0] || null;
+            const restoreTheme = originalTheme || activeTheme;
+
+            if (restoreTheme && restoreTheme.id) {
+                editItem(restoreTheme.id, 'undangan_digital');
+            } else {
+                const form = document.getElementById('itemForm');
+                if (form) form.reset();
+            }
+
+            editId = null;
+            window.udCreatingNewThemeV8 = false;
+            window.udEditSessionOriginal = null;
+            window.udDefaultTemplateEditUnlockedV7 = false;
+
+            if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
+            if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
+            if (window.updateUDActiveStates) window.updateUDActiveStates();
+            if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+            if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+            if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Dibatalkan. Perubahan sementara dibuang dan tombol aksi disembunyikan.');
+            showToast('Perubahan Undangan Digital dibatalkan.');
         };
 
         window.activateUDTheme = async function(id) {
@@ -4493,8 +4799,9 @@
 
         window.collectUDDigitalLiveData = function() {
             const existing = editId ? appData.items['undangan_digital'].find(i => i.id === editId) : null;
-            if (existing && window.isUDLockedTheme && window.isUDLockedTheme(existing)) {
-                showToast('Template Web Default terkunci dan tidak bisa diedit. Salin template untuk membuat versi yang bisa diedit.', 'error');
+            const isUnlockedDefaultEdit = existing && window.isUDLockedTheme && window.isUDLockedTheme(existing) && window.udDefaultTemplateEditUnlockedV7 === true;
+            if (existing && window.isUDLockedTheme && window.isUDLockedTheme(existing) && !isUnlockedDefaultEdit) {
+                showToast('Template Web Default butuh password sebelum bisa diedit.', 'error');
                 return null;
             }
             const v = (id, fallback = '') => {
@@ -4571,20 +4878,15 @@
 
         window.autoPublishUDDigitalChange = function(reason = 'Perubahan', options = {}) {
             if (activeMenu !== 'undangan_digital') return;
-            if (editId && window.isUDLockedTheme && window.isUDLockedTheme(editId)) {
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Template Web Default terkunci. Salin dulu jika ingin mengedit.');
-                return;
-            }
-            const state = window.udLivePublishState;
+            const state = window.udLivePublishState || {};
             const fieldId = options.fieldId || '';
+            if (state.timer) clearTimeout(state.timer);
             window.udRecordLiveChange(reason, fieldId);
             if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
             if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
             if (window.updateUDActiveStates) window.updateUDActiveStates();
-            window.refreshUDLiveMonitor('pending', `${reason} terdeteksi. Auto publish berjalan otomatis.`);
-            clearTimeout(state.timer);
-            const delay = options.immediate ? 250 : (options.delay ?? 900);
-            state.timer = setTimeout(() => window.publishUDDigitalNow(reason), delay);
+            if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+            window.refreshUDLiveMonitor('pending', `${reason} berubah sementara. Klik Simpan/Update agar tersimpan permanen.`);
         };
 
         window.setupUDLiveEditing = function() {
@@ -4727,6 +5029,10 @@
             studio.className = 'md:col-span-2 ud-studio-max p-5 md:p-6 mb-1';
             studio.innerHTML = `
                 <div class="ud-studio-inner space-y-5">
+                    <div class="ud-session-lock-hint-v9">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Editor dikunci. Klik Edit pada template atau Buat Tema Baru dulu agar Mode sekali klik, material, warna, dan field manual bisa dipakai.</span>
+                    </div>
                     <div class="ud-studio-hero p-5 md:p-6">
                         <div class="grid grid-cols-1 xl:grid-cols-[1.15fr_.85fr] gap-5 items-stretch">
                             <div class="flex flex-col justify-between gap-5">
@@ -5033,7 +5339,10 @@
                     setTimeout(window.initR2Dropzones, 100);
                 }
                 await loadData(activeMenu); 
-                if (activeMenu === 'undangan_digital') setTimeout(window.initUndanganDigitalAccordions, 50);
+                if (activeMenu === 'undangan_digital') setTimeout(() => {
+                    if (window.initUndanganDigitalAccordions) window.initUndanganDigitalAccordions();
+                    if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+                }, 50);
             }
         }
 
@@ -6926,8 +7235,12 @@
                             <form id="itemForm" onsubmit="handleFormSubmit(event, '${categoryId}')" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${formInner}
                                 <div class="md:col-span-2 flex justify-end gap-3 mt-3 pt-5 border-t border-gray-100">
-                                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button>
-                                    <button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button>
+                                    ${categoryId === 'undangan_digital' ? `
+                                        <button type="button" id="btnUDCancelAction" onclick="window.cancelUDThemeSessionV8()" class="hidden px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold" style="display:none">Batal</button>
+                                    ` : `
+                                        <button type="button" onclick="window.resetForm()" class="px-5 py-2.5 text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-2xl transition font-bold">Batal</button>
+                                    `}
+                                    <button type="submit" id="btnSubmit" class="premium-action-btn px-6 py-2.5 text-sm bg-gradient-to-r from-lavender to-lavender-dark text-white rounded-2xl hover:shadow-lg transition font-black ${categoryId === 'undangan_digital' ? 'hidden' : ''}" style="${categoryId === 'undangan_digital' ? 'display:none' : ''}"><i class="fa-solid fa-plus mr-1"></i> Simpan Data</button>
                                 </div>
                             </form>
                         </div>
@@ -6943,12 +7256,11 @@
             const resetSubmitButton = () => {
                 if (btnSubmit) {
                     if (categoryId === 'undangan_digital') {
-                        const current = window.getUDCurrentTheme ? window.getUDCurrentTheme() : null;
-                        btnSubmit.innerHTML = current ? (current.isActive ? '<i class="fa-solid fa-broadcast-tower mr-1"></i> Simpan Tema Aktif' : '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Draft Tema') : '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Tema Baru';
+                        if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
                     } else {
                         btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Simpan Data`;
+                        btnSubmit.disabled = false;
                     }
-                    btnSubmit.disabled = false;
                 }
             };
 
@@ -6959,6 +7271,12 @@
 
             if (window.r2Uploading) {
                 showToast('Tunggu upload file selesai dulu sebelum menyimpan data.', 'error');
+                resetSubmitButton();
+                return;
+            }
+
+            if (categoryId === 'undangan_digital' && !editId && window.udCreatingNewThemeV8 !== true) {
+                showToast('Klik Edit atau Buat Tema Baru dulu. Tombol aksi hanya aktif saat ada sesi Undangan Digital.', 'error');
                 resetSubmitButton();
                 return;
             }
@@ -7379,8 +7697,8 @@
             }
 
             try {
-                if (categoryId === 'undangan_digital' && editId && window.isUDLockedTheme && window.isUDLockedTheme(editId)) {
-                    showToast('Template Web Default terkunci. Klik Salin Template agar bisa diedit.', 'error');
+                if (categoryId === 'undangan_digital' && editId && window.isUDLockedTheme && window.isUDLockedTheme(editId) && window.udDefaultTemplateEditUnlockedV7 !== true) {
+                    showToast('Template Web Default butuh password sebelum bisa diupdate.', 'error');
                     return;
                 }
                 let savedUndanganThemeId = editId;
@@ -7402,10 +7720,17 @@
                 }
                 if (categoryId === 'undangan_digital') {
                     editId = savedUndanganThemeId || editId;
+                    window.udCreatingNewThemeV8 = false;
+                    window.udEditSessionOriginal = null;
                     await loadData(categoryId);
-                    if (editId) setTimeout(() => window.openUDTheme(editId, { silent: true, scroll: false }), 50);
+                    if (editId) setTimeout(() => {
+                        const wasDefault = window.isUDLockedTheme && window.isUDLockedTheme(editId);
+                        window.openUDTheme(editId, { silent: true, scroll: false });
+                        if (wasDefault) window.udDefaultTemplateEditUnlockedV7 = true;
+                        if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+                    }, 50);
                 } else {
-                    resetForm();
+                    if (typeof window.resetForm === "function") window.resetForm();
                     await loadData(categoryId);
                 } 
             } catch (error) {
@@ -7667,7 +7992,7 @@
                                 <div>
                                     <p class="text-[10px] font-black uppercase tracking-[0.24em] text-lavender-dark mb-1">Bank Tema Undangan</p>
                                     <h3 class="text-xl md:text-2xl font-black text-gray-800">Pilih A/B/C/D tanpa menimpa tema lain</h3>
-                                    <p class="text-xs text-gray-500 mt-1 max-w-3xl">Web undangan tetap satu. Template Web Default bisa diedit setelah password benar. Semua perubahan hanya menjadi draft sementara sampai tombol Simpan/Update ditekan.</p>
+                                    <p class="text-xs text-gray-500 mt-1 max-w-3xl">Web undangan tetap satu. Template Web Default terkunci sebagai master; salinan/draft bisa diedit bebas tanpa menimpa tema lain.</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-2 w-full xl:w-[430px]">
@@ -7690,7 +8015,7 @@
                         const borderTone = isActive ? 'border-emerald-300 ring-4 ring-emerald-100 bg-emerald-50/30' : (isLocked ? 'border-amber-200 ring-4 ring-amber-50 bg-amber-50/20' : 'border-gray-100 bg-white');
                         const statusBadge = isActive
                             ? '<span class="xmenu-badge bg-emerald-50 text-emerald-700 border-emerald-200"><i class="fa-solid fa-broadcast-tower"></i> SEDANG DIPAKAI</span>'
-                            : (isLocked ? '<span class="xmenu-badge bg-amber-50 text-amber-700 border-amber-200"><i class="fa-solid fa-lock"></i> PASSWORD EDIT</span>' : '<span class="xmenu-badge bg-violet-50 text-violet-700 border-violet-200"><i class="fa-solid fa-pen-ruler"></i> DRAFT AMAN</span>');
+                            : (isLocked ? '<span class="xmenu-badge bg-amber-50 text-amber-700 border-amber-200"><i class="fa-solid fa-lock"></i> TEMPLATE TERKUNCI</span>' : '<span class="xmenu-badge bg-violet-50 text-violet-700 border-violet-200"><i class="fa-solid fa-pen-ruler"></i> DRAFT AMAN</span>');
                         return `
                             <div class="xmenu-card p-5 md:p-6 ${borderTone}">
                                 <div class="relative z-10 flex items-start gap-4">
@@ -7702,11 +8027,11 @@
                                     </div>
                                 </div>
                                 <div class="relative z-10 mt-5 grid grid-cols-2 gap-3">
-                                    <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Status Web</p><p class="text-sm font-black ${isActive ? 'text-emerald-700' : (isLocked ? 'text-amber-700' : 'text-violet-700')} mt-1">${isActive ? 'Tampil di web' : (isLocked ? 'Password edit' : 'Tersimpan draft')}</p></div>
+                                    <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Status Web</p><p class="text-sm font-black ${isActive ? 'text-emerald-700' : (isLocked ? 'text-amber-700' : 'text-violet-700')} mt-1">${isActive ? 'Tampil di web' : (isLocked ? 'Master terkunci' : 'Tersimpan draft')}</p></div>
                                     <div class="xmenu-metric"><p class="text-[10px] font-black uppercase text-gray-400">Update</p><p class="text-sm font-black text-gray-800 mt-1">${escapeHTML((item.tanggalUpdate || '').slice(0,10) || 'Belum ada')}</p></div>
                                 </div>
                                 <div class="relative z-10 mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <button type="button" onclick="openUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl ${isLocked ? 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100' : 'bg-slate-900 text-white hover:bg-slate-700'} text-xs font-black transition"><i class="fa-solid ${isLocked ? 'fa-key' : 'fa-folder-open'} mr-1"></i> ${isLocked ? 'Edit Pakai Password' : 'Buka Tema'}</button>
+                                    ${isLocked ? `<button type="button" onclick="openUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-black hover:bg-amber-100 transition"><i class="fa-solid fa-key mr-1"></i> Edit Pakai Password</button>` : `<button type="button" onclick="openUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-slate-900 text-white text-xs font-black hover:bg-slate-700 transition"><i class="fa-solid fa-folder-open mr-1"></i> Buka Tema</button>`}
                                     <button type="button" onclick="activateUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl ${isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100'} text-xs font-black transition" ${isActive ? 'disabled' : ''}><i class="fa-solid ${isActive ? 'fa-circle-check' : 'fa-broadcast-tower'} mr-1"></i> ${isActive ? 'Aktif Sekarang' : 'Pakai Tema Ini'}</button>
                                     <button type="button" onclick="duplicateUDTheme('${item.id}')" class="px-3 py-2.5 rounded-2xl bg-white text-violet-700 border border-violet-100 text-xs font-black hover:bg-violet-50 transition"><i class="fa-solid fa-copy mr-1"></i> ${isLocked ? 'Salin Template' : 'Duplikat'}</button>
                                     ${isLocked ? `<button type="button" disabled class="px-3 py-2.5 rounded-2xl bg-gray-50 text-gray-400 border border-gray-100 text-xs font-black cursor-not-allowed"><i class="fa-solid fa-shield-halved mr-1"></i> Aman</button>` : `<button type="button" onclick="deleteItem('${item.id}', 'undangan_digital')" class="px-3 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 text-xs font-black hover:bg-rose-100 transition"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>`}
@@ -9368,9 +9693,8 @@
                 if (window.renderUDMaterialPresetGroups) window.renderUDMaterialPresetGroups();
                 if (window.refreshAllUDMediaPickers) window.refreshAllUDMediaPickers();
                 if (window.setupUDLiveEditing) window.setupUDLiveEditing();
-                const udSubmit = document.getElementById('btnSubmit');
-                if (udSubmit) udSubmit.innerHTML = item.isActive ? '<i class="fa-solid fa-broadcast-tower mr-1"></i> Simpan Tema Aktif' : '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Draft Tema';
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', item.isActive ? 'Tema aktif dimuat. Edit langsung tampil di web.' : 'Tema draft dimuat. Edit tersimpan tanpa mengubah web.');
+                if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', item.isActive ? 'Tema aktif dimuat. Klik Update Tema untuk menyimpan permanen.' : 'Tema draft dimuat. Klik Update Tema untuk menyimpan permanen.');
                 if (window.updateUDActiveStates) window.updateUDActiveStates();
             } else if(categoryId === 'mahar') {
                 document.getElementById('inputNama').value = item.nama; 
@@ -9582,452 +9906,20 @@
                 }
             }
             if (activeMenu === 'undangan_digital') {
+                window.udEditSessionOriginal = null;
+                window.udCreatingNewThemeV8 = false;
                 const nameEl = document.getElementById('inputUDNamaPengaturan');
                 if (nameEl && !nameEl.value) nameEl.value = `Tema Baru ${Math.max(1, (appData.items['undangan_digital'] || []).length + 1)}`;
-                const btn = document.getElementById('btnSubmit');
-                if (btn) btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Tema Baru';
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Mode tema baru. Tema ini akan tersimpan sebagai draft jika sudah ada tema lain.');
+                window.udDefaultTemplateEditUnlockedV7 = false;
+                if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
+                if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
+                if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
+                if (window.updateUDActiveStates) window.updateUDActiveStates();
+                if (window.renderUDLivePreview) window.renderUDLivePreview(false);
+                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Edit dibatalkan. Perubahan sementara tidak disimpan ke database.');
             }
         }
         
-
-        /* =====================================================
-           PATCH UNDANGAN DIGITAL MEMORY SAVE V17
-           Scope: hanya menu undangan_digital.
-           Tujuan:
-           1) Irit database: tidak ada auto-save saat input/klik.
-           2) Template Web Default bisa diedit dengan password.
-           3) Perubahan tampil di live preview dashboard, tapi baru permanen
-              setelah klik Simpan/Update.
-           4) Batal / pindah menu membuang perubahan sementara.
-        ===================================================== */
-        (function installUDMemorySavePatchV17() {
-            if (window.__UD_MEMORY_SAVE_PATCH_V17__) return;
-            window.__UD_MEMORY_SAVE_PATCH_V17__ = true;
-
-            const DEFAULT_ID = (typeof UD_DEFAULT_TEMPLATE_ID !== 'undefined') ? UD_DEFAULT_TEMPLATE_ID : 'template_web_default';
-            const DEFAULT_PASSWORD = 'destradanmutiara';
-            const originalOpenUDTheme = window.openUDTheme;
-            const originalStartNewUDTheme = window.startNewUDTheme;
-            const originalHandleFormSubmit = window.handleFormSubmit;
-            const originalResetForm = window.resetForm;
-            const originalChangeMenu = window.changeMenu;
-            const originalActivateUDTheme = window.activateUDTheme;
-            const originalEditItem = window.editItem;
-
-            window.udMemoryEditSession = window.udMemoryEditSession || null;
-
-            function cloneUD(obj) {
-                return obj ? JSON.parse(JSON.stringify(obj)) : null;
-            }
-
-            function isUDMenuActive() {
-                return activeMenu === 'undangan_digital';
-            }
-
-            function toastUD(message, type = 'success') {
-                if (typeof showToast === 'function') showToast(message, type);
-                else console.log(message);
-            }
-
-            function getUDRawList() {
-                if (!appData.items['undangan_digital']) appData.items['undangan_digital'] = [];
-                return appData.items['undangan_digital'];
-            }
-
-            function getUDThemeSafe(id) {
-                if (window.getUDThemeById) return window.getUDThemeById(id);
-                return getUDRawList().find(item => item && item.id === id) || null;
-            }
-
-            function isDefaultUD(itemOrId) {
-                const item = typeof itemOrId === 'string' ? getUDThemeSafe(itemOrId) : itemOrId;
-                return Boolean(item && (
-                    item.id === DEFAULT_ID ||
-                    item.isDefaultTemplate === true ||
-                    item.isSystemTemplate === true ||
-                    item.isLocked === true
-                ));
-            }
-
-            function ensureUDThemeInMemory(item) {
-                if (!item || !item.id) return null;
-                const list = getUDRawList();
-                const idx = list.findIndex(row => row && row.id === item.id);
-                const copy = cloneUD(item);
-                if (idx >= 0) list[idx] = { ...list[idx], ...copy };
-                else list.unshift(copy);
-                return copy;
-            }
-
-            function ensureDefaultThemeInMemory() {
-                const item = getUDThemeSafe(DEFAULT_ID) || (window.getUDDefaultTemplateData ? window.getUDDefaultTemplateData({ id: DEFAULT_ID }) : null);
-                if (!item) return null;
-                return ensureUDThemeInMemory({
-                    ...item,
-                    id: DEFAULT_ID,
-                    nama: 'Template Web Default',
-                    isDefaultTemplate: true,
-                    isSystemTemplate: true,
-                    isLocked: true,
-                    themeStatus: 'default_locked',
-                    includeToMainBudget: false
-                });
-            }
-
-            function requestDefaultPassword() {
-                const input = window.prompt('Masukkan password untuk edit Template Web Default:');
-                if (input === null) return false;
-                if (String(input).trim() !== DEFAULT_PASSWORD) {
-                    toastUD('Password salah. Template Web Default belum dibuka.', 'error');
-                    return false;
-                }
-                return true;
-            }
-
-            function beginUDSession(item) {
-                window.udMemoryEditSession = {
-                    id: item && item.id ? item.id : null,
-                    original: cloneUD(item),
-                    dirty: false,
-                    committed: false,
-                    startedAt: Date.now()
-                };
-                const state = window.udLivePublishState || (window.udLivePublishState = {});
-                state.lastSignature = '';
-                state.lastSavedAt = '';
-                state.lastError = '';
-                clearTimeout(state.timer);
-                state.timer = null;
-            }
-
-            function endUDSession(committed = false) {
-                if (window.udMemoryEditSession) {
-                    window.udMemoryEditSession.committed = committed === true;
-                }
-                window.udMemoryEditSession = null;
-            }
-
-            function markUDDirty(reason = 'Perubahan sementara', fieldId = '') {
-                const session = window.udMemoryEditSession;
-                if (session) session.dirty = true;
-                if (window.udRecordLiveChange) window.udRecordLiveChange(reason, fieldId);
-                if (window.syncUDDesignControlsToText) window.syncUDDesignControlsToText();
-                if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
-                if (window.renderUDLivePreview) window.renderUDLivePreview(false);
-                if (window.updateUDActiveStates) window.updateUDActiveStates();
-                if (window.refreshUDLiveMonitor) {
-                    window.refreshUDLiveMonitor('pending', 'Perubahan tampil sementara di preview. Klik Simpan/Update untuk menyimpan permanen, atau Batal untuk kembali ke awal.');
-                }
-            }
-
-            function setUDSubmitIdleText() {
-                const btn = document.getElementById('btnSubmit');
-                if (!btn) return;
-                const current = editId ? getUDThemeSafe(editId) : null;
-                if (current) {
-                    btn.innerHTML = current.isActive ? '<i class="fa-solid fa-broadcast-tower mr-1"></i> Update Tema Aktif' : '<i class="fa-solid fa-floppy-disk mr-1"></i> Update Draft Tema';
-                } else {
-                    btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Tema Baru';
-                }
-                btn.disabled = false;
-            }
-
-            function readValue(id, fallback = '', trim = true) {
-                const el = document.getElementById(id);
-                if (!el) return fallback;
-                const value = el.value ?? fallback;
-                return trim && typeof value === 'string' ? value.trim() : value;
-            }
-
-            window.collectUDDigitalLiveData = function() {
-                const existing = editId ? getUDThemeSafe(editId) : null;
-                const now = new Date().toISOString();
-                const data = {
-                    ...(existing || {}),
-                    nama: readValue('inputUDNamaPengaturan') || 'Pengaturan Undangan Digital',
-                    coupleShort: readValue('inputUDCoupleShort'),
-                    eventDateText: readValue('inputUDEventDateText'),
-                    coverKicker: readValue('inputUDCoverKicker'),
-                    heroSubtitle: readValue('inputUDHeroSubtitle'),
-                    coverImage: readValue('inputUDCoverImage'),
-                    heroImage: readValue('inputUDHeroImage'),
-                    bridePhoto: readValue('inputUDBridePhoto'),
-                    groomPhoto: readValue('inputUDGroomPhoto'),
-                    designPackText: window.buildUDDesignPackFromControls ? window.buildUDDesignPackFromControls() : readValue('inputUDDesignPackText'),
-                    effectParticlesEnabled: readValue('inputUDEffectParticlesEnabled', 'on', false),
-                    effectParticleType: readValue('inputUDEffectParticleType', 'sakura', false),
-                    effectParticleIntensity: readValue('inputUDEffectParticleIntensity', 'medium', false),
-                    effectParticleSpeed: readValue('inputUDEffectParticleSpeed', '1', false),
-                    effectParticleOpacity: readValue('inputUDEffectParticleOpacity', '0.45', false),
-                    effectParticleSize: readValue('inputUDEffectParticleSize', '1', false),
-                    effectAosEnabled: readValue('inputUDEffectAosEnabled', 'on', false),
-                    effectAosType: readValue('inputUDEffectAosType', 'default', false),
-                    effectAosDuration: readValue('inputUDEffectAosDuration', '700', false),
-                    effectAosOnce: readValue('inputUDEffectAosOnce', 'true', false),
-                    effectCoverTransition: readValue('inputUDEffectCoverTransition', 'cinematic', false),
-                    effectParallaxEnabled: readValue('inputUDEffectParallaxEnabled', 'on', false),
-                    effectHoverEnabled: readValue('inputUDEffectHoverEnabled', 'on', false),
-                    effectProgressBar: readValue('inputUDEffectProgressBar', 'on', false),
-                    effectFloatingNav: readValue('inputUDEffectFloatingNav', 'on', false),
-                    effectButtonShine: readValue('inputUDEffectButtonShine', 'on', false),
-                    effectAutoScrollEnabled: readValue('inputUDEffectAutoScrollEnabled', 'on', false),
-                    effectAutoScrollMobileSpeed: readValue('inputUDEffectAutoScrollMobileSpeed', '42', false),
-                    effectAutoScrollDesktopSpeed: readValue('inputUDEffectAutoScrollDesktopSpeed', '56', false),
-                    effectAutoScrollResumeDelay: readValue('inputUDEffectAutoScrollResumeDelay', '2200', false),
-                    effectMusicSpin: readValue('inputUDEffectMusicSpin', 'on', false),
-                    brideLabel: readValue('inputUDBrideLabel'),
-                    brideName: readValue('inputUDBrideName'),
-                    brideParents: readValue('inputUDBrideParents'),
-                    brideInstagram: readValue('inputUDBrideInstagram'),
-                    groomLabel: readValue('inputUDGroomLabel'),
-                    groomName: readValue('inputUDGroomName'),
-                    groomParents: readValue('inputUDGroomParents'),
-                    groomInstagram: readValue('inputUDGroomInstagram'),
-                    ayatTitle: readValue('inputUDAyatTitle'),
-                    ayatText: readValue('inputUDAyatText'),
-                    ayatSource: readValue('inputUDAyatSource'),
-                    greetingTitle: readValue('inputUDGreetingTitle'),
-                    greetingText: readValue('inputUDGreetingText'),
-                    akadTitle: readValue('inputUDAkadTitle'),
-                    akadDate: readValue('inputUDAkadDate'),
-                    akadTime: readValue('inputUDAkadTime'),
-                    akadIcon: readValue('inputUDAkadIcon'),
-                    akadVenue: readValue('inputUDAkadVenue'),
-                    akadAddress: readValue('inputUDAkadAddress'),
-                    akadCalendarLink: readValue('inputUDAkadCalendarLink'),
-                    resepsiTitle: readValue('inputUDResepsiTitle'),
-                    resepsiDate: readValue('inputUDResepsiDate'),
-                    resepsiTime: readValue('inputUDResepsiTime'),
-                    resepsiIcon: readValue('inputUDResepsiIcon'),
-                    resepsiVenue: readValue('inputUDResepsiVenue'),
-                    resepsiAddress: readValue('inputUDResepsiAddress'),
-                    resepsiCalendarLink: readValue('inputUDResepsiCalendarLink'),
-                    mapsLink: readValue('inputUDMapsLink'),
-                    mapsEmbed: readValue('inputUDMapsEmbed'),
-                    liveStreamLink: readValue('inputUDLiveStreamLink'),
-                    liveStreamText: readValue('inputUDLiveStreamText'),
-                    quickMenuItemsText: readValue('inputUDQuickMenuItemsText'),
-                    storyItemsText: readValue('inputUDStoryItemsText'),
-                    galleryImagesText: readValue('inputUDGalleryImagesText'),
-                    rundownItemsText: readValue('inputUDRundownItemsText'),
-                    locationCardsText: readValue('inputUDLocationCardsText'),
-                    infoTamuText: readValue('inputUDInfoTamuText'),
-                    dresscodeTitle: readValue('inputUDDresscodeTitle'),
-                    dresscodeColorsText: window.syncUDDresscodeColorControlsToHidden ? window.syncUDDresscodeColorControlsToHidden() : readValue('inputUDDresscodeColorsText'),
-                    dresscodeNote: readValue('inputUDDresscodeNote'),
-                    bankAccountsText: readValue('inputUDBankAccountsText'),
-                    faqItemsText: readValue('inputUDFAQItemsText'),
-                    qrisImage: readValue('inputUDQrisImage'),
-                    ewalletNumber: readValue('inputUDEwalletNumber'),
-                    hashtagsText: readValue('inputUDHashtagsText'),
-                    galleryVideoLink: readValue('inputUDGalleryVideoLink'),
-                    bgMusicLink: readValue('inputUDBgMusicLink'),
-                    galleryVideoText: readValue('inputUDGalleryVideoText'),
-                    extraElementsText: readValue('inputUDExtraElementsText'),
-                    customBuilderText: readValue('inputUDCustomBuilderText'),
-                    footerText: readValue('inputUDFooterText'),
-                    isActive: existing ? existing.isActive === true : !getUDRawList().some(item => item && item.isActive === true),
-                    themeStatus: existing && existing.isActive === true ? 'aktif' : 'draft',
-                    createdAt: existing && existing.createdAt ? existing.createdAt : now,
-                    tanggalUpdate: now,
-                    includeToMainBudget: false
-                };
-
-                if (isDefaultUD(existing) || editId === DEFAULT_ID) {
-                    data.id = DEFAULT_ID;
-                    data.nama = 'Template Web Default';
-                    data.isDefaultTemplate = true;
-                    data.isSystemTemplate = true;
-                    data.isLocked = true;
-                    data.themeStatus = 'default_locked';
-                    data.includeToMainBudget = false;
-                } else {
-                    data.isDefaultTemplate = false;
-                    data.isSystemTemplate = false;
-                    data.isLocked = false;
-                }
-                return data;
-            };
-
-            window.autoPublishUDDigitalChange = function(reason = 'Perubahan', options = {}) {
-                if (!isUDMenuActive()) return;
-                const fieldId = options.fieldId || '';
-                markUDDirty(reason, fieldId);
-                const state = window.udLivePublishState || (window.udLivePublishState = {});
-                clearTimeout(state.timer);
-                state.timer = null;
-                state.saving = false;
-                state.lastError = '';
-            };
-
-            window.publishUDDigitalNow = async function(reason = 'Perubahan') {
-                if (!isUDMenuActive()) return;
-                markUDDirty(reason, '');
-                toastUD('Mode hemat database aktif. Perubahan belum disimpan. Klik tombol Simpan/Update Data untuk menyimpan permanen.', 'error');
-            };
-
-            function rollbackUDSession(showMessage = true) {
-                const session = window.udMemoryEditSession;
-                if (!session || session.committed) return false;
-                clearTimeout(window.udLivePublishState?.timer);
-                if (session.original && session.original.id) {
-                    ensureUDThemeInMemory(session.original);
-                    editId = session.original.id;
-                    if (typeof originalEditItem === 'function') originalEditItem(session.original.id, 'undangan_digital');
-                } else if (typeof originalResetForm === 'function') {
-                    editId = null;
-                    originalResetForm();
-                }
-                endUDSession(false);
-                if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
-                if (window.renderUDLivePreview) window.renderUDLivePreview(false);
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Perubahan sementara dibatalkan. Data kembali seperti awal.');
-                setUDSubmitIdleText();
-                if (showMessage) toastUD('Perubahan sementara dibatalkan. Data kembali ke awal.');
-                return true;
-            }
-
-            window.openUDTheme = function(id, options = {}) {
-                if (!isUDMenuActive() && activeMenu) {
-                    return typeof originalOpenUDTheme === 'function' ? originalOpenUDTheme.apply(this, arguments) : undefined;
-                }
-
-                let item = getUDThemeSafe(id);
-                if (!item && id === DEFAULT_ID) item = ensureDefaultThemeInMemory();
-                if (!item) {
-                    toastUD('Tema undangan tidak ditemukan.', 'error');
-                    return;
-                }
-
-                if (isDefaultUD(item)) {
-                    if (!options.bypassPassword && !requestDefaultPassword()) return;
-                    item = ensureDefaultThemeInMemory();
-                }
-
-                if (window.udMemoryEditSession?.dirty && !window.udMemoryEditSession?.committed) {
-                    rollbackUDSession(false);
-                }
-
-                ensureUDThemeInMemory(item);
-                if (typeof originalEditItem === 'function') originalEditItem(item.id, 'undangan_digital');
-                else if (typeof originalOpenUDTheme === 'function') originalOpenUDTheme.call(this, item.id, { ...options, silent: true });
-
-                editId = item.id;
-                beginUDSession(item);
-                setUDSubmitIdleText();
-                if (window.refreshUDStudioPanel) window.refreshUDStudioPanel();
-                if (window.renderUDLivePreview) window.renderUDLivePreview(false);
-                if (window.refreshUDLiveMonitor) {
-                    window.refreshUDLiveMonitor('ready', isDefaultUD(item)
-                        ? 'Template Web Default terbuka. Perubahan tampil sementara; klik Simpan/Update untuk menyimpan permanen.'
-                        : 'Tema terbuka. Perubahan tampil sementara; klik Simpan/Update untuk menyimpan permanen.');
-                }
-                if (!options.silent) toastUD(isDefaultUD(item) ? 'Password benar. Template Web Default siap diedit.' : 'Tema siap diedit. Perubahan belum tersimpan sampai klik Simpan/Update.');
-                if (options.scroll !== false) {
-                    const main = document.getElementById('main-content');
-                    if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            };
-
-            window.startNewUDTheme = function() {
-                if (window.udMemoryEditSession?.dirty) rollbackUDSession(false);
-                endUDSession(false);
-                if (typeof originalStartNewUDTheme === 'function') originalStartNewUDTheme.apply(this, arguments);
-                beginUDSession(null);
-                setUDSubmitIdleText();
-                if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Tema baru siap. Perubahan tampil sementara dan baru tersimpan saat klik Simpan Data.');
-            };
-
-            window.activateUDTheme = async function(id) {
-                if (window.udMemoryEditSession?.dirty) rollbackUDSession(false);
-                endUDSession(false);
-                return typeof originalActivateUDTheme === 'function' ? originalActivateUDTheme.apply(this, arguments) : undefined;
-            };
-
-            window.handleFormSubmit = async function(e, categoryId) {
-                if (categoryId !== 'undangan_digital') {
-                    return typeof originalHandleFormSubmit === 'function' ? originalHandleFormSubmit.apply(this, arguments) : undefined;
-                }
-                e.preventDefault();
-                const btnSubmit = document.getElementById('btnSubmit');
-                if (btnSubmit) {
-                    btnSubmit.disabled = true;
-                    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...';
-                }
-                try {
-                    if (window.r2Uploading) {
-                        toastUD('Tunggu upload file selesai dulu sebelum menyimpan tema.', 'error');
-                        return;
-                    }
-                    const itemData = window.collectUDDigitalLiveData();
-                    if (!itemData) throw new Error('Data tema tidak bisa dibaca.');
-                    const existing = editId ? getUDThemeSafe(editId) : null;
-                    const savingDefault = isDefaultUD(existing) || editId === DEFAULT_ID;
-                    let savedId = editId;
-
-                    if (savingDefault) {
-                        itemData.id = DEFAULT_ID;
-                        itemData.nama = 'Template Web Default';
-                        itemData.isDefaultTemplate = true;
-                        itemData.isSystemTemplate = true;
-                        itemData.isLocked = true;
-                        itemData.themeStatus = 'default_locked';
-                        const payload = { ...itemData };
-                        delete payload.id;
-                        delete payload.__virtualDefault;
-                        await setDoc(doc(db, 'undangan_digital', DEFAULT_ID), payload, { merge: true });
-                        savedId = DEFAULT_ID;
-                    } else if (editId) {
-                        const payload = { ...itemData };
-                        delete payload.id;
-                        delete payload.__virtualDefault;
-                        await updateDoc(doc(db, 'undangan_digital', editId), payload);
-                        savedId = editId;
-                    } else {
-                        itemData.isActive = !getUDRawList().some(item => item && item.isActive === true);
-                        itemData.themeStatus = itemData.isActive ? 'aktif' : 'draft';
-                        const payload = { ...itemData };
-                        delete payload.id;
-                        delete payload.__virtualDefault;
-                        const newDocRef = await addDoc(collection(db, 'undangan_digital'), payload);
-                        savedId = newDocRef.id;
-                    }
-
-                    endUDSession(true);
-                    editId = savedId;
-                    await loadData('undangan_digital');
-                    setTimeout(() => window.openUDTheme(savedId, { silent: true, scroll: false, bypassPassword: true }), 80);
-                    toastUD(savingDefault ? 'Template Web Default berhasil disimpan.' : (editId ? 'Tema undangan berhasil disimpan.' : 'Tema undangan baru berhasil disimpan.'));
-                } catch (error) {
-                    console.error('Gagal menyimpan tema undangan:', error);
-                    toastUD('Gagal menyimpan tema: ' + (error.message || 'Periksa koneksi dan izin database.'), 'error');
-                } finally {
-                    setUDSubmitIdleText();
-                }
-            };
-
-            window.resetForm = function() {
-                if (isUDMenuActive() && window.udMemoryEditSession && !window.udMemoryEditSession.committed) {
-                    rollbackUDSession(true);
-                    return;
-                }
-                return typeof originalResetForm === 'function' ? originalResetForm.apply(this, arguments) : undefined;
-            };
-
-            window.changeMenu = async function(menuId) {
-                if (isUDMenuActive() && menuId !== 'undangan_digital') {
-                    if (window.udMemoryEditSession?.dirty) rollbackUDSession(false);
-                    endUDSession(false);
-                }
-                return typeof originalChangeMenu === 'function' ? originalChangeMenu.apply(this, arguments) : undefined;
-            };
-
-            window.addEventListener('beforeunload', function() {
-                clearTimeout(window.udLivePublishState?.timer);
-            });
-        })();
-
     </script>
 </body>
 </html>
