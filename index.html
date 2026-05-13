@@ -8262,6 +8262,92 @@
             return formatRupiah(item.total || item.biaya || item.totalHarga || item.nilai || item.harga || 0);
         }
 
+
+        function getModernNotesBoardHTML(rawData) {
+            const dataSource = Array.isArray(rawData) ? rawData : [];
+            const q = String(window.xmenuSearch['notes'] || '').toLowerCase().trim();
+            const data = q
+                ? dataSource.filter(item => `${item.isi || ''} ${item.tanggal || ''}`.toLowerCase().includes(q))
+                : dataSource;
+            const totalWords = dataSource.reduce((sum, item) => {
+                const words = String(item.isi || '').trim().split(/\s+/).filter(Boolean).length;
+                return sum + words;
+            }, 0);
+            const latestDate = dataSource.length ? escapeHTML(dataSource[dataSource.length - 1].tanggal || 'Tersimpan') : 'Belum ada';
+            const notePalette = [
+                { paper: 'from-amber-50 via-yellow-50 to-white', pin: 'bg-amber-400', ring: 'border-amber-200', badge: 'bg-amber-100 text-amber-700 border-amber-200', icon: 'text-amber-500' },
+                { paper: 'from-rose-50 via-pink-50 to-white', pin: 'bg-rose-400', ring: 'border-rose-200', badge: 'bg-rose-100 text-rose-700 border-rose-200', icon: 'text-rose-500' },
+                { paper: 'from-violet-50 via-purple-50 to-white', pin: 'bg-violet-400', ring: 'border-violet-200', badge: 'bg-violet-100 text-violet-700 border-violet-200', icon: 'text-violet-500' },
+                { paper: 'from-emerald-50 via-teal-50 to-white', pin: 'bg-emerald-400', ring: 'border-emerald-200', badge: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: 'text-emerald-500' }
+            ];
+
+            const noteCards = data.map((item, index) => {
+                const rawText = String(item.isi || '').trim();
+                const cleanLines = rawText.split(/\n+/).map(line => line.trim()).filter(Boolean);
+                const firstLine = cleanLines[0] || 'Catatan Wedding';
+                const title = firstLine.length > 64 ? `${firstLine.slice(0, 64)}...` : firstLine;
+                const body = cleanLines.length > 1 ? cleanLines.slice(1).join('\n') : rawText;
+                const bodyText = body || 'Belum ada detail tambahan.';
+                const tone = notePalette[index % notePalette.length];
+                const wordCount = rawText ? rawText.split(/\s+/).filter(Boolean).length : 0;
+                const noteNumber = String(index + 1).padStart(2, '0');
+                return `
+                    <article class="group relative overflow-hidden rounded-[2rem] border ${tone.ring} bg-gradient-to-br ${tone.paper} p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+                        <div class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/60 blur-2xl"></div>
+                        <div class="pointer-events-none absolute left-0 top-0 h-full w-1.5 ${tone.pin}"></div>
+                        <div class="pointer-events-none absolute left-8 top-0 h-6 w-12 rounded-b-2xl ${tone.pin}/80 shadow-sm"></div>
+                        <div class="relative z-10 flex items-start justify-between gap-4 pt-4">
+                            <div class="min-w-0">
+                                <div class="mb-3 flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex items-center gap-1.5 rounded-full border ${tone.badge} px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em]"><i class="fa-solid fa-thumbtack"></i> Note ${noteNumber}</span>
+                                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400"><i class="fa-regular fa-calendar"></i> ${escapeHTML(item.tanggal || 'Tersimpan')}</span>
+                                </div>
+                                <h4 class="break-words text-xl font-black leading-tight text-slate-900">${escapeHTML(title)}</h4>
+                            </div>
+                            <div class="flex shrink-0 gap-2 opacity-100 md:opacity-80 md:transition md:group-hover:opacity-100">
+                                <button type="button" onclick="editItem('${item.id}', 'notes')" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/80 bg-white/90 text-violet-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-violet-50" title="Edit Catatan"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button type="button" onclick="deleteItem('${item.id}', 'notes')" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/80 bg-white/90 text-rose-500 shadow-sm transition hover:-translate-y-0.5 hover:bg-rose-50" title="Hapus Catatan"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="relative z-10 mt-5 rounded-[1.45rem] border border-white/80 bg-white/65 p-4 shadow-inner" style="background-image: linear-gradient(rgba(226,232,240,.65) 1px, transparent 1px); background-size: 100% 29px;">
+                            <p class="min-h-[5.4rem] whitespace-pre-line break-words text-sm font-semibold leading-[29px] text-slate-600">${escapeHTML(bodyText)}</p>
+                        </div>
+                        <div class="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-3">
+                            <span class="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-2 text-[11px] font-black text-slate-400"><i class="fa-solid fa-align-left ${tone.icon}"></i> ${wordCount} kata</span>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-2 text-[11px] font-black text-slate-400"><i class="fa-solid fa-shield-heart text-emerald-500"></i> Tersimpan</span>
+                        </div>
+                    </article>`;
+            }).join('');
+
+            return `
+                <div class="space-y-6 fade-in">
+                    <div class="relative overflow-hidden rounded-[2.2rem] border border-amber-100 bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 p-5 text-white shadow-xl shadow-slate-900/10 md:p-7">
+                        <div class="pointer-events-none absolute -right-14 -top-16 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"></div>
+                        <div class="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl"></div>
+                        <div class="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                            <div class="flex items-start gap-4">
+                                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-white/10 text-amber-200 ring-1 ring-white/15"><i class="fa-solid fa-note-sticky text-2xl"></i></div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-amber-200/80">Wedding Notes</p>
+                                    <h3 class="mt-2 text-2xl font-black tracking-tight md:text-3xl">Buku Catatan Acara</h3>
+                                    <p class="mt-2 max-w-2xl text-sm font-semibold leading-7 text-white/58">Catatan dibuat seperti memo agar ide, pengingat vendor, dan detail kecil lebih nyaman dibaca.</p>
+                                </div>
+                            </div>
+                            <div class="grid w-full grid-cols-3 gap-2 xl:w-[460px]">
+                                <div class="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur"><p class="text-[10px] font-black uppercase text-white/45">Catatan</p><p class="mt-1 text-2xl font-black">${dataSource.length}</p></div>
+                                <div class="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur"><p class="text-[10px] font-black uppercase text-white/45">Total Kata</p><p class="mt-1 text-2xl font-black">${totalWords}</p></div>
+                                <div class="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur"><p class="text-[10px] font-black uppercase text-white/45">Update</p><p class="mt-2 text-xs font-black leading-tight">${latestDate}</p></div>
+                            </div>
+                        </div>
+                        <div class="relative z-10 mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_240px] lg:items-center">
+                            <div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i><input class="xmenu-search border-white/10 bg-white/10 pl-11 text-white placeholder:text-white/35 focus:border-amber-200 focus:bg-white/15" value="${escapeHTML(window.xmenuSearch['notes'] || '')}" oninput="setXmenuSearch('notes', this.value)" placeholder="Cari isi catatan, ide, vendor, reminder..."></div>
+                            <div class="rounded-3xl border border-white/10 bg-white/10 px-4 py-3 text-xs font-black text-white/65"><i class="fa-solid fa-lightbulb text-amber-200 mr-2"></i> Edit dan hapus tetap tersedia di tiap catatan.</div>
+                        </div>
+                    </div>
+                    ${data.length ? `<div class="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">${noteCards}</div>` : getEmptyStateHTML('fa-note-sticky', q ? 'Catatan tidak ditemukan dari pencarian ini.' : 'Belum ada catatan. Tulis catatan pertama dari form di atas.')}
+                </div>`;
+        }
+
         function getXStatusBadge(categoryId, item) {
             let label = 'Aktif', tone = 'bg-gray-50 text-gray-600 border-gray-200', icon = 'fa-circle-dot';
             if (categoryId === 'wedding_profile') {
@@ -8378,6 +8464,7 @@
 
         function getXMenuBoardHTML(categoryId, rawData) {
             if (categoryId === 'undangan_digital') return getUDThemeBoardHTML(rawData);
+            if (categoryId === 'notes') return getModernNotesBoardHTML(rawData);
             const cfg = getXMenuConfig(categoryId);
             let data = [...rawData];
             if (categoryId === 'doorprize') {
