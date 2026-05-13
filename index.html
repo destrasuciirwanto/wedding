@@ -2112,6 +2112,56 @@
 
         let activeMenu = 'dashboard';
         let editId = null;
+
+        // =====================================================
+        // SCROLL MEMORY - SEMUA MENU
+        // Saat user klik Edit, posisi terakhir di list disimpan.
+        // Setelah klik Batal atau Simpan/Update, dashboard kembali
+        // ke posisi list tersebut. Tidak mengubah logic tombol/menu.
+        // =====================================================
+        window.dashboardReturnScrollTop = 0;
+        window.dashboardReturnScrollMenu = null;
+        window.dashboardReturnScrollActive = false;
+        window.dashboardSuppressNextReturnRemember = false;
+        window.dashboardSuppressNextEditScroll = false;
+
+        function rememberDashboardReturnPosition() {
+            const main = document.getElementById('main-content');
+            if (!main) return;
+            window.dashboardReturnScrollTop = Number(main.scrollTop || 0);
+            window.dashboardReturnScrollMenu = activeMenu;
+            window.dashboardReturnScrollActive = true;
+        }
+
+        function scrollDashboardFormTop() {
+            const main = document.getElementById('main-content');
+            if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restoreDashboardReturnPosition(options = {}) {
+            const main = document.getElementById('main-content');
+            if (!main || !window.dashboardReturnScrollActive) return;
+
+            const targetTop = Number(window.dashboardReturnScrollTop || 0);
+            const targetMenu = window.dashboardReturnScrollMenu;
+            const delay = Number(options.delay ?? 140);
+
+            setTimeout(() => {
+                const currentMain = document.getElementById('main-content');
+                if (!currentMain) return;
+
+                if (targetMenu && targetMenu !== activeMenu) {
+                    window.dashboardReturnScrollActive = false;
+                    window.dashboardReturnScrollMenu = null;
+                    return;
+                }
+
+                currentMain.scrollTo({ top: targetTop, behavior: 'smooth' });
+                window.dashboardReturnScrollActive = false;
+                window.dashboardReturnScrollMenu = null;
+            }, delay);
+        }
+
         let appData = { totalBudget: 0, items: {}, dashboardSummary: null };
         menus.forEach(m => { if(m.id !== 'dashboard') appData.items[m.id] = []; });
         appData.items['dokumen_folder'] = []; 
@@ -4657,6 +4707,10 @@
             }
 
             window.udEditSessionOriginal = JSON.parse(JSON.stringify(item || {}));
+            if (options.scroll === false) {
+                window.dashboardSuppressNextReturnRemember = true;
+                window.dashboardSuppressNextEditScroll = true;
+            }
             editItem(id, 'undangan_digital');
             if (!options.silent) showToast(isLockedDefault ? 'Template Web Default dibuka. Simpan/Update diperlukan agar perubahan permanen.' : `Tema "${item.nama || 'Undangan Digital'}" dibuka. Simpan/Update diperlukan agar perubahan permanen.`);
             if (window.refreshUDLiveMonitor) {
@@ -4697,6 +4751,8 @@
             const restoreTheme = originalTheme || activeTheme;
 
             if (restoreTheme && restoreTheme.id) {
+                window.dashboardSuppressNextReturnRemember = true;
+                window.dashboardSuppressNextEditScroll = true;
                 editItem(restoreTheme.id, 'undangan_digital');
             } else {
                 const form = document.getElementById('itemForm');
@@ -4714,6 +4770,7 @@
             if (window.renderUDLivePreview) window.renderUDLivePreview(false);
             if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
             if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Dibatalkan. Perubahan sementara dibuang dan tombol aksi disembunyikan.');
+            restoreDashboardReturnPosition({ delay: 160 });
             showToast('Perubahan Undangan Digital dibatalkan.');
         };
 
@@ -5415,6 +5472,7 @@
                 window.batalEditFolder(); // Kembali ke mode "Buat Baru"
                 await loadFolders(); 
                 renderTable('dokumen'); 
+                restoreDashboardReturnPosition({ delay: 180 });
             } catch(error) {
                 showToast(isEditing ? 'Gagal mengupdate folder!' : 'Gagal membuat folder!', 'error');
             } finally {
@@ -5427,6 +5485,7 @@
 
         // --- FUNGSI EDIT NAMA FOLDER ---
         window.editFolder = async function(id, namaSekarang) {
+            rememberDashboardReturnPosition();
             window.editFolderId = id;
             
             // Ubah UI Form agar berubah jadi Form Edit
@@ -5436,7 +5495,7 @@
             document.getElementById('btnCancelEditFolder').classList.remove('hidden');
             
             // Scroll layar ke atas agar langsung kelihatan formnya
-            document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+            scrollDashboardFormTop();
         };
         
         // --- FUNGSI BATAL EDIT FOLDER ---
@@ -5453,6 +5512,7 @@
             
             const btnCancel = document.getElementById('btnCancelEditFolder');
             if(btnCancel) btnCancel.classList.add('hidden');
+            restoreDashboardReturnPosition({ delay: 120 });
         };
 
         window.hapusFolder = async function(id) {
@@ -7729,9 +7789,11 @@
                         if (wasDefault) window.udDefaultTemplateEditUnlockedV7 = true;
                         if (window.updateUDSubmitButtonModeV7) window.updateUDSubmitButtonModeV7();
                     }, 50);
+                    restoreDashboardReturnPosition({ delay: 260 });
                 } else {
                     if (typeof window.resetForm === "function") window.resetForm();
                     await loadData(categoryId);
+                    restoreDashboardReturnPosition({ delay: 180 });
                 } 
             } catch (error) {
                 if (uploadedR2DataForRollback) {
@@ -9569,6 +9631,15 @@
             const item = appData.items[categoryId].find(i => i.id === id);
             if(!item) return;
 
+            const skipRememberScroll = window.dashboardSuppressNextReturnRemember === true;
+            const skipEditScroll = window.dashboardSuppressNextEditScroll === true;
+            window.dashboardSuppressNextReturnRemember = false;
+            window.dashboardSuppressNextEditScroll = false;
+
+            if (!skipRememberScroll) {
+                rememberDashboardReturnPosition();
+            }
+
             editId = id;
             
             // [PERBAIKAN] Cek apakah elemen dengan id 'form-title' ada di HTML
@@ -9844,7 +9915,7 @@
             }
             
             // Menggulir layar ke atas secara halus agar form terlihat
-            document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+            if (!skipEditScroll) scrollDashboardFormTop();
         }
 
         window.resetForm = function() {
@@ -9918,6 +9989,7 @@
                 if (window.renderUDLivePreview) window.renderUDLivePreview(false);
                 if (window.refreshUDLiveMonitor) window.refreshUDLiveMonitor('ready', 'Edit dibatalkan. Perubahan sementara tidak disimpan ke database.');
             }
+            restoreDashboardReturnPosition({ delay: 160 });
         }
         
     </script>
