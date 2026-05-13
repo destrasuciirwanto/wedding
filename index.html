@@ -10733,6 +10733,533 @@
             window.renderTable.__udV14Wrapped = true;
         }
 
+
+        /* =====================================================
+           MASTER PATCH DASHBOARD BUTTON FIX V17
+           Dipasang langsung di file dashboard utama.
+           Fokus:
+           - Tombol Edit / Delete / Simpan / Update semua menu
+           - Select Status / checkbox quick update
+           - Overlay sidebar mobile yang menahan klik
+           - Undangan Digital readonly/password tetap aman
+           - Template Web Default tetap terkunci dan tidak bisa dihapus
+        ===================================================== */
+        (function () {
+            const PATCH_KEY = '__DESTARA_MASTER_BUTTON_FIX_V17__';
+            if (window[PATCH_KEY]) return;
+            window[PATCH_KEY] = true;
+
+            const DEFAULT_TEMPLATE_ID = 'template_web_default';
+
+            function safeToast(message, type = 'success') {
+                try {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(message, type);
+                    } else {
+                        console.log('[Dashboard]', message);
+                    }
+                } catch (error) {
+                    console.log('[Dashboard]', message);
+                }
+            }
+
+            function getCurrentMenuSafe() {
+                try {
+                    if (typeof activeMenu !== 'undefined') return activeMenu;
+                } catch (error) {}
+                return window.activeMenu || '';
+            }
+
+            function getAppDataSafe() {
+                try {
+                    if (typeof appData !== 'undefined') return appData;
+                } catch (error) {}
+                return window.appData || { items: {} };
+            }
+
+            function qsa(selector, root = document) {
+                return Array.from(root.querySelectorAll(selector));
+            }
+
+            function getSidebarParts() {
+                return {
+                    sidebar: document.getElementById('sidebar'),
+                    overlay: document.getElementById('mobile-overlay')
+                };
+            }
+
+            function sidebarIsOpen() {
+                const { sidebar } = getSidebarParts();
+                return Boolean(sidebar && !sidebar.classList.contains('-translate-x-full'));
+            }
+
+            window.closeSidebarSafe = function () {
+                const { sidebar, overlay } = getSidebarParts();
+
+                if (sidebar) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.style.pointerEvents = 'none';
+                    overlay.style.display = 'none';
+                }
+            };
+
+            window.openSidebarSafe = function () {
+                const { sidebar, overlay } = getSidebarParts();
+
+                if (sidebar) {
+                    sidebar.classList.remove('-translate-x-full');
+                }
+
+                if (overlay) {
+                    overlay.classList.remove('hidden');
+                    overlay.style.pointerEvents = 'auto';
+                    overlay.style.display = '';
+                }
+            };
+
+            function repairOverlay() {
+                const { overlay } = getSidebarParts();
+                if (!overlay) return;
+
+                const mustClose = !sidebarIsOpen() || window.innerWidth >= 1024;
+                if (mustClose) {
+                    overlay.classList.add('hidden');
+                    overlay.style.pointerEvents = 'none';
+                    overlay.style.display = 'none';
+                } else {
+                    overlay.classList.remove('hidden');
+                    overlay.style.pointerEvents = 'auto';
+                    overlay.style.display = '';
+                }
+            }
+
+            function textOf(el) {
+                return String(el && el.textContent ? el.textContent : '').toLowerCase().trim();
+            }
+
+            function mustStayDisabled(el) {
+                const text = textOf(el);
+                if (text.includes('aktif sekarang')) return true;
+                if (text === 'aman' || text.includes(' aman')) return true;
+                if (text.includes('mengupload')) return true;
+                if (text.includes('upload berjalan')) return true;
+                if (el && el.classList && el.classList.contains('cursor-not-allowed') && !el.matches('#btnSubmit')) return true;
+                return false;
+            }
+
+            function isInsideUDReadonlyEditor(el) {
+                const form = el.closest('#itemForm');
+                return Boolean(form && form.classList.contains('ud-editor-readonly-v14'));
+            }
+
+            function isAllowedInsideUDReadonly(el) {
+                return Boolean(
+                    el.matches('.ud-readonly-edit-v14, [data-ud-allow-readonly="1"], .ud-live-preview-tool-btn, .ud-live-preview-open-btn, [data-preview-button]') ||
+                    el.closest('[data-ud-allow-readonly="1"], .ud-live-preview-toolbar, .ud-studio-mini-preview, .ud-password-modal-v14')
+                );
+            }
+
+            function unlockOne(el) {
+                if (!el) return;
+                if (mustStayDisabled(el)) return;
+                if (isInsideUDReadonlyEditor(el) && !isAllowedInsideUDReadonly(el)) return;
+
+                el.style.pointerEvents = '';
+                el.removeAttribute('aria-disabled');
+                el.classList.remove('pointer-events-none', 'opacity-40', 'opacity-45');
+
+                if (el.disabled) {
+                    el.disabled = false;
+                    el.removeAttribute('disabled');
+                }
+            }
+
+            function repairClickableElements() {
+                repairOverlay();
+
+                const main = document.getElementById('main-content');
+                if (!main) return;
+
+                const selector = [
+                    '#main-content button[onclick]',
+                    '#main-content a[onclick]',
+                    '#main-content select[onchange]',
+                    '#main-content input[onchange]',
+                    '#main-content textarea[onchange]',
+                    '#dynamic-list-container button',
+                    '#dynamic-list-container select',
+                    '#dynamic-list-container input[type="checkbox"]',
+                    '#btnSubmit'
+                ].join(',');
+
+                qsa(selector, main).forEach(unlockOne);
+
+                const form = document.getElementById('itemForm');
+                if (form) {
+                    form.style.pointerEvents = '';
+                }
+            }
+
+            function scheduleRepair() {
+                repairClickableElements();
+                setTimeout(repairClickableElements, 60);
+                setTimeout(repairClickableElements, 200);
+                setTimeout(repairClickableElements, 600);
+            }
+
+            function parseInlineCall(code) {
+                const src = String(code || '').trim().replace(/;+\s*$/, '');
+                const match = src.match(/^(?:window\.)?([A-Za-z_$][\w$]*)\s*\(([\s\S]*)\)$/);
+                if (!match) return null;
+                return { fnName: match[1], argsText: match[2] || '' };
+            }
+
+            function runInlineHandler(el, event, attrName) {
+                const code = el.getAttribute(attrName || 'onclick');
+                const parsed = parseInlineCall(code);
+                if (!parsed) return false;
+
+                const fn = window[parsed.fnName];
+                if (typeof fn !== 'function') return false;
+
+                try {
+                    const args = Function('el', 'event', 'return [' + parsed.argsText + '];').call(el, el, event);
+                    const result = fn.apply(window, args);
+                    scheduleRepair();
+                    return result === false ? false : true;
+                } catch (error) {
+                    console.error('Handler gagal dijalankan:', code, error);
+                    safeToast('Tombol gagal dijalankan: ' + (error.message || 'cek console'), 'error');
+                    scheduleRepair();
+                    return true;
+                }
+            }
+
+            function wrapFunction(name, wrapperFactory) {
+                const original = window[name];
+                if (typeof original !== 'function') return false;
+                if (original.__buttonFixV17Wrapped) return true;
+
+                const wrapped = wrapperFactory(original);
+                wrapped.__buttonFixV17Wrapped = true;
+                window[name] = wrapped;
+                return true;
+            }
+
+            function installWrappers() {
+                wrapFunction('toggleSidebar', function () {
+                    return function (force) {
+                        if (force === 'open') {
+                            window.openSidebarSafe();
+                        } else if (force === 'close') {
+                            window.closeSidebarSafe();
+                        } else if (sidebarIsOpen()) {
+                            window.closeSidebarSafe();
+                        } else {
+                            window.openSidebarSafe();
+                        }
+                        scheduleRepair();
+                    };
+                });
+
+                wrapFunction('changeMenu', function (original) {
+                    return async function () {
+                        const result = await original.apply(this, arguments);
+                        if (window.innerWidth < 1024) window.closeSidebarSafe();
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('renderContent', function (original) {
+                    return async function () {
+                        const result = await original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('renderTable', function (original) {
+                    return function () {
+                        const result = original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('loadData', function (original) {
+                    return async function () {
+                        const result = await original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('editItem', function (original) {
+                    return function () {
+                        const result = original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('resetForm', function (original) {
+                    return function () {
+                        const result = original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('setUDReadOnlyModeV14', function (original) {
+                    return function () {
+                        const result = original.apply(this, arguments);
+
+                        qsa('#dynamic-list-container button, #dynamic-list-container select, #dynamic-list-container input[type="checkbox"]').forEach(function (el) {
+                            if (mustStayDisabled(el)) return;
+                            el.disabled = false;
+                            el.removeAttribute('disabled');
+                            el.removeAttribute('aria-disabled');
+                            el.style.pointerEvents = '';
+                        });
+
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+
+                wrapFunction('deleteItem', function (original) {
+                    return async function (id, categoryId) {
+                        try {
+                            if (categoryId === 'undangan_digital') {
+                                const data = getAppDataSafe();
+                                const list = (data.items && data.items.undangan_digital) || [];
+                                const item = list.find(function (row) { return row && row.id === id; });
+                                const isDefault =
+                                    id === DEFAULT_TEMPLATE_ID ||
+                                    (item && (item.id === DEFAULT_TEMPLATE_ID || item.isDefaultTemplate === true || item.isSystemTemplate === true)) ||
+                                    (typeof window.isUDLockedTheme === 'function' && window.isUDLockedTheme(item || id));
+
+                                if (isDefault) {
+                                    safeToast('Template Web Default adalah template bawaan terkunci dan tidak bisa dihapus.', 'error');
+                                    scheduleRepair();
+                                    return;
+                                }
+                            }
+
+                            const result = await original.apply(this, arguments);
+                            scheduleRepair();
+                            return result;
+                        } catch (error) {
+                            console.error('Delete error:', error);
+                            safeToast('Gagal menghapus data: ' + (error.message || 'cek console'), 'error');
+                            scheduleRepair();
+                        }
+                    };
+                });
+
+                wrapFunction('deleteUDThemeCard', function (original) {
+                    return async function (id) {
+                        if (id === DEFAULT_TEMPLATE_ID) {
+                            safeToast('Template Web Default adalah template bawaan terkunci dan tidak bisa dihapus.', 'error');
+                            scheduleRepair();
+                            return;
+                        }
+                        const result = await original.apply(this, arguments);
+                        scheduleRepair();
+                        return result;
+                    };
+                });
+            }
+
+            function installDelegatedEvents() {
+                if (window.__DESTARA_DELEGATED_EVENTS_V17__) return;
+                window.__DESTARA_DELEGATED_EVENTS_V17__ = true;
+
+                document.addEventListener('click', function (event) {
+                    const overlay = document.getElementById('mobile-overlay');
+                    if (overlay && event.target === overlay) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        window.closeSidebarSafe();
+                        scheduleRepair();
+                        return;
+                    }
+
+                    const btn = event.target.closest('button[onclick], a[onclick]');
+                    if (!btn) return;
+                    if (!btn.closest('#main-content') && !btn.closest('#sidebar')) return;
+
+                    unlockOne(btn);
+
+                    const handled = runInlineHandler(btn, event, 'onclick');
+                    if (handled) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (typeof event.stopImmediatePropagation === 'function') {
+                            event.stopImmediatePropagation();
+                        }
+                    }
+                }, true);
+
+                document.addEventListener('change', function (event) {
+                    const el = event.target;
+                    if (!el) return;
+                    if (!el.matches('select[onchange], input[onchange], textarea[onchange]')) return;
+                    if (!el.closest('#main-content')) return;
+
+                    unlockOne(el);
+
+                    const handled = runInlineHandler(el, event, 'onchange');
+                    if (handled) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (typeof event.stopImmediatePropagation === 'function') {
+                            event.stopImmediatePropagation();
+                        }
+                    }
+                }, true);
+
+                document.addEventListener('submit', function (event) {
+                    const form = event.target;
+                    if (!form || form.id !== 'itemForm') return;
+
+                    const code = form.getAttribute('onsubmit');
+                    if (!code || !code.includes('handleFormSubmit')) return;
+                    if (typeof window.handleFormSubmit !== 'function') return;
+
+                    const handled = runInlineHandler(form, event, 'onsubmit');
+                    if (handled) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (typeof event.stopImmediatePropagation === 'function') {
+                            event.stopImmediatePropagation();
+                        }
+                    }
+                }, true);
+
+                document.addEventListener('click', function (event) {
+                    const btn = event.target.closest('#btnSubmit');
+                    if (!btn) return;
+
+                    unlockOne(btn);
+
+                    const form = btn.closest('form');
+                    if (!form) return;
+
+                    if ((btn.getAttribute('type') || '').toLowerCase() !== 'submit') {
+                        event.preventDefault();
+                        if (typeof form.requestSubmit === 'function') {
+                            form.requestSubmit(btn);
+                        } else {
+                            form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                        }
+                    }
+                }, true);
+            }
+
+            function installMutationRepair() {
+                const target = document.getElementById('main-content') || document.body;
+                if (!target || target.__buttonFixObserverV17) return;
+
+                const observer = new MutationObserver(function () {
+                    scheduleRepair();
+                });
+
+                observer.observe(target, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['class', 'disabled', 'style', 'aria-disabled']
+                });
+
+                target.__buttonFixObserverV17 = observer;
+            }
+
+            function installCssSafety() {
+                if (document.getElementById('master-button-fix-css-v17')) return;
+
+                const style = document.createElement('style');
+                style.id = 'master-button-fix-css-v17';
+                style.textContent = `
+                    #mobile-overlay.hidden {
+                        pointer-events: none !important;
+                        display: none !important;
+                    }
+
+                    #main-content button:not(:disabled),
+                    #main-content select:not(:disabled),
+                    #main-content input[type="checkbox"]:not(:disabled),
+                    #dynamic-list-container button:not(:disabled),
+                    #dynamic-list-container select:not(:disabled),
+                    #dynamic-list-container input[type="checkbox"]:not(:disabled) {
+                        pointer-events: auto;
+                    }
+
+                    #itemForm.ud-editor-readonly-v14 .ud-readonly-edit-v14,
+                    #itemForm.ud-editor-readonly-v14 [data-ud-allow-readonly="1"],
+                    #itemForm.ud-editor-readonly-v14 .ud-live-preview-tool-btn,
+                    #itemForm.ud-editor-readonly-v14 .ud-live-preview-open-btn {
+                        pointer-events: auto !important;
+                        opacity: 1 !important;
+                        filter: none !important;
+                        cursor: pointer !important;
+                    }
+
+                    #dynamic-list-container button,
+                    #dynamic-list-container select,
+                    #dynamic-list-container input[type="checkbox"],
+                    #main-content button,
+                    #main-content select {
+                        touch-action: manipulation;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            function installAll() {
+                installCssSafety();
+                installWrappers();
+                installDelegatedEvents();
+                installMutationRepair();
+                scheduleRepair();
+            }
+
+            installAll();
+
+            let tries = 0;
+            const timer = setInterval(function () {
+                tries += 1;
+                installAll();
+
+                if (
+                    tries > 80 ||
+                    (
+                        typeof window.changeMenu === 'function' &&
+                        typeof window.renderContent === 'function' &&
+                        typeof window.renderTable === 'function' &&
+                        typeof window.editItem === 'function' &&
+                        typeof window.deleteItem === 'function' &&
+                        typeof window.quickUpdate === 'function' &&
+                        typeof window.handleFormSubmit === 'function'
+                    )
+                ) {
+                    clearInterval(timer);
+                    scheduleRepair();
+                }
+            }, 250);
+
+            window.addEventListener('resize', scheduleRepair);
+            window.addEventListener('load', scheduleRepair);
+            document.addEventListener('DOMContentLoaded', scheduleRepair);
+
+            console.log('MASTER PATCH DASHBOARD BUTTON FIX V17 aktif. Menu sekarang dipaksa bisa klik kembali.');
+        })();
+
     </script>
 </body>
 </html>
