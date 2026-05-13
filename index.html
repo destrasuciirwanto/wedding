@@ -5598,19 +5598,24 @@
             return (appData.items['dokumen_folder'] || []).find(folder => folder && folder.id === folderId) || null;
         }
 
-        function getDokumenFolderPathLabel(folderId) {
-            if (!folderId) return 'Ruang Utama';
+        function getDokumenFolderPathArray(folderId) {
             const folders = appData.items['dokumen_folder'] || [];
-            const names = [];
+            const path = [];
             const visited = new Set();
-            let current = getDokumenFolderById(folderId);
+            let current = folderId ? getDokumenFolderById(folderId) : null;
 
             while (current && !visited.has(current.id)) {
                 visited.add(current.id);
-                names.unshift(current.namaFolder || 'Tanpa Nama');
+                path.unshift(current);
                 current = current.parentId ? folders.find(folder => folder.id === current.parentId) : null;
             }
 
+            return path;
+        }
+
+        function getDokumenFolderPathLabel(folderId) {
+            if (!folderId) return 'Ruang Utama';
+            const names = getDokumenFolderPathArray(folderId).map(folder => folder.namaFolder || 'Tanpa Nama');
             return names.length ? names.join(' / ') : 'Folder tidak ditemukan';
         }
 
@@ -5640,37 +5645,62 @@
             const isFolderMove = state.type === 'folder';
             const blockedFolderIds = isFolderMove ? getDokumenFolderDescendantIds(state.id) : new Set();
             const currentParentId = state.currentFolderId || '';
+            const browseFolderId = state.browseFolderId || '';
+            const browseFolder = browseFolderId ? getDokumenFolderById(browseFolderId) : null;
+            const parentFolderId = browseFolder ? (browseFolder.parentId || '') : '';
             const safeText = (value) => escapeHtml(String(value || ''));
+            const safeJs = (value) => String(value || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
-            let targets = [{ id: '', namaFolder: 'Ruang Utama', parentId: '', isRoot: true }];
-            folders.forEach(folder => {
-                if (!folder || !folder.id) return;
-                if (isFolderMove && blockedFolderIds.has(folder.id)) return;
-                targets.push(folder);
-            });
+            const pathArray = getDokumenFolderPathArray(browseFolderId);
+            const breadcrumbHtml = [
+                `<button type="button" onclick="goDokumenMoveFolder('')" class="hover:text-lavender-dark transition">Ruang Utama</button>`,
+                ...pathArray.map(folder => `
+                    <span class="text-gray-300">/</span>
+                    <button type="button" onclick="goDokumenMoveFolder('${safeJs(folder.id)}')" class="hover:text-lavender-dark transition max-w-[130px] truncate">${safeText(folder.namaFolder || 'Tanpa Nama')}</button>
+                `)
+            ].join('');
 
-            const targetHtml = targets.map(target => {
-                const targetId = target.id || '';
-                const isCurrent = targetId === currentParentId;
-                const icon = target.isRoot ? 'fa-hard-drive' : 'fa-folder';
-                const path = target.isRoot ? 'Lokasi utama Dokumen & Media' : getDokumenFolderPathLabel(target.id);
+            const children = folders
+                .filter(folder => {
+                    if (!folder || !folder.id) return false;
+                    if ((folder.parentId || '') !== browseFolderId) return false;
+                    if (isFolderMove && blockedFolderIds.has(folder.id)) return false;
+                    return true;
+                })
+                .sort((a, b) => String(a.namaFolder || '').localeCompare(String(b.namaFolder || ''), 'id'));
+
+            const childHtml = children.length ? children.map(folder => {
+                const childCount = folders.filter(child => child && (child.parentId || '') === folder.id && !(isFolderMove && blockedFolderIds.has(child.id))).length;
                 return `
-                    <button type="button" ${isCurrent ? 'disabled' : ''} onclick="moveDokumenItemToFolder('${targetId}')" class="w-full text-left rounded-2xl border ${isCurrent ? 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed' : 'border-gray-100 bg-white hover:border-lavender hover:bg-lavender-light/40 text-gray-700'} p-4 transition">
-                        <div class="flex items-start gap-3">
-                            <div class="w-11 h-11 rounded-2xl ${target.isRoot ? 'bg-slate-100 text-slate-500' : 'bg-yellow-50 text-yellow-500'} flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid ${icon}"></i>
+                    <button type="button" onclick="goDokumenMoveFolder('${safeJs(folder.id)}')" class="w-full text-left rounded-2xl border border-gray-100 bg-white hover:border-lavender hover:bg-lavender-light/40 text-gray-700 p-4 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-folder"></i>
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="flex items-center justify-between gap-3">
-                                    <b class="text-sm font-black truncate">${safeText(target.namaFolder || 'Tanpa Nama')}</b>
-                                    ${isCurrent ? '<span class="text-[10px] font-black px-2 py-1 rounded-full bg-gray-100 text-gray-400">Lokasi Saat Ini</span>' : '<span class="text-[10px] font-black px-2 py-1 rounded-full bg-lavender text-white">Pindah</span>'}
-                                </div>
-                                <p class="text-xs mt-1 ${isCurrent ? 'text-gray-400' : 'text-gray-500'} line-clamp-2">${safeText(path)}</p>
+                                <b class="block text-sm font-black truncate">${safeText(folder.namaFolder || 'Tanpa Nama')}</b>
+                                <p class="text-xs mt-1 text-gray-500">${childCount ? childCount + ' folder di dalamnya' : 'Folder kosong / tanpa sub-folder'}</p>
+                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-lavender-light text-lavender-dark flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
                             </div>
                         </div>
                     </button>
                 `;
-            }).join('');
+            }).join('') : `
+                <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 text-center p-6 text-gray-400">
+                    <i class="fa-solid fa-folder-open text-2xl mb-2"></i>
+                    <p class="text-sm font-black">Tidak ada sub-folder di lokasi ini</p>
+                    <p class="text-xs mt-1">Klik “Pindahkan ke sini” kalau lokasi ini sudah benar.</p>
+                </div>
+            `;
+
+            const isCurrentLocation = browseFolderId === currentParentId;
+            const currentPath = getDokumenFolderPathLabel(currentParentId);
+            const browsePath = getDokumenFolderPathLabel(browseFolderId);
+            const moveButtonHtml = isCurrentLocation
+                ? `<button type="button" disabled class="w-full sm:w-auto min-h-[46px] rounded-2xl px-5 bg-gray-100 text-gray-400 text-xs font-black cursor-not-allowed"><i class="fa-solid fa-location-dot mr-1"></i> Lokasi Saat Ini</button>`
+                : `<button type="button" onclick="moveDokumenItemToFolder('${safeJs(browseFolderId)}')" class="w-full sm:w-auto min-h-[46px] rounded-2xl px-5 bg-lavender text-white text-xs font-black shadow-lg shadow-lavender/25 hover:bg-lavender-dark transition"><i class="fa-solid fa-check mr-1"></i> Pindahkan ke Sini</button>`;
 
             const existing = document.getElementById('dokumen-move-modal');
             if (existing) existing.remove();
@@ -5679,14 +5709,14 @@
             modal.id = 'dokumen-move-modal';
             modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-sm';
             modal.innerHTML = `
-                <div class="w-full max-w-xl rounded-[2rem] bg-white shadow-2xl border border-white overflow-hidden fade-in">
+                <div class="w-full max-w-2xl rounded-[2rem] bg-white shadow-2xl border border-white overflow-hidden fade-in">
                     <div class="relative overflow-hidden p-5 md:p-6 bg-gradient-to-br from-lavender-light via-white to-yellow-50 border-b border-gray-100">
                         <div class="absolute -right-12 -top-12 w-36 h-36 rounded-full bg-lavender/30 blur-3xl"></div>
                         <div class="relative flex items-start justify-between gap-4">
-                            <div>
+                            <div class="min-w-0">
                                 <p class="text-[10px] font-black uppercase tracking-[0.22em] text-lavender-dark mb-2"><i class="fa-solid fa-arrows-up-down-left-right mr-1"></i> Pindah Lokasi</p>
                                 <h3 class="text-xl font-black text-gray-900">${isFolderMove ? 'Pindah Folder' : 'Pindah File'}</h3>
-                                <p class="text-sm text-gray-500 mt-1">Pilih folder tujuan untuk <b class="text-gray-800">${safeText(state.name)}</b>.</p>
+                                <p class="text-sm text-gray-500 mt-1">Buka folder tujuan dulu, lalu klik <b class="text-gray-800">Pindahkan ke Sini</b>.</p>
                             </div>
                             <button type="button" onclick="closeDokumenMoveModal()" class="w-10 h-10 rounded-2xl bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0"><i class="fa-solid fa-xmark"></i></button>
                         </div>
@@ -5694,10 +5724,35 @@
                     <div class="p-5 md:p-6">
                         <div class="rounded-2xl border border-blue-100 bg-blue-50 text-blue-700 text-xs leading-6 p-4 mb-4">
                             <i class="fa-solid fa-circle-info mr-1"></i>
-                            Ini hanya memindahkan posisi di Dokumen & Media. Link file tetap sama, jadi hemat database dan tidak upload ulang.
+                            Memindahkan <b>${safeText(state.name)}</b>. Database tetap hemat karena hanya update lokasi, tidak upload ulang file.
                         </div>
-                        <div class="max-h-[52vh] overflow-y-auto pr-1 space-y-3">
-                            ${targetHtml}
+
+                        <div class="rounded-2xl border border-gray-100 bg-gray-50 p-4 mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-gray-400 mb-2">Lokasi saat ini</p>
+                            <p class="text-sm font-bold text-gray-700 break-words">${safeText(currentPath)}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <button type="button" onclick="backDokumenMoveFolder()" ${browseFolderId ? '' : 'disabled'} class="min-h-[38px] rounded-2xl px-4 text-xs font-black ${browseFolderId ? 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' : 'bg-gray-100 text-gray-300 cursor-not-allowed'} transition">
+                                <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                            </button>
+                            <div class="min-w-0 flex-1 text-right text-[11px] font-black text-gray-500 flex items-center justify-end gap-1 overflow-hidden">
+                                ${breadcrumbHtml}
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-lavender-light bg-white p-4 mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-lavender-dark mb-1">Sedang dibuka</p>
+                            <p class="text-sm font-black text-gray-800 break-words"><i class="fa-solid ${browseFolderId ? 'fa-folder-open text-yellow-500' : 'fa-hard-drive text-slate-500'} mr-1"></i> ${safeText(browsePath)}</p>
+                        </div>
+
+                        <div class="max-h-[42vh] overflow-y-auto pr-1 space-y-3 mb-5">
+                            ${childHtml}
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-gray-100 pt-4">
+                            <button type="button" onclick="closeDokumenMoveModal()" class="w-full sm:w-auto min-h-[46px] rounded-2xl px-5 bg-gray-100 text-gray-500 text-xs font-black hover:bg-gray-200 transition">Batal</button>
+                            ${moveButtonHtml}
                         </div>
                     </div>
                 </div>
@@ -5722,9 +5777,44 @@
                 type: isFolderMove ? 'folder' : 'file',
                 id,
                 name: isFolderMove ? (item.namaFolder || 'Folder tanpa nama') : (item.namaFile || 'File tanpa nama'),
-                currentFolderId: isFolderMove ? (item.parentId || '') : (item.folderId || '')
+                currentFolderId: isFolderMove ? (item.parentId || '') : (item.folderId || ''),
+                browseFolderId: ''
             };
 
+            renderDokumenMoveModal();
+        };
+
+        window.goDokumenMoveFolder = function(folderId = '') {
+            const state = window.dokumenMoveState;
+            if (!state) return;
+
+            const targetId = folderId || '';
+            if (targetId) {
+                const folder = getDokumenFolderById(targetId);
+                if (!folder) {
+                    showToast('Folder tujuan tidak ditemukan.', 'error');
+                    return;
+                }
+
+                if (state.type === 'folder') {
+                    const blocked = getDokumenFolderDescendantIds(state.id);
+                    if (blocked.has(targetId)) {
+                        showToast('Folder itu tidak bisa dipilih karena masih bagian dari folder yang dipindah.', 'error');
+                        return;
+                    }
+                }
+            }
+
+            state.browseFolderId = targetId;
+            renderDokumenMoveModal();
+        };
+
+        window.backDokumenMoveFolder = function() {
+            const state = window.dokumenMoveState;
+            if (!state) return;
+
+            const current = state.browseFolderId ? getDokumenFolderById(state.browseFolderId) : null;
+            state.browseFolderId = current ? (current.parentId || '') : '';
             renderDokumenMoveModal();
         };
 
