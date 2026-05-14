@@ -2006,6 +2006,51 @@
         @media (prefers-reduced-motion: reduce) { .dokumen-floating-back-v17 { transition: none !important; } .dokumen-floating-back-v17:hover { transform: none !important; } }
     </style>
 
+
+    <style id="dokumen-floating-back-smooth-css-v19">
+        /* Dokumen & Media V20 - tombol kembali bawah smooth tanpa auto-scroll. Scope hanya tombol floating Dokumen. */
+        @keyframes dokumenFloatingBackInV19 {
+            from { opacity: 0; transform: translate3d(0, 18px, 0) scale(.96); }
+            to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+        .dokumen-floating-back-smooth-v19 {
+            transform: translate3d(0, 0, 0);
+            will-change: transform, opacity, box-shadow;
+            animation: dokumenFloatingBackInV19 .28s cubic-bezier(.2,.8,.2,1) both;
+            transition: transform .24s cubic-bezier(.2,.8,.2,1), opacity .18s ease, box-shadow .24s ease, background .24s ease !important;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        .dokumen-floating-back-smooth-v19:hover {
+            transform: translate3d(0, -3px, 0) scale(1.02) !important;
+            box-shadow: 0 26px 62px rgba(17,24,39,.34) !important;
+        }
+        .dokumen-floating-back-smooth-v19:active {
+            transform: translate3d(0, 1px, 0) scale(.96) !important;
+        }
+        .dokumen-floating-back-smooth-v19.is-tapping {
+            transform: translate3d(0, 1px, 0) scale(.97) !important;
+            opacity: .92 !important;
+            pointer-events: none !important;
+        }
+        .dokumen-floating-back-smooth-v19.is-leaving {
+            opacity: .92 !important;
+            transform: translate3d(0, 1px, 0) scale(.97) !important;
+            pointer-events: none !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .dokumen-floating-back-smooth-v19 {
+                animation: none !important;
+                transition: none !important;
+            }
+            .dokumen-floating-back-smooth-v19:hover,
+            .dokumen-floating-back-smooth-v19:active,
+            .dokumen-floating-back-smooth-v19.is-leaving {
+                transform: none !important;
+            }
+        }
+    </style>
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -2161,6 +2206,10 @@
                     <button onclick="toggleHideMoney()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-lavender hover:bg-lavender-light transition" title="Sembunyikan / Tampilkan Uang">
                         <i id="toggle-eye-icon" class="fa-solid fa-eye"></i>
                     </button>
+                    <a id="destara-music-dam-link" href="destara_music.html" target="_blank" rel="noopener" class="h-10 px-4 rounded-full flex items-center justify-center gap-2 bg-slate-900 text-white hover:bg-lavender-dark transition shadow-sm text-xs font-black tracking-[0.18em]" title="Buka DestAra Music">
+                        <i class="fa-solid fa-music"></i>
+                        <span>DAM</span>
+                    </a>
                     <div id="user-profile" class="w-10 h-10 rounded-full bg-lavender-light flex items-center justify-center text-lavender-dark font-bold shadow-sm">
                         MD
                     </div>
@@ -5902,6 +5951,40 @@
                 }
             }
             renderTable('dokumen');
+        };
+
+        // Dokumen & Media V20: tombol kembali bawah smooth tanpa auto-scroll dan tanpa efek patah.
+        // Scope hanya tombol floating Dokumen & Media. Tidak menyentuh menu/tombol lain.
+        window.keParentFolderSmoothV19 = function(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const button = event && event.currentTarget ? event.currentTarget : document.querySelector('.dokumen-floating-back-smooth-v19');
+            const main = document.getElementById('main-content');
+            const keepScrollTop = main ? main.scrollTop : null;
+
+            if (button) {
+                button.classList.add('is-tapping');
+                button.setAttribute('disabled', 'disabled');
+                button.style.pointerEvents = 'none';
+            }
+
+            // Jangan paksa scroll ke atas. Posisi scroll dipertahankan supaya transisi folder tidak terasa patah.
+            window.setTimeout(function() {
+                window.keParentFolder();
+                window.requestAnimationFrame(function() {
+                    if (main && keepScrollTop !== null) {
+                        main.scrollTop = keepScrollTop;
+                    }
+                    const nextButton = document.querySelector('.dokumen-floating-back-smooth-v19');
+                    if (nextButton) {
+                        nextButton.classList.remove('is-tapping', 'is-leaving');
+                        nextButton.removeAttribute('disabled');
+                        nextButton.style.pointerEvents = '';
+                    }
+                });
+            }, 70);
         };
 
 
@@ -10440,7 +10523,7 @@
 
                 htmlOut = `
                     <div class="space-y-6 fade-in">
-                        ${window.activeDokumenFolder ? `<button type="button" onclick="keParentFolder()" class="dokumen-floating-back-v17"><i class="fa-solid fa-arrow-left"></i><span>Kembali</span></button>` : ''}
+                        ${window.activeDokumenFolder ? `<button type="button" onclick="keParentFolderSmoothV19(event)" class="dokumen-floating-back-v17 dokumen-floating-back-smooth-v19"><i class="fa-solid fa-arrow-left"></i><span>Kembali</span></button>` : ''}
                         <div class="relative overflow-hidden rounded-3xl bg-gray-900 text-white shadow-sm">
                             <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 20%, #CBA6F7 0, transparent 28%), radial-gradient(circle at 80% 10%, #FDE68A 0, transparent 25%), radial-gradient(circle at 50% 90%, #93C5FD 0, transparent 24%);"></div>
                             <div class="relative p-6 md:p-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
