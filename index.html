@@ -1761,6 +1761,237 @@
         }
     </style>
 
+
+
+    <style id="dokumen-media-preview-css-v15">
+        /* Dokumen & Media Preview V15 - hanya untuk menu Dokumen & Media */
+        .dokumen-preview-card-v15 {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            background: #f8fafc;
+            border: 1px solid rgba(226,232,240,.9);
+            min-height: 168px;
+        }
+        .dokumen-preview-card-v15 button,
+        .dokumen-preview-card-v15 a { -webkit-tap-highlight-color: transparent; }
+        .dokumen-preview-thumb-v15 {
+            width: 100%;
+            height: 168px;
+            display: block;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+        .dokumen-preview-empty-v15 {
+            height: 168px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(203,166,247,.22), transparent 32%),
+                linear-gradient(135deg, #f8fafc, #fff);
+        }
+        .dokumen-preview-empty-v15 i { font-size: 2.4rem; }
+        .dokumen-preview-overlay-v15 {
+            position: absolute;
+            inset: auto .75rem .75rem .75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            border-radius: 1rem;
+            padding: .65rem .75rem;
+            color: white;
+            background: rgba(15,23,42,.66);
+            backdrop-filter: blur(12px);
+        }
+        .dokumen-preview-overlay-v15 span {
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+        .dokumen-preview-play-v15 {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.20);
+        }
+        .dokumen-preview-modal-v15 {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15,23,42,.62);
+            backdrop-filter: blur(14px);
+        }
+        .dokumen-preview-modal-card-v15 {
+            width: min(980px, 96vw);
+            max-height: min(92vh, 880px);
+            overflow: hidden;
+            border-radius: 2rem;
+            background: white;
+            border: 1px solid rgba(255,255,255,.7);
+            box-shadow: 0 30px 100px rgba(15,23,42,.30);
+        }
+        .dokumen-preview-modal-head-v15 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(226,232,240,.86);
+            background: linear-gradient(135deg, #fff, #faf5ff);
+        }
+        .dokumen-preview-modal-body-v15 {
+            max-height: calc(min(92vh, 880px) - 5rem);
+            overflow: auto;
+            background: #f8fafc;
+        }
+        .dokumen-preview-modal-body-v15 img,
+        .dokumen-preview-modal-body-v15 video {
+            display: block;
+            max-width: 100%;
+            max-height: calc(min(92vh, 880px) - 8rem);
+            margin: 0 auto;
+            object-fit: contain;
+        }
+        .dokumen-preview-file-box-v15 {
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        @media (max-width: 640px) {
+            .dokumen-preview-thumb-v15,
+            .dokumen-preview-empty-v15 { height: 150px; }
+            .dokumen-preview-modal-card-v15 { border-radius: 1.4rem; }
+        }
+    </style>
+
+    <style id="dokumen-media-explorer-css-v16">
+        /* Dokumen & Media Explorer V16 - hanya untuk menu Dokumen & Media */
+        .dokumen-explorer-toolbar-v16 {
+            border-radius: 1.75rem;
+            border: 1px solid rgba(226,232,240,.9);
+            background: rgba(255,255,255,.94);
+            box-shadow: 0 12px 34px rgba(15,23,42,.045);
+            overflow: hidden;
+        }
+        .dokumen-explorer-control-v16 {
+            min-height: 42px;
+            border-radius: 1rem;
+            border: 1px solid rgba(226,232,240,.92);
+            background: #fff;
+            padding: 0 .85rem;
+            font-size: 12px;
+            font-weight: 900;
+            color: #475569;
+            outline: none;
+        }
+        .dokumen-explorer-control-v16:focus {
+            border-color: #CBA6F7;
+            box-shadow: 0 0 0 4px rgba(203,166,247,.16);
+        }
+        .dokumen-view-btn-v16 {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            min-height: 40px;
+            border-radius: 1rem;
+            border: 1px solid rgba(226,232,240,.92);
+            background: #fff;
+            padding: .55rem .8rem;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 950;
+            transition: .16s ease;
+            white-space: nowrap;
+        }
+        .dokumen-view-btn-v16:hover { border-color: rgba(203,166,247,.7); color: #7C3AED; transform: translateY(-1px); }
+        .dokumen-view-btn-v16.is-active { background: #F5F3FF; border-color: rgba(124,58,237,.35); color: #6D28D9; box-shadow: 0 10px 20px rgba(124,58,237,.08); }
+        .dokumen-size-slider-v16 { accent-color: #8B5CF6; min-width: 160px; }
+        .dokumen-explorer-grid-v16 { --dokumen-card-min-v16: 250px; --dokumen-thumb-h-v16: 168px; display: grid; gap: 1.25rem; }
+        .dokumen-explorer-grid-v16[data-view="gallery"] { grid-template-columns: repeat(auto-fill, minmax(var(--dokumen-card-min-v16), 1fr)); }
+        .dokumen-explorer-grid-v16[data-view="large"] { --dokumen-thumb-h-v16: 230px; grid-template-columns: repeat(auto-fill, minmax(calc(var(--dokumen-card-min-v16) + 60px), 1fr)); }
+        .dokumen-explorer-grid-v16[data-view="tile"] { --dokumen-thumb-h-v16: 128px; grid-template-columns: repeat(auto-fill, minmax(calc(var(--dokumen-card-min-v16) - 45px), 1fr)); }
+        .dokumen-explorer-grid-v16[data-view="compact"] { --dokumen-thumb-h-v16: 92px; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .8rem; }
+        .dokumen-explorer-grid-v16[data-view="masonry"] { columns: 1; display: block; }
+        @media (min-width: 700px) { .dokumen-explorer-grid-v16[data-view="masonry"] { columns: 2; } }
+        @media (min-width: 1180px) { .dokumen-explorer-grid-v16[data-view="masonry"] { columns: 3; } }
+        .dokumen-explorer-grid-v16[data-view="masonry"] .dokumen-file-card-v16 { break-inside: avoid; margin-bottom: 1rem; }
+        .dokumen-explorer-grid-v16[data-view="list"],
+        .dokumen-explorer-grid-v16[data-view="details"] { display: flex; flex-direction: column; gap: .75rem; }
+        .dokumen-file-card-v16 {
+            border-radius: 1.55rem;
+            border: 1px solid rgba(226,232,240,.88);
+            background: #fff;
+            box-shadow: 0 10px 26px rgba(15,23,42,.04);
+            overflow: hidden;
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+        }
+        .dokumen-file-card-v16:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(15,23,42,.07); border-color: rgba(203,166,247,.52); }
+        .dokumen-file-card-v16 .dokumen-preview-thumb-v15,
+        .dokumen-file-card-v16 .dokumen-preview-empty-v15,
+        .dokumen-folder-grid-v16 .dokumen-folder-card-v16 { transition: .16s ease; }
+        .dokumen-file-card-v16 .dokumen-preview-card-v15 { min-height: var(--dokumen-thumb-h-v16); }
+        .dokumen-file-card-v16 .dokumen-preview-thumb-v15,
+        .dokumen-file-card-v16 .dokumen-preview-empty-v15 { height: var(--dokumen-thumb-h-v16); }
+        .dokumen-explorer-grid-v16[data-view="compact"] .dokumen-file-note-v16,
+        .dokumen-explorer-grid-v16[data-view="compact"] .dokumen-file-date-v16 { display: none; }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-file-card-v16,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-file-card-v16 { display: grid; grid-template-columns: 112px minmax(0, 1fr); }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-file-card-v16 > .h-2,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-file-card-v16 > .h-2 { display: none; }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-file-card-v16 .dokumen-file-content-v16,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-file-card-v16 .dokumen-file-content-v16 { display: grid; grid-template-columns: 112px minmax(0,1fr); gap: .9rem; align-items: center; padding: .8rem; }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-file-card-v16,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-file-card-v16 { grid-template-columns: 1fr; }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-preview-card-v15,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-preview-card-v15 { min-height: 86px; border-radius: 1rem; }
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-preview-thumb-v15,
+        .dokumen-explorer-grid-v16[data-view="list"] .dokumen-preview-empty-v15,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-preview-thumb-v15,
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-preview-empty-v15 { height: 86px; }
+        .dokumen-details-row-v16 { display: none; }
+        .dokumen-explorer-grid-v16[data-view="details"] .dokumen-details-row-v16 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; }
+        .dokumen-folder-grid-v16 { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--dokumen-folder-min-v16, 240px), 1fr)); gap: 1.25rem; }
+        .dokumen-folder-grid-v16[data-view="large"] { --dokumen-folder-min-v16: 310px; }
+        .dokumen-folder-grid-v16[data-view="tile"] { --dokumen-folder-min-v16: 200px; }
+        .dokumen-folder-grid-v16[data-view="compact"] { --dokumen-folder-min-v16: 170px; gap: .8rem; }
+        .dokumen-folder-grid-v16[data-view="list"], .dokumen-folder-grid-v16[data-view="details"] { display: flex; flex-direction: column; gap: .75rem; }
+        .dokumen-folder-grid-v16[data-view="list"] .dokumen-folder-card-v16,
+        .dokumen-folder-grid-v16[data-view="details"] .dokumen-folder-card-v16 { padding: .85rem !important; }
+        .dokumen-file-actions-v16 a,
+        .dokumen-file-actions-v16 button { -webkit-tap-highlight-color: transparent; }
+        @media (prefers-reduced-motion: reduce) {
+            .dokumen-view-btn-v16, .dokumen-file-card-v16, .dokumen-file-card-v16:hover { transition: none !important; transform: none !important; }
+        }
+        @media (max-width: 640px) {
+            .dokumen-explorer-toolbar-v16 { border-radius: 1.3rem; }
+            .dokumen-explorer-grid-v16[data-view="list"] .dokumen-file-card-v16 .dokumen-file-content-v16,
+            .dokumen-explorer-grid-v16[data-view="details"] .dokumen-file-card-v16 .dokumen-file-content-v16 { grid-template-columns: 86px minmax(0,1fr); }
+            .dokumen-explorer-grid-v16[data-view="list"] .dokumen-preview-thumb-v15,
+            .dokumen-explorer-grid-v16[data-view="list"] .dokumen-preview-empty-v15,
+            .dokumen-explorer-grid-v16[data-view="details"] .dokumen-preview-thumb-v15,
+            .dokumen-explorer-grid-v16[data-view="details"] .dokumen-preview-empty-v15 { height: 74px; }
+        }
+    </style>
+
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -2480,6 +2711,9 @@
         // FILTER UI DOKUMEN & MEDIA - hanya filter di browser, tidak tambah read database
         window.dokumenSearch = '';
         window.dokumenFileType = 'all';
+        window.dokumenViewMode = localStorage.getItem('destara_dokumen_view_mode_v16') || 'gallery';
+        window.dokumenViewSize = Number(localStorage.getItem('destara_dokumen_view_size_v16') || 100);
+        window.dokumenSortMode = localStorage.getItem('destara_dokumen_sort_mode_v16') || 'newest';
         window.setDokumenFileType = function(type) {
             window.dokumenFileType = type;
             renderTable('dokumen');
@@ -2487,6 +2721,22 @@
         window.setDokumenSearch = function(value) {
             window.dokumenSearch = (value || '').toLowerCase();
             debounceRenderTable('dokumen');
+        }
+        window.setDokumenViewMode = function(mode) {
+            window.dokumenViewMode = mode || 'gallery';
+            localStorage.setItem('destara_dokumen_view_mode_v16', window.dokumenViewMode);
+            renderTable('dokumen');
+        }
+        window.setDokumenViewSize = function(size) {
+            const value = Math.max(70, Math.min(170, Number(size) || 100));
+            window.dokumenViewSize = value;
+            localStorage.setItem('destara_dokumen_view_size_v16', String(value));
+            renderTable('dokumen');
+        }
+        window.setDokumenSortMode = function(mode) {
+            window.dokumenSortMode = mode || 'newest';
+            localStorage.setItem('destara_dokumen_sort_mode_v16', window.dokumenSortMode);
+            renderTable('dokumen');
         }
         window.selectedUndanganType = 'fisik'; 
         window.handleUndanganType = function(type) {
@@ -8133,43 +8383,228 @@
             return map[type] || { label: 'File', icon: 'fa-file-lines', text: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-100', chip: 'bg-gray-50 text-gray-600 border-gray-100' };
         }
 
-        // HELPER KHUSUS RENDER FILE DOKUMEN 
+        // HELPER KHUSUS RENDER FILE DOKUMEN
+        // V15: preview foto/video/audio/dokumen hanya membaca URL yang sudah ada.
+        // Tidak menambah collection, tidak upload ulang, dan tidak menulis database saat preview dibuka.
+        function safeDokumenJs(value) {
+            return String(value || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        }
+
+        function getDokumenItemUrl(item = {}) {
+            return String(item.url || item.urlFile || item.fileUrl || item.downloadUrl || item.publicUrl || item.linkFile || item.link || '').trim();
+        }
+
+        function getDokumenFileExtension(item = {}) {
+            const url = getDokumenItemUrl(item).split('?')[0].split('#')[0];
+            const name = String(item.namaFile || item.fileName || item.r2FileName || url.split('/').pop() || '').toLowerCase();
+            const match = name.match(/\.([a-z0-9]{2,8})$/i);
+            return match ? match[1].toUpperCase() : '';
+        }
+
+        function inferDokumenPreviewKind(item = {}) {
+            const explicit = String(item.jenisFile || '').toLowerCase();
+            const url = getDokumenItemUrl(item).toLowerCase().split('?')[0].split('#')[0];
+            if (explicit === 'foto' || /\.(jpg|jpeg|png|webp|gif|bmp|svg)$/i.test(url)) return 'foto';
+            if (explicit === 'video' || /\.(mp4|webm|ogg|mov|m4v)$/i.test(url)) return 'video';
+            if (explicit === 'audio' || /\.(mp3|wav|ogg|m4a|aac)$/i.test(url)) return 'audio';
+            if (explicit === 'link') return 'link';
+            return 'dokumen';
+        }
+
+        function getDokumenFileSizeValue(item = {}) {
+            return Number(item.sizeBytes || item.fileSize || item.size || item.bytes || item.r2Size || 0) || 0;
+        }
+
+        function formatDokumenSize(bytes) {
+            const size = Number(bytes || 0);
+            if (!size) return 'Ukuran tidak tersedia';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let value = size;
+            let index = 0;
+            while (value >= 1024 && index < units.length - 1) {
+                value = value / 1024;
+                index += 1;
+            }
+            return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+        }
+
+        function getDokumenDateValue(item = {}) {
+            const raw = item.tanggalUpdate || item.createdAt || item.updatedAt || item.tanggal || item.date || '';
+            const parsed = raw ? new Date(raw).getTime() : 0;
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+
+        function sortDokumenFiles(list = []) {
+            const mode = window.dokumenSortMode || 'newest';
+            return [...list].sort((a, b) => {
+                const nameA = String(a.namaFile || '').toLowerCase();
+                const nameB = String(b.namaFile || '').toLowerCase();
+                const typeA = String(a.jenisFile || '').toLowerCase();
+                const typeB = String(b.jenisFile || '').toLowerCase();
+                if (mode === 'oldest') return getDokumenDateValue(a) - getDokumenDateValue(b);
+                if (mode === 'nameAsc') return nameA.localeCompare(nameB, 'id');
+                if (mode === 'nameDesc') return nameB.localeCompare(nameA, 'id');
+                if (mode === 'type') return typeA.localeCompare(typeB, 'id') || nameA.localeCompare(nameB, 'id');
+                if (mode === 'sizeBig') return getDokumenFileSizeValue(b) - getDokumenFileSizeValue(a);
+                if (mode === 'sizeSmall') return getDokumenFileSizeValue(a) - getDokumenFileSizeValue(b);
+                return getDokumenDateValue(b) - getDokumenDateValue(a);
+            });
+        }
+
+        function sortDokumenFolders(list = []) {
+            const mode = window.dokumenSortMode || 'newest';
+            return [...list].sort((a, b) => {
+                const nameA = String(a.namaFolder || '').toLowerCase();
+                const nameB = String(b.namaFolder || '').toLowerCase();
+                const dateA = getDokumenDateValue(a);
+                const dateB = getDokumenDateValue(b);
+                if (mode === 'oldest') return dateA - dateB;
+                if (mode === 'nameDesc') return nameB.localeCompare(nameA, 'id');
+                if (mode === 'newest') return dateB - dateA || nameA.localeCompare(nameB, 'id');
+                return nameA.localeCompare(nameB, 'id');
+            });
+        }
+
+        function getDokumenViewScale() {
+            return Math.max(70, Math.min(170, Number(window.dokumenViewSize || 100))) / 100;
+        }
+
+        function getDokumenExplorerGridStyle() {
+            const scale = getDokumenViewScale();
+            const min = Math.round(250 * scale);
+            const thumb = Math.round(168 * scale);
+            return `--dokumen-card-min-v16:${Math.max(160, min)}px;--dokumen-thumb-h-v16:${Math.max(86, thumb)}px;`;
+        }
+
+        function getDokumenDownloadName(item = {}) {
+            const fallback = String(item.namaFile || 'dokumen-media').trim() || 'dokumen-media';
+            const ext = getDokumenFileExtension(item);
+            if (!ext) return fallback;
+            return /\.[a-z0-9]{2,8}$/i.test(fallback) ? fallback : `${fallback}.${ext.toLowerCase()}`;
+        }
+
+        window.downloadDokumenMedia = function(id) {
+            const item = (appData.items['dokumen'] || []).find(row => row && row.id === id);
+            if (!item) {
+                showToast('File tidak ditemukan.', 'error');
+                return;
+            }
+            const rawUrl = getDokumenItemUrl(item);
+            if (!rawUrl) {
+                showToast('Link file belum tersedia.', 'error');
+                return;
+            }
+            const link = document.createElement('a');
+            link.href = rawUrl;
+            link.download = getDokumenDownloadName(item);
+            link.target = '_blank';
+            link.rel = 'noopener';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function renderDokumenPreviewThumb(item, meta) {
+            const kind = inferDokumenPreviewKind(item);
+            const rawUrl = getDokumenItemUrl(item);
+            const safeUrl = escapeHtml(rawUrl || '#');
+            const safeId = safeDokumenJs(item.id);
+            const safeName = escapeHtml(item.namaFile || 'Tanpa Nama');
+            const ext = getDokumenFileExtension(item);
+
+            if (kind === 'foto' && rawUrl) {
+                return `
+                    <button type="button" onclick="openDokumenPreviewModal('${safeId}')" class="dokumen-preview-card-v15 w-full text-left group/preview" title="Preview ${safeName}">
+                        <img src="${safeUrl}" alt="${safeName}" loading="lazy" decoding="async" class="dokumen-preview-thumb-v15 group-hover/preview:scale-[1.03] transition duration-300" onerror="this.closest('button').innerHTML='<div class=&quot;dokumen-preview-empty-v15 text-blue-500&quot;><div><i class=&quot;fa-solid fa-image mb-3&quot;></i><p class=&quot;text-xs font-black text-slate-500&quot;>Preview gambar tidak tersedia</p></div></div>'">
+                        <div class="dokumen-preview-overlay-v15"><span><i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Lihat Foto</span><span class="dokumen-preview-play-v15"><i class="fa-solid fa-expand text-xs"></i></span></div>
+                    </button>`;
+            }
+
+            if (kind === 'video' && rawUrl) {
+                return `
+                    <button type="button" onclick="openDokumenPreviewModal('${safeId}')" class="dokumen-preview-card-v15 w-full text-left group/preview" title="Preview ${safeName}">
+                        <video src="${safeUrl}" preload="metadata" muted playsinline class="dokumen-preview-thumb-v15 bg-slate-900"></video>
+                        <div class="dokumen-preview-overlay-v15"><span><i class="fa-solid fa-film mr-1"></i> Lihat Video</span><span class="dokumen-preview-play-v15"><i class="fa-solid fa-play text-xs"></i></span></div>
+                    </button>`;
+            }
+
+            if (kind === 'audio' && rawUrl) {
+                return `
+                    <button type="button" onclick="openDokumenPreviewModal('${safeId}')" class="dokumen-preview-card-v15 w-full text-left" title="Preview ${safeName}">
+                        <div class="dokumen-preview-empty-v15 text-green-600">
+                            <div>
+                                <i class="fa-solid fa-music mb-3"></i>
+                                <p class="text-xs font-black text-slate-600">Audio</p>
+                                <p class="text-[10px] text-slate-400 mt-1">Klik untuk putar</p>
+                            </div>
+                        </div>
+                        <div class="dokumen-preview-overlay-v15"><span><i class="fa-solid fa-headphones mr-1"></i> Preview Audio</span><span class="dokumen-preview-play-v15"><i class="fa-solid fa-play text-xs"></i></span></div>
+                    </button>`;
+            }
+
+            return `
+                <button type="button" onclick="openDokumenPreviewModal('${safeId}')" class="dokumen-preview-card-v15 w-full text-left" title="Preview ${safeName}">
+                    <div class="dokumen-preview-empty-v15 ${meta.text}">
+                        <div>
+                            <i class="fa-solid ${meta.icon} mb-3"></i>
+                            <p class="text-xs font-black text-slate-600">${escapeHtml(meta.label)}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">${ext || 'FILE'} · klik untuk lihat detail</p>
+                        </div>
+                    </div>
+                    <div class="dokumen-preview-overlay-v15"><span><i class="fa-solid fa-eye mr-1"></i> Detail File</span><span class="dokumen-preview-play-v15"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></span></div>
+                </button>`;
+        }
+
         function renderFilesGrid(filesToRender, categoryId) {
             if (filesToRender.length === 0) return `<div class="col-span-full">${getEmptyStateHTML('fa-file-circle-xmark', 'Belum ada file di bagian ini.')}</div>`;
-            
-            let gridHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">`;
+
+            const viewMode = window.dokumenViewMode || 'gallery';
+            const gridStyle = getDokumenExplorerGridStyle();
+            let gridHtml = `<div class="dokumen-explorer-grid-v16" data-view="${escapeHtml(viewMode)}" style="${gridStyle}">`;
             filesToRender.forEach(item => {
                 const meta = getFileMeta(item.jenisFile);
                 const safeName = escapeHtml(item.namaFile || 'Tanpa Nama');
                 const safeNote = escapeHtml(item.catatan || 'Tanpa keterangan');
-                const safeUrl = escapeHtml(item.url || '#');
+                const rawUrl = getDokumenItemUrl(item);
+                const safeUrl = escapeHtml(rawUrl || '#');
+                const copyUrl = safeDokumenJs(rawUrl || '');
+                const safeId = safeDokumenJs(item.id);
+                const safeCategory = safeDokumenJs(categoryId);
+                const ext = getDokumenFileExtension(item) || String(item.jenisFile || 'FILE').toUpperCase();
+                const fileSize = formatDokumenSize(getDokumenFileSizeValue(item));
                 const safeDate = item.tanggalUpdate ? new Date(item.tanggalUpdate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                const downloadBtn = rawUrl ? `<button onclick="downloadDokumenMedia('${safeId}')" class="w-11 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="Download"><i class="fa-solid fa-download"></i></button>` : '';
 
                 gridHtml += `
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden group">
+                <div class="dokumen-file-card-v16 group">
                     <div class="h-2 ${meta.bg}"></div>
-                    <div class="p-5">
-                        <div class="flex items-start justify-between gap-3 mb-4">
-                            <div class="w-14 h-14 ${meta.bg} ${meta.border} border rounded-2xl flex items-center justify-center ${meta.text} text-2xl shadow-sm flex-shrink-0">
-                                <i class="fa-solid ${meta.icon}"></i>
+                    <div class="dokumen-file-content-v16 p-4">
+                        ${renderDokumenPreviewThumb(item, meta)}
+                        <div class="min-w-0">
+                            <div class="mt-4 flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                                        <span class="text-[10px] font-black px-2.5 py-1 rounded-full border ${meta.chip}">${meta.label}</span>
+                                        <span class="dokumen-file-date-v16 text-[10px] text-gray-400"><i class="fa-regular fa-calendar mr-1"></i>${safeDate}</span>
+                                    </div>
+                                    <h4 class="font-black text-gray-800 text-sm leading-snug line-clamp-2" title="${safeName}">${safeName}</h4>
+                                    <p class="dokumen-file-note-v16 text-xs text-gray-400 mt-2 line-clamp-2" title="${safeNote}">${safeNote}</p>
+                                    <div class="dokumen-details-row-v16 mt-3">
+                                        <span class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2 text-[10px] font-black text-slate-500"><i class="fa-solid fa-file mr-1 text-slate-300"></i>${escapeHtml(ext)}</span>
+                                        <span class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2 text-[10px] font-black text-slate-500"><i class="fa-solid fa-hard-drive mr-1 text-slate-300"></i>${escapeHtml(fileSize)}</span>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1 flex-shrink-0">
+                                    <button onclick="editItem('${safeId}', '${safeCategory}')" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-400 hover:bg-lavender-light hover:text-lavender-dark transition" title="Edit"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    <button onclick="openDokumenMoveModal('file', '${safeId}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-400 hover:bg-blue-100 hover:text-blue-600 transition" title="Pindah File"><i class="fa-solid fa-folder-tree text-[11px]"></i></button>
+                                    <button onclick="deleteItem('${safeId}', '${safeCategory}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 transition" title="Hapus"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                                </div>
                             </div>
-                            <div class="flex gap-1">
-                                <button onclick="editItem('${item.id}', '${categoryId}')" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-400 hover:bg-lavender-light hover:text-lavender-dark transition" title="Edit"><i class="fa-solid fa-pen text-[11px]"></i></button>
-                                <button onclick="openDokumenMoveModal('file', '${item.id}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-400 hover:bg-blue-100 hover:text-blue-600 transition" title="Pindah File"><i class="fa-solid fa-folder-tree text-[11px]"></i></button>
-                                <button onclick="deleteItem('${item.id}', '${categoryId}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 transition" title="Hapus"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                            <div class="dokumen-file-actions-v16 mt-5 pt-4 border-t border-gray-50 flex gap-2">
+                                <a href="${safeUrl}" target="_blank" rel="noopener" class="flex-1 text-center py-2.5 rounded-2xl bg-gray-900 text-white text-xs font-bold hover:bg-lavender-dark transition shadow-sm"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka</a>
+                                ${downloadBtn}
+                                <button onclick="navigator.clipboard.writeText('${copyUrl}').then(()=>showToast('Link file berhasil dicopy!'))" class="w-11 rounded-2xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
                             </div>
-                        </div>
-                        <div class="min-h-[74px]">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[10px] font-black px-2.5 py-1 rounded-full border ${meta.chip}">${meta.label}</span>
-                                <span class="text-[10px] text-gray-400"><i class="fa-regular fa-calendar mr-1"></i>${safeDate}</span>
-                            </div>
-                            <h4 class="font-black text-gray-800 text-sm leading-snug line-clamp-2" title="${safeName}">${safeName}</h4>
-                            <p class="text-xs text-gray-400 mt-2 line-clamp-2" title="${safeNote}">${safeNote}</p>
-                        </div>
-                        <div class="mt-5 pt-4 border-t border-gray-50 flex gap-2">
-                            <a href="${safeUrl}" target="_blank" class="flex-1 text-center py-2.5 rounded-2xl bg-gray-900 text-white text-xs font-bold hover:bg-lavender-dark transition shadow-sm"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka</a>
-                            <button onclick="navigator.clipboard.writeText('${String(item.url || '').replace(/'/g, "\\'")}').then(()=>showToast('Link file berhasil dicopy!'))" class="w-11 rounded-2xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition" title="Copy Link"><i class="fa-regular fa-copy"></i></button>
                         </div>
                     </div>
                 </div>
@@ -8178,6 +8613,63 @@
             gridHtml += `</div>`;
             return gridHtml;
         }
+
+        window.openDokumenPreviewModal = function(id) {
+            const item = (appData.items['dokumen'] || []).find(row => row && row.id === id);
+            if (!item) {
+                showToast('File tidak ditemukan di data Dokumen & Media.', 'error');
+                return;
+            }
+
+            const rawUrl = getDokumenItemUrl(item);
+            const safeUrl = escapeHtml(rawUrl || '#');
+            const safeName = escapeHtml(item.namaFile || 'Tanpa Nama');
+            const safeNote = escapeHtml(item.catatan || 'Tanpa keterangan');
+            const kind = inferDokumenPreviewKind(item);
+            const meta = getFileMeta(item.jenisFile);
+            const ext = getDokumenFileExtension(item);
+            let body = '';
+
+            if (kind === 'foto' && rawUrl) {
+                body = `<img src="${safeUrl}" alt="${safeName}" loading="lazy" decoding="async">`;
+            } else if (kind === 'video' && rawUrl) {
+                body = `<video src="${safeUrl}" controls preload="metadata" playsinline></video>`;
+            } else if (kind === 'audio' && rawUrl) {
+                body = `<div class="dokumen-preview-file-box-v15"><i class="fa-solid fa-music text-6xl text-green-500 mb-4"></i><h4 class="text-xl font-black text-slate-800">${safeName}</h4><p class="text-sm text-slate-500 mt-2 max-w-xl">${safeNote}</p><audio src="${safeUrl}" controls preload="metadata" class="mt-6 w-full max-w-xl"></audio></div>`;
+            } else {
+                body = `<div class="dokumen-preview-file-box-v15"><i class="fa-solid ${meta.icon} text-7xl ${meta.text} mb-5"></i><p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">${escapeHtml(meta.label)} ${ext ? '· ' + escapeHtml(ext) : ''}</p><h4 class="text-xl font-black text-slate-800 mt-2">${safeName}</h4><p class="text-sm text-slate-500 mt-2 max-w-xl">${safeNote}</p>${rawUrl ? `<div class="mt-6 flex flex-wrap items-center justify-center gap-2"><a href="${safeUrl}" target="_blank" rel="noopener" class="inline-flex items-center justify-center min-h-[46px] px-5 rounded-2xl bg-slate-900 text-white text-xs font-black hover:bg-lavender-dark transition"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>Buka File</a><button type="button" onclick="downloadDokumenMedia('${safeDokumenJs(item.id)}')" class="inline-flex items-center justify-center min-h-[46px] px-5 rounded-2xl bg-emerald-50 text-emerald-700 text-xs font-black hover:bg-emerald-100 transition"><i class="fa-solid fa-download mr-2"></i>Download</button></div>` : ''}</div>`;
+            }
+
+            const old = document.getElementById('dokumen-preview-modal-v15');
+            if (old) old.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'dokumen-preview-modal-v15';
+            modal.className = 'dokumen-preview-modal-v15';
+            modal.innerHTML = `
+                <div class="dokumen-preview-modal-card-v15">
+                    <div class="dokumen-preview-modal-head-v15">
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-lavender-dark">Preview Dokumen & Media</p>
+                            <h3 class="text-sm md:text-base font-black text-slate-900 truncate mt-1" title="${safeName}">${safeName}</h3>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            ${rawUrl ? `<button type="button" onclick="downloadDokumenMedia('${safeDokumenJs(item.id)}')" class="h-10 px-3 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition text-xs font-black"><i class="fa-solid fa-download mr-1"></i> Download</button>` : ''}
+                            <button type="button" onclick="closeDokumenPreviewModal()" class="w-10 h-10 rounded-2xl bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                    <div class="dokumen-preview-modal-body-v15">${body}</div>
+                </div>`;
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) window.closeDokumenPreviewModal();
+            });
+            document.body.appendChild(modal);
+        };
+
+        window.closeDokumenPreviewModal = function() {
+            const modal = document.getElementById('dokumen-preview-modal-v15');
+            if (modal) modal.remove();
+        };
 
 
         function getModuleStatsHTML(categoryId, data) {
@@ -9866,9 +10358,17 @@
                     activeFolders = activeFolders.filter(f => String(f.namaFolder || '').toLowerCase().includes(q));
                 }
 
+                activeFolders = sortDokumenFolders(activeFolders);
+                activeFiles = sortDokumenFiles(activeFiles);
+
                 const typeBtn = (type, label, icon) => `
                     <button onclick="setDokumenFileType('${type}')" class="px-4 py-2 rounded-2xl text-xs font-black border transition ${window.dokumenFileType === type ? 'bg-lavender text-white border-lavender shadow-md shadow-lavender/20' : 'bg-white text-gray-500 border-gray-100 hover:border-lavender-light hover:text-lavender-dark'}">
                         <i class="fa-solid ${icon} mr-1"></i>${label}
+                    </button>`;
+
+                const dokumenModeBtn = (mode, label, icon) => `
+                    <button onclick="setDokumenViewMode('${mode}')" class="dokumen-view-btn-v16 ${window.dokumenViewMode === mode ? 'is-active' : ''}" title="Mode ${label}">
+                        <i class="fa-solid ${icon}"></i><span>${label}</span>
                     </button>`;
 
                 htmlOut = `
@@ -9910,6 +10410,43 @@
                                 ${typeBtn('audio', 'Audio', 'fa-music')}
                                 ${typeBtn('link', 'Link', 'fa-link')}
                             </div>
+                            <div class="dokumen-explorer-toolbar-v16 mt-4 p-4">
+                                <div class="grid grid-cols-1 xl:grid-cols-[1fr_auto_auto] gap-4 xl:items-center">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400 mb-2"><i class="fa-solid fa-table-cells-large mr-1 text-lavender-dark"></i> Mode Tampilan</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${dokumenModeBtn('gallery', 'Galeri', 'fa-table-cells-large')}
+                                            ${dokumenModeBtn('large', 'Ikon Besar', 'fa-expand')}
+                                            ${dokumenModeBtn('tile', 'Tiles', 'fa-grip')}
+                                            ${dokumenModeBtn('list', 'List', 'fa-list')}
+                                            ${dokumenModeBtn('details', 'Detail', 'fa-rectangle-list')}
+                                            ${dokumenModeBtn('compact', 'Compact', 'fa-table-cells')}
+                                            ${dokumenModeBtn('masonry', 'Masonry', 'fa-layer-group')}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400 mb-2"><i class="fa-solid fa-arrow-down-wide-short mr-1 text-lavender-dark"></i> Urutan</p>
+                                        <select onchange="setDokumenSortMode(this.value)" class="dokumen-explorer-control-v16 w-full xl:w-[180px]">
+                                            <option value="newest" ${window.dokumenSortMode === 'newest' ? 'selected' : ''}>Terbaru</option>
+                                            <option value="oldest" ${window.dokumenSortMode === 'oldest' ? 'selected' : ''}>Terlama</option>
+                                            <option value="nameAsc" ${window.dokumenSortMode === 'nameAsc' ? 'selected' : ''}>Nama A-Z</option>
+                                            <option value="nameDesc" ${window.dokumenSortMode === 'nameDesc' ? 'selected' : ''}>Nama Z-A</option>
+                                            <option value="type" ${window.dokumenSortMode === 'type' ? 'selected' : ''}>Jenis File</option>
+                                            <option value="sizeBig" ${window.dokumenSortMode === 'sizeBig' ? 'selected' : ''}>Ukuran Terbesar</option>
+                                            <option value="sizeSmall" ${window.dokumenSortMode === 'sizeSmall' ? 'selected' : ''}>Ukuran Terkecil</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400 mb-2"><i class="fa-solid fa-magnifying-glass-plus mr-1 text-lavender-dark"></i> Ukuran ${Number(window.dokumenViewSize || 100)}%</p>
+                                        <div class="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-3 min-h-[42px]">
+                                            <span class="text-[10px] font-black text-gray-400">70%</span>
+                                            <input type="range" min="70" max="170" step="10" value="${Number(window.dokumenViewSize || 100)}" oninput="setDokumenViewSize(this.value)" class="dokumen-size-slider-v16">
+                                            <span class="text-[10px] font-black text-gray-400">170%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-[11px] leading-5 text-gray-400 font-semibold">Pengaturan ini hanya disimpan di browser, tidak menulis database. Download juga memakai URL file yang sudah ada.</p>
+                            </div>
                         </div>
                 `;
 
@@ -9920,13 +10457,13 @@
                                 <h4 class="text-sm font-black text-gray-700 uppercase tracking-wide"><i class="fa-solid fa-folder-tree text-yellow-500 mr-2"></i> Folder</h4>
                                 <span class="text-xs text-gray-400 font-bold">${activeFolders.length} folder</span>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">`;
+                            <div class="dokumen-folder-grid-v16 mb-8" data-view="${escapeHtml(window.dokumenViewMode || 'gallery')}" style="--dokumen-folder-min-v16:${Math.max(170, Math.round(240 * getDokumenViewScale()))}px;">`;
                     activeFolders.forEach(folder => {
                         const safeFolderName = escapeHtml(folder.namaFolder || 'Tanpa Nama');
                         const childFolders = folders.filter(f => (f.parentId || '') === folder.id).length;
                         const childFiles = files.filter(f => (f.folderId || '') === folder.id).length;
                         htmlOut += `
-                        <div class="relative bg-white p-5 rounded-3xl border border-yellow-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all group cursor-pointer overflow-hidden" onclick="masukFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
+                        <div class="dokumen-folder-card-v16 relative bg-white p-5 rounded-3xl border border-yellow-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all group cursor-pointer overflow-hidden" onclick="masukFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
                             <div class="absolute -right-8 -top-8 w-24 h-24 bg-yellow-100 rounded-full blur-2xl group-hover:bg-yellow-200 transition"></div>
                             <div class="relative flex items-start gap-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500 text-3xl shadow-sm border border-yellow-100 flex-shrink-0">
