@@ -4159,5 +4159,118 @@
     }
   }
 </style>
+
+
+<style id="dam-v47-track-card-border-hover-only">
+  /* DAM V47 - Track card border only appears on cursor hover.
+     Scope sengaja hanya .track-card agar bagian lain tidak ikut berubah. */
+  .track-card {
+    border-color: transparent !important;
+  }
+
+  .track-card.playing {
+    border-color: transparent !important;
+  }
+
+  .track-card:hover,
+  .track-card:focus-within {
+    border-color: rgba(255,255,255,.18) !important;
+  }
+
+  .track-card.playing:hover,
+  .track-card.playing:focus-within {
+    border-color: rgba(34,197,94,.48) !important;
+  }
+</style>
+
+<script id="dam-v46-smooth-bottom-seek">
+(function () {
+  if (window.__DAM_V46_SMOOTH_BOTTOM_SEEK__) return;
+  window.__DAM_V46_SMOOTH_BOTTOM_SEEK__ = true;
+
+  var audio = document.getElementById('audio');
+  var seek = document.getElementById('seek');
+  var rafId = 0;
+  var isSeeking = false;
+
+  if (!audio || !seek || !window.requestAnimationFrame) return;
+
+  /* Hanya untuk progress bar player bawah: bikin nilai range lebih rapat,
+     lalu gerakkan thumb mengikuti audio per frame saat lagu berjalan. */
+  seek.setAttribute('step', '0.01');
+
+  function hasDuration() {
+    return Number.isFinite(audio.duration) && audio.duration > 0;
+  }
+
+  function syncSeek() {
+    if (isSeeking || !hasDuration()) return;
+    seek.value = String((audio.currentTime / audio.duration) * 100);
+  }
+
+  function tick() {
+    syncSeek();
+
+    if (!audio.paused && !audio.ended) {
+      rafId = window.requestAnimationFrame(tick);
+    } else {
+      rafId = 0;
+    }
+  }
+
+  function startSmoothSeek() {
+    if (!rafId) rafId = window.requestAnimationFrame(tick);
+  }
+
+  function stopSmoothSeek() {
+    if (rafId) {
+      window.cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    syncSeek();
+  }
+
+  function startSeeking() {
+    isSeeking = true;
+  }
+
+  function finishSeeking() {
+    if (!isSeeking) return;
+    isSeeking = false;
+
+    if (hasDuration()) {
+      audio.currentTime = (Number(seek.value) / 100) * audio.duration;
+    }
+
+    syncSeek();
+    if (!audio.paused && !audio.ended) startSmoothSeek();
+  }
+
+  seek.addEventListener('pointerdown', startSeeking);
+  seek.addEventListener('mousedown', startSeeking);
+  seek.addEventListener('touchstart', startSeeking, { passive: true });
+  seek.addEventListener('input', function () {
+    isSeeking = true;
+    if (hasDuration()) {
+      audio.currentTime = (Number(seek.value) / 100) * audio.duration;
+    }
+  });
+  seek.addEventListener('change', finishSeeking);
+  seek.addEventListener('pointerup', finishSeeking);
+  seek.addEventListener('pointercancel', finishSeeking);
+  window.addEventListener('mouseup', finishSeeking);
+  window.addEventListener('touchend', finishSeeking, { passive: true });
+
+  audio.addEventListener('play', startSmoothSeek);
+  audio.addEventListener('playing', startSmoothSeek);
+  audio.addEventListener('pause', stopSmoothSeek);
+  audio.addEventListener('ended', stopSmoothSeek);
+  audio.addEventListener('seeked', syncSeek);
+  audio.addEventListener('loadedmetadata', syncSeek);
+
+  if (!audio.paused && !audio.ended) startSmoothSeek();
+  else syncSeek();
+})();
+</script>
 </body>
 </html>
