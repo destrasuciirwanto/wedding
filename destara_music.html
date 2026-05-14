@@ -4937,5 +4937,1487 @@
 })();
 </script>
 
+
+
+<style id="dam-v51-modern-centered-icons-style">
+  /* DAM V51 - Icon modern, center presisi, dan hilangkan tap highlight kotak di HP. */
+  button,
+  [role="button"],
+  .nav-btn,
+  .chip,
+  .btn,
+  .icon-btn,
+  .round,
+  .big-play,
+  .player-side-btn,
+  .play-floating,
+  .ctrl,
+  .dam-action-trigger,
+  .dam-action-panel button,
+  .row-actions button,
+  .mini-actions button {
+    -webkit-tap-highlight-color: transparent !important;
+    tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+  }
+
+  button:focus,
+  button:active,
+  .round:focus,
+  .round:active,
+  .big-play:focus,
+  .big-play:active,
+  .player-side-btn:focus,
+  .player-side-btn:active,
+  .play-floating:focus,
+  .play-floating:active,
+  .ctrl:focus,
+  .ctrl:active,
+  .icon-btn:focus,
+  .icon-btn:active {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .dam-iconified {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    line-height: 1 !important;
+    font-variant-ligatures: none !important;
+    text-rendering: geometricPrecision !important;
+  }
+
+  .dam-icon-only {
+    gap: 0 !important;
+    line-height: 0 !important;
+    text-indent: 0 !important;
+  }
+
+  .dam-svg-icon {
+    width: 1.05em;
+    height: 1.05em;
+    display: block;
+    flex: 0 0 auto;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .dam-icon-label {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .big-play.dam-iconified {
+    display: grid !important;
+    place-items: center !important;
+    line-height: 0 !important;
+    text-align: center !important;
+  }
+
+  .big-play .dam-svg-icon {
+    width: 21px !important;
+    height: 21px !important;
+    transform: translateX(0) !important;
+  }
+
+  .round .dam-svg-icon,
+  .player-side-btn .dam-svg-icon,
+  .icon-btn .dam-svg-icon,
+  .play-floating .dam-svg-icon,
+  .ctrl .dam-svg-icon,
+  .row-actions button .dam-svg-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .play-floating.dam-iconified,
+  .ctrl.dam-iconified,
+  .round.dam-iconified,
+  .player-side-btn.dam-iconified,
+  .icon-btn.dam-iconified,
+  .row-actions button.dam-iconified {
+    display: grid !important;
+    place-items: center !important;
+    line-height: 0 !important;
+  }
+
+  .dam-action-trigger.dam-iconified {
+    justify-content: space-between !important;
+  }
+
+  .dam-action-trigger .dam-action-trigger-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    pointer-events: none;
+  }
+
+  .dam-action-trigger .dam-action-trigger-main .dam-svg-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .dam-action-trigger .dam-action-chevron .dam-svg-icon {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .dam-action-panel button.dam-iconified,
+  .mini-actions button.dam-iconified,
+  .btn.dam-iconified,
+  .chip.dam-iconified {
+    line-height: 1 !important;
+  }
+
+  .dam-action-panel button .dam-svg-icon,
+  .mini-actions button .dam-svg-icon,
+  .btn .dam-svg-icon,
+  .chip .dam-svg-icon {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .big-play:focus-visible,
+  .round:focus-visible,
+  .player-side-btn:focus-visible,
+  .play-floating:focus-visible,
+  .ctrl:focus-visible,
+  .icon-btn:focus-visible,
+  .row-actions button:focus-visible,
+  .dam-action-trigger:focus-visible,
+  .dam-action-panel button:focus-visible,
+  .mini-actions button:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.13), 0 0 0 6px rgb(var(--dam-rgb, 34 197 94) / .10) !important;
+  }
+
+  .big-play:focus:not(:focus-visible),
+  .round:focus:not(:focus-visible),
+  .player-side-btn:focus:not(:focus-visible),
+  .play-floating:focus:not(:focus-visible),
+  .ctrl:focus:not(:focus-visible),
+  .icon-btn:focus:not(:focus-visible),
+  .row-actions button:focus:not(:focus-visible),
+  .dam-action-trigger:focus:not(:focus-visible),
+  .dam-action-panel button:focus:not(:focus-visible),
+  .mini-actions button:focus:not(:focus-visible) {
+    box-shadow: inherit !important;
+  }
+
+  @media (max-width: 740px) {
+    .big-play .dam-svg-icon {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    .round .dam-svg-icon,
+    .player-side-btn .dam-svg-icon,
+    .icon-btn .dam-svg-icon,
+    .play-floating .dam-svg-icon,
+    .ctrl .dam-svg-icon,
+    .row-actions button .dam-svg-icon {
+      width: 16px !important;
+      height: 16px !important;
+    }
+  }
+</style>
+
+<script id="dam-v51-modern-centered-icons-script">
+(function () {
+  if (window.__DAM_V51_MODERN_CENTERED_ICONS__) return;
+  window.__DAM_V51_MODERN_CENTERED_ICONS__ = true;
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  var paths = {
+    play: '<path d="M8 5.8v12.4c0 .75.82 1.21 1.46.82l9.78-6.2a.96.96 0 0 0 0-1.64L9.46 4.98A.96.96 0 0 0 8 5.8Z" fill="currentColor"/>',
+    pause: '<path d="M7.6 5.25h3.15c.5 0 .9.4.9.9v11.7c0 .5-.4.9-.9.9H7.6a.9.9 0 0 1-.9-.9V6.15c0-.5.4-.9.9-.9Zm5.65 0h3.15c.5 0 .9.4.9.9v11.7c0 .5-.4.9-.9.9h-3.15a.9.9 0 0 1-.9-.9V6.15c0-.5.4-.9.9-.9Z" fill="currentColor"/>',
+    previous: '<path d="M5.8 5.5c.5 0 .9.4.9.9v4.15l8.56-5.18c.64-.39 1.44.08 1.44.83v11.6c0 .75-.8 1.22-1.44.83L6.7 13.45v4.15c0 .5-.4.9-.9.9s-.9-.4-.9-.9V6.4c0-.5.4-.9.9-.9Z" fill="currentColor"/>',
+    next: '<path d="M18.2 5.5c-.5 0-.9.4-.9.9v4.15L8.74 5.37A.96.96 0 0 0 7.3 6.2v11.6c0 .75.8 1.22 1.44.83l8.56-5.18v4.15c0 .5.4.9.9.9s.9-.4.9-.9V6.4c0-.5-.4-.9-.9-.9Z" fill="currentColor"/>',
+    shuffle: '<path d="M16.8 4.9 20.1 8l-3.3 3.1V8.9h-1.15c-1.7 0-2.62.75-3.8 2.6l-.78 1.22C9.7 14.85 8.24 17 5.1 17H3.8a.9.9 0 0 1 0-1.8h1.3c2.04 0 2.96-1.28 4.45-3.6l.78-1.22c1.38-2.16 2.78-3.28 5.32-3.28h1.15V4.9Zm-13 2h1.3c2.06 0 3.34.92 4.38 2.16a.9.9 0 1 1-1.38 1.16C7.34 9.32 6.55 8.7 5.1 8.7H3.8a.9.9 0 0 1 0-1.8Zm12.98 6v2.2h-1.13c-1.46 0-2.28-.4-3.08-1.25a.9.9 0 1 0-1.32 1.22c1.18 1.27 2.46 1.83 4.4 1.83h1.13v2.2l3.32-3.1-3.32-3.1Z" fill="currentColor"/>',
+    repeat: '<path d="M7.1 7.2h8.3c1.9 0 3.45 1.55 3.45 3.45a.9.9 0 1 0 1.8 0A5.25 5.25 0 0 0 15.4 5.4H7.1V3.35L3.9 6.3l3.2 2.95V7.2Zm9.8 9.6H8.6a3.45 3.45 0 0 1-3.45-3.45.9.9 0 1 0-1.8 0A5.25 5.25 0 0 0 8.6 18.6h8.3v2.05l3.2-2.95-3.2-2.95v2.05Z" fill="currentColor"/>',
+    heart: '<path d="M12 20.25c-.28 0-.55-.09-.77-.27C6.1 15.92 3.25 13.2 3.25 9.7A4.72 4.72 0 0 1 8 4.95c1.55 0 2.98.72 4 1.86a5.32 5.32 0 0 1 4-1.86 4.72 4.72 0 0 1 4.75 4.75c0 3.5-2.85 6.22-7.98 10.28-.22.18-.49.27-.77.27Z" fill="currentColor"/>',
+    heartLine: '<path d="M12 20.2a1.2 1.2 0 0 1-.75-.27C6.1 15.86 3.3 13.16 3.3 9.74A4.7 4.7 0 0 1 8 5.05c1.55 0 2.95.7 4 1.82a5.27 5.27 0 0 1 4-1.82 4.7 4.7 0 0 1 4.7 4.69c0 3.42-2.8 6.12-7.95 10.19-.22.18-.48.27-.75.27Zm-3.99-13.35a2.9 2.9 0 0 0-2.91 2.9c0 2.5 2.2 4.8 6.9 8.55 4.7-3.75 6.9-6.05 6.9-8.55a2.9 2.9 0 0 0-2.9-2.9c-1.33 0-2.27.76-3.17 1.92a1.04 1.04 0 0 1-1.66 0c-.9-1.16-1.84-1.92-3.16-1.92Z" fill="currentColor"/>',
+    download: '<path d="M12 3.75c.52 0 .95.43.95.95v8.05l2.52-2.52a.95.95 0 1 1 1.34 1.34l-4.14 4.14a.95.95 0 0 1-1.34 0l-4.14-4.14a.95.95 0 1 1 1.34-1.34l2.52 2.52V4.7c0-.52.43-.95.95-.95ZM5.2 16.9c.5 0 .9.4.9.9v1.1h11.8v-1.1a.9.9 0 1 1 1.8 0v1.65c0 .7-.56 1.25-1.25 1.25H5.55c-.69 0-1.25-.56-1.25-1.25V17.8c0-.5.4-.9.9-.9Z" fill="currentColor"/>',
+    share: '<path d="M15.8 5.1a3.1 3.1 0 1 1 1.08 2.35l-6.02 3.33a3.23 3.23 0 0 1 0 2.44l6.02 3.33a3.1 3.1 0 1 1-.86 1.58L9.98 14.8a3.1 3.1 0 1 1 0-5.6l6.04-3.33a3.05 3.05 0 0 1-.22-.77Z" fill="currentColor"/>',
+    plus: '<path d="M12 4.4c.5 0 .9.4.9.9v5.8h5.8a.9.9 0 1 1 0 1.8h-5.8v5.8a.9.9 0 1 1-1.8 0v-5.8H5.3a.9.9 0 0 1 0-1.8h5.8V5.3c0-.5.4-.9.9-.9Z" fill="currentColor"/>',
+    edit: '<path d="M16.66 3.86a2.28 2.28 0 0 1 3.22 3.22L9.22 17.74c-.2.2-.45.35-.72.42l-3.66 1a.75.75 0 0 1-.92-.92l1-3.66c.07-.27.22-.52.42-.72L16.66 3.86ZM15.4 6.4l2.2 2.2 1.02-1.02a.48.48 0 0 0 0-.68L17.34 5.6a.48.48 0 0 0-.68 0L15.4 6.4ZM14.13 7.67 6.57 15.23l-.52 1.9 1.9-.52 7.56-7.56-1.38-1.38Z" fill="currentColor"/>',
+    move: '<path d="M7 6.6h8.4l-1.7-1.7a.9.9 0 1 1 1.27-1.27l3.24 3.24c.35.35.35.92 0 1.27l-3.24 3.24a.9.9 0 0 1-1.27-1.27l1.7-1.7H7A2.1 2.1 0 0 0 4.9 10.5c0 .5-.4.9-.9.9s-.9-.4-.9-.9A3.9 3.9 0 0 1 7 6.6Zm10 10.8H8.6l1.7 1.7a.9.9 0 0 1-1.27 1.27l-3.24-3.24a.9.9 0 0 1 0-1.27l3.24-3.24a.9.9 0 1 1 1.27 1.27l-1.7 1.7H17a2.1 2.1 0 0 0 2.1-2.1c0-.5.4-.9.9-.9s.9.4.9.9a3.9 3.9 0 0 1-3.9 3.9Z" fill="currentColor"/>',
+    trash: '<path d="M9.1 4.25c.18-.58.7-.98 1.3-.98h3.2c.6 0 1.12.4 1.3.98l.32 1.05h3.03a.9.9 0 1 1 0 1.8H5.75a.9.9 0 1 1 0-1.8h3.03l.32-1.05Zm-1.7 4.2h9.2l-.55 10.05a2.2 2.2 0 0 1-2.2 2.08h-3.7a2.2 2.2 0 0 1-2.2-2.08L7.4 8.45Zm3.05 2.05a.8.8 0 0 0-.8.85l.32 5.9a.8.8 0 0 0 1.6-.09l-.32-5.9a.8.8 0 0 0-.8-.76Zm3.1 0a.8.8 0 0 0-.8.76l-.32 5.9a.8.8 0 1 0 1.6.09l.32-5.9a.8.8 0 0 0-.8-.85Z" fill="currentColor"/>',
+    queue: '<path d="M5 6.2h11.2a.9.9 0 1 1 0 1.8H5a.9.9 0 0 1 0-1.8Zm0 4.9h14a.9.9 0 1 1 0 1.8H5a.9.9 0 1 1 0-1.8Zm0 4.9h8.2a.9.9 0 1 1 0 1.8H5a.9.9 0 1 1 0-1.8Zm11.3-.85 3.1 1.85-3.1 1.85v-3.7Z" fill="currentColor"/>',
+    menu: '<path d="M4.8 6.4h14.4a.9.9 0 1 1 0 1.8H4.8a.9.9 0 1 1 0-1.8Zm0 4.7h14.4a.9.9 0 1 1 0 1.8H4.8a.9.9 0 1 1 0-1.8Zm0 4.7h14.4a.9.9 0 1 1 0 1.8H4.8a.9.9 0 1 1 0-1.8Z" fill="currentColor"/>',
+    close: '<path d="M6.28 5.02a.9.9 0 0 1 1.27 0L12 9.47l4.45-4.45a.9.9 0 1 1 1.27 1.27L13.27 12l4.45 4.45a.9.9 0 0 1-1.27 1.27L12 13.27l-4.45 4.45a.9.9 0 0 1-1.27-1.27L10.73 12 6.28 7.55a.9.9 0 0 1 0-1.27Z" fill="currentColor"/>',
+    refresh: '<path d="M18.15 8.25A6.8 6.8 0 0 0 6.6 5.85l1.4 1.4H3.7V2.95l1.58 1.58A8.6 8.6 0 0 1 19.9 7.7a.9.9 0 1 1-1.75.55ZM5.85 15.75A6.8 6.8 0 0 0 17.4 18.15l-1.4-1.4h4.3v4.3l-1.58-1.58A8.6 8.6 0 0 1 4.1 16.3a.9.9 0 0 1 1.75-.55Z" fill="currentColor"/>',
+    command: '<path d="M8 4.2a3.2 3.2 0 0 1 3.2 3.2v1.4h1.6V7.4A3.2 3.2 0 1 1 16 10.6h-1.4v1.6H16a3.2 3.2 0 1 1-3.2 3.2V14h-1.6v1.4A3.2 3.2 0 1 1 8 12.2h1.4v-1.6H8A3.2 3.2 0 1 1 8 4.2Zm1.4 4.6V7.4A1.4 1.4 0 1 0 8 8.8h1.4Zm5.2 0H16a1.4 1.4 0 1 0-1.4-1.4v1.4Zm-5.2 5.2H8a1.4 1.4 0 1 0 1.4 1.4V14Zm5.2 0v1.4A1.4 1.4 0 1 0 16 14h-1.4Z" fill="currentColor"/>',
+    ellipsis: '<path d="M6.3 12a1.7 1.7 0 1 1-3.4 0 1.7 1.7 0 0 1 3.4 0Zm7.4 0a1.7 1.7 0 1 1-3.4 0 1.7 1.7 0 0 1 3.4 0Zm7.4 0a1.7 1.7 0 1 1-3.4 0 1.7 1.7 0 0 1 3.4 0Z" fill="currentColor"/>',
+    chevronDown: '<path d="M6.28 8.72a.9.9 0 0 1 1.27 0L12 13.17l4.45-4.45a.9.9 0 1 1 1.27 1.27l-5.08 5.08a.9.9 0 0 1-1.27 0L6.28 9.99a.9.9 0 0 1 0-1.27Z" fill="currentColor"/>'
+  };
+
+  function svg(name) {
+    return '<svg class="dam-svg-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + (paths[name] || paths.ellipsis) + '</svg>';
+  }
+
+  function cleanText(node) {
+    return (node.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function setIconOnly(button, name, label) {
+    if (!button) return;
+    var key = name + '|only';
+    if (button.dataset.damIconKey === key && button.querySelector('.dam-svg-icon')) return;
+    button.dataset.damIconKey = key;
+    button.classList.add('dam-iconified', 'dam-icon-only');
+    button.innerHTML = svg(name) + '<span class="ico" hidden></span>';
+    if (label) button.setAttribute('aria-label', label);
+  }
+
+  function setIconLabel(button, name, label) {
+    if (!button) return;
+    var key = name + '|label|' + label;
+    if (button.dataset.damIconKey === key && button.querySelector('.dam-svg-icon')) return;
+    button.dataset.damIconKey = key;
+    button.classList.add('dam-iconified');
+    button.classList.remove('dam-icon-only');
+    button.innerHTML = svg(name) + '<span class="dam-icon-label">' + label + '</span><span class="ico" hidden></span>';
+  }
+
+  function setActionTrigger(button) {
+    if (!button) return;
+    var key = 'action-trigger';
+    if (button.dataset.damIconKey === key && button.querySelector('.dam-svg-icon')) return;
+    button.dataset.damIconKey = key;
+    button.classList.add('dam-iconified');
+    button.innerHTML = '<span class="dam-action-trigger-main">' + svg('ellipsis') + '<span class="dam-icon-label">Aksi Lagu</span></span><span class="dam-action-chevron">' + svg('chevronDown') + '</span>';
+  }
+
+  function iconForAction(button) {
+    if (button.dataset.download !== undefined) return ['download', 'Download'];
+    if (button.dataset.fav !== undefined) {
+      var txt = cleanText(button);
+      return [txt.indexOf('♥') >= 0 || txt.toLowerCase().indexOf('tersimpan') >= 0 ? 'heart' : 'heartLine', 'Favorit'];
+    }
+    if (button.dataset.queue !== undefined) return ['queue', 'Queue'];
+    if (button.dataset.addplaylist !== undefined) return ['plus', 'Playlist'];
+    if (button.dataset.edit !== undefined) return ['edit', 'Edit'];
+    if (button.dataset.move !== undefined) return ['move', 'Pindah'];
+    if (button.dataset.del !== undefined) return ['trash', 'Hapus'];
+    return null;
+  }
+
+  function applyIcons() {
+    var audio = qs('#audio');
+    var play = qs('#playBtn');
+    if (play) setIconOnly(play, audio && !audio.paused ? 'pause' : 'play', audio && !audio.paused ? 'Pause' : 'Play');
+
+    setIconOnly(qs('#shuffleBtn'), 'shuffle', 'Shuffle');
+    setIconOnly(qs('#prevBtn'), 'previous', 'Previous');
+    setIconOnly(qs('#nextBtn'), 'next', 'Next');
+    setIconOnly(qs('#repeatBtn'), 'repeat', 'Repeat');
+
+    var favCurrent = qs('#favCurrentBtn');
+    if (favCurrent) {
+      var favText = cleanText(favCurrent);
+      setIconOnly(favCurrent, favText.indexOf('♥') >= 0 ? 'heart' : 'heartLine', 'Favorite');
+    }
+    setIconOnly(qs('#downloadBtn'), 'download', 'Download');
+    setIconOnly(qs('#shareBtn'), 'share', 'Copy link');
+    setIconOnly(qs('#mobileMenuBtn'), 'menu', 'Buka menu');
+
+    qsa('[data-close]').forEach(function (button) {
+      if (button.classList.contains('icon-btn') || cleanText(button) === '×') setIconOnly(button, 'close', 'Tutup');
+    });
+
+    qsa('.play-floating, .ctrl').forEach(function (button) {
+      var txt = cleanText(button);
+      setIconOnly(button, txt.indexOf('⏸') >= 0 ? 'pause' : 'play', txt.indexOf('⏸') >= 0 ? 'Pause' : 'Play');
+    });
+
+    qsa('.row-actions button').forEach(function (button) {
+      var data = iconForAction(button);
+      if (data) setIconOnly(button, data[0], data[1]);
+    });
+
+    qsa('.dam-action-trigger').forEach(setActionTrigger);
+
+    qsa('.dam-action-panel button, .mini-actions button:not(.dam-action-trigger)').forEach(function (button) {
+      var data = iconForAction(button);
+      if (data) setIconLabel(button, data[0], data[1]);
+    });
+
+    setIconLabel(qs('#refreshBtn'), 'refresh', 'Refresh');
+    setIconLabel(qs('#cmdBtn'), 'command', 'Command');
+
+    qsa('.btn').forEach(function (button) {
+      var txt = cleanText(button);
+      if (/^▶\s*/.test(txt)) setIconLabel(button, 'play', txt.replace(/^▶\s*/, ''));
+    });
+  }
+
+  var scheduled = false;
+  function scheduleIcons() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () {
+      scheduled = false;
+      applyIcons();
+    });
+  }
+
+  function start() {
+    applyIcons();
+    var audio = qs('#audio');
+    if (audio) {
+      ['play', 'pause', 'timeupdate', 'loadedmetadata', 'ended'].forEach(function (eventName) {
+        audio.addEventListener(eventName, scheduleIcons, true);
+      });
+    }
+
+    document.addEventListener('click', scheduleIcons, true);
+    document.addEventListener('keyup', scheduleIcons, true);
+
+    var observer = new MutationObserver(scheduleIcons);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    setInterval(scheduleIcons, 900);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+
+
+
+<!-- DAM V52 - Logo refresh + stable admin dropdown + premium file picker -->
+<style id="dam-v52-admin-polish-style">
+  /* Logo DAM baru: visual lebih premium, tetap tanpa asset eksternal */
+  .brand-mark.dam-v52-logo {
+    position: relative !important;
+    overflow: hidden !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    background:
+      radial-gradient(circle at 28% 16%, rgba(255,255,255,.42), transparent 18%),
+      radial-gradient(circle at 76% 78%, rgba(34,197,94,.38), transparent 34%),
+      conic-gradient(from 225deg, #22c55e, #06b6d4, #8b5cf6, #ec4899, #22c55e) !important;
+    box-shadow:
+      0 18px 48px rgba(34,197,94,.24),
+      0 12px 34px rgba(168,85,247,.18),
+      inset 0 1px 0 rgba(255,255,255,.26) !important;
+  }
+  .brand-mark.dam-v52-logo::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 16px;
+    background:
+      linear-gradient(145deg, rgba(2,6,4,.86), rgba(5,8,18,.74));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  .brand-mark.dam-v52-logo::after {
+    content: "";
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    left: -34px;
+    top: -34px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.22);
+    filter: blur(8px);
+  }
+  .brand-mark.dam-v52-logo span { display: none !important; }
+  .brand-mark.dam-v52-logo .dam-v52-logo-svg {
+    position: relative;
+    z-index: 2;
+    width: 38px;
+    height: 38px;
+    color: #f8fff9;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,.38));
+  }
+  .brand-mark.dam-v52-logo .dam-v52-logo-core { fill: currentColor; }
+  .brand-mark.dam-v52-logo .dam-v52-logo-wave {
+    fill: none;
+    stroke: #86efac;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    opacity: .96;
+  }
+
+  /* Dropdown genre admin dibuat inline-expand agar tidak kepotong modal */
+  #adminModal,
+  #editModal,
+  #moveModal {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    align-items: flex-start !important;
+  }
+  #adminModal .modal-card,
+  #editModal .modal-card,
+  #moveModal .modal-card {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  #adminModal .genre-select-wrap,
+  #editModal .genre-select-wrap,
+  #moveModal .genre-select-wrap,
+  #uploadForm .genre-select-wrap {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 20 !important;
+  }
+  #adminModal .field:has(.genre-picker.open),
+  #editModal .field:has(.genre-picker.open),
+  #moveModal .field:has(.genre-picker.open) {
+    z-index: 80 !important;
+  }
+  #adminModal .genre-picker,
+  #editModal .genre-picker,
+  #moveModal .genre-picker,
+  #uploadForm .genre-picker {
+    position: relative !important;
+    z-index: 60 !important;
+  }
+  #adminModal .genre-picker-button,
+  #editModal .genre-picker-button,
+  #moveModal .genre-picker-button,
+  #uploadForm .genre-picker-button {
+    min-height: 56px !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.18), transparent 42%),
+      linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.065)) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.11),
+      0 14px 34px rgba(0,0,0,.20) !important;
+  }
+  #adminModal .genre-picker-button:hover,
+  #editModal .genre-picker-button:hover,
+  #moveModal .genre-picker-button:hover,
+  #uploadForm .genre-picker-button:hover,
+  #adminModal .genre-picker.open .genre-picker-button,
+  #editModal .genre-picker.open .genre-picker-button,
+  #moveModal .genre-picker.open .genre-picker-button,
+  #uploadForm .genre-picker.open .genre-picker-button {
+    border-color: rgba(34,197,94,.42) !important;
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.28), transparent 44%),
+      linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.075)) !important;
+    box-shadow:
+      0 18px 46px rgba(34,197,94,.12),
+      inset 0 1px 0 rgba(255,255,255,.14) !important;
+  }
+  #adminModal .genre-picker-dot,
+  #editModal .genre-picker-dot,
+  #moveModal .genre-picker-dot,
+  #uploadForm .genre-picker-dot {
+    width: 14px !important;
+    height: 14px !important;
+    background: linear-gradient(135deg, #86efac, #22c55e 50%, #8b5cf6) !important;
+    box-shadow: 0 0 0 5px rgba(34,197,94,.10), 0 0 22px rgba(34,197,94,.34) !important;
+  }
+  #adminModal .genre-picker-chevron,
+  #editModal .genre-picker-chevron,
+  #moveModal .genre-picker-chevron,
+  #uploadForm .genre-picker-chevron {
+    background: rgba(34,197,94,.10) !important;
+    color: #dcfce7 !important;
+  }
+  #adminModal .genre-picker-menu,
+  #editModal .genre-picker-menu,
+  #moveModal .genre-picker-menu,
+  #uploadForm .genre-picker-menu {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-height: min(360px, 44vh) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: none !important;
+    margin-top: 10px !important;
+    padding: 10px !important;
+    border-radius: 22px !important;
+    border: 1px solid rgba(34,197,94,.24) !important;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(34,197,94,.18), transparent 38%),
+      linear-gradient(180deg, rgba(14,20,16,.98), rgba(4,7,5,.98)) !important;
+    box-shadow:
+      0 20px 56px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(255,255,255,.08) !important;
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+  }
+  #adminModal .genre-picker.open .genre-picker-menu,
+  #editModal .genre-picker.open .genre-picker-menu,
+  #moveModal .genre-picker.open .genre-picker-menu,
+  #uploadForm .genre-picker.open .genre-picker-menu {
+    display: grid !important;
+    gap: 7px !important;
+    animation: damV52DropdownIn .16s ease-out !important;
+  }
+  @keyframes damV52DropdownIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
+  #adminModal .genre-option,
+  #editModal .genre-option,
+  #moveModal .genre-option,
+  #uploadForm .genre-option {
+    min-height: 46px !important;
+    border-radius: 16px !important;
+    padding: 0 13px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+  }
+  #adminModal .genre-option:hover,
+  #editModal .genre-option:hover,
+  #moveModal .genre-option:hover,
+  #uploadForm .genre-option:hover {
+    border-color: rgba(255,255,255,.10) !important;
+    background: rgba(255,255,255,.10) !important;
+    transform: translateX(2px) !important;
+  }
+  #adminModal .genre-option.active,
+  #editModal .genre-option.active,
+  #moveModal .genre-option.active,
+  #uploadForm .genre-option.active {
+    border-color: rgba(34,197,94,.28) !important;
+    background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(168,85,247,.12)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12) !important;
+  }
+
+  /* Pilih file custom: native input disembunyikan, fungsi form tetap sama */
+  .field input[type="file"].dam-v52-native-file {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    clip-path: inset(50%) !important;
+  }
+  .dam-v52-file-picker {
+    width: 100%;
+    min-height: 74px;
+    border-radius: 22px;
+    border: 1px dashed rgba(34,197,94,.34);
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.18), transparent 40%),
+      linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.045));
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 16px 36px rgba(0,0,0,.16);
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .dam-v52-file-picker:hover,
+  .dam-v52-file-picker.dam-dragover,
+  .dam-v52-file-picker:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(34,197,94,.58);
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.26), transparent 42%),
+      linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    box-shadow: 0 18px 46px rgba(34,197,94,.10), inset 0 1px 0 rgba(255,255,255,.12);
+    outline: none;
+  }
+  .dam-v52-file-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 17px;
+    display: grid;
+    place-items: center;
+    color: #ecfff2;
+    background: linear-gradient(135deg, rgba(34,197,94,.34), rgba(139,92,246,.24));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 14px 28px rgba(0,0,0,.22);
+  }
+  .dam-v52-file-icon svg {
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
+  .dam-v52-file-main {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .dam-v52-file-main b {
+    font-size: .9rem;
+    letter-spacing: -.02em;
+    color: #f8fafc;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dam-v52-file-main small,
+  .dam-v52-file-name {
+    color: rgba(255,255,255,.58);
+    font-size: .76rem;
+    font-weight: 750;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dam-v52-file-cta {
+    min-height: 38px;
+    border-radius: 999px;
+    padding: 0 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #052e16;
+    background: linear-gradient(135deg, #bbf7d0, #22c55e);
+    font-size: .75rem;
+    font-weight: 950;
+    box-shadow: 0 12px 26px rgba(34,197,94,.20);
+  }
+  .dam-v52-file-picker.dam-has-file {
+    border-style: solid;
+    border-color: rgba(34,197,94,.48);
+  }
+  .dam-v52-file-picker.dam-has-file .dam-v52-file-name {
+    color: #bbf7d0;
+  }
+  @media (max-width: 740px) {
+    .dam-v52-file-picker {
+      grid-template-columns: 44px minmax(0, 1fr);
+      min-height: 72px;
+    }
+    .dam-v52-file-cta {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+    #adminModal .genre-picker-menu,
+    #editModal .genre-picker-menu,
+    #moveModal .genre-picker-menu,
+    #uploadForm .genre-picker-menu {
+      max-height: 48vh !important;
+    }
+  }
+</style>
+
+<script id="dam-v52-admin-polish-script">
+(function () {
+  if (window.__DAM_V52_ADMIN_POLISH__) return;
+  window.__DAM_V52_ADMIN_POLISH__ = true;
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  function fileSvg(isImage) {
+    if (isImage) {
+      return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5.4 4.2h13.2c1.15 0 2.1.95 2.1 2.1v11.4c0 1.15-.95 2.1-2.1 2.1H5.4a2.1 2.1 0 0 1-2.1-2.1V6.3c0-1.15.95-2.1 2.1-2.1Zm0 1.8a.3.3 0 0 0-.3.3v8.42l3.16-3.16a1.55 1.55 0 0 1 2.18 0l1.6 1.6 3.06-3.67a1.55 1.55 0 0 1 2.38 0l1.42 1.7V6.3a.3.3 0 0 0-.3-.3H5.4Zm13.5 8-2.58-3.1-3.02 3.62 3.48 3.48h1.82a.3.3 0 0 0 .3-.3V14Zm-12.62 4h7.95l-4.88-4.88-4.25 4.25v.33c0 .16.14.3.3.3h.88ZM8 7.45a1.55 1.55 0 1 1 0 3.1 1.55 1.55 0 0 1 0-3.1Z"/></svg>';
+    }
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3.35c.5 0 .9.4.9.9v9.28l2.63-2.64a.9.9 0 1 1 1.28 1.28l-4.17 4.17a.9.9 0 0 1-1.28 0l-4.17-4.17a.9.9 0 0 1 1.28-1.28l2.63 2.64V4.25c0-.5.4-.9.9-.9ZM5.25 16.65c.5 0 .9.4.9.9v1.05h11.7v-1.05a.9.9 0 1 1 1.8 0v1.6c0 .7-.56 1.25-1.25 1.25H5.6c-.69 0-1.25-.56-1.25-1.25v-1.6c0-.5.4-.9.9-.9Z"/></svg>';
+  }
+
+  function injectLogo() {
+    var mark = qs('.brand-mark');
+    if (!mark || mark.dataset.damV52Logo === '1') return;
+    mark.dataset.damV52Logo = '1';
+    mark.classList.add('dam-v52-logo');
+    mark.innerHTML = '<svg class="dam-v52-logo-svg" viewBox="0 0 48 48" aria-label="DestAra Music"><path class="dam-v52-logo-core" d="M12 14.8c0-2.1 1.7-3.8 3.8-3.8h8.4C32 11 38 16.78 38 24s-6 13-13.8 13h-8.4A3.8 3.8 0 0 1 12 33.2V14.8Zm7.6 3.1v12.2h4.35c4.2 0 6.95-2.45 6.95-6.1s-2.75-6.1-6.95-6.1H19.6Z"/><path class="dam-v52-logo-wave" d="M8.4 18.2c-1.9 3.7-1.9 7.9 0 11.6M39.6 18.2c1.9 3.7 1.9 7.9 0 11.6M24 20.8v6.4M27.4 22.5v3M20.6 22.5v3"/></svg>';
+  }
+
+  function readableBytes(size) {
+    var n = Number(size || 0);
+    if (!n) return '';
+    var units = ['B', 'KB', 'MB', 'GB'];
+    var i = 0;
+    while (n >= 1024 && i < units.length - 1) { n = n / 1024; i++; }
+    return n.toFixed(i ? 1 : 0) + ' ' + units[i];
+  }
+
+  function updateFilePicker(input) {
+    var picker = input && input.dataset ? qs('[data-dam-file-for="' + input.dataset.damFileId + '"]') : null;
+    if (!picker) return;
+    var file = input.files && input.files[0];
+    var name = qs('.dam-v52-file-name', picker);
+    if (file) {
+      picker.classList.add('dam-has-file');
+      if (name) name.textContent = file.name + (file.size ? ' · ' + readableBytes(file.size) : '');
+    } else {
+      picker.classList.remove('dam-has-file');
+      if (name) name.textContent = input.dataset.damEmptyText || 'Belum ada file dipilih';
+    }
+  }
+
+  function attachDroppedFiles(input, files) {
+    if (!files || !files.length) return;
+    try {
+      var dt = new DataTransfer();
+      Array.from(files).forEach(function (file) { dt.items.add(file); });
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    } catch (err) {
+      input.click();
+    }
+  }
+
+  var fileCounter = 0;
+  function enhanceFileInputs(root) {
+    qsa('input[type="file"]', root || document).forEach(function (input) {
+      if (input.dataset.damV52FileReady === '1') return;
+      input.dataset.damV52FileReady = '1';
+      input.classList.add('dam-v52-native-file');
+
+      var isImage = /image/i.test(input.getAttribute('accept') || '');
+      var isAudio = /audio|mp3|wav|m4a|aac|flac|ogg|mpeg|webm/i.test(input.getAttribute('accept') || '');
+      var id = 'damFile' + (++fileCounter);
+      input.dataset.damFileId = id;
+      input.dataset.damEmptyText = isImage ? 'Belum ada cover dipilih' : 'Belum ada lagu dipilih';
+
+      var picker = document.createElement('div');
+      picker.className = 'dam-v52-file-picker';
+      picker.tabIndex = 0;
+      picker.setAttribute('role', 'button');
+      picker.setAttribute('data-dam-file-for', id);
+      picker.setAttribute('aria-label', isImage ? 'Pilih gambar cover' : 'Pilih file audio');
+      picker.innerHTML = '<div class="dam-v52-file-icon">' + fileSvg(isImage) + '</div>' +
+        '<div class="dam-v52-file-main"><b>' + (isImage ? 'Upload cover gambar' : 'Upload file audio') + '</b><small>' +
+        (isImage ? 'JPG, PNG, WEBP, atau format gambar lain' : 'MP3, MPEG, WAV, M4A, AAC, OGG, FLAC, WEBM') +
+        '</small><span class="dam-v52-file-name">' + input.dataset.damEmptyText + '</span></div>' +
+        '<span class="dam-v52-file-cta">Pilih File</span>';
+
+      input.insertAdjacentElement('afterend', picker);
+
+      picker.addEventListener('click', function () { input.click(); });
+      picker.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          input.click();
+        }
+      });
+      picker.addEventListener('dragover', function (event) {
+        event.preventDefault();
+        picker.classList.add('dam-dragover');
+      });
+      picker.addEventListener('dragleave', function () { picker.classList.remove('dam-dragover'); });
+      picker.addEventListener('drop', function (event) {
+        event.preventDefault();
+        picker.classList.remove('dam-dragover');
+        attachDroppedFiles(input, event.dataTransfer && event.dataTransfer.files);
+      });
+      input.addEventListener('change', function () { updateFilePicker(input); });
+      var form = input.closest('form');
+      if (form) form.addEventListener('reset', function () { setTimeout(function () { updateFilePicker(input); }, 0); });
+      updateFilePicker(input);
+    });
+  }
+
+  function polishGenrePicker() {
+    qsa('.genre-picker-button').forEach(function (button) {
+      if (button.dataset.damV52Genre === '1') return;
+      button.dataset.damV52Genre = '1';
+      button.setAttribute('aria-label', 'Pilih genre atau kategori');
+    });
+  }
+
+  function closeOtherGenrePickers(event) {
+    var current = event.target && event.target.closest ? event.target.closest('.genre-picker') : null;
+    qsa('.genre-picker.open').forEach(function (picker) {
+      if (picker !== current) {
+        picker.classList.remove('open');
+        var btn = qs('.genre-picker-button', picker);
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function run() {
+    injectLogo();
+    enhanceFileInputs(document);
+    polishGenrePicker();
+  }
+
+  document.addEventListener('click', closeOtherGenrePickers, true);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+
+  var observer = new MutationObserver(function () { run(); });
+  observer.observe(document.body, { childList: true, subtree: true });
+  setInterval(run, 1200);
+})();
+</script>
+
+
+
+<!-- DAM V53 - Compact admin dropdown, no layout push, raised admin fields -->
+<style id="dam-v53-admin-dropdown-compact-style">
+  /* Dropdown admin: overlay kecil, tidak mendorong elemen bawah */
+  #adminModal .genre-select-wrap,
+  #editModal .genre-select-wrap,
+  #moveModal .genre-select-wrap,
+  #uploadForm .genre-select-wrap {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 120 !important;
+  }
+
+  #adminModal .field:has(.genre-picker.open),
+  #editModal .field:has(.genre-picker.open),
+  #moveModal .field:has(.genre-picker.open),
+  #uploadForm .field:has(.genre-picker.open) {
+    z-index: 900 !important;
+  }
+
+  #adminModal .genre-picker,
+  #editModal .genre-picker,
+  #moveModal .genre-picker,
+  #uploadForm .genre-picker {
+    position: relative !important;
+    z-index: 900 !important;
+  }
+
+  #adminModal .genre-picker-button,
+  #editModal .genre-picker-button,
+  #moveModal .genre-picker-button,
+  #uploadForm .genre-picker-button {
+    min-height: 46px !important;
+    border-radius: 16px !important;
+    padding: 0 12px !important;
+  }
+
+  #adminModal .genre-picker-dot,
+  #editModal .genre-picker-dot,
+  #moveModal .genre-picker-dot,
+  #uploadForm .genre-picker-dot {
+    width: 10px !important;
+    height: 10px !important;
+    box-shadow: 0 0 0 4px rgba(34,197,94,.09), 0 0 16px rgba(34,197,94,.28) !important;
+  }
+
+  #adminModal .genre-picker-chevron,
+  #editModal .genre-picker-chevron,
+  #moveModal .genre-picker-chevron,
+  #uploadForm .genre-picker-chevron {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 10px !important;
+  }
+
+  #adminModal .genre-picker-menu,
+  #editModal .genre-picker-menu,
+  #moveModal .genre-picker-menu,
+  #uploadForm .genre-picker-menu {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: calc(100% + 6px) !important;
+    bottom: auto !important;
+    inset: auto 0 auto 0 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-height: 172px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: none !important;
+    margin: 0 !important;
+    padding: 7px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(34,197,94,.26) !important;
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.16), transparent 42%),
+      linear-gradient(180deg, rgba(15,18,20,.98), rgba(5,7,9,.98)) !important;
+    box-shadow: 0 20px 46px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.08) !important;
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+  }
+
+  #adminModal .genre-picker.dam-v53-drop-up .genre-picker-menu,
+  #editModal .genre-picker.dam-v53-drop-up .genre-picker-menu,
+  #moveModal .genre-picker.dam-v53-drop-up .genre-picker-menu,
+  #uploadForm .genre-picker.dam-v53-drop-up .genre-picker-menu {
+    top: auto !important;
+    bottom: calc(100% + 6px) !important;
+  }
+
+  #adminModal .genre-picker.open .genre-picker-menu,
+  #editModal .genre-picker.open .genre-picker-menu,
+  #moveModal .genre-picker.open .genre-picker-menu,
+  #uploadForm .genre-picker.open .genre-picker-menu {
+    display: grid !important;
+    gap: 4px !important;
+    animation: damV53MenuPop .12s ease-out !important;
+  }
+
+  @keyframes damV53MenuPop {
+    from { opacity: 0; transform: translateY(-3px) scale(.99); }
+    to { opacity: 1; transform: none; }
+  }
+
+  #adminModal .genre-option,
+  #editModal .genre-option,
+  #moveModal .genre-option,
+  #uploadForm .genre-option {
+    min-height: 34px !important;
+    border-radius: 11px !important;
+    padding: 0 10px !important;
+    font-size: .78rem !important;
+  }
+
+  #adminModal .genre-option small,
+  #editModal .genre-option small,
+  #moveModal .genre-option small,
+  #uploadForm .genre-option small {
+    font-size: .62rem !important;
+  }
+
+  #adminModal .genre-picker-menu::-webkit-scrollbar,
+  #editModal .genre-picker-menu::-webkit-scrollbar,
+  #moveModal .genre-picker-menu::-webkit-scrollbar,
+  #uploadForm .genre-picker-menu::-webkit-scrollbar {
+    width: 7px !important;
+  }
+
+  #adminModal .genre-picker-menu::-webkit-scrollbar-thumb,
+  #editModal .genre-picker-menu::-webkit-scrollbar-thumb,
+  #moveModal .genre-picker-menu::-webkit-scrollbar-thumb,
+  #uploadForm .genre-picker-menu::-webkit-scrollbar-thumb {
+    background: rgba(34,197,94,.42) !important;
+    border-radius: 999px !important;
+  }
+
+  /* Kolom admin dinaikkan dan dipadatkan */
+  #adminModal.modal.show,
+  #editModal.modal.show,
+  #moveModal.modal.show {
+    align-items: flex-start !important;
+    padding-top: 10px !important;
+  }
+
+  #adminModal .modal-card,
+  #editModal .modal-card,
+  #moveModal .modal-card {
+    margin-top: 6px !important;
+    padding: 16px !important;
+  }
+
+  #adminModal .modal-head,
+  #editModal .modal-head,
+  #moveModal .modal-head {
+    margin-bottom: 10px !important;
+  }
+
+  #adminModal .admin-grid,
+  #adminModal .form-grid,
+  #editModal .form-grid,
+  #moveModal .form-grid {
+    gap: 9px !important;
+    align-items: start !important;
+  }
+
+  #adminModal .admin-card {
+    padding: 13px !important;
+  }
+
+  #adminModal .admin-card[style*="margin-top"] {
+    margin-top: 8px !important;
+  }
+
+  #adminModal .dropzone {
+    padding: 12px !important;
+  }
+
+  #adminModal .field,
+  #editModal .field,
+  #moveModal .field {
+    gap: 5px !important;
+  }
+
+  #adminModal .field input:not([type="file"]),
+  #adminModal .field select,
+  #editModal .field input:not([type="file"]),
+  #editModal .field select,
+  #moveModal .field input:not([type="file"]),
+  #moveModal .field select {
+    min-height: 44px !important;
+    border-radius: 15px !important;
+  }
+
+  .dam-v52-file-picker {
+    min-height: 60px !important;
+    border-radius: 17px !important;
+    grid-template-columns: 38px minmax(0, 1fr) auto !important;
+    gap: 10px !important;
+    padding: 9px 10px !important;
+    margin-top: 0 !important;
+  }
+
+  .dam-v52-file-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 13px !important;
+  }
+
+  .dam-v52-file-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .dam-v52-file-main {
+    gap: 2px !important;
+  }
+
+  .dam-v52-file-main b {
+    font-size: .82rem !important;
+  }
+
+  .dam-v52-file-main small,
+  .dam-v52-file-name {
+    font-size: .69rem !important;
+  }
+
+  .dam-v52-file-cta {
+    min-height: 32px !important;
+    padding: 0 11px !important;
+    font-size: .69rem !important;
+  }
+
+  @media (max-width: 740px) {
+    #adminModal.modal.show,
+    #editModal.modal.show,
+    #moveModal.modal.show {
+      padding-top: 8px !important;
+    }
+
+    #adminModal .genre-picker-menu,
+    #editModal .genre-picker-menu,
+    #moveModal .genre-picker-menu,
+    #uploadForm .genre-picker-menu {
+      max-height: 146px !important;
+    }
+
+    .dam-v52-file-picker {
+      grid-template-columns: 36px minmax(0, 1fr) !important;
+      min-height: 58px !important;
+    }
+
+    .dam-v52-file-cta {
+      grid-column: auto !important;
+      width: auto !important;
+    }
+  }
+</style>
+
+<script id="dam-v53-admin-dropdown-compact-script">
+(function () {
+  if (window.__DAM_V53_ADMIN_DROPDOWN_COMPACT__) return;
+  window.__DAM_V53_ADMIN_DROPDOWN_COMPACT__ = true;
+
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  function positionOpenPickers() {
+    qsa('#adminModal .genre-picker.open, #editModal .genre-picker.open, #moveModal .genre-picker.open, #uploadForm .genre-picker.open').forEach(function (picker) {
+      var rect = picker.getBoundingClientRect();
+      var estimatedMenuHeight = Math.min(172, Math.max(122, window.innerHeight * 0.24));
+      var roomBelow = window.innerHeight - rect.bottom;
+      var roomAbove = rect.top;
+      if (roomBelow < estimatedMenuHeight + 18 && roomAbove > roomBelow) {
+        picker.classList.add('dam-v53-drop-up');
+      } else {
+        picker.classList.remove('dam-v53-drop-up');
+      }
+    });
+  }
+
+  document.addEventListener('click', function () {
+    setTimeout(positionOpenPickers, 0);
+  }, true);
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Escape') {
+      setTimeout(positionOpenPickers, 0);
+    }
+  }, true);
+
+  window.addEventListener('resize', positionOpenPickers);
+  window.addEventListener('scroll', positionOpenPickers, true);
+  setInterval(positionOpenPickers, 700);
+})();
+</script>
+
+
+
+<!-- DAM V54 - Clean dropdown icon refresh -->
+<style id="dam-v54-dropdown-icon-clean-style">
+  #adminModal .genre-picker-chevron,
+  #editModal .genre-picker-chevron,
+  #moveModal .genre-picker-chevron,
+  #uploadForm .genre-picker-chevron {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background:
+      radial-gradient(circle at 30% 18%, rgba(255,255,255,.22), transparent 34%),
+      linear-gradient(135deg, rgba(34,197,94,.28), rgba(139,92,246,.20)) !important;
+    border: 1px solid rgba(255,255,255,.15) !important;
+    color: #f8fafc !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 8px 18px rgba(0,0,0,.20) !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+  }
+
+  #adminModal .genre-picker-chevron svg,
+  #editModal .genre-picker-chevron svg,
+  #moveModal .genre-picker-chevron svg,
+  #uploadForm .genre-picker-chevron svg {
+    width: 17px !important;
+    height: 17px !important;
+    display: block !important;
+    stroke: currentColor !important;
+    stroke-width: 2.5 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.24));
+    pointer-events: none !important;
+  }
+
+  #adminModal .genre-picker-button:hover .genre-picker-chevron,
+  #editModal .genre-picker-button:hover .genre-picker-chevron,
+  #moveModal .genre-picker-button:hover .genre-picker-chevron,
+  #uploadForm .genre-picker-button:hover .genre-picker-chevron,
+  #adminModal .genre-picker.open .genre-picker-chevron,
+  #editModal .genre-picker.open .genre-picker-chevron,
+  #moveModal .genre-picker.open .genre-picker-chevron,
+  #uploadForm .genre-picker.open .genre-picker-chevron {
+    background:
+      radial-gradient(circle at 30% 18%, rgba(255,255,255,.28), transparent 34%),
+      linear-gradient(135deg, rgba(34,197,94,.42), rgba(139,92,246,.28)) !important;
+    border-color: rgba(134,239,172,.34) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 10px 24px rgba(34,197,94,.14) !important;
+  }
+
+  #adminModal .genre-picker.open .genre-picker-chevron,
+  #editModal .genre-picker.open .genre-picker-chevron,
+  #moveModal .genre-picker.open .genre-picker-chevron,
+  #uploadForm .genre-picker.open .genre-picker-chevron {
+    transform: rotate(180deg) !important;
+  }
+</style>
+<script id="dam-v54-dropdown-icon-clean-script">
+(function(){
+  if (window.__DAM_V54_DROPDOWN_ICON_CLEAN__) return;
+  window.__DAM_V54_DROPDOWN_ICON_CLEAN__ = true;
+
+  const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 10.5 12 15.5 17 10.5"></path></svg>';
+
+  function refreshDropdownIcons(root){
+    const scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('#adminModal .genre-picker-chevron, #editModal .genre-picker-chevron, #moveModal .genre-picker-chevron, #uploadForm .genre-picker-chevron').forEach(function(el){
+      if (el.dataset.damV54Icon === '1') return;
+      el.dataset.damV54Icon = '1';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = ICON;
+    });
+  }
+
+  refreshDropdownIcons(document);
+  const observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(mutation){
+      mutation.addedNodes.forEach(function(node){
+        if (node.nodeType === 1) refreshDropdownIcons(node);
+      });
+    });
+    refreshDropdownIcons(document);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+
+<!-- DAM V55 - DAM logo only refresh; visual patch only, no app function changes -->
+<style id="dam-v55-dam-logo-only-style">
+  .brand-mark.dam-v55-logo {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    border-radius: 22px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: grid !important;
+    place-items: center !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    background:
+      radial-gradient(circle at 25% 12%, rgba(255,255,255,.42), transparent 22%),
+      radial-gradient(circle at 76% 88%, rgba(34,197,94,.42), transparent 36%),
+      linear-gradient(135deg, #121827 0%, #121025 42%, #05170d 100%) !important;
+    box-shadow:
+      0 18px 42px rgba(0,0,0,.34),
+      0 0 38px rgba(34,197,94,.16),
+      inset 0 1px 0 rgba(255,255,255,.22) !important;
+    animation: damV55LogoGlow 4.5s ease-in-out infinite !important;
+  }
+
+  .brand-mark.dam-v55-logo::before {
+    content: "";
+    position: absolute;
+    inset: -45%;
+    background: conic-gradient(from 210deg, transparent 0 18%, rgba(34,197,94,.72), rgba(6,182,212,.60), rgba(168,85,247,.72), rgba(244,63,94,.50), transparent 82% 100%);
+    opacity: .72;
+    filter: blur(.2px);
+    animation: damV55LogoSpin 9s linear infinite;
+  }
+
+  .brand-mark.dam-v55-logo::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 18px;
+    background:
+      linear-gradient(145deg, rgba(3,7,18,.90), rgba(5,18,12,.82)),
+      radial-gradient(circle at 50% 0%, rgba(255,255,255,.18), transparent 48%);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+  }
+
+  .brand-mark.dam-v55-logo span {
+    display: none !important;
+  }
+
+  .brand-mark.dam-v55-logo .dam-v55-logo-svg {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 48px !important;
+    height: 48px !important;
+    display: block !important;
+    overflow: visible !important;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,.44));
+  }
+
+  .brand-mark.dam-v55-logo .dam-v55-ring {
+    fill: none;
+    stroke: url(#damV55LogoStroke);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    opacity: .96;
+  }
+
+  .brand-mark.dam-v55-logo .dam-v55-note {
+    fill: #86efac;
+    opacity: .96;
+  }
+
+  .brand-mark.dam-v55-logo .dam-v55-text {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: -1.1px;
+    fill: #ffffff;
+  }
+
+  .brand-mark.dam-v55-logo .dam-v55-subline {
+    stroke: #bbf7d0;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    opacity: .86;
+  }
+
+  @keyframes damV55LogoSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes damV55LogoGlow {
+    0%, 100% { box-shadow: 0 18px 42px rgba(0,0,0,.34), 0 0 30px rgba(34,197,94,.12), inset 0 1px 0 rgba(255,255,255,.22); }
+    50% { box-shadow: 0 20px 50px rgba(0,0,0,.38), 0 0 46px rgba(168,85,247,.20), inset 0 1px 0 rgba(255,255,255,.26); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-mark.dam-v55-logo,
+    .brand-mark.dam-v55-logo::before {
+      animation: none !important;
+    }
+  }
+</style>
+<script id="dam-v55-dam-logo-only-script">
+(function(){
+  if (window.__DAM_V55_DAM_LOGO_ONLY__) return;
+  window.__DAM_V55_DAM_LOGO_ONLY__ = true;
+
+  var LOGO = '<svg class="dam-v55-logo-svg" viewBox="0 0 56 56" role="img" aria-label="DAM"><defs><linearGradient id="damV55LogoStroke" x1="8" y1="8" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#86efac"/><stop offset=".48" stop-color="#22d3ee"/><stop offset="1" stop-color="#c084fc"/></linearGradient></defs><path class="dam-v55-ring" d="M14.2 17.4C17.5 11.7 24.8 9 31.1 10.9c7 2.1 11.5 9.1 10.3 16.3-1.2 7.5-8 12.9-15.6 12.2-4.5-.4-8.4-2.9-10.8-6.5"/><path class="dam-v55-note" d="M39 14.5v15.2a4.7 4.7 0 1 1-2.6-4.2v-8.6l-10.2 2.2v11.5a4.7 4.7 0 1 1-2.6-4.2V17.7c0-.7.5-1.4 1.2-1.5l12.5-2.7c.9-.2 1.7.4 1.7 1Z" opacity=".18"/><text class="dam-v55-text" x="28" y="31.2" text-anchor="middle">DAM</text><path class="dam-v55-subline" d="M18.4 36.2h19.2"/></svg>';
+
+  function applyLogo(){
+    var mark = document.querySelector('.brand-mark');
+    if (!mark) return;
+    if (mark.dataset.damV55Logo === '1') return;
+    mark.dataset.damV55Logo = '1';
+    mark.classList.remove('dam-v52-logo');
+    mark.classList.add('dam-v55-logo');
+    mark.innerHTML = LOGO;
+  }
+
+  function start(){
+    applyLogo();
+    setTimeout(applyLogo, 80);
+    setTimeout(applyLogo, 400);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+
+
+<!-- DAM V56 - Logo like requested reference; theme-adaptive visual only, no app function changes -->
+<style id="dam-v56-reference-logo-theme-style">
+  .brand-mark.dam-v56-logo {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    border-radius: 17px !important;
+    position: relative !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    color: #ffffff !important;
+    background:
+      radial-gradient(circle at 30% 18%, color-mix(in srgb, var(--accent2, #22c55e) 92%, white 18%), transparent 34%),
+      linear-gradient(145deg, var(--accent2, #22c55e), var(--accent, #a855f7)) !important;
+    box-shadow:
+      0 18px 42px rgba(0,0,0,.34),
+      0 0 34px color-mix(in srgb, var(--accent2, #22c55e) 38%, transparent),
+      inset 0 1px 0 rgba(255,255,255,.22),
+      inset 0 -10px 18px rgba(0,0,0,.12) !important;
+    transform: translateZ(0);
+  }
+
+  .brand-mark.dam-v56-logo::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 13px;
+    background:
+      radial-gradient(circle at 45% 38%, rgba(255,255,255,.065), transparent 30%),
+      linear-gradient(145deg, rgba(2,6,7,.96), rgba(0,22,15,.92)) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.045),
+      inset 0 16px 24px rgba(255,255,255,.035),
+      0 10px 24px rgba(0,0,0,.28) !important;
+  }
+
+  .brand-mark.dam-v56-logo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 0 34%, rgba(255,255,255,.20) 45%, transparent 56% 100%),
+      radial-gradient(circle at 24% 16%, rgba(255,255,255,.18), transparent 22%);
+    opacity: .55;
+    mix-blend-mode: screen;
+  }
+
+  .brand-mark.dam-v56-logo span { display: none !important; }
+  .brand-mark.dam-v56-logo .dam-v52-logo-svg,
+  .brand-mark.dam-v56-logo .dam-v55-logo-svg { display: none !important; }
+
+  .brand-mark.dam-v56-logo .dam-v56-logo-svg {
+    position: relative;
+    z-index: 2;
+    width: 48px !important;
+    height: 48px !important;
+    display: block !important;
+    overflow: visible;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.38));
+  }
+
+  .brand-mark.dam-v56-logo .dam-v56-word {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    font-weight: 950;
+    letter-spacing: -1.35px;
+    fill: #ffffff;
+    paint-order: stroke;
+    stroke: rgba(255,255,255,.16);
+    stroke-width: .45px;
+  }
+
+  .brand-mark.dam-v56-logo .dam-v56-shadow {
+    fill: rgba(255,255,255,.18);
+    filter: blur(.18px);
+  }
+
+  .brand-mark.dam-v56-logo .dam-v56-core-glow {
+    fill: color-mix(in srgb, var(--accent2, #22c55e) 22%, transparent);
+    opacity: .55;
+  }
+
+  .brand-mark.dam-v56-logo:hover {
+    transform: translateY(-1px) scale(1.015) !important;
+    box-shadow:
+      0 22px 50px rgba(0,0,0,.38),
+      0 0 42px color-mix(in srgb, var(--accent2, #22c55e) 48%, transparent),
+      inset 0 1px 0 rgba(255,255,255,.25) !important;
+  }
+
+  @supports not (background: color-mix(in srgb, #22c55e 50%, transparent)) {
+    .brand-mark.dam-v56-logo {
+      box-shadow: 0 18px 42px rgba(0,0,0,.34), 0 0 34px rgba(34,197,94,.26), inset 0 1px 0 rgba(255,255,255,.22), inset 0 -10px 18px rgba(0,0,0,.12) !important;
+    }
+    .brand-mark.dam-v56-logo .dam-v56-core-glow { fill: rgba(34,197,94,.22); }
+  }
+</style>
+<script id="dam-v56-reference-logo-theme-script">
+(function(){
+  if (window.__DAM_V56_REFERENCE_LOGO_THEME__) return;
+  window.__DAM_V56_REFERENCE_LOGO_THEME__ = true;
+
+  var LOGO = '<svg class="dam-v56-logo-svg" viewBox="0 0 52 52" role="img" aria-label="DAM"><rect class="dam-v56-core-glow" x="9" y="11" width="34" height="30" rx="12"></rect><text class="dam-v56-shadow" x="26.8" y="31.6" text-anchor="middle">DAM</text><text class="dam-v56-word" x="26" y="30.6" text-anchor="middle">DAM</text></svg>';
+
+  function applyLogo(){
+    var mark = document.querySelector('.brand-mark');
+    if (!mark) return;
+    if (mark.dataset.damV56Logo === '1' && mark.classList.contains('dam-v56-logo')) return;
+    mark.dataset.damV56Logo = '1';
+    mark.classList.remove('dam-v52-logo', 'dam-v55-logo');
+    mark.classList.add('dam-v56-logo');
+    mark.innerHTML = LOGO;
+  }
+
+  function start(){
+    applyLogo();
+    setTimeout(applyLogo, 80);
+    setTimeout(applyLogo, 450);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
