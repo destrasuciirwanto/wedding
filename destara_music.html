@@ -2293,6 +2293,66 @@
   }
   function canUseAudio(){ return typeof audio !== 'undefined' && audio; }
 
+  function sourceCoverForTrack(trackId){
+    var id = String(trackId || '');
+    if (!id) return null;
+
+    try {
+      var current = currentTrack();
+      if (current && String(current.id || '') === id) {
+        var nowCover = qs('#nowInfo .cover');
+        if (nowCover) return nowCover;
+      }
+    } catch(e) {}
+
+    var card = qsa('.track-card[data-track]').find(function(el){
+      return String(el.getAttribute('data-track') || '') === id;
+    });
+    if (card) {
+      var cardCover = qs('.cover', card);
+      if (cardCover) return cardCover;
+    }
+
+    var row = qsa('.row').find(function(el){
+      var btn = qs('[data-play]', el);
+      return btn && String(btn.getAttribute('data-play') || '') === id;
+    });
+    if (row) {
+      var rowCover = qs('.cover', row);
+      if (rowCover) return rowCover;
+    }
+
+    var cmd = qsa('.command-item[data-cmd-track]').find(function(el){
+      return String(el.getAttribute('data-cmd-track') || '') === id;
+    });
+    if (cmd) {
+      var cmdCover = qs('.cover', cmd);
+      if (cmdCover) return cmdCover;
+    }
+
+    return null;
+  }
+
+  function applyExpandedArt(art, track){
+    if (!art) return;
+    var srcCover = track ? sourceCoverForTrack(track.id) : null;
+
+    art.classList.remove('dam-has-wallpaper-cover', 'dam-wallpaper-loading');
+
+    if (srcCover) {
+      art.style.background = srcCover.style.background || safeGradient(track);
+      art.innerHTML = srcCover.innerHTML;
+      art.classList.toggle('dam-has-wallpaper-cover', srcCover.classList.contains('dam-has-wallpaper-cover'));
+      art.classList.toggle('dam-wallpaper-loading', srcCover.classList.contains('dam-wallpaper-loading'));
+      return;
+    }
+
+    art.style.background = safeGradient(track);
+    art.innerHTML = track && track.cover
+      ? '<img src="' + safeAttr(track.cover) + '" alt="">'
+      : '<span class="cover-letter">' + safeEsc(String((track && track.title) || 'D').charAt(0)) + '</span>';
+  }
+
   function ensureExpandedPlayer(){
     var existing = qs('#damExpandedPlayer');
     if (existing) return existing;
@@ -2391,8 +2451,7 @@
 
     shell.style.setProperty('--dam-expanded-accent', safeColor(t) + '44');
     art.setAttribute('data-track', t.id || '');
-    art.style.background = safeGradient(t);
-    art.innerHTML = t.cover ? '<img src="' + safeAttr(t.cover) + '" alt="">' : '<span class="cover-letter">' + safeEsc(String(t.title || 'D').charAt(0)) + '</span>';
+    applyExpandedArt(art, t);
     title.textContent = t.title || 'Untitled';
     meta.innerHTML = '<span class="dam-expanded-chip">' + safeEsc(t.artist || 'Unknown Artist') + '</span>' +
       '<span class="dam-expanded-chip">' + safeEsc(t.genre || 'Music') + '</span>' +
