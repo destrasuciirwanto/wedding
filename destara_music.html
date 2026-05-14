@@ -4291,5 +4291,651 @@
   }
 </style>
 
+
+<style id="dam-v49-color-and-mood-controls">
+  /* DAM V49 - Warna + Mood aktif.
+     Default tetap tampilan hijau saat ini. Patch ini hanya menambah kontrol warna/mood UI. */
+  :root {
+    --dam-accent: #22c55e;
+    --dam-accent2: #16a34a;
+    --dam-rgb: 34 197 94;
+    --dam-rgb2: 22 163 74;
+    --dam-on-accent: #06130a;
+  }
+
+  :root[data-dam-color="blue"] {
+    --dam-accent: #3b82f6;
+    --dam-accent2: #06b6d4;
+    --dam-rgb: 59 130 246;
+    --dam-rgb2: 6 182 212;
+    --dam-on-accent: #eff6ff;
+  }
+
+  :root[data-dam-color="red"] {
+    --dam-accent: #ef4444;
+    --dam-accent2: #fb7185;
+    --dam-rgb: 239 68 68;
+    --dam-rgb2: 251 113 133;
+    --dam-on-accent: #fff1f2;
+  }
+
+  :root[data-dam-color="purple"] {
+    --dam-accent: #a855f7;
+    --dam-accent2: #7c3aed;
+    --dam-rgb: 168 85 247;
+    --dam-rgb2: 124 58 237;
+    --dam-on-accent: #faf5ff;
+  }
+
+  :root[data-dam-color="pink"] {
+    --dam-accent: #ec4899;
+    --dam-accent2: #f472b6;
+    --dam-rgb: 236 72 153;
+    --dam-rgb2: 244 114 182;
+    --dam-on-accent: #fff1f2;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) {
+    --accent: var(--dam-accent) !important;
+    --accent2: var(--dam-accent2) !important;
+    --green: var(--dam-accent) !important;
+    --soft-green: rgb(var(--dam-rgb) / .11) !important;
+    --soft-green-2: rgb(var(--dam-rgb) / .18) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) body {
+    background:
+      radial-gradient(circle at 68% -8%, rgb(var(--dam-rgb) / .13), transparent 32%),
+      radial-gradient(circle at 12% 18%, rgb(var(--dam-rgb) / .055), transparent 28%),
+      linear-gradient(180deg, #050505 0%, #0a0a0a 46%, #050505 100%) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .aurora {
+    background:
+      radial-gradient(circle at 76% 4%, rgb(var(--dam-rgb) / .13), transparent 28%),
+      radial-gradient(circle at 18% 18%, rgb(var(--dam-rgb2) / .075), transparent 28%),
+      linear-gradient(135deg, #050505, #0a0a0a 52%, #050505) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .current-glow {
+    background: radial-gradient(circle, rgb(var(--dam-rgb) / .18), transparent 64%) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .noise {
+    background-image:
+      linear-gradient(rgb(var(--dam-rgb) / .035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--dam-rgb) / .022) 1px, transparent 1px) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .brand-mark {
+    background: conic-gradient(from 210deg, var(--dam-accent), var(--dam-accent2), color-mix(in srgb, var(--dam-accent) 58%, white), var(--dam-accent)) !important;
+    box-shadow: 0 16px 38px rgb(var(--dam-rgb) / .28) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .eyebrow,
+  :root[data-dam-color]:not([data-dam-color="green"]) .nav-title,
+  :root[data-dam-color]:not([data-dam-color="green"]) .section-head small,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-eyebrow,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-chip {
+    color: color-mix(in srgb, var(--dam-accent) 66%, white) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .hero {
+    background:
+      radial-gradient(circle at 85% 10%, rgb(var(--dam-rgb) / .08), transparent 26%),
+      linear-gradient(135deg, rgba(28,28,28,.96), rgba(12,12,12,.98)) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .hero:before {
+    background: linear-gradient(120deg, transparent, rgb(var(--dam-rgb) / .11), transparent) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .btn.primary,
+  :root[data-dam-color]:not([data-dam-color="green"]) .primary,
+  :root[data-dam-color]:not([data-dam-color="green"]) .seg button.active,
+  :root[data-dam-color]:not([data-dam-color="green"]) .pill.active,
+  :root[data-dam-color]:not([data-dam-color="green"]) .chip.active,
+  :root[data-dam-color]:not([data-dam-color="green"]) .admin-toggle,
+  :root[data-dam-color]:not([data-dam-color="green"]) button.primary,
+  :root[data-dam-color]:not([data-dam-color="green"]) .play-floating,
+  :root[data-dam-color]:not([data-dam-color="green"]) .toast.good,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-btn.big {
+    background: linear-gradient(135deg, var(--dam-accent), var(--dam-accent2)) !important;
+    border-color: rgb(var(--dam-rgb) / .42) !important;
+    color: var(--dam-on-accent) !important;
+    box-shadow: 0 16px 36px rgb(var(--dam-rgb) / .22) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .btn:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .chip:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .icon-btn:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .seg button:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .pill:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .mini-actions button:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .row-actions button:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .ctrl:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-pill:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-btn:hover {
+    background: rgb(var(--dam-rgb) / .12) !important;
+    border-color: rgb(var(--dam-rgb) / .30) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .search-wrap input:focus,
+  :root[data-dam-color]:not([data-dam-color="green"]) .field input:focus,
+  :root[data-dam-color]:not([data-dam-color="green"]) .field select:focus,
+  :root[data-dam-color]:not([data-dam-color="green"]) .field textarea:focus {
+    border-color: rgb(var(--dam-rgb) / .55) !important;
+    box-shadow: 0 0 0 4px rgb(var(--dam-rgb) / .13) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn::before {
+    background: var(--dam-accent) !important;
+    box-shadow: 0 0 14px rgb(var(--dam-rgb) / .58) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn.active,
+  :root[data-dam-color]:not([data-dam-color="green"]) #nowInfo:hover {
+    background: rgb(var(--dam-rgb) / .075) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn.active {
+    border-color: rgb(var(--dam-rgb) / .16) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn.active .icon,
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn:hover .icon {
+    background: rgb(var(--dam-rgb) / .18) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .count-badge,
+  :root[data-dam-color]:not([data-dam-color="green"]) .sidebar .nav-btn.active .count-badge,
+  :root[data-dam-color]:not([data-dam-color="green"]) .dam-expanded-chip {
+    background: rgb(var(--dam-rgb) / .10) !important;
+    border-color: rgb(var(--dam-rgb) / .16) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) input[type="range"] {
+    accent-color: var(--dam-accent) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) #seek::-webkit-slider-runnable-track {
+    background: linear-gradient(90deg, rgb(var(--dam-rgb) / .55), rgba(255,255,255,.26)) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) #seek::-webkit-slider-thumb {
+    background: var(--dam-accent) !important;
+    box-shadow: 0 0 0 4px rgb(var(--dam-rgb) / .18) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) #seek::-moz-range-track {
+    background: linear-gradient(90deg, rgb(var(--dam-rgb) / .55), rgba(255,255,255,.26)) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) #seek::-moz-range-thumb {
+    background: var(--dam-accent) !important;
+    box-shadow: 0 0 0 4px rgb(var(--dam-rgb) / .18) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .progress > span,
+  :root[data-dam-color]:not([data-dam-color="green"]) .bar > span,
+  :root[data-dam-color]:not([data-dam-color="green"]) .volbar > span,
+  :root[data-dam-color]:not([data-dam-color="green"]) .progress-fill,
+  :root[data-dam-color]:not([data-dam-color="green"]) .bar-fill,
+  :root[data-dam-color]:not([data-dam-color="green"]) .eq span {
+    background: var(--dam-accent) !important;
+    box-shadow: 0 0 18px rgb(var(--dam-rgb) / .26) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card.playing,
+  :root[data-dam-color]:not([data-dam-color="green"]) .row.playing {
+    border-color: rgb(var(--dam-rgb) / .35) !important;
+    box-shadow: 0 0 0 1px rgb(var(--dam-rgb) / .12), 0 18px 40px rgba(0,0,0,.45) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card,
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card.playing {
+    border-color: transparent !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card:focus-within {
+    border-color: rgba(255,255,255,.18) !important;
+  }
+
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card.playing:hover,
+  :root[data-dam-color]:not([data-dam-color="green"]) .track-card.playing:focus-within {
+    border-color: rgb(var(--dam-rgb) / .48) !important;
+  }
+
+  :root[data-dam-mood="soft"] .aurora,
+  :root[data-dam-mood="soft"] .current-glow {
+    opacity: .42 !important;
+  }
+
+  :root[data-dam-mood="soft"] .hero,
+  :root[data-dam-mood="soft"] .track-card,
+  :root[data-dam-mood="soft"] .genre-card,
+  :root[data-dam-mood="soft"] .playlist-card,
+  :root[data-dam-mood="soft"] .row,
+  :root[data-dam-mood="soft"] .player,
+  :root[data-dam-mood="soft"] .sidebar,
+  :root[data-dam-mood="soft"] .main {
+    box-shadow: 0 14px 34px rgba(0,0,0,.30) !important;
+  }
+
+  :root[data-dam-mood="glow"] .current-glow {
+    opacity: .85 !important;
+    filter: blur(24px) !important;
+  }
+
+  :root[data-dam-mood="glow"] .btn.primary,
+  :root[data-dam-mood="glow"] .primary,
+  :root[data-dam-mood="glow"] .play-floating,
+  :root[data-dam-mood="glow"] .brand-mark {
+    box-shadow: 0 18px 42px rgb(var(--dam-rgb) / .32) !important;
+  }
+
+  :root[data-dam-mood="clean"] .aurora,
+  :root[data-dam-mood="clean"] .noise,
+  :root[data-dam-mood="clean"] .current-glow {
+    opacity: 0 !important;
+  }
+
+  :root[data-dam-mood="clean"] .hero,
+  :root[data-dam-mood="clean"] .track-card,
+  :root[data-dam-mood="clean"] .genre-card,
+  :root[data-dam-mood="clean"] .playlist-card,
+  :root[data-dam-mood="clean"] .row,
+  :root[data-dam-mood="clean"] .player,
+  :root[data-dam-mood="clean"] .sidebar,
+  :root[data-dam-mood="clean"] .main {
+    box-shadow: none !important;
+  }
+
+  #colorBtn,
+  #themeBtn {
+    white-space: nowrap !important;
+  }
+
+  @media (max-width: 740px) {
+    #colorBtn,
+    #themeBtn {
+      min-height: 36px !important;
+      padding: 0 10px !important;
+      font-size: .72rem !important;
+    }
+  }
+</style>
+
+<script id="dam-v49-color-and-mood-controls-script">
+(function () {
+  if (window.__DAM_V49_COLOR_AND_MOOD_CONTROLS__) return;
+  window.__DAM_V49_COLOR_AND_MOOD_CONTROLS__ = true;
+
+  var COLOR_KEY = 'dam_theme_color_v49';
+  var MOOD_KEY = 'dam_theme_mood_v49';
+  var root = document.documentElement;
+
+  var colors = ['green', 'blue', 'red', 'purple', 'pink'];
+  var colorLabels = {
+    green: 'Hijau',
+    blue: 'Biru',
+    red: 'Merah',
+    purple: 'Ungu',
+    pink: 'Pink'
+  };
+  var colorValues = {
+    green: ['#22c55e', '#16a34a'],
+    blue: ['#3b82f6', '#06b6d4'],
+    red: ['#ef4444', '#fb7185'],
+    purple: ['#a855f7', '#7c3aed'],
+    pink: ['#ec4899', '#f472b6']
+  };
+
+  var moods = ['default', 'soft', 'glow', 'clean'];
+  var moodLabels = {
+    default: 'Default',
+    soft: 'Soft',
+    glow: 'Glow',
+    clean: 'Clean'
+  };
+
+  function qs(selector, rootNode) {
+    return (rootNode || document).querySelector(selector);
+  }
+
+  function makeToast(title, message) {
+    if (typeof window.toast === 'function') {
+      window.toast(title, message, 'good');
+    }
+  }
+
+  function validColor(value) {
+    return colors.indexOf(value) >= 0 ? value : 'green';
+  }
+
+  function validMood(value) {
+    return moods.indexOf(value) >= 0 ? value : 'default';
+  }
+
+  function compactLabel(prefix, label) {
+    return prefix + ' ' + label;
+  }
+
+  function setImportantVar(name, value) {
+    root.style.setProperty(name, value, 'important');
+  }
+
+  function applyColor(color, shouldToast) {
+    color = validColor(color);
+    var values = colorValues[color] || colorValues.green;
+
+    root.dataset.damColor = color;
+    setImportantVar('--accent', values[0]);
+    setImportantVar('--accent2', values[1]);
+    localStorage.setItem(COLOR_KEY, color);
+
+    var colorBtn = qs('#colorBtn');
+    if (colorBtn) {
+      colorBtn.textContent = compactLabel('🎨 Warna:', colorLabels[color]);
+      colorBtn.classList.toggle('active', color !== 'green');
+      colorBtn.title = 'Klik untuk ganti warna tema';
+    }
+
+    if (shouldToast) makeToast('Warna diganti', colorLabels[color]);
+  }
+
+  function applyMood(mood, shouldToast) {
+    mood = validMood(mood);
+    root.dataset.damMood = mood;
+    localStorage.setItem(MOOD_KEY, mood);
+
+    var moodBtn = qs('#themeBtn');
+    if (moodBtn) {
+      moodBtn.textContent = compactLabel('✧ Mood:', moodLabels[mood]);
+      moodBtn.classList.toggle('active', mood !== 'default');
+      moodBtn.title = 'Klik untuk ganti mood tampilan';
+    }
+
+    if (shouldToast) makeToast('Mood diganti', moodLabels[mood]);
+  }
+
+  function nextValue(list, current) {
+    var index = list.indexOf(current);
+    return list[(index + 1) % list.length];
+  }
+
+  function setupButtons() {
+    var moodButtonOld = qs('#themeBtn');
+    if (!moodButtonOld || !moodButtonOld.parentNode) return;
+
+    var moodButton = moodButtonOld.cloneNode(true);
+    moodButton.id = 'themeBtn';
+    moodButton.className = moodButtonOld.className || 'chip';
+    moodButtonOld.parentNode.replaceChild(moodButton, moodButtonOld);
+
+    var colorButton = qs('#colorBtn');
+    if (!colorButton) {
+      colorButton = document.createElement('button');
+      colorButton.type = 'button';
+      colorButton.className = 'chip';
+      colorButton.id = 'colorBtn';
+      moodButton.insertAdjacentElement('beforebegin', colorButton);
+    }
+
+    colorButton.addEventListener('click', function () {
+      var current = validColor(root.dataset.damColor || localStorage.getItem(COLOR_KEY));
+      applyColor(nextValue(colors, current), true);
+    });
+
+    moodButton.addEventListener('click', function () {
+      var current = validMood(root.dataset.damMood || localStorage.getItem(MOOD_KEY));
+      applyMood(nextValue(moods, current), true);
+    });
+
+    applyColor(validColor(localStorage.getItem(COLOR_KEY) || 'green'), false);
+    applyMood(validMood(localStorage.getItem(MOOD_KEY) || 'default'), false);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupButtons);
+  } else {
+    setupButtons();
+  }
+})();
+</script>
+
+<style id="dam-v50-modern-color-no-mood-style">
+  /* DAM V50 - Mood dihapus, tombol Warna dibuat lebih modern. */
+  #themeBtn {
+    display: none !important;
+  }
+
+  #colorBtn.dam-modern-color-btn {
+    position: relative !important;
+    min-height: 40px !important;
+    padding: 0 13px 0 9px !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    overflow: hidden !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.13) !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.055)) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.09),
+      0 12px 30px rgba(0,0,0,.18) !important;
+    font-weight: 950 !important;
+    letter-spacing: -.01em !important;
+    white-space: nowrap !important;
+  }
+
+  #colorBtn.dam-modern-color-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 0%, rgb(var(--dam-rgb, 34 197 94) / .22), transparent 42%),
+      linear-gradient(135deg, rgb(var(--dam-rgb, 34 197 94) / .08), transparent 62%);
+    opacity: .88;
+  }
+
+  #colorBtn.dam-modern-color-btn > span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dam-color-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    background:
+      conic-gradient(from 210deg, var(--dam-accent, #22c55e), var(--dam-accent2, #16a34a), rgba(255,255,255,.92), var(--dam-accent, #22c55e));
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.16),
+      0 8px 20px rgb(var(--dam-rgb, 34 197 94) / .28);
+  }
+
+  .dam-color-icon::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(5,5,7,.82);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+  }
+
+  .dam-color-label {
+    font-size: .78rem;
+    color: rgba(255,255,255,.94);
+  }
+
+  .dam-color-value {
+    min-width: 46px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--dam-accent, #22c55e) 50%, white);
+    background: rgb(var(--dam-rgb, 34 197 94) / .13);
+    border: 1px solid rgb(var(--dam-rgb, 34 197 94) / .16);
+    font-size: .70rem;
+    line-height: 1;
+    text-align: center;
+  }
+
+  #colorBtn.dam-modern-color-btn:hover {
+    transform: translateY(-1px) !important;
+    border-color: rgb(var(--dam-rgb, 34 197 94) / .36) !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.075)) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 16px 38px rgb(var(--dam-rgb, 34 197 94) / .16) !important;
+  }
+
+  @media (max-width: 740px) {
+    #colorBtn.dam-modern-color-btn {
+      min-height: 36px !important;
+      padding: 0 10px 0 7px !important;
+      gap: 7px !important;
+    }
+
+    .dam-color-icon {
+      width: 23px;
+      height: 23px;
+    }
+
+    .dam-color-icon::after {
+      width: 9px;
+      height: 9px;
+    }
+
+    .dam-color-label {
+      font-size: .72rem;
+    }
+
+    .dam-color-value {
+      min-width: 42px;
+      padding: 4px 7px;
+      font-size: .66rem;
+    }
+  }
+</style>
+
+<script id="dam-v50-modern-color-no-mood-script">
+(function () {
+  if (window.__DAM_V50_MODERN_COLOR_NO_MOOD__) return;
+  window.__DAM_V50_MODERN_COLOR_NO_MOOD__ = true;
+
+  var COLOR_KEY = 'dam_theme_color_v49';
+  var OLD_MOOD_KEY = 'dam_theme_mood_v49';
+  var root = document.documentElement;
+
+  var colors = ['green', 'blue', 'red', 'purple', 'pink'];
+  var labels = {
+    green: 'Hijau',
+    blue: 'Biru',
+    red: 'Merah',
+    purple: 'Ungu',
+    pink: 'Pink'
+  };
+  var values = {
+    green: ['#22c55e', '#16a34a'],
+    blue: ['#3b82f6', '#06b6d4'],
+    red: ['#ef4444', '#fb7185'],
+    purple: ['#a855f7', '#7c3aed'],
+    pink: ['#ec4899', '#f472b6']
+  };
+
+  function qs(selector, parent) {
+    return (parent || document).querySelector(selector);
+  }
+
+  function validColor(value) {
+    return colors.indexOf(value) >= 0 ? value : 'green';
+  }
+
+  function nextColor(current) {
+    var index = colors.indexOf(validColor(current));
+    return colors[(index + 1) % colors.length];
+  }
+
+  function setImportantVar(name, value) {
+    root.style.setProperty(name, value, 'important');
+  }
+
+  function renderButton(button, color) {
+    button.innerHTML = '<span class="dam-color-icon" aria-hidden="true"></span><span class="dam-color-label">Warna</span><span class="dam-color-value">' + labels[color] + '</span>';
+    button.className = 'chip dam-modern-color-btn' + (color !== 'green' ? ' active' : '');
+    button.type = 'button';
+    button.title = 'Klik untuk ganti warna tema';
+    button.setAttribute('aria-label', 'Ganti warna tema. Warna sekarang: ' + labels[color]);
+  }
+
+  function applyColor(color, shouldToast) {
+    color = validColor(color);
+    var pair = values[color] || values.green;
+
+    root.dataset.damColor = color;
+    setImportantVar('--accent', pair[0]);
+    setImportantVar('--accent2', pair[1]);
+    localStorage.setItem(COLOR_KEY, color);
+
+    var button = qs('#colorBtn');
+    if (button) renderButton(button, color);
+
+    if (shouldToast && typeof window.toast === 'function') {
+      window.toast('Warna diganti', labels[color], 'good');
+    }
+  }
+
+  function setup() {
+    root.dataset.damMood = 'default';
+    localStorage.removeItem(OLD_MOOD_KEY);
+
+    var themeButton = qs('#themeBtn');
+    if (themeButton) themeButton.remove();
+
+    var topActions = qs('.top-actions');
+    if (!topActions) return;
+
+    var oldColorButton = qs('#colorBtn');
+    var colorButton = document.createElement('button');
+    colorButton.id = 'colorBtn';
+    colorButton.type = 'button';
+
+    if (oldColorButton && oldColorButton.parentNode) {
+      oldColorButton.parentNode.replaceChild(colorButton, oldColorButton);
+    } else {
+      var commandButton = qs('#cmdBtn', topActions);
+      if (commandButton && commandButton.nextSibling) {
+        topActions.insertBefore(colorButton, commandButton.nextSibling);
+      } else {
+        topActions.appendChild(colorButton);
+      }
+    }
+
+    colorButton.addEventListener('click', function () {
+      var current = validColor(root.dataset.damColor || localStorage.getItem(COLOR_KEY));
+      applyColor(nextColor(current), true);
+    });
+
+    applyColor(validColor(localStorage.getItem(COLOR_KEY) || 'green'), false);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+})();
+</script>
+
 </body>
 </html>
