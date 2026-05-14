@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DestAra Music</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070b;
+      --panel: rgba(18, 18, 24, .78);
+      --panel-2: rgba(28, 28, 38, .78);
+      --line: rgba(255,255,255,.08);
+      --muted: #a1a1aa;
+      --text: #f8fafc;
+      --accent: #a855f7;
+      --accent-2: #22c55e;
+      --shadow: 0 28px 90px rgba(0,0,0,.42);
+      --radius: 28px;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 16% 8%, rgba(168,85,247,.25), transparent 28%),
+        radial-gradient(circle at 78% 12%, rgba(34,197,94,.13), transparent 24%),
+        radial-gradient(circle at 65% 84%, rgba(14,165,233,.16), transparent 28%),
+        linear-gradient(135deg, #050508 0%, #0a0a13 48%, #080813 100%);
+      overflow: hidden;
+    }
+    button, input, select { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    a { color: inherit; }
+    .app {
+      width: 100vw;
+      height: 100dvh;
+      display: grid;
+      grid-template-columns: 280px minmax(0,1fr);
+      grid-template-rows: minmax(0,1fr) 96px;
+      gap: 14px;
+      padding: 14px;
+      overflow: hidden;
+    }
+    .sidebar, .main, .player, .modal-card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .sidebar {
+      grid-row: 1 / 2;
+      border-radius: var(--radius);
+      padding: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 52px;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #7c3aed, #d946ef, #22c55e);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 18px 42px rgba(168,85,247,.22);
+      font-weight: 950;
+    }
+    .brand strong { display: block; font-size: 18px; letter-spacing: -.03em; }
+    .brand span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; margin-top: 2px; }
+    .nav-group { display: flex; flex-direction: column; gap: 8px; }
+    .nav-title { color: #71717a; font-size: 10px; font-weight: 950; letter-spacing: .18em; text-transform: uppercase; padding: 0 10px; }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      border-radius: 16px;
+      padding: 0 12px;
+      color: #d4d4d8;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 850;
+      transition: .16s ease;
+      text-align: left;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,.06); color: white; }
+    .nav-btn.active { background: linear-gradient(135deg, rgba(168,85,247,.32), rgba(34,197,94,.14)); color: white; border: 1px solid rgba(255,255,255,.08); }
+    .nav-ico { width: 24px; text-align: center; opacity: .92; }
+    .create-btn {
+      min-height: 46px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.08);
+      color: white;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      transition: .16s ease;
+    }
+    .create-btn:hover { background: rgba(168,85,247,.25); transform: translateY(-1px); }
+    .playlist-list { overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 8px; }
+    .playlist-mini {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,.04);
+      color: white;
+      text-align: left;
+      transition: .16s ease;
+    }
+    .playlist-mini:hover { background: rgba(255,255,255,.08); }
+    .playlist-mini-cover { width: 38px; height: 38px; border-radius: 12px; flex: 0 0 auto; display: grid; place-items: center; font-size: 13px; font-weight: 950; }
+    .playlist-mini b { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .playlist-mini small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .main {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .topbar {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(12,12,17,.65);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .mobile-menu { display: none; }
+    .round-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.07);
+      color: white;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.08);
+      transition: .16s ease;
+    }
+    .round-btn:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .searchbox { position: relative; min-width: 0; }
+    .searchbox input {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.08);
+      color: white;
+      outline: none;
+      padding: 0 46px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .searchbox input:focus { border-color: rgba(168,85,247,.72); box-shadow: 0 0 0 4px rgba(168,85,247,.16); background: rgba(255,255,255,.11); }
+    .searchbox span { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .view-tools { display: flex; gap: 8px; align-items: center; }
+    .select-dark {
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.07);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-weight: 850;
+      font-size: 12px;
+    }
+    .select-dark option { color: #111827; }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 22px;
+      scroll-behavior: smooth;
+    }
+    .content::-webkit-scrollbar, .playlist-list::-webkit-scrollbar { width: 7px; }
+    .content::-webkit-scrollbar-thumb, .playlist-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.16); border-radius: 999px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      min-height: 260px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 82% 10%, rgba(34,197,94,.28), transparent 26%),
+        radial-gradient(circle at 15% 20%, rgba(168,85,247,.35), transparent 28%),
+        linear-gradient(135deg, rgba(39,39,50,.95), rgba(12,12,18,.94));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 24px 80px rgba(0,0,0,.30);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
+      gap: 20px;
+      align-items: center;
+    }
+    .hero:before { content:""; position:absolute; inset:0; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 34px 34px; mask-image: radial-gradient(circle at center, black, transparent 75%); pointer-events:none; }
+    .hero > * { position: relative; z-index: 1; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.10); color: #e9d5ff; font-size: 10px; font-weight: 950; letter-spacing: .18em; text-transform: uppercase; }
+    .hero h1 { font-size: clamp(34px, 5vw, 68px); line-height: .95; margin: 18px 0 12px; letter-spacing: -.06em; }
+    .hero p { margin: 0; color: #cbd5e1; line-height: 1.75; max-width: 680px; font-size: 14px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    .primary, .secondary, .pill-btn {
+      min-height: 44px;
+      border-radius: 999px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: white;
+      font-weight: 950;
+      font-size: 13px;
+      transition: .16s ease;
+    }
+    .primary { background: linear-gradient(135deg, #22c55e, #a855f7); box-shadow: 0 16px 42px rgba(34,197,94,.16); }
+    .secondary, .pill-btn { background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.10); }
+    .primary:hover, .secondary:hover, .pill-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .hero-card-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .stat-card { min-height: 112px; border-radius: 24px; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.10); padding: 18px; }
+    .stat-card b { display: block; font-size: 28px; letter-spacing: -.04em; }
+    .stat-card span { display: block; color: var(--muted); font-size: 11px; font-weight: 850; margin-top: 8px; }
+    .section { margin-top: 28px; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom: 14px; }
+    .section h2 { margin: 0; font-size: 24px; letter-spacing: -.04em; }
+    .section small { color: var(--muted); font-weight: 800; }
+    .chip-row { display:flex; gap: 10px; overflow-x:auto; padding-bottom: 4px; }
+    .chip { flex: 0 0 auto; min-height: 38px; border-radius: 999px; padding: 0 14px; background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08); color:#e5e7eb; font-size:12px; font-weight:900; }
+    .chip.active { background: rgba(168,85,247,.28); border-color: rgba(168,85,247,.42); color:white; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+    .grid.compact { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .track-card, .playlist-card, .genre-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 12px;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+      min-width: 0;
+    }
+    .track-card:hover, .playlist-card:hover, .genre-card:hover { transform: translateY(-3px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.15); }
+    .cover {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 20px;
+      overflow: hidden;
+      display:grid;
+      place-items:center;
+      box-shadow: 0 20px 42px rgba(0,0,0,.25);
+      isolation: isolate;
+    }
+    .cover img { width: 100%; height: 100%; object-fit: cover; display:block; }
+    .cover:after { content:""; position:absolute; inset:0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 34%), linear-gradient(to top, rgba(0,0,0,.42), transparent); pointer-events:none; }
+    .cover-letter { position:relative; z-index:1; font-size: 36px; font-weight: 950; text-shadow: 0 10px 32px rgba(0,0,0,.32); }
+    .play-floating { position: absolute; z-index: 3; right: 12px; bottom: 12px; width: 48px; height: 48px; border-radius: 999px; background: #22c55e; color:#06110a; display:grid; place-items:center; font-weight:950; box-shadow: 0 18px 32px rgba(34,197,94,.30); transform: translateY(8px); opacity:0; transition:.16s ease; }
+    .track-card:hover .play-floating, .playlist-card:hover .play-floating { transform: translateY(0); opacity: 1; }
+    .track-card.is-playing { border-color: rgba(34,197,94,.42); background: rgba(34,197,94,.10); }
+    .track-info { padding: 12px 4px 4px; min-width:0; }
+    .track-info b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:14px; }
+    .track-info small { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--muted); font-weight:750; margin-top:5px; font-size:12px; }
+    .track-actions { display:flex; gap:6px; padding: 8px 2px 2px; }
+    .tiny-btn { min-width: 34px; height: 34px; border-radius: 13px; color:white; background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); display:grid; place-items:center; transition:.16s ease; }
+    .tiny-btn:hover, .tiny-btn.active { background: rgba(168,85,247,.25); }
+    .list { display:flex; flex-direction:column; gap: 8px; }
+    .track-row {
+      display:grid;
+      grid-template-columns: 42px 56px minmax(0, 1.4fr) minmax(120px,.7fr) 90px auto;
+      align-items:center;
+      gap: 12px;
+      min-height: 72px;
+      padding: 8px 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.06);
+      transition:.16s ease;
+    }
+    .track-row:hover, .track-row.is-playing { background: rgba(255,255,255,.08); }
+    .mini-cover { width: 52px; height: 52px; border-radius: 14px; display:grid; place-items:center; font-weight:950; overflow:hidden; }
+    .mini-cover img { width:100%; height:100%; object-fit:cover; }
+    .row-title b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .row-title small, .row-album, .row-duration { color: var(--muted); font-size: 12px; font-weight: 800; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .empty { border-radius: 28px; border:1px dashed rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding: 42px 22px; text-align:center; color: var(--muted); }
+    .player {
+      grid-column: 1 / 3;
+      grid-row: 2 / 3;
+      border-radius: 26px;
+      display:grid;
+      grid-template-columns: minmax(210px, .85fr) minmax(260px, 1.2fr) minmax(210px, .85fr);
+      align-items:center;
+      gap: 18px;
+      padding: 14px 18px;
+      min-width:0;
+    }
+    .now { display:flex; align-items:center; gap: 12px; min-width:0; }
+    .now .mini-cover { width: 62px; height: 62px; border-radius: 18px; }
+    .now b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .now small { display:block; color:var(--muted); font-weight:800; font-size:12px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .controls { display:flex; flex-direction:column; gap: 10px; min-width:0; }
+    .control-buttons { display:flex; align-items:center; justify-content:center; gap: 10px; }
+    .control { width: 40px; height: 40px; border-radius: 999px; background: transparent; color:white; display:grid; place-items:center; transition:.16s ease; }
+    .control:hover, .control.active { background: rgba(255,255,255,.09); }
+    .control.main-play { width: 50px; height:50px; background:white; color:#050508; font-size:16px; }
+    .control.main-play:hover { transform: scale(1.03); }
+    .progress-wrap { display:grid; grid-template-columns: 48px minmax(0,1fr) 48px; align-items:center; gap: 10px; color:var(--muted); font-size:11px; font-weight:850; }
+    input[type="range"] { width:100%; accent-color: #22c55e; }
+    .right-tools { display:flex; align-items:center; justify-content:flex-end; gap: 10px; min-width:0; }
+    .volume { display:flex; align-items:center; gap:8px; width:150px; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background: rgba(0,0,0,.64);
+      backdrop-filter: blur(14px);
+    }
+    .modal.show { display:flex; }
+    .modal-card { width:min(520px, 100%); border-radius: 32px; padding: 22px; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
+    .modal-head h3 { margin:0; font-size:20px; letter-spacing:-.04em; }
+    .field { margin-bottom: 12px; }
+    .field label { display:block; color:var(--muted); font-size:11px; font-weight:950; letter-spacing:.13em; text-transform:uppercase; margin-bottom:8px; }
+    .field input, .field select {
+      width:100%; min-height:48px; border-radius:16px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.08); color:white; outline:none; padding: 0 14px; font-weight:800;
+    }
+    .field select option { color:#111827; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .toast { position:fixed; right:18px; bottom:118px; z-index:60; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+    .toast-item { border-radius:18px; padding:12px 14px; background:rgba(24,24,32,.95); border:1px solid rgba(255,255,255,.10); box-shadow:0 18px 44px rgba(0,0,0,.35); color:white; font-weight:850; font-size:13px; animation: toastIn .22s ease-out; }
+    @keyframes toastIn { from { opacity:0; transform: translateX(20px);} to { opacity:1; transform:none;} }
+    .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.52); z-index:30; }
+    @media (max-width: 980px) {
+      body { overflow: hidden; }
+      .app { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr) 124px; padding: 8px; gap: 8px; }
+      .sidebar { position:fixed; z-index:40; left:10px; top:10px; bottom:132px; width:min(300px, calc(100vw - 20px)); transform: translateX(calc(-100% - 16px)); transition:.2s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show { display:block; }
+      .main { grid-column: 1; }
+      .mobile-menu { display:grid; }
+      .topbar { grid-template-columns: auto minmax(0,1fr); }
+      .view-tools { grid-column: 1 / -1; justify-content:space-between; overflow-x:auto; }
+      .hero { grid-template-columns: 1fr; padding: 22px; }
+      .hero-card-stack { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .player { grid-column:1; grid-template-columns: 1fr; height:auto; align-items:stretch; padding: 10px; }
+      .right-tools { justify-content:center; }
+      .now { justify-content:center; text-align:left; }
+      .volume { width: 170px; }
+      .track-row { grid-template-columns: 36px 48px minmax(0,1fr) auto; }
+      .row-album, .row-duration { display:none; }
+    }
+    @media (max-width: 560px) {
+      .content { padding: 14px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .grid.compact { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 34px; }
+      .hero-card-stack { grid-template-columns: 1fr; }
+      .track-card { border-radius: 20px; padding: 9px; }
+      .cover { border-radius: 17px; }
+      .track-actions { gap:4px; }
+      .tiny-btn { min-width: 31px; height:31px; border-radius: 12px; }
+      .select-dark { max-width: 48%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-logo">♪</div>
+        <div><strong>DestAra Music</strong><span>DAM Player</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Menu</div>
+        <button class="nav-btn active" data-view="home"><span class="nav-ico">⌂</span> Home</button>
+        <button class="nav-btn" data-view="search"><span class="nav-ico">⌕</span> Search</button>
+        <button class="nav-btn" data-view="library"><span class="nav-ico">▦</span> Library</button>
+        <button class="nav-btn" data-view="genres"><span class="nav-ico">◇</span> Kategori</button>
+        <button class="nav-btn" data-view="favorites"><span class="nav-ico">♥</span> Favorite</button>
+        <button class="nav-btn" data-view="recent"><span class="nav-ico">◷</span> Recently Played</button>
+        <button class="nav-btn" data-view="queue"><span class="nav-ico">☰</span> Queue</button>
+      </div>
+      <button class="create-btn" id="createPlaylistBtn">＋ Buat Playlist</button>
+      <div class="nav-title">Playlist</div>
+      <div class="playlist-list" id="playlistList"></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="round-btn mobile-menu" id="mobileMenuBtn">☰</button>
+        <div class="searchbox">
+          <span>⌕</span>
+          <input id="globalSearch" placeholder="Cari lagu, artist, album, playlist, genre..." autocomplete="off" />
+        </div>
+        <div class="view-tools">
+          <select class="select-dark" id="sortSelect" title="Urutan lagu">
+            <option value="popular">Rekomendasi</option>
+            <option value="title-asc">Judul A-Z</option>
+            <option value="title-desc">Judul Z-A</option>
+            <option value="artist-asc">Artist A-Z</option>
+            <option value="genre-asc">Genre</option>
+            <option value="duration-desc">Durasi Terpanjang</option>
+          </select>
+          <select class="select-dark" id="viewModeSelect" title="Mode tampilan">
+            <option value="grid">Grid</option>
+            <option value="compact">Compact</option>
+            <option value="list">List</option>
+          </select>
+        </div>
+      </div>
+      <div class="content" id="content"></div>
+    </main>
+
+    <section class="player">
+      <div class="now" id="nowInfo">
+        <div class="mini-cover" id="nowCover" style="background:linear-gradient(135deg,#27272a,#18181b)">♪</div>
+        <div style="min-width:0"><b>Belum ada lagu</b><small>Pilih lagu untuk memulai</small></div>
+      </div>
+      <div class="controls">
+        <div class="control-buttons">
+          <button class="control" id="shuffleBtn" title="Shuffle">⤨</button>
+          <button class="control" id="prevBtn" title="Previous">⏮</button>
+          <button class="control main-play" id="playBtn" title="Play/Pause">▶</button>
+          <button class="control" id="nextBtn" title="Next">⏭</button>
+          <button class="control" id="repeatBtn" title="Repeat">↻</button>
+        </div>
+        <div class="progress-wrap">
+          <span id="currentTime">0:00</span>
+          <input type="range" id="progressBar" min="0" max="100" value="0" />
+          <span id="durationTime">0:00</span>
+        </div>
+      </div>
+      <div class="right-tools">
+        <button class="tiny-btn" id="favNowBtn" title="Favorite">♡</button>
+        <button class="tiny-btn" id="queueNowBtn" title="Tambah ke Queue">☰</button>
+        <button class="tiny-btn" id="downloadNowBtn" title="Download">⇩</button>
+        <div class="volume"><span>🔊</span><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" /></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="playlistModal">
+    <div class="modal-card">
+      <div class="modal-head"><h3>Buat Playlist Baru</h3><button class="round-btn" data-close-modal>×</button></div>
+      <div class="field"><label>Nama Playlist</label><input id="playlistNameInput" placeholder="Contoh: Lagu Resepsi" /></div>
+      <div class="field"><label>Deskripsi</label><input id="playlistDescInput" placeholder="Keterangan singkat playlist" /></div>
+      <div class="modal-actions"><button class="secondary" data-close-modal>Batal</button><button class="primary" id="savePlaylistBtn">Simpan Playlist</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="addModal">
+    <div class="modal-card">
+      <div class="modal-head"><h3>Tambah ke Playlist</h3><button class="round-btn" data-close-modal>×</button></div>
+      <div class="field"><label>Pilih Playlist</label><select id="addPlaylistSelect"></select></div>
+      <div class="modal-actions"><button class="secondary" data-close-modal>Batal</button><button class="primary" id="confirmAddPlaylistBtn">Tambah</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SAMPLE_CATALOG = {"appName": "DestAra Music", "version": "1.0", "notes": "Ganti field src dengan URL musik Cloudflare/R2 kamu. Cover boleh kosong karena app membuat gradient otomatis.", "tracks": [{"id": "dam-001", "title": "Lavender Night", "artist": "DestAra Session", "album": "Wedding Atmosphere", "genre": "Chill", "mood": "Calm", "duration": 42, "src": "", "cover": "", "accent": ["#7c3aed", "#d946ef"], "year": 2026, "frequency": 261.63}, {"id": "dam-002", "title": "Golden Waltz", "artist": "DestAra Orchestra", "album": "Classic Romance", "genre": "Classic", "mood": "Elegant", "duration": 46, "src": "", "cover": "", "accent": ["#d4af37", "#7c2d12"], "year": 2026, "frequency": 329.63}, {"id": "dam-003", "title": "Moon Jazz", "artist": "DestAra Quartet", "album": "Late Dinner", "genre": "Jazz", "mood": "Smooth", "duration": 44, "src": "", "cover": "", "accent": ["#0ea5e9", "#312e81"], "year": 2026, "frequency": 293.66}, {"id": "dam-004", "title": "Sakura Piano", "artist": "Mutiara Keys", "album": "Soft Ceremony", "genre": "Piano", "mood": "Romantic", "duration": 40, "src": "", "cover": "", "accent": ["#f472b6", "#f9a8d4"], "year": 2026, "frequency": 349.23}, {"id": "dam-005", "title": "Acoustic Promise", "artist": "Destra Strings", "album": "Acoustic Vows", "genre": "Acoustic", "mood": "Warm", "duration": 48, "src": "", "cover": "", "accent": ["#22c55e", "#14b8a6"], "year": 2026, "frequency": 392.0}, {"id": "dam-006", "title": "Midnight Lofi", "artist": "DestAra Beats", "album": "Focus Room", "genre": "Lo-fi", "mood": "Focus", "duration": 45, "src": "", "cover": "", "accent": ["#334155", "#8b5cf6"], "year": 2026, "frequency": 220.0}, {"id": "dam-007", "title": "Wedding Entrance", "artist": "DestAra Ensemble", "album": "Grand Wedding", "genre": "Wedding", "mood": "Grand", "duration": 51, "src": "", "cover": "", "accent": ["#f97316", "#facc15"], "year": 2026, "frequency": 440.0}, {"id": "dam-008", "title": "Soft Religi", "artist": "DestAra Harmony", "album": "Peaceful Morning", "genre": "Religi", "mood": "Peaceful", "duration": 43, "src": "", "cover": "", "accent": ["#06b6d4", "#0f766e"], "year": 2026, "frequency": 246.94}, {"id": "dam-009", "title": "Pop Celebration", "artist": "DestAra Pop", "album": "Reception Lights", "genre": "Pop", "mood": "Happy", "duration": 47, "src": "", "cover": "", "accent": ["#ef4444", "#f97316"], "year": 2026, "frequency": 493.88}, {"id": "dam-010", "title": "Dangdut Smile", "artist": "DestAra Live", "album": "Party Time", "genre": "Dangdut", "mood": "Fun", "duration": 41, "src": "", "cover": "", "accent": ["#84cc16", "#eab308"], "year": 2026, "frequency": 277.18}, {"id": "dam-011", "title": "Ocean Instrumental", "artist": "DestAra Ambient", "album": "Blue Room", "genre": "Instrumental", "mood": "Airy", "duration": 49, "src": "", "cover": "", "accent": ["#0891b2", "#2563eb"], "year": 2026, "frequency": 369.99}, {"id": "dam-012", "title": "Royal Orchestra", "artist": "DestAra Symphony", "album": "Palace Hall", "genre": "Orchestra", "mood": "Luxury", "duration": 52, "src": "", "cover": "", "accent": ["#a16207", "#4c1d95"], "year": 2026, "frequency": 523.25}], "playlists": [{"id": "pl-wedding", "name": "Wedding Premium", "description": "Lagu yang cocok untuk momen wedding dan resepsi.", "trackIds": ["dam-007", "dam-004", "dam-002", "dam-005"]}, {"id": "pl-chill", "name": "Chill & Lo-fi", "description": "Tenang untuk kerja, santai, atau persiapan malam.", "trackIds": ["dam-001", "dam-006", "dam-011"]}, {"id": "pl-classic-jazz", "name": "Classic Jazz Room", "description": "Classic, jazz, piano, dan orchestra.", "trackIds": ["dam-002", "dam-003", "dam-004", "dam-012"]}, {"id": "pl-party", "name": "Reception Party", "description": "Lebih ramai untuk acara dan party.", "trackIds": ["dam-009", "dam-010", "dam-007"]}]};
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+    const STORAGE = {
+      favorites: 'dam_favorites_v1', recent: 'dam_recent_v1', playlists: 'dam_user_playlists_v1', settings: 'dam_settings_v1'
+    };
+    const state = {
+      tracks: [], builtinPlaylists: [], userPlaylists: [], favorites: [], recent: [], queue: [], queueIndex: -1,
+      view: 'home', selectedGenre: null, selectedPlaylist: null, query: '', sort: 'popular', viewMode: 'grid',
+      currentId: null, isPlaying: false, shuffle: false, repeat: 'off', volume: .8,
+      addTrackId: null, demo: { timer:null, ctx:null, osc:null, gain:null, progress:0, duration:0 }
+    };
+    const audio = new Audio();
+    audio.preload = 'metadata';
+
+    function loadLS(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+    function saveLS(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    function showToast(msg) {
+      const box = $('#toast'); const item = document.createElement('div'); item.className = 'toast-item'; item.textContent = msg; box.appendChild(item);
+      setTimeout(() => { item.style.opacity = '0'; item.style.transform = 'translateX(20px)'; setTimeout(() => item.remove(), 250); }, 2600);
+    }
+    function fmt(sec) { sec = Math.max(0, Math.floor(sec || 0)); const m = Math.floor(sec/60); const s = sec%60; return `${m}:${String(s).padStart(2,'0')}`; }
+    function safeId(prefix='id') { return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+    function getTrack(id) { return state.tracks.find(t => t.id === id); }
+    function firstLetter(t) { return (t?.title || 'D').trim().charAt(0).toUpperCase(); }
+    function gradient(track) { const a = track?.accent?.[0] || '#7c3aed'; const b = track?.accent?.[1] || '#22c55e'; return `linear-gradient(135deg, ${a}, ${b})`; }
+    function coverHTML(track, cls='cover') {
+      const bg = gradient(track);
+      if (track.cover) return `<div class="${cls}" style="background:${bg}"><img src="${escapeAttr(track.cover)}" loading="lazy" onerror="this.remove()"><span class="cover-letter">${firstLetter(track)}</span></div>`;
+      return `<div class="${cls}" style="background:${bg}"><span class="cover-letter">${firstLetter(track)}</span></div>`;
+    }
+    function miniCoverHTML(track) { return coverHTML(track, 'mini-cover'); }
+    function escapeHTML(str='') { return String(str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function escapeAttr(str='') { return escapeHTML(str); }
+
+    async function init() {
+      const settings = loadLS(STORAGE.settings, {});
+      state.favorites = loadLS(STORAGE.favorites, []);
+      state.recent = loadLS(STORAGE.recent, []);
+      state.userPlaylists = loadLS(STORAGE.playlists, []);
+      state.viewMode = settings.viewMode || 'grid'; state.sort = settings.sort || 'popular'; state.volume = Number(settings.volume ?? .8);
+      state.shuffle = Boolean(settings.shuffle); state.repeat = settings.repeat || 'off';
+      $('#viewModeSelect').value = state.viewMode; $('#sortSelect').value = state.sort; $('#volumeSlider').value = state.volume;
+      audio.volume = state.volume;
+      await loadCatalog(); bindEvents(); renderAll(); updatePlayerUI();
+    }
+    async function loadCatalog() {
+      let catalog = SAMPLE_CATALOG;
+      try {
+        const res = await fetch('music-catalog.json', { cache: 'no-store' });
+        if (res.ok) catalog = await res.json();
+      } catch (_) {}
+      state.tracks = (catalog.tracks || []).map((t, i) => ({
+        id: t.id || `track-${i+1}`, title: t.title || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'Single',
+        genre: t.genre || 'Other', mood: t.mood || '', duration: Number(t.duration || 0), src: t.src || t.url || '', cover: t.cover || '',
+        accent: t.accent || autoAccent(i), year: t.year || '', frequency: Number(t.frequency || 220 + (i*31)%280), popularity: 100 - i
+      }));
+      state.builtinPlaylists = catalog.playlists || [];
+      if (!state.queue.length) state.queue = state.tracks.map(t => t.id);
+    }
+    function autoAccent(i) { const palettes = [['#7c3aed','#d946ef'],['#22c55e','#0ea5e9'],['#f97316','#facc15'],['#ef4444','#8b5cf6'],['#06b6d4','#312e81'],['#84cc16','#14b8a6']]; return palettes[i % palettes.length]; }
+
+    function bindEvents() {
+      $$('.nav-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+      $('#globalSearch').addEventListener('input', e => { state.query = e.target.value.trim(); state.view = state.query ? 'search' : state.view; setActiveNav(); renderContent(); });
+      $('#sortSelect').addEventListener('change', e => { state.sort = e.target.value; saveSettings(); renderContent(); });
+      $('#viewModeSelect').addEventListener('change', e => { state.viewMode = e.target.value; saveSettings(); renderContent(); });
+      $('#createPlaylistBtn').addEventListener('click', () => openModal('playlistModal'));
+      $('#savePlaylistBtn').addEventListener('click', saveNewPlaylist);
+      $('#confirmAddPlaylistBtn').addEventListener('click', confirmAddToPlaylist);
+      $$('[data-close-modal]').forEach(b => b.addEventListener('click', closeModals));
+      $('#mobileMenuBtn').addEventListener('click', () => toggleSidebar(true)); $('#sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
+      $('#playBtn').addEventListener('click', togglePlay); $('#prevBtn').addEventListener('click', prev); $('#nextBtn').addEventListener('click', next);
+      $('#shuffleBtn').addEventListener('click', () => { state.shuffle = !state.shuffle; saveSettings(); updatePlayerUI(); });
+      $('#repeatBtn').addEventListener('click', () => { state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; saveSettings(); updatePlayerUI(); });
+      $('#volumeSlider').addEventListener('input', e => { state.volume = Number(e.target.value); audio.volume = state.volume; if (state.demo.gain) state.demo.gain.gain.value = state.volume * .08; saveSettings(); });
+      $('#progressBar').addEventListener('input', e => seek(Number(e.target.value)));
+      $('#favNowBtn').addEventListener('click', () => state.currentId && toggleFavorite(state.currentId));
+      $('#queueNowBtn').addEventListener('click', () => state.currentId && addToQueue(state.currentId));
+      $('#downloadNowBtn').addEventListener('click', () => state.currentId && downloadTrack(state.currentId));
+      audio.addEventListener('timeupdate', updateProgress); audio.addEventListener('loadedmetadata', updateProgress); audio.addEventListener('ended', onEnded);
+      document.addEventListener('keydown', e => { if (e.target.matches('input,select')) return; if (e.code === 'Space') { e.preventDefault(); togglePlay(); } });
+    }
+    function saveSettings() { saveLS(STORAGE.settings, { viewMode: state.viewMode, sort: state.sort, volume: state.volume, shuffle: state.shuffle, repeat: state.repeat }); }
+    function toggleSidebar(open) { $('#sidebar').classList.toggle('open', open); $('#sidebarOverlay').classList.toggle('show', open); }
+    function openModal(id) { $('#' + id).classList.add('show'); }
+    function closeModals() { $$('.modal').forEach(m => m.classList.remove('show')); }
+    function setView(view, extra) { state.view = view; state.selectedGenre = extra?.genre || null; state.selectedPlaylist = extra?.playlist || null; setActiveNav(); renderContent(); toggleSidebar(false); }
+    function setActiveNav() { $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === state.view)); }
+    function renderAll() { renderPlaylists(); setActiveNav(); renderContent(); }
+
+    function renderPlaylists() {
+      const box = $('#playlistList'); const all = [...state.builtinPlaylists.map(p=>({...p,builtin:true})), ...state.userPlaylists];
+      box.innerHTML = all.map((p, i) => `<button class="playlist-mini" data-playlist="${escapeAttr(p.id)}"><div class="playlist-mini-cover" style="background:${gradient({accent:autoAccent(i)})}">♫</div><div style="min-width:0"><b>${escapeHTML(p.name)}</b><small>${(p.trackIds||[]).length} lagu</small></div></button>`).join('') || `<div class="empty">Belum ada playlist.</div>`;
+      $$('[data-playlist]', box).forEach(btn => btn.addEventListener('click', () => setView('playlist', { playlist: btn.dataset.playlist })));
+    }
+    function renderContent() {
+      const c = $('#content');
+      if (state.view === 'home') return renderHome(c);
+      if (state.view === 'search') return renderSearch(c);
+      if (state.view === 'library') return renderLibrary(c);
+      if (state.view === 'genres') return renderGenres(c);
+      if (state.view === 'favorites') return renderTrackSection(c, 'Favorite', 'Lagu yang kamu sukai.', state.favorites.map(getTrack).filter(Boolean));
+      if (state.view === 'recent') return renderTrackSection(c, 'Recently Played', 'Riwayat lagu yang baru diputar.', state.recent.map(getTrack).filter(Boolean));
+      if (state.view === 'queue') return renderTrackSection(c, 'Queue / Antrean', 'Urutan lagu yang akan diputar.', state.queue.map(getTrack).filter(Boolean), true);
+      if (state.view === 'genre') return renderTrackSection(c, state.selectedGenre || 'Kategori', 'Lagu dari kategori ini.', getTracks({ genre: state.selectedGenre }));
+      if (state.view === 'playlist') return renderPlaylistDetail(c);
+      renderHome(c);
+    }
+    function getTracks(filter={}) {
+      let list = [...state.tracks];
+      if (filter.genre) list = list.filter(t => t.genre === filter.genre);
+      if (filter.query || state.query) {
+        const q = (filter.query || state.query).toLowerCase();
+        list = list.filter(t => [t.title,t.artist,t.album,t.genre,t.mood].join(' ').toLowerCase().includes(q));
+      }
+      return sortTracks(list);
+    }
+    function sortTracks(list) {
+      const s = state.sort;
+      return [...list].sort((a,b) => {
+        if (s === 'title-asc') return a.title.localeCompare(b.title);
+        if (s === 'title-desc') return b.title.localeCompare(a.title);
+        if (s === 'artist-asc') return a.artist.localeCompare(b.artist);
+        if (s === 'genre-asc') return a.genre.localeCompare(b.genre) || a.title.localeCompare(b.title);
+        if (s === 'duration-desc') return (b.duration||0) - (a.duration||0);
+        return (b.popularity||0) - (a.popularity||0);
+      });
+    }
+    function renderHome(c) {
+      const genres = [...new Set(state.tracks.map(t => t.genre))].sort();
+      c.innerHTML = `
+        <section class="hero">
+          <div><span class="eyebrow">✦ Cloudflare Ready</span><h1>DestAra Music</h1><p>Player musik pribadi dengan playlist, kategori, search, favorite, queue, shuffle, repeat, dan cover gradient otomatis. Ganti URL lagu di <b>music-catalog.json</b> agar semua musik Cloudflare kamu tampil di sini.</p><div class="hero-actions"><button class="primary" id="heroPlay">▶ Putar Rekomendasi</button><button class="secondary" id="heroLibrary">Lihat Library</button></div></div>
+          <div class="hero-card-stack"><div class="stat-card"><b>${state.tracks.length}</b><span>Total Lagu</span></div><div class="stat-card"><b>${genres.length}</b><span>Kategori</span></div><div class="stat-card"><b>${state.builtinPlaylists.length + state.userPlaylists.length}</b><span>Playlist</span></div><div class="stat-card"><b>${state.favorites.length}</b><span>Favorite</span></div></div>
+        </section>
+        <section class="section"><div class="section-head"><div><h2>Kategori Musik</h2><small>Classic, Jazz, Pop, Chill, dan lainnya.</small></div></div><div class="chip-row">${genres.map(g => `<button class="chip" data-genre="${escapeAttr(g)}">${escapeHTML(g)}</button>`).join('')}</div></section>
+        <section class="section"><div class="section-head"><div><h2>Playlist Pilihan</h2><small>Koleksi siap putar.</small></div></div><div class="grid">${[...state.builtinPlaylists, ...state.userPlaylists].map((p,i)=>playlistCard(p,i)).join('')}</div></section>
+        <section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Langsung play dari katalog.</small></div></div>${tracksHTML(getTracks().slice(0,8))}</section>`;
+      $('#heroPlay')?.addEventListener('click', () => playTrack(getTracks()[0]?.id, getTracks().map(t=>t.id)));
+      $('#heroLibrary')?.addEventListener('click', () => setView('library'));
+      $$('[data-genre]', c).forEach(b => b.addEventListener('click', () => setView('genre', { genre: b.dataset.genre })));
+      bindDynamic(c);
+    }
+    function renderSearch(c) { const list = getTracks({ query: state.query }); renderTrackSection(c, state.query ? `Hasil Search: ${state.query}` : 'Search Music', 'Cari judul, artist, album, genre, atau mood.', list); }
+    function renderLibrary(c) { renderTrackSection(c, 'Library', 'Semua musik dari katalog Cloudflare/DAM.', getTracks()); }
+    function renderGenres(c) {
+      const genres = [...new Set(state.tracks.map(t => t.genre))].sort();
+      c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Kategori</h2><small>Pilih genre untuk melihat lagu.</small></div></div><div class="grid">${genres.map((g,i)=>genreCard(g,i)).join('')}</div></section>`; bindDynamic(c);
+    }
+    function renderPlaylistDetail(c) {
+      const p = [...state.builtinPlaylists, ...state.userPlaylists].find(x => x.id === state.selectedPlaylist);
+      if (!p) return renderHome(c); const tracks = (p.trackIds || []).map(getTrack).filter(Boolean);
+      c.innerHTML = `<section class="hero" style="min-height:220px"><div><span class="eyebrow">♫ Playlist</span><h1>${escapeHTML(p.name)}</h1><p>${escapeHTML(p.description || 'Playlist DestAra Music.')}</p><div class="hero-actions"><button class="primary" id="playPlaylist">▶ Putar Playlist</button>${p.user ? `<button class="secondary" id="deletePlaylist">Hapus Playlist</button>` : ''}</div></div><div class="hero-card-stack"><div class="stat-card"><b>${tracks.length}</b><span>Lagu</span></div><div class="stat-card"><b>${fmt(tracks.reduce((a,t)=>a+(t.duration||0),0))}</b><span>Total Durasi</span></div></div></section><section class="section">${tracksHTML(tracks)}</section>`;
+      $('#playPlaylist')?.addEventListener('click', () => tracks[0] && playTrack(tracks[0].id, tracks.map(t=>t.id)));
+      $('#deletePlaylist')?.addEventListener('click', () => { state.userPlaylists = state.userPlaylists.filter(x => x.id !== p.id); saveLS(STORAGE.playlists, state.userPlaylists); setView('home'); renderPlaylists(); showToast('Playlist dihapus.'); });
+      bindDynamic(c);
+    }
+    function renderTrackSection(c, title, subtitle, tracks, isQueue=false) {
+      c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>${escapeHTML(title)}</h2><small>${escapeHTML(subtitle)}</small></div>${tracks.length ? `<button class="pill-btn" id="playSection">▶ Putar Semua</button>` : ''}</div>${tracks.length ? tracksHTML(tracks, isQueue) : `<div class="empty">Belum ada lagu di bagian ini.</div>`}</section>`;
+      $('#playSection')?.addEventListener('click', () => playTrack(tracks[0].id, tracks.map(t=>t.id))); bindDynamic(c);
+    }
+    function tracksHTML(tracks, isQueue=false) { return state.viewMode === 'list' ? `<div class="list">${tracks.map((t,i)=>trackRow(t,i,isQueue)).join('')}</div>` : `<div class="grid ${state.viewMode === 'compact' ? 'compact' : ''}">${tracks.map(trackCard).join('')}</div>`; }
+    function trackCard(t) { const fav = state.favorites.includes(t.id); const playing = state.currentId === t.id; return `<article class="track-card ${playing?'is-playing':''}" data-track="${escapeAttr(t.id)}">${coverHTML(t)}<button class="play-floating" data-play="${escapeAttr(t.id)}">${playing && state.isPlaying ? '❚❚' : '▶'}</button><div class="track-info"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.genre)}</small></div><div class="track-actions"><button class="tiny-btn ${fav?'active':''}" data-fav="${escapeAttr(t.id)}">${fav?'♥':'♡'}</button><button class="tiny-btn" data-add="${escapeAttr(t.id)}">＋</button><button class="tiny-btn" data-queue="${escapeAttr(t.id)}">☰</button><button class="tiny-btn" data-download="${escapeAttr(t.id)}">⇩</button></div></article>`; }
+    function trackRow(t, i, isQueue=false) { const fav = state.favorites.includes(t.id); return `<article class="track-row ${state.currentId===t.id?'is-playing':''}" data-track="${escapeAttr(t.id)}"><button class="tiny-btn" data-play="${escapeAttr(t.id)}">${state.currentId===t.id&&state.isPlaying?'❚❚':'▶'}</button>${miniCoverHTML(t)}<div class="row-title"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.genre)}</small></div><div class="row-album">${escapeHTML(t.album)}</div><div class="row-duration">${fmt(t.duration)}</div><div style="display:flex;gap:6px"><button class="tiny-btn ${fav?'active':''}" data-fav="${escapeAttr(t.id)}">${fav?'♥':'♡'}</button><button class="tiny-btn" data-add="${escapeAttr(t.id)}">＋</button>${isQueue?`<button class="tiny-btn" data-remove-queue="${escapeAttr(t.id)}">×</button>`:`<button class="tiny-btn" data-queue="${escapeAttr(t.id)}">☰</button>`}</div></article>`; }
+    function playlistCard(p, i) { const tracks = (p.trackIds||[]).map(getTrack).filter(Boolean); return `<article class="playlist-card" data-open-playlist="${escapeAttr(p.id)}"><div class="cover" style="background:${gradient({accent:autoAccent(i)})}"><span class="cover-letter">♫</span></div><button class="play-floating" data-playlist-play="${escapeAttr(p.id)}">▶</button><div class="track-info"><b>${escapeHTML(p.name)}</b><small>${tracks.length} lagu • ${escapeHTML(p.description||'Playlist')}</small></div></article>`; }
+    function genreCard(g, i) { const count = state.tracks.filter(t=>t.genre===g).length; return `<article class="genre-card" data-open-genre="${escapeAttr(g)}"><div class="cover" style="background:${gradient({accent:autoAccent(i)})}"><span class="cover-letter">${escapeHTML(g.charAt(0))}</span></div><div class="track-info"><b>${escapeHTML(g)}</b><small>${count} lagu</small></div></article>`; }
+    function bindDynamic(root) {
+      $$('[data-play]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playTrack(b.dataset.play, visibleTrackIds()); }));
+      $$('[data-track]', root).forEach(card => card.addEventListener('dblclick', () => playTrack(card.dataset.track, visibleTrackIds())));
+      $$('[data-fav]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); toggleFavorite(b.dataset.fav); }));
+      $$('[data-add]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openAddToPlaylist(b.dataset.add); }));
+      $$('[data-queue]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); addToQueue(b.dataset.queue); }));
+      $$('[data-download]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); downloadTrack(b.dataset.download); }));
+      $$('[data-open-playlist]', root).forEach(el => el.addEventListener('click', () => setView('playlist', { playlist: el.dataset.openPlaylist })));
+      $$('[data-playlist-play]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const p = [...state.builtinPlaylists,...state.userPlaylists].find(x=>x.id===b.dataset.playlistPlay); const ids=(p?.trackIds||[]).filter(getTrack); if(ids.length) playTrack(ids[0], ids); }));
+      $$('[data-open-genre]', root).forEach(el => el.addEventListener('click', () => setView('genre', { genre: el.dataset.openGenre })));
+      $$('[data-remove-queue]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); state.queue = state.queue.filter(id => id !== b.dataset.removeQueue); renderContent(); showToast('Dihapus dari queue.'); }));
+    }
+    function visibleTrackIds() { return getTracks().map(t => t.id); }
+
+    function saveNewPlaylist() { const name = $('#playlistNameInput').value.trim(); const desc = $('#playlistDescInput').value.trim(); if (!name) return showToast('Nama playlist wajib diisi.'); state.userPlaylists.unshift({ id:safeId('upl'), name, description:desc, trackIds:[], user:true }); saveLS(STORAGE.playlists, state.userPlaylists); $('#playlistNameInput').value=''; $('#playlistDescInput').value=''; closeModals(); renderPlaylists(); showToast('Playlist dibuat.'); }
+    function openAddToPlaylist(trackId) { state.addTrackId = trackId; const all = state.userPlaylists; $('#addPlaylistSelect').innerHTML = all.length ? all.map(p=>`<option value="${escapeAttr(p.id)}">${escapeHTML(p.name)}</option>`).join('') : `<option value="">Buat playlist dulu</option>`; openModal('addModal'); }
+    function confirmAddToPlaylist() { const id = $('#addPlaylistSelect').value; if (!id || !state.addTrackId) return showToast('Playlist belum dipilih.'); const p = state.userPlaylists.find(x=>x.id===id); if (!p) return; if (!p.trackIds.includes(state.addTrackId)) p.trackIds.push(state.addTrackId); saveLS(STORAGE.playlists, state.userPlaylists); closeModals(); renderPlaylists(); showToast('Lagu ditambahkan ke playlist.'); }
+    function toggleFavorite(id) { state.favorites = state.favorites.includes(id) ? state.favorites.filter(x=>x!==id) : [id, ...state.favorites]; saveLS(STORAGE.favorites, state.favorites); renderContent(); updatePlayerUI(); showToast(state.favorites.includes(id) ? 'Masuk favorite.' : 'Dihapus dari favorite.'); }
+    function addRecent(id) { state.recent = [id, ...state.recent.filter(x=>x!==id)].slice(0, 40); saveLS(STORAGE.recent, state.recent); }
+    function addToQueue(id) { state.queue.push(id); showToast('Ditambahkan ke queue.'); if (state.view === 'queue') renderContent(); }
+    function downloadTrack(id) { const t = getTrack(id); if (!t) return; if (!t.src) return showToast('Demo tone tidak punya file download. Isi URL Cloudflare di catalog.'); const a = document.createElement('a'); a.href = t.src; a.download = `${t.title} - ${t.artist}`.replace(/[\\/:*?"<>|]/g,'-'); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
+
+    function playTrack(id, listIds) {
+      const t = getTrack(id); if (!t) return;
+      if (Array.isArray(listIds) && listIds.length) { state.queue = [...listIds]; state.queueIndex = state.queue.indexOf(id); }
+      else { if (!state.queue.includes(id)) state.queue.unshift(id); state.queueIndex = state.queue.indexOf(id); }
+      state.currentId = id; addRecent(id); stopDemo(); audio.pause(); audio.removeAttribute('src');
+      if (t.src) { audio.src = t.src; audio.volume = state.volume; audio.play().then(()=>{ state.isPlaying=true; updatePlayerUI(); renderContent(); }).catch(()=>{ state.isPlaying=false; showToast('Audio gagal diputar. Cek URL Cloudflare/CORS.'); updatePlayerUI(); }); }
+      else { startDemo(t); }
+      updatePlayerUI(); renderContent();
+    }
+    function togglePlay() { const t = getTrack(state.currentId); if (!t) return playTrack(getTracks()[0]?.id, getTracks().map(x=>x.id)); if (t.src) { if (audio.paused) audio.play().then(()=>{state.isPlaying=true; updatePlayerUI();}); else { audio.pause(); state.isPlaying=false; updatePlayerUI(); } } else { state.isPlaying ? pauseDemo() : startDemo(t, true); } }
+    function startDemo(t, resume=false) {
+      stopDemo(false); state.demo.duration = t.duration || 42; if (!resume) state.demo.progress = 0;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext; if (AudioCtx) { state.demo.ctx = state.demo.ctx || new AudioCtx(); state.demo.osc = state.demo.ctx.createOscillator(); state.demo.gain = state.demo.ctx.createGain(); state.demo.osc.type = 'sine'; state.demo.osc.frequency.value = t.frequency || 261.63; state.demo.gain.gain.value = state.volume * .08; state.demo.osc.connect(state.demo.gain); state.demo.gain.connect(state.demo.ctx.destination); state.demo.osc.start(); }
+      state.isPlaying = true; state.demo.timer = setInterval(() => { state.demo.progress += .25; updateProgress(); if (state.demo.progress >= state.demo.duration) onEnded(); }, 250); updatePlayerUI();
+    }
+    function pauseDemo() { stopDemo(false); state.isPlaying = false; updatePlayerUI(); }
+    function stopDemo(reset=true) { if (state.demo.timer) clearInterval(state.demo.timer); state.demo.timer = null; try { state.demo.osc && state.demo.osc.stop(); } catch {} state.demo.osc = null; state.demo.gain = null; if (reset) state.demo.progress = 0; }
+    function seek(percent) { const t = getTrack(state.currentId); if (!t) return; if (t.src && audio.duration) audio.currentTime = (percent/100)*audio.duration; else state.demo.progress = (percent/100)*(state.demo.duration || t.duration || 42); updateProgress(); }
+    function next() { if (!state.queue.length) return; if (state.shuffle) state.queueIndex = Math.floor(Math.random()*state.queue.length); else state.queueIndex = (state.queueIndex + 1) % state.queue.length; playTrack(state.queue[state.queueIndex], state.queue); }
+    function prev() { if (!state.queue.length) return; state.queueIndex = state.queueIndex <= 0 ? state.queue.length - 1 : state.queueIndex - 1; playTrack(state.queue[state.queueIndex], state.queue); }
+    function onEnded() { if (state.repeat === 'one' && state.currentId) return playTrack(state.currentId, state.queue); if (state.repeat === 'off' && state.queueIndex >= state.queue.length - 1 && !state.shuffle) { state.isPlaying=false; stopDemo(); updatePlayerUI(); return; } next(); }
+    function updateProgress() { const t = getTrack(state.currentId); if (!t) return; let cur=0,dur=0; if (t.src) { cur = audio.currentTime || 0; dur = audio.duration || t.duration || 0; } else { cur = state.demo.progress || 0; dur = state.demo.duration || t.duration || 42; } $('#currentTime').textContent = fmt(cur); $('#durationTime').textContent = fmt(dur); $('#progressBar').value = dur ? Math.min(100, (cur/dur)*100) : 0; }
+    function updatePlayerUI() {
+      const t = getTrack(state.currentId); $('#playBtn').textContent = state.isPlaying ? '❚❚' : '▶'; $('#shuffleBtn').classList.toggle('active', state.shuffle); $('#repeatBtn').classList.toggle('active', state.repeat !== 'off'); $('#repeatBtn').textContent = state.repeat === 'one' ? '↺1' : '↻';
+      $('#favNowBtn').textContent = t && state.favorites.includes(t.id) ? '♥' : '♡'; $('#favNowBtn').classList.toggle('active', Boolean(t && state.favorites.includes(t.id)));
+      if (!t) { $('#nowInfo').innerHTML = `<div class="mini-cover" style="background:linear-gradient(135deg,#27272a,#18181b)">♪</div><div style="min-width:0"><b>Belum ada lagu</b><small>Pilih lagu untuk memulai</small></div>`; return; }
+      $('#nowInfo').innerHTML = `${miniCoverHTML(t)}<div style="min-width:0"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.album)}</small></div>`; updateProgress();
+    }
+
+    init();
+  </script>
+</body>
+</html>
