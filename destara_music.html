@@ -6472,6 +6472,30 @@
   }
 </style>
 
+<!-- DAM V58 - Stop small auto-scroll on play/pause; UI behavior only -->
+<style id="dam-v58-no-autoscroll-style">
+  #content,
+  .content,
+  .track-card,
+  .row,
+  .player,
+  .cover,
+  .play-floating,
+  .ctrl {
+    overflow-anchor: none !important;
+  }
+
+  .play-floating,
+  .ctrl,
+  #playBtn,
+  #prevBtn,
+  #nextBtn,
+  [data-fav] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+</style>
+
 <script id="dam-v57-play-favorite-fix-script">
 (function(){
   if (window.__DAM_V57_PLAY_FAVORITE_FIX__) return;
@@ -6575,11 +6599,90 @@
     if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
   }
 
-  function toggleTrackPlay(id){
-    var a = getAudio();
-    var same = id && currentId() === String(id);
+  function getScrollTargets(){
+    var content = qs('#content');
+    var root = document.scrollingElement || document.documentElement;
+    var body = document.body;
+    return { content: content, root: root, body: body };
+  }
 
-    if (same && a) {
+  function snapshotScroll(){
+    var t = getScrollTargets();
+    return {
+      content: t.content ? t.content.scrollTop : 0,
+      root: t.root ? t.root.scrollTop : 0,
+      body: t.body ? t.body.scrollTop : 0,
+      active: document.activeElement
+    };
+  }
+
+  function restoreScroll(snap){
+    if (!snap) return;
+    var t = getScrollTargets();
+    if (t.content) t.content.scrollTop = snap.content;
+    if (t.root) t.root.scrollTop = snap.root;
+    if (t.body) t.body.scrollTop = snap.body;
+  }
+
+  function keepScrollStable(work){
+    var snap = snapshotScroll();
+    var result;
+    try {
+      result = typeof work === 'function' ? work() : undefined;
+    } finally {
+      restoreScroll(snap);
+      if (snap && snap.active && typeof snap.active.blur === 'function') {
+        try { snap.active.blur(); } catch(e) {}
+      }
+      requestAnimationFrame(function(){ restoreScroll(snap); });
+      setTimeout(function(){ restoreScroll(snap); }, 40);
+      setTimeout(function(){ restoreScroll(snap); }, 140);
+      setTimeout(function(){ restoreScroll(snap); }, 320);
+    }
+    return result;
+  }
+
+  function toggleTrackPlay(id){
+    keepScrollStable(function(){
+      var a = getAudio();
+      var same = id && currentId() === String(id);
+
+      if (same && a) {
+        if (a.paused) {
+          var p = a.play();
+          if (p && typeof p.catch === 'function') {
+            p.catch(function(err){
+              try { if (typeof toast === 'function') toast('Audio belum bisa diputar', err && err.message ? err.message : 'Coba ulang.', 'bad'); } catch(e) {}
+            });
+          }
+        } else {
+          a.pause();
+        }
+        try { if (typeof renderPlayer === 'function') renderPlayer(); } catch(e) {}
+        refreshAll();
+        scheduleRefresh(80);
+        return;
+      }
+
+      try {
+        if (typeof playTrack === 'function') playTrack(id);
+      } catch(e) {}
+      scheduleRefresh(140);
+    });
+  }
+
+  function toggleMainPlay(){
+    keepScrollStable(function(){
+      var a = getAudio();
+      var s = getState();
+
+      if ((!s || !s.currentId) && s && Array.isArray(s.tracks) && s.tracks[0]) {
+        try { if (typeof playAll === 'function') playAll(s.tracks); } catch(e) {}
+        scheduleRefresh(140);
+        return;
+      }
+
+      if (!a) return;
       if (a.paused) {
         var p = a.play();
         if (p && typeof p.catch === 'function') {
@@ -6591,26 +6694,58 @@
         a.pause();
       }
       try { if (typeof renderPlayer === 'function') renderPlayer(); } catch(e) {}
-      try { if (typeof render === 'function') render(); } catch(e) {}
+      refreshAll();
       scheduleRefresh(80);
-      return;
-    }
+    });
+  }
 
-    try {
-      if (typeof playTrack === 'function') playTrack(id);
-    } catch(e) {}
-    scheduleRefresh(140);
+  function nextWithStableScroll(){
+    keepScrollStable(function(){
+      try { if (typeof nextTrack === 'function') nextTrack(); } catch(e) {}
+      scheduleRefresh(120);
+    });
+  }
+
+  function prevWithStableScroll(){
+    keepScrollStable(function(){
+      try { if (typeof prevTrack === 'function') prevTrack(); } catch(e) {}
+      scheduleRefresh(120);
+    });
   }
 
   function toggleFav(id){
-    try {
-      if (typeof toggleFavorite === 'function') toggleFavorite(id);
-    } catch(e) {}
-    qsa('.mini-actions.open').forEach(function(menu){ menu.classList.remove('open'); });
-    scheduleRefresh(80);
+    keepScrollStable(function(){
+      try {
+        if (typeof toggleFavorite === 'function') toggleFavorite(id);
+      } catch(e) {}
+      qsa('.mini-actions.open').forEach(function(menu){ menu.classList.remove('open'); });
+      refreshAll();
+      scheduleRefresh(80);
+    });
   }
 
   document.addEventListener('click', function(event){
+    var mainPlayButton = event.target && event.target.closest ? event.target.closest('#playBtn') : null;
+    if (mainPlayButton) {
+      stopOriginal(event);
+      toggleMainPlay();
+      return;
+    }
+
+    var nextButton = event.target && event.target.closest ? event.target.closest('#nextBtn') : null;
+    if (nextButton) {
+      stopOriginal(event);
+      nextWithStableScroll();
+      return;
+    }
+
+    var prevButton = event.target && event.target.closest ? event.target.closest('#prevBtn') : null;
+    if (prevButton) {
+      stopOriginal(event);
+      prevWithStableScroll();
+      return;
+    }
+
     var playButton = event.target && event.target.closest ? event.target.closest('[data-play]') : null;
     if (playButton) {
       var id = playButton.getAttribute('data-play');
@@ -6633,6 +6768,7 @@
   }, true);
 
   function start(){
+    try { window.togglePlay = toggleMainPlay; } catch(e) {}
     refreshAll();
     var a = getAudio();
     if (a) {
