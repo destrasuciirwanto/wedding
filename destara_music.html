@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DestAra Music</title>
+  <title>DestAra Music — Ultra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1579,120 +1579,85 @@
   }
 </style>
 
-<script id="dam-v32-wallpaper-genre-covers">
+<script id="dam-v33-unique-wallpaper-covers">
 (function () {
-  if (window.__DAM_V32_WALLPAPER_GENRE_COVERS__) return;
-  window.__DAM_V32_WALLPAPER_GENRE_COVERS__ = true;
+  if (window.__DAM_V33_UNIQUE_WALLPAPER_COVERS__) return;
+  window.__DAM_V33_UNIQUE_WALLPAPER_COVERS__ = true;
 
   function qs(selector, root = document) { return root.querySelector(selector); }
   function qsa(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
 
   const PHOTO_BASE = 'https://images.unsplash.com/';
   const IMG_PARAMS = '?auto=format&fit=crop&w=900&h=900&q=82';
+  const assignedPhotoByEntity = new Map();
+  const usedPhotoIds = new Set();
 
   const PHOTO_SETS = [
     {
       re: /jazz/i,
       photos: [
-        'photo-1511379938547-c1f69419868d',
-        'photo-1493225457124-a3eb161ffa5f',
-        'photo-1511192336575-5a79af67a629',
-        'photo-1519501025264-65ba15a82390',
-        'photo-1449824913935-59a10b8d2000',
-        'photo-1477959858617-67f85cf4f1df'
+        'photo-1511379938547-c1f69419868d','photo-1493225457124-a3eb161ffa5f','photo-1511192336575-5a79af67a629','photo-1519501025264-65ba15a82390','photo-1449824913935-59a10b8d2000','photo-1477959858617-67f85cf4f1df',
+        'photo-1496293455970-f8581aae0e3b','photo-1516280440614-37939bbacd81','photo-1483412033650-1015ddeb83d1','photo-1501612780327-45045538702b','photo-1487180144351-b8472da7d491','photo-1507838153414-b4b713384a76'
       ]
     },
     {
-      re: /classic|classical|klasik|piano|orchestra/i,
+      re: /classic|classical|klasik|piano|orchestra|instrumental/i,
       photos: [
-        'photo-1520523839897-bd0b52f945a0',
-        'photo-1507838153414-b4b713384a76',
-        'photo-1510915361894-db8b60106cb1',
-        'photo-1500530855697-b586d89ba3ee',
-        'photo-1519681393784-d120267933ba',
-        'photo-1501785888041-af3ef285b470'
+        'photo-1520523839897-bd0b52f945a0','photo-1507838153414-b4b713384a76','photo-1510915361894-db8b60106cb1','photo-1500530855697-b586d89ba3ee','photo-1519681393784-d120267933ba','photo-1501785888041-af3ef285b470',
+        'photo-1489515217757-5fd1be406fef','photo-1460661419201-fd4cecdf8a8b','photo-1500534623283-312aade485b7','photo-1516542076529-1ea3854896f2','photo-1494526585095-c41746248156','photo-1467269204594-9661b134dd2b'
       ]
     },
     {
       re: /wedding|akad|nikah|romantic|love/i,
       photos: [
-        'photo-1519741497674-611481863552',
-        'photo-1511285560929-80b456fea0bc',
-        'photo-1469371670807-013ccf25f16a',
-        'photo-1495567720989-cebdbdd97913',
-        'photo-1500534314209-a25ddb2bd429',
-        'photo-1507525428034-b723cf961d3e'
+        'photo-1519741497674-611481863552','photo-1511285560929-80b456fea0bc','photo-1469371670807-013ccf25f16a','photo-1495567720989-cebdbdd97913','photo-1500534314209-a25ddb2bd429','photo-1507525428034-b723cf961d3e',
+        'photo-1516589091380-5d601971214f','photo-1516589178581-6cd7833ae3b2','photo-1460364157752-926555421a7e','photo-1515934751635-c81c6bc9a2d8','photo-1473116763249-2faaef81ccda','photo-1490474418585-ba9bad8fd0ea'
       ]
     },
     {
       re: /lo-?fi|lofi|chill|relax|meditation|meditasi/i,
       photos: [
-        'photo-1519608487953-e999c86e7455',
-        'photo-1519681393784-d120267933ba',
-        'photo-1500534314209-a25ddb2bd429',
-        'photo-1507525428034-b723cf961d3e',
-        'photo-1470252649378-9c29740c9fa8',
-        'photo-1490730141103-6cac27aaab94'
+        'photo-1519608487953-e999c86e7455','photo-1519681393784-d120267933ba','photo-1500534314209-a25ddb2bd429','photo-1507525428034-b723cf961d3e','photo-1470252649378-9c29740c9fa8','photo-1490730141103-6cac27aaab94',
+        'photo-1493246507139-91e8fad9978e','photo-1470770841072-f978cf4d019e','photo-1465146344425-f00d5f5c8f07','photo-1500530855697-b586d89ba3ee','photo-1506744038136-46273834b3fb','photo-1441974231531-c6227db76b6e'
       ]
     },
     {
-      re: /edm|electro|dance|rock|hip\s*hop|rap|r&b|rnb/i,
+      re: /edm|electro|dance|rock|hip\s*hop|rap|r&b|rnb|party/i,
       photos: [
-        'photo-1492684223066-81342ee5ff30',
-        'photo-1501386761578-eac5c94b800a',
-        'photo-1506157786151-b8491531f063',
-        'photo-1519501025264-65ba15a82390',
-        'photo-1480714378408-67cf0d13bc1f',
-        'photo-1449824913935-59a10b8d2000'
+        'photo-1492684223066-81342ee5ff30','photo-1501386761578-eac5c94b800a','photo-1506157786151-b8491531f063','photo-1519501025264-65ba15a82390','photo-1480714378408-67cf0d13bc1f','photo-1449824913935-59a10b8d2000',
+        'photo-1500530855697-b586d89ba3ee','photo-1514525253161-7a46d19cd819','photo-1499364615650-ec38552f4f34','photo-1516450360452-9312f5e86fc7','photo-1516280030429-27679b3dc9cf','photo-1507874457470-272b3c8d8ee2'
       ]
     },
     {
-      re: /religi|religious|islam|sholawat/i,
+      re: /religi|religious|islam|sholawat|spiritual/i,
       photos: [
-        'photo-1470252649378-9c29740c9fa8',
-        'photo-1500534314209-a25ddb2bd429',
-        'photo-1507525428034-b723cf961d3e',
-        'photo-1506744038136-46273834b3fb',
-        'photo-1501785888041-af3ef285b470',
-        'photo-1519681393784-d120267933ba'
+        'photo-1470252649378-9c29740c9fa8','photo-1500534314209-a25ddb2bd429','photo-1507525428034-b723cf961d3e','photo-1506744038136-46273834b3fb','photo-1501785888041-af3ef285b470','photo-1519681393784-d120267933ba',
+        'photo-1441974231531-c6227db76b6e','photo-1470770841072-f978cf4d019e','photo-1493246507139-91e8fad9978e','photo-1464822759023-fed622ff2c3b','photo-1465146344425-f00d5f5c8f07','photo-1493246507139-91e8fad9978e'
       ]
     },
     {
-      re: /dangdut|keroncong|sunda|jawa|bali|nusantara|acoustic|instrumental/i,
+      re: /dangdut|keroncong|sunda|jawa|bali|nusantara|acoustic/i,
       photos: [
-        'photo-1500530855697-b586d89ba3ee',
-        'photo-1506744038136-46273834b3fb',
-        'photo-1472214103451-9374bd1c798e',
-        'photo-1493246507139-91e8fad9978e',
-        'photo-1501785888041-af3ef285b470',
-        'photo-1490730141103-6cac27aaab94'
+        'photo-1500530855697-b586d89ba3ee','photo-1506744038136-46273834b3fb','photo-1472214103451-9374bd1c798e','photo-1493246507139-91e8fad9978e','photo-1501785888041-af3ef285b470','photo-1490730141103-6cac27aaab94',
+        'photo-1441974231531-c6227db76b6e','photo-1464822759023-fed622ff2c3b','photo-1465146344425-f00d5f5c8f07','photo-1470770841072-f978cf4d019e','photo-1500534623283-312aade485b7','photo-1447752875215-b2761acb3c5d'
       ]
     },
     {
       re: /kids|anak|pop|soundtrack|ost|score/i,
       photos: [
-        'photo-1500530855697-b586d89ba3ee',
-        'photo-1519501025264-65ba15a82390',
-        'photo-1480714378408-67cf0d13bc1f',
-        'photo-1477959858617-67f85cf4f1df',
-        'photo-1506744038136-46273834b3fb',
-        'photo-1519608487953-e999c86e7455'
+        'photo-1500530855697-b586d89ba3ee','photo-1519501025264-65ba15a82390','photo-1480714378408-67cf0d13bc1f','photo-1477959858617-67f85cf4f1df','photo-1506744038136-46273834b3fb','photo-1519608487953-e999c86e7455',
+        'photo-1473116763249-2faaef81ccda','photo-1494526585095-c41746248156','photo-1493246507139-91e8fad9978e','photo-1467269204594-9661b134dd2b','photo-1500534623283-312aade485b7','photo-1516589178581-6cd7833ae3b2'
       ]
     }
   ];
 
   const DEFAULT_PHOTOS = [
-    'photo-1500530855697-b586d89ba3ee',
-    'photo-1506744038136-46273834b3fb',
-    'photo-1519501025264-65ba15a82390',
-    'photo-1480714378408-67cf0d13bc1f',
-    'photo-1449824913935-59a10b8d2000',
-    'photo-1477959858617-67f85cf4f1df',
-    'photo-1519681393784-d120267933ba',
-    'photo-1507525428034-b723cf961d3e',
-    'photo-1493246507139-91e8fad9978e',
-    'photo-1492684223066-81342ee5ff30'
+    'photo-1500530855697-b586d89ba3ee','photo-1506744038136-46273834b3fb','photo-1519501025264-65ba15a82390','photo-1480714378408-67cf0d13bc1f','photo-1449824913935-59a10b8d2000','photo-1477959858617-67f85cf4f1df','photo-1519681393784-d120267933ba','photo-1507525428034-b723cf961d3e','photo-1493246507139-91e8fad9978e','photo-1492684223066-81342ee5ff30',
+    'photo-1441974231531-c6227db76b6e','photo-1447752875215-b2761acb3c5d','photo-1464822759023-fed622ff2c3b','photo-1465146344425-f00d5f5c8f07','photo-1470770841072-f978cf4d019e','photo-1501785888041-af3ef285b470','photo-1500534623283-312aade485b7','photo-1494526585095-c41746248156','photo-1499346030926-9a72daac6c63','photo-1491553895911-0055eca6402d',
+    'photo-1516589178581-6cd7833ae3b2','photo-1516589091380-5d601971214f','photo-1473116763249-2faaef81ccda','photo-1467269204594-9661b134dd2b','photo-1516542076529-1ea3854896f2','photo-1514525253161-7a46d19cd819','photo-1499364615650-ec38552f4f34','photo-1501612780327-45045538702b','photo-1487180144351-b8472da7d491','photo-1460661419201-fd4cecdf8a8b'
   ];
+
+  const ALL_PHOTOS = Array.from(new Set(PHOTO_SETS.flatMap((set) => set.photos).concat(DEFAULT_PHOTOS)));
 
   function hashString(value) {
     let h = 0;
@@ -1704,25 +1669,51 @@
     return Math.abs(h);
   }
 
-  function pickPhotos(genre) {
-    const value = String(genre || '');
-    const match = PHOTO_SETS.find((set) => set.re.test(value));
-    return match ? match.photos : DEFAULT_PHOTOS;
-  }
-
   function photoUrl(photoId) {
     return PHOTO_BASE + photoId + IMG_PARAMS;
   }
 
-  function picsumFallback(track) {
-    const seed = encodeURIComponent(['dam', track?.id, track?.key, track?.title, track?.genre].filter(Boolean).join('-') || 'destara-music');
+  function picsumFallback(entityKey) {
+    const seed = encodeURIComponent('dam-' + entityKey);
     return 'https://picsum.photos/seed/' + seed + '/900/900';
   }
 
-  function fallbackPhotoFor(track) {
-    const photos = pickPhotos(track?.genre);
-    const seed = hashString([track?.id, track?.key, track?.title, track?.artist, track?.genre].join('|'));
-    return photoUrl(photos[seed % photos.length]);
+  function pickPhotos(genre) {
+    const value = String(genre || '');
+    const match = PHOTO_SETS.find((set) => set.re.test(value));
+    return match ? match.photos.filter(Boolean) : DEFAULT_PHOTOS;
+  }
+
+  function buildCandidateIds(entity) {
+    const themed = pickPhotos(entity?.genre);
+    const remaining = ALL_PHOTOS.filter((id) => !themed.includes(id));
+    return Array.from(new Set(themed.concat(remaining)));
+  }
+
+  function entityKey(entity) {
+    return String(entity?._damEntityKey || entity?.id || entity?.key || entity?.title || entity?.genre || 'unknown');
+  }
+
+  function uniquePhotoFor(entity) {
+    const key = entityKey(entity);
+    if (assignedPhotoByEntity.has(key)) return assignedPhotoByEntity.get(key);
+
+    const candidates = buildCandidateIds(entity);
+    const offset = hashString([key, entity?.genre, entity?.title].join('|'));
+
+    for (let i = 0; i < candidates.length; i++) {
+      const candidate = candidates[(offset + i) % candidates.length];
+      if (!usedPhotoIds.has(candidate)) {
+        usedPhotoIds.add(candidate);
+        const url = photoUrl(candidate);
+        assignedPhotoByEntity.set(key, url);
+        return url;
+      }
+    }
+
+    const fallback = picsumFallback(key);
+    assignedPhotoByEntity.set(key, fallback);
+    return fallback;
   }
 
   function hasRealCover(cover) {
@@ -1744,8 +1735,8 @@
     cover.classList.remove('dam-has-fallback-cover');
   }
 
-  function applyWallpaperFallback(cover, track) {
-    if (!cover || !track) return;
+  function applyWallpaperFallback(cover, entity) {
+    if (!cover || !entity) return;
     cleanupOldFallbacks(cover);
 
     if (hasRealCover(cover)) {
@@ -1754,7 +1745,7 @@
       return;
     }
 
-    const src = fallbackPhotoFor(track);
+    const src = uniquePhotoFor(entity);
     let img = cover.querySelector('img.dam-wallpaper-fallback-cover');
 
     if (!img) {
@@ -1762,12 +1753,12 @@
       img.className = 'dam-wallpaper-fallback-cover';
       img.loading = 'lazy';
       img.decoding = 'async';
-      img.alt = 'Wallpaper cover ' + (track.genre || 'musik');
+      img.alt = 'Wallpaper cover ' + (entity.genre || entity.title || 'musik');
       img.addEventListener('load', function () {
         cover.classList.remove('dam-wallpaper-loading');
       });
       img.addEventListener('error', function () {
-        const fallback = picsumFallback(track);
+        const fallback = picsumFallback(entityKey(entity));
         if (img.getAttribute('src') !== fallback) {
           img.setAttribute('src', fallback);
         } else {
@@ -1797,26 +1788,52 @@
 
   function enhanceTrackCards() {
     qsa('.track-card[data-track]').forEach((card) => {
-      applyWallpaperFallback(qs('.cover', card), getTrackById(card.dataset.track));
+      const track = getTrackById(card.dataset.track);
+      if (!track) return;
+      const entity = Object.assign({}, track, { _damEntityKey: 'track:' + String(track.id) });
+      applyWallpaperFallback(qs('.cover', card), entity);
     });
   }
 
   function enhanceRows() {
     qsa('.row').forEach((row) => {
       const id = qs('[data-play]', row)?.dataset.play || qs('[data-fav]', row)?.dataset.fav || qs('[data-download]', row)?.dataset.download;
-      applyWallpaperFallback(qs('.cover', row), getTrackById(id));
+      const track = getTrackById(id);
+      if (!track) return;
+      const entity = Object.assign({}, track, { _damEntityKey: 'track:' + String(track.id) });
+      applyWallpaperFallback(qs('.cover', row), entity);
     });
   }
 
   function enhancePlayerAndHero() {
     const track = currentTrack();
-    applyWallpaperFallback(qs('#nowInfo .cover'), track);
-    qsa('.vinyl-cover').forEach((cover) => applyWallpaperFallback(cover, track));
+    if (!track) return;
+    const entity = Object.assign({}, track, { _damEntityKey: 'track:' + String(track.id) });
+    applyWallpaperFallback(qs('#nowInfo .cover'), entity);
+    qsa('.vinyl-cover').forEach((cover) => applyWallpaperFallback(cover, entity));
   }
 
   function enhanceCommandResults() {
     qsa('.command-item[data-cmd-track]').forEach((item) => {
-      applyWallpaperFallback(qs('.cover', item), getTrackById(item.dataset.cmdTrack));
+      const track = getTrackById(item.dataset.cmdTrack);
+      if (!track) return;
+      const entity = Object.assign({}, track, { _damEntityKey: 'track:' + String(track.id) });
+      applyWallpaperFallback(qs('.cover', item), entity);
+    });
+  }
+
+  function enhanceGenreCards() {
+    qsa('.genre-card').forEach((card, index) => {
+      const genre = (qs('.track-info b', card)?.textContent || '').trim() || 'Music';
+      const count = (qs('.track-info small', card)?.textContent || '').trim();
+      const entity = {
+        id: 'genre-' + genre,
+        title: genre,
+        genre: genre,
+        artist: count,
+        _damEntityKey: 'genre:' + genre.toLowerCase()
+      };
+      applyWallpaperFallback(qs('.cover', card), entity);
     });
   }
 
@@ -1825,6 +1842,7 @@
     enhanceRows();
     enhancePlayerAndHero();
     enhanceCommandResults();
+    enhanceGenreCards();
   }
 
   run();
@@ -1838,6 +1856,159 @@
   setInterval(run, 1200);
 })();
 </script>
+
+
+<style id="dam-v34-desktop-black-background">
+  /* DAM V34 - Desktop black background only.
+     Hanya mengubah visual/background. Tidak menyentuh API, database, R2, admin, upload, edit, hapus, move, atau sistem cover. */
+  :root {
+    --bg: #050505 !important;
+    --bg2: #070707 !important;
+    --panel: rgba(22,22,24,.94) !important;
+    --panel-strong: rgba(28,28,31,.96) !important;
+    --card: rgba(255,255,255,.075) !important;
+    --card2: rgba(255,255,255,.105) !important;
+    --line: rgba(255,255,255,.11) !important;
+    --shadow: 0 26px 80px rgba(0,0,0,.62) !important;
+  }
+
+  html,
+  body {
+    background: #050505 !important;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 50% -18%, rgba(255,255,255,.045), transparent 36%),
+      linear-gradient(180deg, #050505 0%, #070707 48%, #050505 100%) !important;
+  }
+
+  .aurora {
+    background: #050505 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    animation: none !important;
+  }
+
+  .noise {
+    opacity: .075 !important;
+    background-image:
+      linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px) !important;
+  }
+
+  .current-glow {
+    display: none !important;
+    opacity: 0 !important;
+  }
+
+  .app {
+    background: transparent !important;
+  }
+
+  .sidebar,
+  .main,
+  .player,
+  .modal-card,
+  .command-panel {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,255,255,.045), transparent 38%),
+      linear-gradient(180deg, rgba(27,27,30,.96), rgba(11,11,12,.96)) !important;
+    border-color: rgba(255,255,255,.105) !important;
+    box-shadow: 0 28px 80px rgba(0,0,0,.58) !important;
+  }
+
+  .main {
+    background:
+      linear-gradient(180deg, rgba(20,20,22,.94), rgba(8,8,9,.96)) !important;
+  }
+
+  .topbar,
+  .content {
+    background: transparent !important;
+  }
+
+  .hero {
+    background:
+      radial-gradient(circle at 18% 0%, rgba(168,85,247,.10), transparent 33%),
+      radial-gradient(circle at 90% 12%, rgba(34,197,94,.08), transparent 34%),
+      linear-gradient(135deg, rgba(35,35,39,.96), rgba(13,13,15,.96)) !important;
+    border-color: rgba(255,255,255,.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 28px 70px rgba(0,0,0,.34) !important;
+  }
+
+  .hero:before {
+    background: none !important;
+    opacity: 0 !important;
+    animation: none !important;
+  }
+
+  .hero:after {
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,.20)) !important;
+  }
+
+  .insight-card,
+  .track-card,
+  .genre-card,
+  .playlist-card,
+  .admin-card,
+  .row,
+  .mini-card,
+  .empty {
+    background:
+      linear-gradient(180deg, rgba(34,34,37,.92), rgba(17,17,19,.94)) !important;
+    border-color: rgba(255,255,255,.105) !important;
+    box-shadow: 0 18px 46px rgba(0,0,0,.24) !important;
+  }
+
+  .track-card:hover,
+  .genre-card:hover,
+  .playlist-card:hover,
+  .admin-card:hover,
+  .insight-card:hover,
+  .row:hover {
+    background:
+      linear-gradient(180deg, rgba(43,43,47,.94), rgba(20,20,22,.96)) !important;
+    border-color: rgba(255,255,255,.16) !important;
+  }
+
+  .search-wrap input,
+  .chip,
+  .btn,
+  .icon-btn,
+  .seg button,
+  .pill,
+  .nav-btn,
+  .field input,
+  .field select,
+  .field textarea {
+    background: rgba(255,255,255,.065) !important;
+    border-color: rgba(255,255,255,.105) !important;
+  }
+
+  .nav-btn:hover,
+  .nav-btn.active {
+    background: rgba(255,255,255,.105) !important;
+  }
+
+  .player {
+    background: #050505 !important;
+    border-top-color: rgba(255,255,255,.09) !important;
+  }
+
+  @media (min-width: 1101px) {
+    .sidebar,
+    .main {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.038), transparent 36%),
+        linear-gradient(180deg, rgba(25,25,27,.96), rgba(9,9,10,.98)) !important;
+    }
+
+    .player {
+      background: #050505 !important;
+    }
+  }
+</style>
 
 </body>
 </html>
