@@ -3109,5 +3109,1055 @@
   *{ text-shadow:none !important; }
 </style>
 
+
+
+<style id="dam-v39-mobile-compact-safe-area-fix">
+  /* DAM V39 - Mobile compact fix
+     - Mengurangi tinggi player di HP.
+     - Mengatasi bagian bawah yang kepotong karena browser mobile/safe area.
+     - Menaruh tombol hamburger sejajar di samping search. */
+  @media (max-width: 740px) {
+    :root { --player: 88px !important; }
+
+    html,
+    body {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      max-height: 100svh !important;
+      overflow: hidden !important;
+    }
+
+    .app {
+      height: 100svh !important;
+      min-height: 100svh !important;
+      max-height: 100svh !important;
+      grid-template-rows: minmax(0, 1fr) var(--player) !important;
+      padding: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left)) !important;
+      gap: 6px !important;
+      overflow: hidden !important;
+    }
+
+    .main {
+      min-height: 0 !important;
+      border-radius: 22px !important;
+      overflow: hidden !important;
+    }
+
+    .content {
+      min-height: 0 !important;
+      padding: 0 8px calc(14px + env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      overscroll-behavior: contain !important;
+    }
+
+    .topbar {
+      display: grid !important;
+      grid-template-columns: 42px minmax(0, 1fr) !important;
+      grid-template-rows: auto auto !important;
+      align-items: center !important;
+      gap: 7px !important;
+      padding: 8px !important;
+      border-radius: 20px !important;
+    }
+
+    .mobile-menu {
+      display: grid !important;
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      border-radius: 14px !important;
+      padding: 0 !important;
+      place-items: center !important;
+      font-size: 1.05rem !important;
+    }
+
+    .search-wrap {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      min-width: 0 !important;
+    }
+
+    .search-wrap input {
+      height: 40px !important;
+      padding-left: 38px !important;
+      padding-right: 12px !important;
+      font-size: .82rem !important;
+      border-radius: 14px !important;
+    }
+
+    .search-wrap .sicon {
+      left: 14px !important;
+      font-size: .9rem !important;
+    }
+
+    .search-wrap .kbd {
+      display: none !important;
+    }
+
+    .top-actions {
+      grid-column: 1 / -1 !important;
+      grid-row: 2 !important;
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 6px !important;
+      justify-content: stretch !important;
+      min-width: 0 !important;
+    }
+
+    .top-actions .chip {
+      min-height: 30px !important;
+      height: 30px !important;
+      padding: 0 8px !important;
+      justify-content: center !important;
+      font-size: .66rem !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      border-radius: 12px !important;
+    }
+
+    .hero {
+      min-height: 230px !important;
+      padding: 16px !important;
+      border-radius: 22px !important;
+    }
+
+    .hero h1,
+    .hero h2 {
+      font-size: 2.1rem !important;
+      line-height: .95 !important;
+    }
+
+    .now-vinyl {
+      width: 168px !important;
+      max-width: 60vw !important;
+    }
+
+    .toolbar,
+    .section {
+      margin-top: 14px !important;
+    }
+
+    .grid {
+      gap: 10px !important;
+    }
+
+    .track-card,
+    .genre-card,
+    .playlist-card,
+    .admin-card,
+    .insight-card {
+      border-radius: 20px !important;
+      padding: 9px !important;
+    }
+
+    .cover {
+      border-radius: 17px !important;
+    }
+
+    .player {
+      height: var(--player) !important;
+      min-height: var(--player) !important;
+      max-height: var(--player) !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      grid-template-rows: 1fr 16px !important;
+      gap: 3px 8px !important;
+      padding: 7px 9px !important;
+      border-radius: 18px !important;
+      align-items: center !important;
+      overflow: hidden !important;
+    }
+
+    .player::before {
+      opacity: .25 !important;
+    }
+
+    .now {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      min-width: 0 !important;
+      gap: 8px !important;
+      overflow: hidden !important;
+    }
+
+    .now .cover {
+      width: 42px !important;
+      height: 42px !important;
+      min-width: 42px !important;
+      border-radius: 10px !important;
+    }
+
+    #nowInfo {
+      padding: 0 !important;
+    }
+
+    .now b {
+      font-size: .78rem !important;
+      line-height: 1.08 !important;
+      max-width: 100% !important;
+    }
+
+    .now small {
+      font-size: .64rem !important;
+      margin-top: 3px !important;
+      line-height: 1.15 !important;
+    }
+
+    .player-center {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+    }
+
+    .controls {
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 4px !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+
+    #shuffleBtn,
+    #repeatBtn {
+      display: none !important;
+    }
+
+    .round {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      font-size: .72rem !important;
+      background: transparent !important;
+      border: 0 !important;
+      color: rgba(255,255,255,.72) !important;
+    }
+
+    .big-play {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      font-size: .9rem !important;
+      box-shadow: 0 8px 18px rgba(255,255,255,.10) !important;
+    }
+
+    .progress-line {
+      grid-column: 1 / -1 !important;
+      grid-row: 2 !important;
+      display: grid !important;
+      grid-template-columns: 32px minmax(0, 1fr) 32px !important;
+      align-items: center !important;
+      gap: 5px !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .progress-line span {
+      font-size: .56rem !important;
+      line-height: 1 !important;
+      color: rgba(255,255,255,.55) !important;
+    }
+
+    #seek {
+      height: 4px !important;
+    }
+
+    #seek::-webkit-slider-runnable-track { height: 4px !important; }
+    #seek::-webkit-slider-thumb {
+      width: 12px !important;
+      height: 12px !important;
+      margin-top: -4px !important;
+    }
+    #seek::-moz-range-track { height: 4px !important; }
+    #seek::-moz-range-thumb {
+      width: 12px !important;
+      height: 12px !important;
+    }
+
+    .player-extra {
+      display: none !important;
+    }
+
+    .toast-wrap {
+      bottom: calc(var(--player) + 12px + env(safe-area-inset-bottom)) !important;
+      right: 8px !important;
+      width: calc(100vw - 16px) !important;
+    }
+
+    .modal {
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+      align-items: flex-start !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    .modal-card,
+    #adminModal .modal-card {
+      width: 100% !important;
+      max-height: calc(100svh - 18px - env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+      border-radius: 22px !important;
+      margin: 0 auto !important;
+      padding: 14px !important;
+    }
+
+    #damExpandedPlayer {
+      padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+
+    .dam-expanded-shell {
+      min-height: 100svh !important;
+      padding: 54px 18px calc(20px + env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+    }
+  }
+
+  @media (max-width: 390px) {
+    :root { --player: 82px !important; }
+    .top-actions .chip { font-size: .6rem !important; padding: 0 6px !important; }
+    #prevBtn,
+    #nextBtn { display: none !important; }
+    .big-play {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+    }
+    .now .cover {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+    }
+  }
+</style>
+
+
+
+<style id="dam-v40-toolbar-black-aligned">
+  /* DAM V40 - Samakan warna kotak belakang tombol view/sort dengan tema hitam. */
+  .toolbar {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .toolbar .seg {
+    background: #050505 !important;
+    border: 1px solid rgba(255,255,255,.045) !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .toolbar .seg button {
+    background: rgba(255,255,255,.055) !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    box-shadow: none !important;
+  }
+
+  .toolbar .seg button.active {
+    background: #16a34a !important;
+    border-color: rgba(34,197,94,.45) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 22px rgba(34,197,94,.14) !important;
+  }
+
+  @media (max-width: 740px) {
+    .toolbar .seg {
+      background: #050505 !important;
+      border-color: rgba(255,255,255,.04) !important;
+    }
+  }
+</style>
+
+
+<style id="dam-v41-vinyl-record-look">
+  /* DAM V41 - Ganti piringan gradient jadi vinyl hitam yang lebih realistis */
+  .now-vinyl{
+    position:relative !important;
+    overflow:hidden !important;
+    border-radius:50% !important;
+    background:
+      radial-gradient(circle at center, #121212 0 8%, #050505 8.5% 13%, #181818 13.5% 14.5%, #040404 15% 100%) !important;
+    border: 8px solid #060606 !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.05),
+      inset 0 0 40px rgba(255,255,255,.03),
+      0 26px 60px rgba(0,0,0,.46) !important;
+    isolation:isolate !important;
+  }
+
+  .now-vinyl::before{
+    content:"";
+    position:absolute;
+    inset:4.5%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,.14), transparent 24%),
+      radial-gradient(circle at 68% 72%, rgba(255,255,255,.04), transparent 32%),
+      repeating-radial-gradient(circle at center,
+        rgba(255,255,255,.055) 0 1px,
+        rgba(255,255,255,0) 1px 7px
+      ),
+      radial-gradient(circle at center,
+        transparent 0 19%,
+        rgba(255,255,255,.035) 19.4%,
+        transparent 20%,
+        transparent 39%,
+        rgba(255,255,255,.028) 39.4%,
+        transparent 40%,
+        transparent 59%,
+        rgba(255,255,255,.022) 59.4%,
+        transparent 60%
+      ) !important;
+    pointer-events:none;
+    z-index:0;
+    opacity:.9;
+  }
+
+  .now-vinyl::after{
+    content:"";
+    position:absolute;
+    left:50%; top:50%;
+    width:16px; height:16px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:#0b0b0b;
+    box-shadow:0 0 0 3px rgba(255,255,255,.06), 0 0 0 8px rgba(0,0,0,.28);
+    z-index:3;
+    pointer-events:none;
+  }
+
+  .vinyl-cover{
+    position:relative !important;
+    z-index:2 !important;
+    width:34% !important;
+    aspect-ratio:1 !important;
+    border-radius:50% !important;
+    overflow:hidden !important;
+    border:4px solid rgba(255,255,255,.14) !important;
+    background:#111 !important;
+    box-shadow:
+      0 0 0 12px rgba(12,12,12,.88),
+      0 0 0 13px rgba(255,255,255,.05),
+      0 16px 36px rgba(0,0,0,.45) !important;
+  }
+
+  .vinyl-cover::after{
+    content:"";
+    position:absolute;
+    left:50%; top:50%;
+    width:10px; height:10px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:#ececec;
+    box-shadow:0 0 0 2px rgba(0,0,0,.28);
+    z-index:2;
+    pointer-events:none;
+  }
+
+  .vinyl-cover img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+  }
+
+  @media (max-width:740px){
+    .now-vinyl{ border-width:6px !important; }
+    .vinyl-cover{ width:38% !important; box-shadow:0 0 0 9px rgba(12,12,12,.9), 0 0 0 10px rgba(255,255,255,.05), 0 14px 26px rgba(0,0,0,.42) !important; }
+  }
+</style>
+
+<style id="dam-v42-turntable-tonearm">
+  /* DAM V42 - Tambah tonearm/jarum piringan seperti turntable */
+  .dam-vinyl-stage{
+    position:relative !important;
+    width:fit-content;
+    margin-inline:auto;
+    display:grid;
+    place-items:center;
+  }
+
+  .dam-tonearm{
+    position:absolute;
+    right:-4px;
+    top:22px;
+    width:118px;
+    height:118px;
+    pointer-events:none;
+    z-index:6;
+  }
+
+  .dam-tonearm-base{
+    position:absolute;
+    right:6px;
+    top:0;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #8b8b8b 0 25%, #5e5e5e 26% 48%, #242424 49% 100%);
+    box-shadow:0 4px 10px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.18);
+  }
+
+  .dam-tonearm-bar{
+    position:absolute;
+    right:18px;
+    top:14px;
+    width:10px;
+    height:82px;
+    border-radius:999px;
+    transform-origin: top center;
+    transform: rotate(34deg);
+    background:linear-gradient(180deg, #d7d7d7 0%, #9b9b9b 38%, #5d5d5d 72%, #3b3b3b 100%);
+    box-shadow:0 2px 6px rgba(0,0,0,.28), inset 0 0 1px rgba(255,255,255,.6);
+  }
+
+  .dam-tonearm-bar::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:10px;
+    transform:translateX(-50%);
+    width:4px;
+    height:50px;
+    border-radius:999px;
+    background:rgba(255,255,255,.22);
+  }
+
+  .dam-tonearm-head{
+    position:absolute;
+    left:50%;
+    bottom:-6px;
+    width:24px;
+    height:16px;
+    transform:translateX(-50%) rotate(6deg);
+    border-radius:5px 5px 7px 7px;
+    background:linear-gradient(180deg, #474747, #222);
+    box-shadow:0 2px 6px rgba(0,0,0,.35);
+  }
+
+  .dam-tonearm-head::before{
+    content:"";
+    position:absolute;
+    left:6px;
+    top:4px;
+    width:12px;
+    height:4px;
+    border-radius:999px;
+    background:rgba(255,255,255,.18);
+  }
+
+  .dam-tonearm-head::after{
+    content:"";
+    position:absolute;
+    right:4px;
+    bottom:-7px;
+    width:2px;
+    height:9px;
+    transform:rotate(18deg);
+    background:#d4b26a;
+    box-shadow:0 0 0 1px rgba(0,0,0,.15);
+  }
+
+  @media (max-width:740px){
+    .dam-tonearm{
+      width:84px;
+      height:84px;
+      right:-2px;
+      top:14px;
+    }
+    .dam-tonearm-base{
+      width:20px;
+      height:20px;
+      right:5px;
+    }
+    .dam-tonearm-bar{
+      right:14px;
+      top:10px;
+      width:8px;
+      height:58px;
+      transform: rotate(34deg);
+    }
+    .dam-tonearm-head{
+      width:18px;
+      height:12px;
+      bottom:-5px;
+    }
+    .dam-tonearm-head::after{
+      height:7px;
+      bottom:-6px;
+    }
+  }
+</style>
+
+<script id="dam-v42-turntable-tonearm-script">
+(function(){
+  if(window.__DAM_V42_TONEARM__) return;
+  window.__DAM_V42_TONEARM__ = true;
+
+  function addTonearm(){
+    document.querySelectorAll('.now-vinyl').forEach(function(vinyl){
+      var stage = vinyl.parentElement;
+      if(!stage || !stage.classList.contains('dam-vinyl-stage')){
+        stage = document.createElement('div');
+        stage.className = 'dam-vinyl-stage';
+        vinyl.parentNode.insertBefore(stage, vinyl);
+        stage.appendChild(vinyl);
+      }
+      if(!stage.querySelector('.dam-tonearm')){
+        var arm = document.createElement('div');
+        arm.className = 'dam-tonearm';
+        arm.innerHTML = '<div class="dam-tonearm-base"></div><div class="dam-tonearm-bar"><div class="dam-tonearm-head"></div></div>';
+        stage.appendChild(arm);
+      }
+    });
+  }
+
+  addTonearm();
+  var mo = new MutationObserver(function(){ addTonearm(); });
+  mo.observe(document.body, {childList:true, subtree:true});
+  document.addEventListener('click', function(){ setTimeout(addTonearm, 0); }, true);
+  setInterval(addTonearm, 1200);
+})();
+</script>
+
+<style id="dam-v43-tonearm-play-stop-animation">
+  /* DAM V43 - Tonearm animasi masuk pelan saat play, keluar saat pause/stop */
+  .dam-vinyl-stage{
+    --dam-tonearm-parked: rotate(18deg) translateY(-3px);
+    --dam-tonearm-playing: rotate(36deg) translateY(0);
+  }
+
+  .dam-tonearm-bar{
+    transform: var(--dam-tonearm-parked) !important;
+    transition: transform 1.45s cubic-bezier(.22,.8,.22,1), filter .6s ease !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.28));
+  }
+
+  .dam-tonearm-head{
+    transition: transform .42s ease, opacity .42s ease !important;
+    transform: translateX(-50%) rotate(6deg) translateY(-2px);
+  }
+
+  .dam-tonearm-head::after{
+    transform: rotate(18deg) scaleY(.9);
+    transform-origin: top center;
+    transition: transform .38s ease, opacity .38s ease;
+    opacity:.92;
+  }
+
+  .dam-tonearm-base::after{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.12);
+    opacity:.9;
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-bar{
+    transform: var(--dam-tonearm-playing) !important;
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-head{
+    transform: translateX(-50%) rotate(6deg) translateY(1px);
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-head::after{
+    transform: rotate(18deg) scaleY(1.08);
+    opacity:1;
+  }
+
+  .dam-vinyl-stage.is-paused .dam-tonearm-bar{
+    transform: var(--dam-tonearm-parked) !important;
+  }
+
+  @media (max-width:740px){
+    .dam-vinyl-stage{
+      --dam-tonearm-parked: rotate(16deg) translateY(-2px);
+      --dam-tonearm-playing: rotate(33deg) translateY(0);
+    }
+    .dam-tonearm-bar{
+      transition-duration: 1.2s !important;
+    }
+  }
+</style>
+
+<script id="dam-v43-tonearm-play-stop-animation-script">
+(function(){
+  if(window.__DAM_V43_TONEARM_ANIM__) return;
+  window.__DAM_V43_TONEARM_ANIM__ = true;
+
+  function syncTonearmState(){
+    document.querySelectorAll('.dam-vinyl-stage').forEach(function(stage){
+      var vinyl = stage.querySelector('.now-vinyl');
+      var shouldPlay = false;
+
+      try {
+        if (typeof audio !== 'undefined' && audio) shouldPlay = !audio.paused && !!audio.src;
+      } catch(e) {}
+
+      if (vinyl) {
+        if (vinyl.classList.contains('paused')) shouldPlay = false;
+        else if (vinyl.closest('.hero') || vinyl.closest('#damExpandedPlayer') || vinyl.closest('.playlist-card') || vinyl.closest('.section') ) {
+          // keep current shouldPlay from audio, otherwise for standalone vinyl without audio use paused class only
+          if (typeof audio === 'undefined') shouldPlay = !vinyl.classList.contains('paused');
+        }
+      }
+
+      stage.classList.toggle('is-playing', shouldPlay);
+      stage.classList.toggle('is-paused', !shouldPlay);
+    });
+  }
+
+  syncTonearmState();
+  var mo = new MutationObserver(function(){ syncTonearmState(); });
+  mo.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+
+  if (typeof audio !== 'undefined' && audio) {
+    ['play','pause','loadedmetadata','emptied','ended'].forEach(function(evt){
+      audio.addEventListener(evt, function(){ setTimeout(syncTonearmState, 20); });
+    });
+  }
+
+  document.addEventListener('click', function(){ setTimeout(syncTonearmState, 30); }, true);
+  setInterval(syncTonearmState, 900);
+})();
+</script>
+
+<style id="dam-v44-tonearm-desktop-smoother">
+  /* DAM V44 - Tonearm lebih dekat ke piringan di desktop + gerakan lebih smooth */
+  .dam-vinyl-stage{
+    --dam-tonearm-parked: rotate(20deg) translateY(-4px);
+    --dam-tonearm-playing: rotate(46deg) translateY(0);
+  }
+
+  .dam-tonearm{
+    right: -26px !important;
+    top: 18px !important;
+    width: 150px !important;
+    height: 138px !important;
+  }
+
+  .dam-tonearm-base{
+    right: 10px !important;
+    top: 2px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .dam-tonearm-bar{
+    right: 26px !important;
+    top: 14px !important;
+    width: 10px !important;
+    height: 104px !important;
+    border-radius: 999px !important;
+    transform-origin: top center !important;
+    transform: var(--dam-tonearm-parked) !important;
+    transition: transform 1.85s cubic-bezier(.22,1,.36,1), filter .65s ease !important;
+    will-change: transform !important;
+  }
+
+  .dam-tonearm-head{
+    width: 24px !important;
+    height: 16px !important;
+    transform: translateX(-50%) rotate(6deg) translateY(-1px) !important;
+    transition: transform .65s cubic-bezier(.22,1,.36,1), opacity .45s ease !important;
+    will-change: transform !important;
+  }
+
+  .dam-tonearm-head::after{
+    transition: transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease !important;
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-bar{
+    transform: var(--dam-tonearm-playing) !important;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,.30));
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-head{
+    transform: translateX(-50%) rotate(7deg) translateY(2px) !important;
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-head::after{
+    transform: rotate(18deg) scaleY(1.1) !important;
+    opacity: 1 !important;
+  }
+
+  .dam-vinyl-stage.is-paused .dam-tonearm-bar{
+    transform: var(--dam-tonearm-parked) !important;
+  }
+
+  @media (max-width: 740px){
+    .dam-vinyl-stage{
+      --dam-tonearm-parked: rotate(16deg) translateY(-2px);
+      --dam-tonearm-playing: rotate(34deg) translateY(0);
+    }
+
+    .dam-tonearm{
+      right: -4px !important;
+      top: 12px !important;
+      width: 88px !important;
+      height: 84px !important;
+    }
+
+    .dam-tonearm-base{
+      width: 20px !important;
+      height: 20px !important;
+      right: 5px !important;
+      top: 0 !important;
+    }
+
+    .dam-tonearm-bar{
+      right: 14px !important;
+      top: 10px !important;
+      width: 8px !important;
+      height: 58px !important;
+      transition-duration: 1.35s !important;
+    }
+
+    .dam-tonearm-head{
+      width: 18px !important;
+      height: 12px !important;
+    }
+  }
+</style>
+
+<style id="dam-v45-tonearm-premium-look">
+  /* DAM V45 - Tonearm dibuat lebih keren / premium */
+  .dam-tonearm {
+    right: -16px !important;
+    top: 14px !important;
+    width: 164px !important;
+    height: 150px !important;
+    z-index: 7 !important;
+  }
+
+  .dam-tonearm::before {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 10px;
+    width: 10px;
+    height: 36px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2a2a2a 0%, #101010 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,.08), 0 5px 12px rgba(0,0,0,.35);
+    opacity: .95;
+  }
+
+  .dam-tonearm::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 34px;
+    width: 34px;
+    height: 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #606060 0%, #2e2e2e 45%, #111111 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 4px 10px rgba(0,0,0,.35);
+    transform: rotate(-6deg);
+    opacity: .96;
+  }
+
+  .dam-tonearm-base {
+    right: 10px !important;
+    top: 2px !important;
+    width: 32px !important;
+    height: 32px !important;
+    background:
+      radial-gradient(circle at 32% 28%, #bdbdbd 0 18%, #7d7d7d 19% 36%, #383838 37% 62%, #151515 63% 100%) !important;
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,.25),
+      inset 0 -2px 3px rgba(0,0,0,.3),
+      0 8px 16px rgba(0,0,0,.35) !important;
+  }
+
+  .dam-tonearm-base::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.24);
+  }
+
+  .dam-tonearm-base::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #d9d9d9 0 25%, #6b6b6b 26% 55%, #202020 56% 100%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.08);
+  }
+
+  .dam-tonearm-bar {
+    right: 28px !important;
+    top: 16px !important;
+    width: 12px !important;
+    height: 110px !important;
+    border-radius: 999px !important;
+    background:
+      linear-gradient(90deg,
+        #2b2b2b 0%,
+        #bebebe 10%,
+        #767676 28%,
+        #d9d9d9 48%,
+        #707070 68%,
+        #2d2d2d 100%) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.08),
+      0 6px 12px rgba(0,0,0,.28) !important;
+  }
+
+  .dam-tonearm-bar::before {
+    content: "" !important;
+    position: absolute;
+    left: 50%;
+    top: 12px;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 66px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.28) !important;
+    filter: blur(.2px);
+  }
+
+  .dam-tonearm-bar::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    right: -14px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #8f8f8f 0 18%, #4d4d4d 19% 58%, #171717 59% 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,.22), 0 3px 8px rgba(0,0,0,.28);
+  }
+
+  .dam-tonearm-head {
+    width: 30px !important;
+    height: 20px !important;
+    bottom: -7px !important;
+    border-radius: 6px 6px 9px 9px !important;
+    background:
+      linear-gradient(180deg, #595959 0%, #2a2a2a 58%, #141414 100%) !important;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,.15),
+      0 4px 10px rgba(0,0,0,.35) !important;
+  }
+
+  .dam-tonearm-head::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 4px;
+    width: 20px;
+    height: 7px;
+    border-radius: 999px;
+    background:
+      repeating-linear-gradient(90deg,
+        rgba(255,255,255,.24) 0 2px,
+        rgba(255,255,255,0) 2px 5px) !important;
+    opacity: .9;
+  }
+
+  .dam-tonearm-head::after {
+    width: 3px !important;
+    height: 11px !important;
+    right: 5px !important;
+    bottom: -8px !important;
+    transform: rotate(18deg) !important;
+    background: linear-gradient(180deg, #f2d18b 0%, #b88b3f 100%) !important;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.16),
+      0 2px 3px rgba(0,0,0,.2) !important;
+  }
+
+  .dam-vinyl-stage.is-playing .dam-tonearm-head::after {
+    transform: rotate(20deg) scaleY(1.08) !important;
+  }
+
+  @media (max-width: 740px) {
+    .dam-tonearm {
+      right: -2px !important;
+      top: 12px !important;
+      width: 92px !important;
+      height: 88px !important;
+    }
+
+    .dam-tonearm::before {
+      right: 9px;
+      top: 6px;
+      width: 7px;
+      height: 22px;
+    }
+
+    .dam-tonearm::after {
+      right: 2px;
+      top: 22px;
+      width: 20px;
+      height: 7px;
+    }
+
+    .dam-tonearm-base {
+      width: 22px !important;
+      height: 22px !important;
+      right: 4px !important;
+      top: 0 !important;
+    }
+
+    .dam-tonearm-bar {
+      right: 14px !important;
+      top: 10px !important;
+      width: 8px !important;
+      height: 60px !important;
+    }
+
+    .dam-tonearm-bar::before {
+      width: 3px;
+      height: 36px;
+      top: 8px;
+    }
+
+    .dam-tonearm-bar::after {
+      width: 11px;
+      height: 11px;
+      right: -8px;
+      top: 3px;
+    }
+
+    .dam-tonearm-head {
+      width: 20px !important;
+      height: 14px !important;
+      bottom: -5px !important;
+    }
+
+    .dam-tonearm-head::before {
+      left: 4px;
+      top: 3px;
+      width: 12px;
+      height: 5px;
+    }
+
+    .dam-tonearm-head::after {
+      width: 2px !important;
+      height: 8px !important;
+      right: 3px !important;
+      bottom: -6px !important;
+    }
+  }
+</style>
 </body>
 </html>
