@@ -1992,6 +1992,20 @@
     </style>
 
 
+
+
+    <style id="dokumen-media-explorer-fix-css-v17">
+        /* Dokumen & Media V17 - hanya Dokumen & Media */
+        .dokumen-search-hidden-v17 { display: none !important; }
+        .dokumen-floating-back-v17 { position: fixed; left: .85rem; bottom: max(.9rem, calc(.9rem + env(safe-area-inset-bottom))); z-index: 120; display: inline-flex; align-items: center; gap: .55rem; min-height: 48px; max-width: min(260px, calc(100vw - 1.7rem)); border-radius: 999px; padding: .8rem 1rem; color: white; background: linear-gradient(135deg, #111827, #7C3AED); box-shadow: 0 18px 45px rgba(17,24,39,.25); font-size: 11px; line-height: 1; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; transition: transform .16s ease, box-shadow .16s ease; }
+        .dokumen-floating-back-v17:hover { transform: translateY(-2px); box-shadow: 0 24px 58px rgba(17,24,39,.32); }
+        .dokumen-search-no-result-v17 { display: none; border-radius: 1.5rem; border: 1px dashed rgba(148,163,184,.55); background: rgba(248,250,252,.72); padding: 1rem; text-align: center; color: #64748b; font-size: 12px; font-weight: 850; }
+        .dokumen-search-no-result-v17.is-visible { display: block; }
+        @media (min-width: 1024px) { .dokumen-floating-back-v17 { left: calc(16rem + 1.25rem); } }
+        @media (max-width: 640px) { .dokumen-floating-back-v17 { right: .85rem; justify-content: center; width: auto; padding-left: .9rem; padding-right: .9rem; } }
+        @media (prefers-reduced-motion: reduce) { .dokumen-floating-back-v17 { transition: none !important; } .dokumen-floating-back-v17:hover { transform: none !important; } }
+    </style>
+
 </head>
 <body class="text-gray-800 flex h-screen overflow-hidden relative">
 
@@ -2719,8 +2733,12 @@
             renderTable('dokumen');
         }
         window.setDokumenSearch = function(value) {
-            window.dokumenSearch = (value || '').toLowerCase();
-            debounceRenderTable('dokumen');
+            window.dokumenSearch = (value || '').toLowerCase().trim();
+            if (typeof window.applyDokumenExplorerInstantFilter === 'function') {
+                window.applyDokumenExplorerInstantFilter();
+            } else {
+                debounceRenderTable('dokumen', 500);
+            }
         }
         window.setDokumenViewMode = function(mode) {
             window.dokumenViewMode = mode || 'gallery';
@@ -2731,12 +2749,59 @@
             const value = Math.max(70, Math.min(170, Number(size) || 100));
             window.dokumenViewSize = value;
             localStorage.setItem('destara_dokumen_view_size_v16', String(value));
-            renderTable('dokumen');
+            if (typeof window.applyDokumenViewSizeLive === 'function') {
+                window.applyDokumenViewSizeLive();
+            } else {
+                renderTable('dokumen');
+            }
         }
         window.setDokumenSortMode = function(mode) {
             window.dokumenSortMode = mode || 'newest';
             localStorage.setItem('destara_dokumen_sort_mode_v16', window.dokumenSortMode);
             renderTable('dokumen');
+        }
+        window.applyDokumenViewSizeLive = function() {
+            const value = Math.max(70, Math.min(170, Number(window.dokumenViewSize || 100)));
+            const scale = value / 100;
+            const label = document.getElementById('dokumen-size-label-v17');
+            if (label) label.innerHTML = `<i class="fa-solid fa-magnifying-glass-plus mr-1 text-lavender-dark"></i> Ukuran ${value}%`;
+            const slider = document.getElementById('dokumen-size-slider-v17');
+            if (slider && String(slider.value) !== String(value)) slider.value = String(value);
+            document.querySelectorAll('.dokumen-explorer-grid-v16').forEach(grid => {
+                grid.style.setProperty('--dokumen-card-min-v16', `${Math.max(160, Math.round(250 * scale))}px`);
+                grid.style.setProperty('--dokumen-thumb-h-v16', `${Math.max(86, Math.round(168 * scale))}px`);
+            });
+            document.querySelectorAll('.dokumen-folder-grid-v16').forEach(grid => {
+                grid.style.setProperty('--dokumen-folder-min-v16', `${Math.max(170, Math.round(240 * scale))}px`);
+            });
+        }
+        window.applyDokumenExplorerInstantFilter = function() {
+            const q = String(window.dokumenSearch || '').toLowerCase().trim();
+            const currentType = String(window.dokumenFileType || 'all');
+            let visibleFolders = 0;
+            let visibleFiles = 0;
+            document.querySelectorAll('#dokumen-folder-list-v17 .dokumen-searchable-v17').forEach(card => {
+                const text = String(card.dataset.search || '').toLowerCase();
+                const match = !q || text.includes(q);
+                card.classList.toggle('dokumen-search-hidden-v17', !match);
+                if (match) visibleFolders += 1;
+            });
+            document.querySelectorAll('#dokumen-file-list-v17 .dokumen-searchable-v17').forEach(card => {
+                const text = String(card.dataset.search || '').toLowerCase();
+                const type = String(card.dataset.fileType || '');
+                const typeMatch = currentType === 'all' || type === currentType;
+                const match = typeMatch && (!q || text.includes(q));
+                card.classList.toggle('dokumen-search-hidden-v17', !match);
+                if (match) visibleFiles += 1;
+            });
+            const folderCount = document.getElementById('dokumen-folder-count-v17');
+            if (folderCount) folderCount.textContent = `${visibleFolders} folder`;
+            const fileCount = document.getElementById('dokumen-file-count-v17');
+            if (fileCount) fileCount.textContent = `${visibleFiles} item tampil`;
+            const folderEmpty = document.getElementById('dokumen-folder-empty-filter-v17');
+            if (folderEmpty) folderEmpty.classList.toggle('is-visible', Boolean(q && visibleFolders === 0));
+            const fileEmpty = document.getElementById('dokumen-file-empty-filter-v17');
+            if (fileEmpty) fileEmpty.classList.toggle('is-visible', Boolean(q && visibleFiles === 0));
         }
         window.selectedUndanganType = 'fisik'; 
         window.handleUndanganType = function(type) {
@@ -8560,7 +8625,7 @@
 
             const viewMode = window.dokumenViewMode || 'gallery';
             const gridStyle = getDokumenExplorerGridStyle();
-            let gridHtml = `<div class="dokumen-explorer-grid-v16" data-view="${escapeHtml(viewMode)}" style="${gridStyle}">`;
+            let gridHtml = `<div id="dokumen-file-list-v17" class="dokumen-explorer-grid-v16" data-view="${escapeHtml(viewMode)}" style="${gridStyle}">`;
             filesToRender.forEach(item => {
                 const meta = getFileMeta(item.jenisFile);
                 const safeName = escapeHtml(item.namaFile || 'Tanpa Nama');
@@ -8574,9 +8639,11 @@
                 const fileSize = formatDokumenSize(getDokumenFileSizeValue(item));
                 const safeDate = item.tanggalUpdate ? new Date(item.tanggalUpdate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
                 const downloadBtn = rawUrl ? `<button onclick="downloadDokumenMedia('${safeId}')" class="w-11 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="Download"><i class="fa-solid fa-download"></i></button>` : '';
+                const searchText = escapeHtml(`${item.namaFile || ''} ${item.catatan || ''} ${item.jenisFile || ''} ${ext || ''}`.toLowerCase());
+                const safeFileType = escapeHtml(String(item.jenisFile || ''));
 
                 gridHtml += `
-                <div class="dokumen-file-card-v16 group">
+                <div class="dokumen-file-card-v16 dokumen-searchable-v17 group" data-file-type="${safeFileType}" data-search="${searchText}">
                     <div class="h-2 ${meta.bg}"></div>
                     <div class="dokumen-file-content-v16 p-4">
                         ${renderDokumenPreviewThumb(item, meta)}
@@ -10373,6 +10440,7 @@
 
                 htmlOut = `
                     <div class="space-y-6 fade-in">
+                        ${window.activeDokumenFolder ? `<button type="button" onclick="keParentFolder()" class="dokumen-floating-back-v17"><i class="fa-solid fa-arrow-left"></i><span>Kembali</span></button>` : ''}
                         <div class="relative overflow-hidden rounded-3xl bg-gray-900 text-white shadow-sm">
                             <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 20%, #CBA6F7 0, transparent 28%), radial-gradient(circle at 80% 10%, #FDE68A 0, transparent 25%), radial-gradient(circle at 50% 90%, #93C5FD 0, transparent 24%);"></div>
                             <div class="relative p-6 md:p-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
@@ -10393,7 +10461,7 @@
                         <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-4 md:p-5">
                             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                                 <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                                    ${window.activeDokumenFolder ? `<button onclick="keParentFolder()" class="px-4 py-2 rounded-2xl bg-gray-900 text-white text-xs font-black hover:bg-lavender-dark transition flex-shrink-0"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>` : ''}
+                                    ${window.activeDokumenFolder ? `<button onclick="keParentFolder()" class="px-5 py-3 rounded-2xl bg-gray-900 text-white text-xs font-black hover:bg-lavender-dark transition flex-shrink-0 shadow-lg shadow-gray-900/15"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>` : ''}
                                     <span class="px-4 py-2 rounded-2xl bg-gray-50 text-gray-500 text-xs font-bold border border-gray-100 flex-shrink-0"><i class="fa-solid fa-hard-drive mr-1"></i> ${window.activeDokumenFolder ? 'Sub-folder' : 'Ruang Utama'}</span>
                                     ${window.activeDokumenFolder ? `<span class="px-4 py-2 rounded-2xl bg-yellow-50 text-yellow-700 text-xs font-bold border border-yellow-100 flex-shrink-0"><i class="fa-solid fa-folder-open mr-1"></i> ${escapeHtml(window.activeDokumenFolder.nama)}</span>` : ''}
                                 </div>
@@ -10437,10 +10505,10 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400 mb-2"><i class="fa-solid fa-magnifying-glass-plus mr-1 text-lavender-dark"></i> Ukuran ${Number(window.dokumenViewSize || 100)}%</p>
+                                        <p id="dokumen-size-label-v17" class="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400 mb-2"><i class="fa-solid fa-magnifying-glass-plus mr-1 text-lavender-dark"></i> Ukuran ${Number(window.dokumenViewSize || 100)}%</p>
                                         <div class="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-3 min-h-[42px]">
                                             <span class="text-[10px] font-black text-gray-400">70%</span>
-                                            <input type="range" min="70" max="170" step="10" value="${Number(window.dokumenViewSize || 100)}" oninput="setDokumenViewSize(this.value)" class="dokumen-size-slider-v16">
+                                            <input id="dokumen-size-slider-v17" type="range" min="70" max="170" step="10" value="${Number(window.dokumenViewSize || 100)}" oninput="setDokumenViewSize(this.value)" class="dokumen-size-slider-v16">
                                             <span class="text-[10px] font-black text-gray-400">170%</span>
                                         </div>
                                     </div>
@@ -10455,15 +10523,15 @@
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="text-sm font-black text-gray-700 uppercase tracking-wide"><i class="fa-solid fa-folder-tree text-yellow-500 mr-2"></i> Folder</h4>
-                                <span class="text-xs text-gray-400 font-bold">${activeFolders.length} folder</span>
+                                <span id="dokumen-folder-count-v17" class="text-xs text-gray-400 font-bold">${activeFolders.length} folder</span>
                             </div>
-                            <div class="dokumen-folder-grid-v16 mb-8" data-view="${escapeHtml(window.dokumenViewMode || 'gallery')}" style="--dokumen-folder-min-v16:${Math.max(170, Math.round(240 * getDokumenViewScale()))}px;">`;
+                            <div id="dokumen-folder-list-v17" class="dokumen-folder-grid-v16 mb-8" data-view="${escapeHtml(window.dokumenViewMode || 'gallery')}" style="--dokumen-folder-min-v16:${Math.max(170, Math.round(240 * getDokumenViewScale()))}px;">`;
                     activeFolders.forEach(folder => {
                         const safeFolderName = escapeHtml(folder.namaFolder || 'Tanpa Nama');
                         const childFolders = folders.filter(f => (f.parentId || '') === folder.id).length;
                         const childFiles = files.filter(f => (f.folderId || '') === folder.id).length;
                         htmlOut += `
-                        <div class="dokumen-folder-card-v16 relative bg-white p-5 rounded-3xl border border-yellow-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all group cursor-pointer overflow-hidden" onclick="masukFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
+                        <div class="dokumen-folder-card-v16 dokumen-searchable-v17 relative bg-white p-5 rounded-3xl border border-yellow-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all group cursor-pointer overflow-hidden" data-search="${escapeHtml(String(folder.namaFolder || '').toLowerCase())}" onclick="masukFolder('${folder.id}', '${String(folder.namaFolder || '').replace(/'/g, "\\'")}', '${folder.parentId || ''}')">
                             <div class="absolute -right-8 -top-8 w-24 h-24 bg-yellow-100 rounded-full blur-2xl group-hover:bg-yellow-200 transition"></div>
                             <div class="relative flex items-start gap-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500 text-3xl shadow-sm border border-yellow-100 flex-shrink-0">
@@ -10482,16 +10550,17 @@
                             </div>
                         </div>`;
                     });
-                    htmlOut += `</div></div>`;
+                    htmlOut += `</div><div id="dokumen-folder-empty-filter-v17" class="dokumen-search-no-result-v17 mb-8"><i class="fa-solid fa-magnifying-glass mr-1"></i> Tidak ada folder yang cocok dengan pencarian.</div></div>`;
                 }
 
                 htmlOut += `
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="text-sm font-black text-gray-700 uppercase tracking-wide"><i class="fa-solid fa-photo-film text-lavender mr-2"></i> File & Media</h4>
-                                <span class="text-xs text-gray-400 font-bold">${activeFiles.length} item tampil</span>
+                                <span id="dokumen-file-count-v17" class="text-xs text-gray-400 font-bold">${activeFiles.length} item tampil</span>
                             </div>
                             ${renderFilesGrid(activeFiles, categoryId)}
+                            <div id="dokumen-file-empty-filter-v17" class="dokumen-search-no-result-v17 mt-3"><i class="fa-solid fa-magnifying-glass mr-1"></i> Tidak ada file yang cocok dengan pencarian.</div>
                         </div>
                     </div>
                 `;
