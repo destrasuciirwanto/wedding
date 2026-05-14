@@ -6419,5 +6419,237 @@
 })();
 </script>
 
+
+
+<!-- DAM V57 - Card play/pause + favorite action fix; visual-only icon refresh, no API/admin changes -->
+<style id="dam-v57-play-favorite-fix-style">
+  .track-card .play-floating,
+  .row .ctrl,
+  [data-fav],
+  #favCurrentBtn,
+  #playBtn {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+
+  .track-card .play-floating {
+    z-index: 40 !important;
+  }
+
+  .track-card .cover,
+  .row .cover {
+    pointer-events: none !important;
+  }
+
+  .track-card .cover img,
+  .track-card .cover::before,
+  .track-card .cover::after,
+  .row .cover img,
+  .row .cover::before,
+  .row .cover::after {
+    pointer-events: none !important;
+  }
+
+  .dam-v57-fixed-icon svg,
+  .dam-v57-fixed-icon .dam-svg-icon {
+    pointer-events: none !important;
+  }
+
+  .dam-v57-fixed-icon[data-fav].dam-v57-fav-on,
+  #favCurrentBtn.dam-v57-fav-on {
+    color: #fecdd3 !important;
+  }
+
+  .dam-action-panel .dam-v57-fixed-icon[data-fav].dam-v57-fav-on {
+    background: rgba(244,63,94,.14) !important;
+    border-color: rgba(244,63,94,.28) !important;
+  }
+
+  .play-floating.dam-v57-playing,
+  .ctrl.dam-v57-playing {
+    background: linear-gradient(135deg, #22c55e, var(--accent, #a855f7)) !important;
+    box-shadow: 0 18px 42px rgba(34,197,94,.24), 0 12px 34px rgba(0,0,0,.28) !important;
+  }
+</style>
+
+<script id="dam-v57-play-favorite-fix-script">
+(function(){
+  if (window.__DAM_V57_PLAY_FAVORITE_FIX__) return;
+  window.__DAM_V57_PLAY_FAVORITE_FIX__ = true;
+
+  function qs(selector, root){ return (root || document).querySelector(selector); }
+  function qsa(selector, root){ return Array.from((root || document).querySelectorAll(selector)); }
+
+  function getState(){
+    try { return typeof state !== 'undefined' ? state : null; } catch (e) { return null; }
+  }
+
+  function getAudio(){
+    try { return typeof audio !== 'undefined' ? audio : qs('#audio'); } catch (e) { return qs('#audio'); }
+  }
+
+  function currentId(){
+    var s = getState();
+    return s && s.currentId ? String(s.currentId) : '';
+  }
+
+  function isFavorite(id){
+    var s = getState();
+    return Boolean(s && Array.isArray(s.favorites) && s.favorites.indexOf(id) >= 0);
+  }
+
+  function icon(name){
+    var paths = {
+      play: '<path d="M8.1 5.35c0-.77.84-1.25 1.5-.84l8.7 5.65c.62.4.62 1.3 0 1.7l-8.7 5.65c-.66.41-1.5-.07-1.5-.84V5.35Z" fill="currentColor"/>',
+      pause: '<path d="M7.25 5.2h3.05c.52 0 .95.43.95.95v11.7c0 .52-.43.95-.95.95H7.25a.95.95 0 0 1-.95-.95V6.15c0-.52.43-.95.95-.95Zm6.45 0h3.05c.52 0 .95.43.95.95v11.7c0 .52-.43.95-.95.95H13.7a.95.95 0 0 1-.95-.95V6.15c0-.52.43-.95.95-.95Z" fill="currentColor"/>',
+      heart: '<path d="M12 20.25c-.28 0-.56-.09-.78-.27C6.1 15.92 3.25 13.2 3.25 9.7A4.72 4.72 0 0 1 8 4.95c1.55 0 2.98.72 4 1.86a5.32 5.32 0 0 1 4-1.86 4.72 4.72 0 0 1 4.75 4.75c0 3.5-2.85 6.22-7.98 10.28-.22.18-.49.27-.77.27Z" fill="currentColor"/>',
+      heartLine: '<path d="M12 20.2c-.27 0-.53-.09-.75-.27C6.1 15.86 3.3 13.16 3.3 9.74A4.7 4.7 0 0 1 8 5.05c1.55 0 2.95.7 4 1.82a5.27 5.27 0 0 1 4-1.82 4.7 4.7 0 0 1 4.7 4.69c0 3.42-2.8 6.12-7.95 10.19-.22.18-.48.27-.75.27ZM8 6.85a2.9 2.9 0 0 0-2.9 2.9c0 2.5 2.2 4.8 6.9 8.55 4.7-3.75 6.9-6.05 6.9-8.55A2.9 2.9 0 0 0 16 6.85c-1.33 0-2.27.76-3.17 1.92a1.04 1.04 0 0 1-1.66 0C10.27 7.61 9.33 6.85 8 6.85Z" fill="currentColor"/>'
+    };
+    return '<svg class="dam-svg-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + (paths[name] || paths.play) + '</svg>';
+  }
+
+  function setIconOnly(button, name, label){
+    if (!button) return;
+    var key = 'v57|' + name + '|only|' + (label || '');
+    if (button.dataset.damV57Key === key && button.querySelector('.dam-svg-icon')) return;
+    button.dataset.damV57Key = key;
+    button.classList.add('dam-v57-fixed-icon');
+    button.innerHTML = icon(name) + '<span class="ico" hidden></span>';
+    if (label) button.setAttribute('aria-label', label);
+    if (label) button.setAttribute('title', label);
+  }
+
+  function setIconLabel(button, name, label){
+    if (!button) return;
+    var key = 'v57|' + name + '|label|' + (label || '');
+    if (button.dataset.damV57Key === key && button.querySelector('.dam-svg-icon')) return;
+    button.dataset.damV57Key = key;
+    button.classList.add('dam-v57-fixed-icon');
+    button.innerHTML = icon(name) + '<span class="dam-icon-label">' + label + '</span><span class="ico" hidden></span>';
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+  }
+
+  function refreshPlayIcons(){
+    var a = getAudio();
+    var now = currentId();
+    qsa('.play-floating, .ctrl').forEach(function(button){
+      var id = String(button.getAttribute('data-play') || '');
+      var active = id && now && id === now;
+      var playing = Boolean(active && a && !a.paused);
+      button.classList.toggle('dam-v57-playing', playing);
+      setIconOnly(button, playing ? 'pause' : 'play', playing ? 'Pause' : 'Play');
+    });
+  }
+
+  function refreshFavoriteIcons(){
+    qsa('[data-fav]').forEach(function(button){
+      var id = String(button.getAttribute('data-fav') || '');
+      var fav = id ? isFavorite(id) : false;
+      button.classList.toggle('dam-v57-fav-on', fav);
+      if (button.closest('.row-actions')) setIconOnly(button, fav ? 'heart' : 'heartLine', fav ? 'Tersimpan' : 'Favorit');
+      else setIconLabel(button, fav ? 'heart' : 'heartLine', fav ? 'Tersimpan' : 'Favorit');
+    });
+
+    var currentFav = qs('#favCurrentBtn');
+    if (currentFav) {
+      var now = currentId();
+      var favNow = now ? isFavorite(now) : false;
+      currentFav.classList.toggle('dam-v57-fav-on', favNow);
+      setIconOnly(currentFav, favNow ? 'heart' : 'heartLine', favNow ? 'Tersimpan' : 'Favorite');
+    }
+  }
+
+  function refreshAll(){
+    refreshPlayIcons();
+    refreshFavoriteIcons();
+  }
+
+  function scheduleRefresh(delay){
+    setTimeout(refreshAll, delay == null ? 40 : delay);
+  }
+
+  function stopOriginal(event){
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+  }
+
+  function toggleTrackPlay(id){
+    var a = getAudio();
+    var same = id && currentId() === String(id);
+
+    if (same && a) {
+      if (a.paused) {
+        var p = a.play();
+        if (p && typeof p.catch === 'function') {
+          p.catch(function(err){
+            try { if (typeof toast === 'function') toast('Audio belum bisa diputar', err && err.message ? err.message : 'Coba ulang.', 'bad'); } catch(e) {}
+          });
+        }
+      } else {
+        a.pause();
+      }
+      try { if (typeof renderPlayer === 'function') renderPlayer(); } catch(e) {}
+      try { if (typeof render === 'function') render(); } catch(e) {}
+      scheduleRefresh(80);
+      return;
+    }
+
+    try {
+      if (typeof playTrack === 'function') playTrack(id);
+    } catch(e) {}
+    scheduleRefresh(140);
+  }
+
+  function toggleFav(id){
+    try {
+      if (typeof toggleFavorite === 'function') toggleFavorite(id);
+    } catch(e) {}
+    qsa('.mini-actions.open').forEach(function(menu){ menu.classList.remove('open'); });
+    scheduleRefresh(80);
+  }
+
+  document.addEventListener('click', function(event){
+    var playButton = event.target && event.target.closest ? event.target.closest('[data-play]') : null;
+    if (playButton) {
+      var id = playButton.getAttribute('data-play');
+      if (id) {
+        stopOriginal(event);
+        toggleTrackPlay(id);
+        return;
+      }
+    }
+
+    var favButton = event.target && event.target.closest ? event.target.closest('[data-fav]') : null;
+    if (favButton) {
+      var favId = favButton.getAttribute('data-fav');
+      if (favId) {
+        stopOriginal(event);
+        toggleFav(favId);
+        return;
+      }
+    }
+  }, true);
+
+  function start(){
+    refreshAll();
+    var a = getAudio();
+    if (a) {
+      ['play', 'pause', 'ended', 'loadedmetadata', 'timeupdate'].forEach(function(name){
+        a.addEventListener(name, function(){ scheduleRefresh(30); }, true);
+      });
+    }
+    document.addEventListener('keyup', function(){ scheduleRefresh(30); }, true);
+    var observer = new MutationObserver(function(){ scheduleRefresh(30); });
+    observer.observe(document.body, { childList: true, subtree: true });
+    setInterval(refreshAll, 650);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+
 </body>
 </html>
