@@ -4272,5 +4272,24 @@
   else syncSeek();
 })();
 </script>
+
+
+<style id="dam-v48-mobile-hide-stats-admin">
+  /* DAM V48 - Khusus tampilan HP: sembunyikan insight stats dan akses admin.
+     Tidak mengubah desktop, layout player, kartu lagu, API, upload, atau fitur lain. */
+  @media (max-width: 740px) {
+    .section:has(> .insights),
+    .insights {
+      display: none !important;
+    }
+
+    #openAdminBtn,
+    #openAdminInside,
+    [data-page="admin"] {
+      display: none !important;
+    }
+  }
+</style>
+
 </body>
 </html>
