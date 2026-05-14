@@ -826,7 +826,7 @@
     }
     function renderHome(c){
       const current=getTrack(state.currentId) || state.tracks[0]; const genres=getGenres(); const rec=sortTracks([...state.tracks]).slice(0,8); const recent=state.recent.map(getTrack).filter(Boolean).slice(0,8);
-      c.innerHTML = `<section class="hero"><div><span class="eyebrow">✦ Cloudflare R2 Connected</span><h1>DestAra Music</h1><p>Music player premium dengan efek modern, queue, playlist, admin upload, edit, pindah kategori, dan cover otomatis dari gradient kalau belum ada gambar.</p><div class="hero-actions"><button class="btn primary" id="heroPlay">▶ Putar Semua</button><button class="btn" data-page="library">Library</button><button class="btn" data-page="admin">Admin Musik</button></div></div><div class="now-vinyl ${audio.paused?'paused':''}"><div class="vinyl-cover" style="background:${gradient(current||{})}">${current?.cover?`<img src="${attr(current.cover)}" alt="">`:`${esc((current?.title||'DAM').charAt(0))}`}</div></div></section>${insightsHTML()}${toolbarHTML()}<section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Lagu dari bucket Cloudflare kamu.</small></div><button class="btn" id="playRec">Putar Mix</button></div>${tracksHTML(rec)}</section>${recent.length?`<section class="section"><div class="section-head"><div><h2>Lanjutkan Dengarkan</h2><small>Riwayat lokal browser.</small></div></div>${tracksHTML(recent)}</section>`:''}<section class="section"><div class="section-head"><div><h2>Kategori Populer</h2><small>Genre otomatis dari folder R2.</small></div></div><div class="grid wide">${genres.slice(0,8).map(genreCard).join('')}</div></section>`;
+      c.innerHTML = `<section class="hero"><div><span class="eyebrow">✦ Cloudflare R2 Connected</span><h1>DestAra Music</h1><p>Music player premium dengan efek modern, queue, playlist, admin upload, edit, pindah kategori, dan cover otomatis bergaya wallpaper kalau belum ada gambar.</p><div class="hero-actions"><button class="btn primary" id="heroPlay">▶ Putar Semua</button><button class="btn" data-page="library">Library</button><button class="btn" data-page="admin">Admin Musik</button></div></div><div class="now-vinyl ${audio.paused?'paused':''}"><div class="vinyl-cover" style="background:${gradient(current||{})}">${current?.cover?`<img src="${attr(current.cover)}" alt="">`:`${esc((current?.title||'DAM').charAt(0))}`}</div></div></section>${insightsHTML()}${toolbarHTML()}<section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Lagu dari bucket Cloudflare kamu.</small></div><button class="btn" id="playRec">Putar Mix</button></div>${tracksHTML(rec)}</section>${recent.length?`<section class="section"><div class="section-head"><div><h2>Lanjutkan Dengarkan</h2><small>Riwayat lokal browser.</small></div></div>${tracksHTML(recent)}</section>`:''}<section class="section"><div class="section-head"><div><h2>Kategori Populer</h2><small>Genre otomatis dari folder R2.</small></div></div><div class="grid wide">${genres.slice(0,8).map(genreCard).join('')}</div></section>`;
       $('#heroPlay')?.addEventListener('click',()=>playAll(state.tracks)); $('#playRec')?.addEventListener('click',()=>playAll(rec)); bindToolbar();
     }
     function insightsHTML(){ const genres=getGenres(); const totalSize=state.tracks.reduce((a,t)=>a+(t.size||0),0); return `<section class="section"><div class="insights"><div class="insight-card"><span class="eyebrow">Tracks</span><div class="num">${state.tracks.length}</div><small>Total lagu aktif</small></div><div class="insight-card"><span class="eyebrow">Genre</span><div class="num">${genres.length}</div><small>Kategori terbaca</small></div><div class="insight-card"><span class="eyebrow">Storage</span><div class="num">${sizeFmt(totalSize)}</div><small>Estimasi file audio</small></div><div class="insight-card"><span class="eyebrow">Mode</span><div class="num" style="font-size:1.2rem">${esc(state.view)}</div><small>Tampilan sekarang</small></div></div></section>`; }
@@ -1528,6 +1528,314 @@
       closePasswordModal();
     });
   });
+})();
+</script>
+
+<style id="dam-v32-wallpaper-genre-covers-style">
+  /* DAM V32 - Wallpaper photo fallback covers
+     Aman untuk database: hanya mengubah tampilan frontend saat lagu belum punya cover asli. */
+  .cover.dam-has-wallpaper-cover,
+  .vinyl-cover.dam-has-wallpaper-cover {
+    position: relative !important;
+    background: #080812 !important;
+  }
+
+  .cover.dam-has-wallpaper-cover .cover-letter,
+  .vinyl-cover.dam-has-wallpaper-cover .cover-letter {
+    display: none !important;
+  }
+
+  .cover img.dam-wallpaper-fallback-cover,
+  .vinyl-cover img.dam-wallpaper-fallback-cover {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    transform: scale(1.015);
+    filter: saturate(1.08) contrast(1.03);
+  }
+
+  .cover.dam-has-wallpaper-cover::after,
+  .vinyl-cover.dam-has-wallpaper-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 24% 12%, rgba(255,255,255,.18), transparent 28%),
+      linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.22));
+    opacity: .48;
+  }
+
+  .track-card:hover .cover img.dam-wallpaper-fallback-cover {
+    transform: scale(1.055);
+    transition: transform .28s ease, filter .28s ease;
+  }
+
+  .dam-wallpaper-loading {
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+      linear-gradient(135deg, #111827, #312e81 55%, #0f172a) !important;
+  }
+</style>
+
+<script id="dam-v32-wallpaper-genre-covers">
+(function () {
+  if (window.__DAM_V32_WALLPAPER_GENRE_COVERS__) return;
+  window.__DAM_V32_WALLPAPER_GENRE_COVERS__ = true;
+
+  function qs(selector, root = document) { return root.querySelector(selector); }
+  function qsa(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
+
+  const PHOTO_BASE = 'https://images.unsplash.com/';
+  const IMG_PARAMS = '?auto=format&fit=crop&w=900&h=900&q=82';
+
+  const PHOTO_SETS = [
+    {
+      re: /jazz/i,
+      photos: [
+        'photo-1511379938547-c1f69419868d',
+        'photo-1493225457124-a3eb161ffa5f',
+        'photo-1511192336575-5a79af67a629',
+        'photo-1519501025264-65ba15a82390',
+        'photo-1449824913935-59a10b8d2000',
+        'photo-1477959858617-67f85cf4f1df'
+      ]
+    },
+    {
+      re: /classic|classical|klasik|piano|orchestra/i,
+      photos: [
+        'photo-1520523839897-bd0b52f945a0',
+        'photo-1507838153414-b4b713384a76',
+        'photo-1510915361894-db8b60106cb1',
+        'photo-1500530855697-b586d89ba3ee',
+        'photo-1519681393784-d120267933ba',
+        'photo-1501785888041-af3ef285b470'
+      ]
+    },
+    {
+      re: /wedding|akad|nikah|romantic|love/i,
+      photos: [
+        'photo-1519741497674-611481863552',
+        'photo-1511285560929-80b456fea0bc',
+        'photo-1469371670807-013ccf25f16a',
+        'photo-1495567720989-cebdbdd97913',
+        'photo-1500534314209-a25ddb2bd429',
+        'photo-1507525428034-b723cf961d3e'
+      ]
+    },
+    {
+      re: /lo-?fi|lofi|chill|relax|meditation|meditasi/i,
+      photos: [
+        'photo-1519608487953-e999c86e7455',
+        'photo-1519681393784-d120267933ba',
+        'photo-1500534314209-a25ddb2bd429',
+        'photo-1507525428034-b723cf961d3e',
+        'photo-1470252649378-9c29740c9fa8',
+        'photo-1490730141103-6cac27aaab94'
+      ]
+    },
+    {
+      re: /edm|electro|dance|rock|hip\s*hop|rap|r&b|rnb/i,
+      photos: [
+        'photo-1492684223066-81342ee5ff30',
+        'photo-1501386761578-eac5c94b800a',
+        'photo-1506157786151-b8491531f063',
+        'photo-1519501025264-65ba15a82390',
+        'photo-1480714378408-67cf0d13bc1f',
+        'photo-1449824913935-59a10b8d2000'
+      ]
+    },
+    {
+      re: /religi|religious|islam|sholawat/i,
+      photos: [
+        'photo-1470252649378-9c29740c9fa8',
+        'photo-1500534314209-a25ddb2bd429',
+        'photo-1507525428034-b723cf961d3e',
+        'photo-1506744038136-46273834b3fb',
+        'photo-1501785888041-af3ef285b470',
+        'photo-1519681393784-d120267933ba'
+      ]
+    },
+    {
+      re: /dangdut|keroncong|sunda|jawa|bali|nusantara|acoustic|instrumental/i,
+      photos: [
+        'photo-1500530855697-b586d89ba3ee',
+        'photo-1506744038136-46273834b3fb',
+        'photo-1472214103451-9374bd1c798e',
+        'photo-1493246507139-91e8fad9978e',
+        'photo-1501785888041-af3ef285b470',
+        'photo-1490730141103-6cac27aaab94'
+      ]
+    },
+    {
+      re: /kids|anak|pop|soundtrack|ost|score/i,
+      photos: [
+        'photo-1500530855697-b586d89ba3ee',
+        'photo-1519501025264-65ba15a82390',
+        'photo-1480714378408-67cf0d13bc1f',
+        'photo-1477959858617-67f85cf4f1df',
+        'photo-1506744038136-46273834b3fb',
+        'photo-1519608487953-e999c86e7455'
+      ]
+    }
+  ];
+
+  const DEFAULT_PHOTOS = [
+    'photo-1500530855697-b586d89ba3ee',
+    'photo-1506744038136-46273834b3fb',
+    'photo-1519501025264-65ba15a82390',
+    'photo-1480714378408-67cf0d13bc1f',
+    'photo-1449824913935-59a10b8d2000',
+    'photo-1477959858617-67f85cf4f1df',
+    'photo-1519681393784-d120267933ba',
+    'photo-1507525428034-b723cf961d3e',
+    'photo-1493246507139-91e8fad9978e',
+    'photo-1492684223066-81342ee5ff30'
+  ];
+
+  function hashString(value) {
+    let h = 0;
+    const str = String(value || '');
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  }
+
+  function pickPhotos(genre) {
+    const value = String(genre || '');
+    const match = PHOTO_SETS.find((set) => set.re.test(value));
+    return match ? match.photos : DEFAULT_PHOTOS;
+  }
+
+  function photoUrl(photoId) {
+    return PHOTO_BASE + photoId + IMG_PARAMS;
+  }
+
+  function picsumFallback(track) {
+    const seed = encodeURIComponent(['dam', track?.id, track?.key, track?.title, track?.genre].filter(Boolean).join('-') || 'destara-music');
+    return 'https://picsum.photos/seed/' + seed + '/900/900';
+  }
+
+  function fallbackPhotoFor(track) {
+    const photos = pickPhotos(track?.genre);
+    const seed = hashString([track?.id, track?.key, track?.title, track?.artist, track?.genre].join('|'));
+    return photoUrl(photos[seed % photos.length]);
+  }
+
+  function hasRealCover(cover) {
+    return Boolean(cover && cover.querySelector('img:not(.dam-wallpaper-fallback-cover):not(.dam-genre-fallback-cover)'));
+  }
+
+  function getTrackById(id) {
+    try {
+      if (!id || typeof state === 'undefined' || !Array.isArray(state.tracks)) return null;
+      return state.tracks.find((track) => String(track.id) === String(id)) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function cleanupOldFallbacks(cover) {
+    if (!cover) return;
+    qsa('img.dam-genre-fallback-cover', cover).forEach((img) => img.remove());
+    cover.classList.remove('dam-has-fallback-cover');
+  }
+
+  function applyWallpaperFallback(cover, track) {
+    if (!cover || !track) return;
+    cleanupOldFallbacks(cover);
+
+    if (hasRealCover(cover)) {
+      cover.classList.remove('dam-has-wallpaper-cover', 'dam-wallpaper-loading');
+      qsa('img.dam-wallpaper-fallback-cover', cover).forEach((img) => img.remove());
+      return;
+    }
+
+    const src = fallbackPhotoFor(track);
+    let img = cover.querySelector('img.dam-wallpaper-fallback-cover');
+
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'dam-wallpaper-fallback-cover';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = 'Wallpaper cover ' + (track.genre || 'musik');
+      img.addEventListener('load', function () {
+        cover.classList.remove('dam-wallpaper-loading');
+      });
+      img.addEventListener('error', function () {
+        const fallback = picsumFallback(track);
+        if (img.getAttribute('src') !== fallback) {
+          img.setAttribute('src', fallback);
+        } else {
+          cover.classList.remove('dam-has-wallpaper-cover');
+        }
+      });
+      cover.prepend(img);
+    }
+
+    if (img.getAttribute('src') !== src && img.getAttribute('data-dam-src') !== src) {
+      cover.classList.add('dam-wallpaper-loading');
+      img.setAttribute('data-dam-src', src);
+      img.setAttribute('src', src);
+    }
+
+    cover.classList.add('dam-has-wallpaper-cover');
+  }
+
+  function currentTrack() {
+    try {
+      if (typeof state === 'undefined') return null;
+      return getTrackById(state.currentId) || (Array.isArray(state.tracks) ? state.tracks[0] : null);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function enhanceTrackCards() {
+    qsa('.track-card[data-track]').forEach((card) => {
+      applyWallpaperFallback(qs('.cover', card), getTrackById(card.dataset.track));
+    });
+  }
+
+  function enhanceRows() {
+    qsa('.row').forEach((row) => {
+      const id = qs('[data-play]', row)?.dataset.play || qs('[data-fav]', row)?.dataset.fav || qs('[data-download]', row)?.dataset.download;
+      applyWallpaperFallback(qs('.cover', row), getTrackById(id));
+    });
+  }
+
+  function enhancePlayerAndHero() {
+    const track = currentTrack();
+    applyWallpaperFallback(qs('#nowInfo .cover'), track);
+    qsa('.vinyl-cover').forEach((cover) => applyWallpaperFallback(cover, track));
+  }
+
+  function enhanceCommandResults() {
+    qsa('.command-item[data-cmd-track]').forEach((item) => {
+      applyWallpaperFallback(qs('.cover', item), getTrackById(item.dataset.cmdTrack));
+    });
+  }
+
+  function run() {
+    enhanceTrackCards();
+    enhanceRows();
+    enhancePlayerAndHero();
+    enhanceCommandResults();
+  }
+
+  run();
+
+  const observer = new MutationObserver(run);
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  document.addEventListener('play', run, true);
+  document.addEventListener('pause', run, true);
+  document.addEventListener('click', function () { setTimeout(run, 0); }, true);
+  setInterval(run, 1200);
 })();
 </script>
 
