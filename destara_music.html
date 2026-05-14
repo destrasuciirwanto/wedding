@@ -3,714 +3,843 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DestAra Music</title>
+  <title>DestAra Music — Ultra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07070b;
-      --panel: rgba(18, 18, 24, .78);
-      --panel-2: rgba(28, 28, 38, .78);
-      --line: rgba(255,255,255,.08);
-      --muted: #a1a1aa;
+      --bg: #050507;
+      --bg2: #080812;
+      --panel: rgba(16, 16, 26, .74);
+      --panel-strong: rgba(22, 22, 34, .90);
+      --card: rgba(255,255,255,.075);
+      --card2: rgba(255,255,255,.115);
+      --line: rgba(255,255,255,.105);
       --text: #f8fafc;
-      --accent: #a855f7;
-      --accent-2: #22c55e;
-      --shadow: 0 28px 90px rgba(0,0,0,.42);
+      --muted: #a1a1aa;
+      --muted2: #71717a;
+      --accent: #b366ff;
+      --accent2: #22c55e;
+      --danger: #fb7185;
+      --warning: #f59e0b;
+      --shadow: 0 34px 100px rgba(0,0,0,.46);
       --radius: 28px;
+      --player: 108px;
     }
     * { box-sizing: border-box; }
-    html, body { width: 100%; min-height: 100%; margin: 0; }
+    html, body { width: 100%; height: 100%; margin: 0; }
     body {
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 16% 8%, rgba(168,85,247,.25), transparent 28%),
-        radial-gradient(circle at 78% 12%, rgba(34,197,94,.13), transparent 24%),
-        radial-gradient(circle at 65% 84%, rgba(14,165,233,.16), transparent 28%),
-        linear-gradient(135deg, #050508 0%, #0a0a13 48%, #080813 100%);
+      background: #050507;
       overflow: hidden;
     }
-    button, input, select { font: inherit; }
+    button, input, select, textarea { font: inherit; color: inherit; }
     button { border: 0; cursor: pointer; }
-    button:disabled { cursor: not-allowed; opacity: .55; }
-    a { color: inherit; }
+    button:disabled { cursor: not-allowed; opacity: .52; }
+    input, select, textarea { outline: none; }
+    .aurora {
+      position: fixed;
+      inset: -20%;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 12% 16%, rgba(180, 93, 255, .38), transparent 25%),
+        radial-gradient(circle at 86% 7%, rgba(34, 197, 94, .20), transparent 20%),
+        radial-gradient(circle at 76% 82%, rgba(14, 165, 233, .24), transparent 25%),
+        radial-gradient(circle at 36% 88%, rgba(244, 63, 94, .16), transparent 24%),
+        linear-gradient(135deg, #050507, #080812 48%, #06060b);
+      animation: auroraFloat 16s ease-in-out infinite alternate;
+      filter: saturate(1.1);
+    }
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .23;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at center, black, transparent 85%);
+    }
+    .current-glow {
+      position: fixed;
+      width: 52vw;
+      height: 52vw;
+      right: -18vw;
+      top: -18vw;
+      z-index: -1;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(179,102,255,.24), transparent 64%);
+      filter: blur(14px);
+      transition: background .35s ease, opacity .35s ease;
+      opacity: .8;
+    }
+    @keyframes auroraFloat {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to { transform: translate3d(2%, 1.5%, 0) scale(1.05); }
+    }
     .app {
-      width: 100vw;
       height: 100dvh;
+      width: 100vw;
       display: grid;
-      grid-template-columns: 280px minmax(0,1fr);
-      grid-template-rows: minmax(0,1fr) 96px;
+      grid-template-columns: 288px minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) var(--player);
       gap: 14px;
       padding: 14px;
       overflow: hidden;
     }
-    .sidebar, .main, .player, .modal-card {
+    .sidebar, .main, .player, .modal-card, .command-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.045));
       border: 1px solid var(--line);
-      background: var(--panel);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(22px) saturate(1.2);
+      -webkit-backdrop-filter: blur(22px) saturate(1.2);
     }
     .sidebar {
-      grid-row: 1 / 2;
-      border-radius: var(--radius);
+      grid-row: 1 / span 2;
+      border-radius: 30px;
       padding: 18px;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      min-height: 0;
+      overflow: hidden;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 52px;
+    .brand { display:flex; align-items:center; gap: 12px; margin-bottom: 18px; }
+    .brand-mark {
+      width: 50px; height: 50px; border-radius: 20px;
+      display:grid; place-items:center;
+      background: conic-gradient(from 210deg, #22c55e, #06b6d4, #a855f7, #f43f5e, #22c55e);
+      box-shadow: 0 18px 40px rgba(168,85,247,.32);
+      animation: softPulse 4s ease-in-out infinite;
     }
-    .brand-logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #7c3aed, #d946ef, #22c55e);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 18px 42px rgba(168,85,247,.22);
-      font-weight: 950;
-    }
-    .brand strong { display: block; font-size: 18px; letter-spacing: -.03em; }
-    .brand span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; margin-top: 2px; }
-    .nav-group { display: flex; flex-direction: column; gap: 8px; }
-    .nav-title { color: #71717a; font-size: 10px; font-weight: 950; letter-spacing: .18em; text-transform: uppercase; padding: 0 10px; }
+    .brand-mark span { width: 36px; height: 36px; border-radius: 15px; display:grid; place-items:center; background: rgba(5,5,7,.78); font-weight: 950; }
+    .brand h1 { font-size: 1.14rem; margin: 0; letter-spacing: -.04em; }
+    .brand small { display:block; margin-top:3px; color: var(--muted); font-size: .72rem; font-weight:700; }
+    @keyframes softPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.04); } }
+    .nav-section { margin-top: 14px; min-height: 0; }
+    .nav-title { color: var(--muted2); font-size: .68rem; font-weight: 950; letter-spacing:.18em; text-transform: uppercase; margin: 16px 12px 9px; }
+    .nav-list { display:flex; flex-direction: column; gap: 7px; }
     .nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 44px;
-      border-radius: 16px;
-      padding: 0 12px;
-      color: #d4d4d8;
-      background: transparent;
-      font-size: 13px;
-      font-weight: 850;
-      transition: .16s ease;
-      text-align: left;
+      width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      min-height: 44px; padding: 0 12px; border-radius: 17px;
+      background: transparent; color: var(--muted); font-weight: 800; transition: .18s ease;
     }
-    .nav-btn:hover { background: rgba(255,255,255,.06); color: white; }
-    .nav-btn.active { background: linear-gradient(135deg, rgba(168,85,247,.32), rgba(34,197,94,.14)); color: white; border: 1px solid rgba(255,255,255,.08); }
-    .nav-ico { width: 24px; text-align: center; opacity: .92; }
-    .create-btn {
-      min-height: 46px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.08);
-      color: white;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,.08);
-      transition: .16s ease;
-    }
-    .create-btn:hover { background: rgba(168,85,247,.25); transform: translateY(-1px); }
-    .playlist-list { overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 8px; }
-    .playlist-mini {
-      width: 100%;
-      min-height: 54px;
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px;
-      background: rgba(255,255,255,.04);
-      color: white;
-      text-align: left;
-      transition: .16s ease;
-    }
-    .playlist-mini:hover { background: rgba(255,255,255,.08); }
-    .playlist-mini-cover { width: 38px; height: 38px; border-radius: 12px; flex: 0 0 auto; display: grid; place-items: center; font-size: 13px; font-weight: 950; }
-    .playlist-mini b { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .playlist-mini small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .nav-btn .left { display:flex; align-items:center; gap:10px; min-width:0; }
+    .nav-btn .icon { width: 30px; height:30px; border-radius: 12px; display:grid; place-items:center; background: rgba(255,255,255,.07); }
+    .nav-btn:hover, .nav-btn.active { color: white; background: rgba(255,255,255,.10); transform: translateX(2px); }
+    .nav-btn.active .icon { background: linear-gradient(135deg, var(--accent), #22c55e); box-shadow: 0 12px 24px rgba(168,85,247,.24); }
+    .count-badge { min-width: 24px; padding: 4px 7px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--muted); font-size: .68rem; font-weight:900; text-align:center; }
+    .sidebar-tools { margin-top:auto; display:grid; gap:10px; }
+    .mini-card { border:1px solid var(--line); background:rgba(255,255,255,.055); border-radius: 22px; padding: 14px; }
+    .mini-card b { display:block; font-size:.84rem; }
+    .mini-card small { color: var(--muted); line-height:1.5; display:block; margin-top: 4px; }
     .main {
-      grid-column: 2 / 3;
-      grid-row: 1 / 2;
-      border-radius: var(--radius);
-      overflow: hidden;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      min-width:0; min-height:0; overflow:hidden; border-radius: 34px; display:flex; flex-direction:column;
     }
     .topbar {
-      flex: 0 0 auto;
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(12,12,17,.65);
-      backdrop-filter: blur(18px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      flex:0 0 auto;
+      display:grid; grid-template-columns: auto minmax(260px, 1fr) auto; gap: 12px; align-items:center;
+      padding: 16px 18px 10px;
     }
-    .mobile-menu { display: none; }
-    .round-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.07);
-      color: white;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,.08);
-      transition: .16s ease;
+    .mobile-menu { display:none; }
+    .search-wrap { position:relative; }
+    .search-wrap input {
+      width: 100%; height: 50px; border-radius: 999px; border:1px solid var(--line);
+      background: rgba(255,255,255,.085); padding: 0 48px; color: white; font-weight:800;
+      transition: .18s ease;
     }
-    .round-btn:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
-    .searchbox { position: relative; min-width: 0; }
-    .searchbox input {
-      width: 100%;
-      min-height: 46px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.08);
-      color: white;
-      outline: none;
-      padding: 0 46px;
-      font-size: 13px;
-      font-weight: 750;
+    .search-wrap input:focus { background: rgba(255,255,255,.13); border-color: rgba(168,85,247,.46); box-shadow: 0 0 0 4px rgba(168,85,247,.14); }
+    .search-wrap .sicon { position:absolute; left:17px; top:50%; transform:translateY(-50%); color:var(--muted); }
+    .search-wrap .kbd { position:absolute; right:14px; top:50%; transform:translateY(-50%); }
+    .top-actions { display:flex; align-items:center; justify-content:flex-end; gap:9px; }
+    .chip, .btn, .icon-btn, .seg button, .pill {
+      border:1px solid var(--line); background: rgba(255,255,255,.075); color: white; transition:.18s ease;
     }
-    .searchbox input:focus { border-color: rgba(168,85,247,.72); box-shadow: 0 0 0 4px rgba(168,85,247,.16); background: rgba(255,255,255,.11); }
-    .searchbox span { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-    .view-tools { display: flex; gap: 8px; align-items: center; }
-    .select-dark {
-      min-height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.07);
-      color: white;
-      padding: 0 12px;
-      outline: none;
-      font-weight: 850;
-      font-size: 12px;
-    }
-    .select-dark option { color: #111827; }
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 22px;
-      scroll-behavior: smooth;
-    }
-    .content::-webkit-scrollbar, .playlist-list::-webkit-scrollbar { width: 7px; }
-    .content::-webkit-scrollbar-thumb, .playlist-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.16); border-radius: 999px; }
+    .chip { min-height: 38px; border-radius:999px; padding: 0 13px; display:inline-flex; align-items:center; gap:8px; font-size:.75rem; font-weight:900; color:var(--muted); }
+    .icon-btn { width: 42px; height:42px; border-radius: 16px; display:grid; place-items:center; }
+    .btn { min-height: 43px; border-radius: 16px; padding: 0 15px; font-weight:950; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+    .btn.primary, .primary { background: linear-gradient(135deg, #a855f7, #22c55e); border-color: rgba(255,255,255,.12); box-shadow:0 14px 34px rgba(168,85,247,.23); }
+    .btn.danger, .danger { background: rgba(244,63,94,.15); color:#fecdd3; border-color: rgba(244,63,94,.28); }
+    .btn.warning { background: rgba(245,158,11,.14); color:#fde68a; border-color: rgba(245,158,11,.25); }
+    .btn:hover, .icon-btn:hover, .chip:hover, .seg button:hover { transform: translateY(-1px); background: rgba(255,255,255,.12); }
+    .content { min-height:0; overflow-y:auto; overflow-x:hidden; padding: 0 18px 26px; scroll-behavior:smooth; }
+    .content::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius:999px; }
     .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 32px;
-      min-height: 260px;
-      padding: 28px;
-      background:
-        radial-gradient(circle at 82% 10%, rgba(34,197,94,.28), transparent 26%),
-        radial-gradient(circle at 15% 20%, rgba(168,85,247,.35), transparent 28%),
-        linear-gradient(135deg, rgba(39,39,50,.95), rgba(12,12,18,.94));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 24px 80px rgba(0,0,0,.30);
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
-      gap: 20px;
-      align-items: center;
+      position:relative; overflow:hidden; border-radius: 34px; padding: 28px; min-height: 330px;
+      display:grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 22px; align-items:end;
+      background: linear-gradient(135deg, rgba(168,85,247,.20), rgba(34,197,94,.08)), rgba(255,255,255,.075);
+      border:1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      isolation:isolate;
     }
-    .hero:before { content:""; position:absolute; inset:0; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 34px 34px; mask-image: radial-gradient(circle at center, black, transparent 75%); pointer-events:none; }
-    .hero > * { position: relative; z-index: 1; }
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.10); color: #e9d5ff; font-size: 10px; font-weight: 950; letter-spacing: .18em; text-transform: uppercase; }
-    .hero h1 { font-size: clamp(34px, 5vw, 68px); line-height: .95; margin: 18px 0 12px; letter-spacing: -.06em; }
-    .hero p { margin: 0; color: #cbd5e1; line-height: 1.75; max-width: 680px; font-size: 14px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
-    .primary, .secondary, .pill-btn {
-      min-height: 44px;
-      border-radius: 999px;
-      padding: 0 18px;
+    .hero:before { content:""; position:absolute; inset:-40%; background: radial-gradient(circle at 20% 25%, rgba(255,255,255,.18), transparent 18%), radial-gradient(circle at 78% 8%, rgba(34,197,94,.24), transparent 24%), radial-gradient(circle at 60% 90%, rgba(168,85,247,.25), transparent 30%); z-index:-1; animation:auroraFloat 12s ease-in-out infinite alternate; }
+    .hero:after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent, rgba(0,0,0,.20)); z-index:-1; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; color:#c4b5fd; font-size:.72rem; font-weight:950; letter-spacing:.18em; text-transform: uppercase; }
+    .hero h2, .hero h1 { margin: 10px 0 10px; font-size: clamp(2.2rem, 5vw, 5.6rem); line-height:.92; letter-spacing:-.08em; max-width: 890px; }
+    .hero p { margin:0; color: rgba(255,255,255,.70); line-height:1.75; max-width: 720px; font-weight:650; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .now-vinyl { align-self:center; justify-self:center; width:min(330px, 100%); aspect-ratio:1; position:relative; border-radius:50%; background: radial-gradient(circle at center, #050507 0 9%, #171724 10% 17%, transparent 18%), conic-gradient(from 90deg, #a855f7, #06b6d4, #22c55e, #f43f5e, #a855f7); box-shadow:0 34px 80px rgba(0,0,0,.36); display:grid; place-items:center; animation: spinVinyl 14s linear infinite; }
+    .now-vinyl.paused { animation-play-state:paused; }
+    .vinyl-cover { width:43%; aspect-ratio:1; border-radius:28%; overflow:hidden; border:3px solid rgba(255,255,255,.18); display:grid; place-items:center; font-weight:950; font-size:2rem; color:white; background:rgba(0,0,0,.25); box-shadow: 0 0 0 8px rgba(0,0,0,.22); }
+    .vinyl-cover img { width:100%; height:100%; object-fit:cover; }
+    @keyframes spinVinyl { to { transform: rotate(360deg); } }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin: 18px 0; }
+    .seg { display:flex; flex-wrap:wrap; gap:8px; }
+    .seg button { min-height: 38px; border-radius:999px; padding: 0 12px; font-weight:900; font-size:.75rem; color:var(--muted); }
+    .seg button.active { color:white; background:linear-gradient(135deg, rgba(168,85,247,.85), rgba(34,197,94,.72)); }
+    .section { margin-top: 22px; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap: 12px; margin-bottom: 14px; }
+    .section-head h2 { margin:0; font-size:1.35rem; letter-spacing:-.045em; }
+    .section-head small { color:var(--muted); display:block; margin-top:5px; font-weight:650; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-min, 178px), 1fr)); gap: 14px; }
+    .grid.compact { --card-min: 145px; }
+    .grid.wide { --card-min: 235px; }
+    .grid.masonry { columns: 4 190px; display:block; }
+    .grid.masonry .track-card { break-inside: avoid; margin-bottom:14px; }
+    .track-card, .genre-card, .playlist-card, .admin-card, .insight-card {
+      position:relative; overflow:hidden; border-radius: 26px; border:1px solid var(--line); background: rgba(255,255,255,.07); padding: 12px; transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .track-card:hover, .genre-card:hover, .playlist-card:hover, .admin-card:hover, .insight-card:hover { transform: translateY(-3px); background: rgba(255,255,255,.105); border-color: rgba(255,255,255,.18); box-shadow:0 20px 48px rgba(0,0,0,.22); }
+    .track-card.playing { border-color: rgba(34,197,94,.48); box-shadow:0 18px 44px rgba(34,197,94,.12); }
+    .cover { position:relative; width:100%; aspect-ratio:1; border-radius:22px; overflow:hidden; display:grid; place-items:center; box-shadow: 0 18px 38px rgba(0,0,0,.28); background: linear-gradient(135deg, #a855f7, #22c55e); }
+    .cover img { width:100%; height:100%; object-fit:cover; display:block; }
+    .cover-letter { font-size: clamp(2rem, 5vw, 4rem); font-weight:950; text-shadow:0 10px 34px rgba(0,0,0,.34); }
+    .play-floating { position:absolute; right:18px; top: calc(12px + min(100%, 160px)); transform: translateY(-50%) scale(.94); width:48px; height:48px; border-radius:999px; background:linear-gradient(135deg,#22c55e,#a855f7); color:white; box-shadow:0 18px 38px rgba(0,0,0,.32); opacity:0; transition:.18s ease; display:grid; place-items:center; font-weight:950; }
+    .track-card:hover .play-floating, .track-card.playing .play-floating { opacity:1; transform: translateY(-50%) scale(1); }
+    .track-info { padding: 12px 3px 5px; min-width:0; }
+    .track-info b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.93rem; letter-spacing:-.025em; }
+    .track-info small { display:block; margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--muted); font-weight:700; font-size:.75rem; }
+    .mini-actions { display:flex; gap:7px; flex-wrap:wrap; padding: 0 3px 2px; }
+    .mini-actions button, .row-actions button { min-height:30px; border-radius:999px; padding:0 9px; background:rgba(255,255,255,.07); border:1px solid var(--line); color:var(--muted); font-size:.68rem; font-weight:950; }
+    .mini-actions button:hover, .row-actions button:hover { color:white; background:rgba(255,255,255,.13); }
+    .list { display:flex; flex-direction:column; gap:9px; }
+    .row { display:grid; grid-template-columns: 42px 58px minmax(0, 1.35fr) .7fr .7fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:20px; background:rgba(255,255,255,.065); padding:9px; transition:.16s ease; }
+    .row:hover { background:rgba(255,255,255,.105); transform: translateX(2px); }
+    .row.playing { border-color:rgba(34,197,94,.40); }
+    .row .cover { width:58px; border-radius:16px; }
+    .row b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .row small { color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ctrl { width:42px; height:42px; border-radius:15px; display:grid; place-items:center; background:rgba(255,255,255,.09); border:1px solid var(--line); }
+    .row-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .genre-card, .playlist-card { min-height: 160px; display:flex; flex-direction:column; justify-content:flex-end; cursor:pointer; }
+    .genre-card .cover, .playlist-card .cover { height:110px; aspect-ratio:auto; }
+    .insights { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
+    .insight-card { padding:16px; min-height:105px; }
+    .insight-card .num { font-size:1.8rem; font-weight:950; letter-spacing:-.07em; margin-top:12px; }
+    .insight-card small { color:var(--muted); font-weight:700; }
+    .equalizer { display:flex; align-items:end; gap:3px; height:28px; }
+    .equalizer i { display:block; width:4px; border-radius:999px; background:#22c55e; height:6px; animation:eq 1s ease-in-out infinite; opacity:.85; }
+    .equalizer i:nth-child(2){animation-delay:.12s}.equalizer i:nth-child(3){animation-delay:.24s}.equalizer i:nth-child(4){animation-delay:.08s}.equalizer i:nth-child(5){animation-delay:.18s}
+    @keyframes eq { 0%,100%{height:6px} 50%{height:25px} }
+    .player {
+      grid-column: 2;
+      border-radius: 28px;
+      padding: 12px;
+      display:grid; grid-template-columns: minmax(220px, .95fr) minmax(300px, 1.3fr) minmax(200px, .75fr); align-items:center; gap:14px;
+      position:relative; overflow:hidden;
+    }
+    .player:before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(168,85,247,.10), transparent 45%, rgba(34,197,94,.08)); pointer-events:none; }
+    .now { position:relative; display:flex; align-items:center; gap:12px; min-width:0; }
+    .now .cover { width:72px; border-radius:20px; flex:0 0 auto; }
+    .now b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .now small { display:block; color:var(--muted); margin-top:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .player-center { position:relative; min-width:0; }
+    .controls { display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:9px; }
+    .big-play { width:54px; height:54px; border-radius:999px; display:grid; place-items:center; background:white; color:#050507; font-weight:950; box-shadow:0 16px 40px rgba(255,255,255,.12); }
+    .round { width:42px; height:42px; border-radius:999px; display:grid; place-items:center; background:rgba(255,255,255,.08); border:1px solid var(--line); color:var(--muted); }
+    .round.active { color:white; background:rgba(34,197,94,.19); border-color:rgba(34,197,94,.34); }
+    .progress-line { display:grid; grid-template-columns: 44px minmax(0,1fr) 44px; gap:9px; align-items:center; }
+    .progress-line span { color:var(--muted); font-size:.72rem; font-weight:900; text-align:center; }
+    input[type="range"] { width:100%; accent-color:#22c55e; }
+    .player-extra { position:relative; display:flex; align-items:center; justify-content:flex-end; gap:9px; flex-wrap:wrap; }
+    .volume { width:105px; }
+    .empty { border:1px dashed rgba(255,255,255,.16); background:rgba(255,255,255,.05); border-radius:28px; padding:36px; text-align:center; color:var(--muted); font-weight:800; line-height:1.7; }
+    .loading-skel { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:14px; }
+    .skeleton { height:260px; border-radius:28px; background:linear-gradient(90deg, rgba(255,255,255,.05), rgba(255,255,255,.12), rgba(255,255,255,.05)); background-size:200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+    @keyframes shimmer { to { background-position:-200% 0; } }
+    .toast-wrap { position:fixed; right:18px; bottom: calc(var(--player) + 24px); z-index: 70; display:grid; gap:10px; width:min(420px, calc(100vw - 36px)); pointer-events:none; }
+    .toast { pointer-events:auto; border:1px solid var(--line); background:rgba(18,18,28,.92); backdrop-filter:blur(18px); border-radius:22px; padding:14px 16px; box-shadow:0 22px 60px rgba(0,0,0,.36); animation: toastIn .22s ease-out; }
+    .toast b { display:block; margin-bottom:4px; }
+    .toast small { color:var(--muted); line-height:1.5; }
+    @keyframes toastIn { from{opacity:0; transform:translateY(10px) scale(.98)} to{opacity:1; transform:none} }
+    .modal { position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.62); backdrop-filter: blur(16px); display:none; align-items:center; justify-content:center; padding:18px; }
+    .modal.show { display:flex; }
+    .modal-card { width:min(920px, 100%); max-height:92vh; overflow:auto; border-radius:34px; padding:20px; animation: modalPop .2s ease-out; }
+    @keyframes modalPop { from{opacity:0; transform:translateY(12px) scale(.98)} to{opacity:1; transform:none} }
+    .modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px; }
+    .modal-head h3 { margin:0; font-size:1.45rem; letter-spacing:-.06em; }
+    .modal-head p { margin:6px 0 0; color:var(--muted); line-height:1.5; }
+    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; }
+    .field { display:grid; gap:7px; }
+    .field label { color:var(--muted); font-size:.72rem; font-weight:950; letter-spacing:.12em; text-transform:uppercase; }
+    .field input, .field select, .field textarea {
+      min-height:48px; border-radius:17px; border:1px solid var(--line); background:rgba(255,255,255,.08); padding:0 13px; font-weight:800;
+    }
+    .field textarea { padding:13px; min-height:110px; resize:vertical; }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .admin-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+    .admin-card { padding:16px; }
+    .dropzone { border:1px dashed rgba(255,255,255,.22); border-radius:24px; padding:18px; background:rgba(255,255,255,.045); }
+    .genre-select-wrap { display:grid; grid-template-columns: minmax(0,1fr); gap:8px; }
+
+    /* V26 custom genre dropdown: native select popup putih diganti picker gelap modern */
+    .genre-select-wrap { position: relative; }
+    select[data-genre-select].native-genre-select-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      clip-path: inset(50%) !important;
+    }
+    .genre-picker { position: relative; z-index: 12; }
+    .genre-picker-button {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(179,102,255,.18), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.065));
+      color: #fff;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 950;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 12px 30px rgba(0,0,0,.16);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .genre-picker-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(179,102,255,.42);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(179,102,255,.28), transparent 40%),
+        linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,.075));
+      box-shadow: 0 18px 45px rgba(179,102,255,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    .genre-picker-button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .genre-picker-value {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: white;
-      font-weight: 950;
-      font-size: 13px;
-      transition: .16s ease;
-    }
-    .primary { background: linear-gradient(135deg, #22c55e, #a855f7); box-shadow: 0 16px 42px rgba(34,197,94,.16); }
-    .secondary, .pill-btn { background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.10); }
-    .primary:hover, .secondary:hover, .pill-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-    .hero-card-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .stat-card { min-height: 112px; border-radius: 24px; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.10); padding: 18px; }
-    .stat-card b { display: block; font-size: 28px; letter-spacing: -.04em; }
-    .stat-card span { display: block; color: var(--muted); font-size: 11px; font-weight: 850; margin-top: 8px; }
-    .section { margin-top: 28px; }
-    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom: 14px; }
-    .section h2 { margin: 0; font-size: 24px; letter-spacing: -.04em; }
-    .section small { color: var(--muted); font-weight: 800; }
-    .chip-row { display:flex; gap: 10px; overflow-x:auto; padding-bottom: 4px; }
-    .chip { flex: 0 0 auto; min-height: 38px; border-radius: 999px; padding: 0 14px; background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08); color:#e5e7eb; font-size:12px; font-weight:900; }
-    .chip.active { background: rgba(168,85,247,.28); border-color: rgba(168,85,247,.42); color:white; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
-    .grid.compact { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-    .track-card, .playlist-card, .genre-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 12px;
-      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+      gap: 10px;
       min-width: 0;
-    }
-    .track-card:hover, .playlist-card:hover, .genre-card:hover { transform: translateY(-3px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.15); }
-    .cover {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 20px;
       overflow: hidden;
-      display:grid;
-      place-items:center;
-      box-shadow: 0 20px 42px rgba(0,0,0,.25);
-      isolation: isolate;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .cover img { width: 100%; height: 100%; object-fit: cover; display:block; }
-    .cover:after { content:""; position:absolute; inset:0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 34%), linear-gradient(to top, rgba(0,0,0,.42), transparent); pointer-events:none; }
-    .cover-letter { position:relative; z-index:1; font-size: 36px; font-weight: 950; text-shadow: 0 10px 32px rgba(0,0,0,.32); }
-    .play-floating { position: absolute; z-index: 3; right: 12px; bottom: 12px; width: 48px; height: 48px; border-radius: 999px; background: #22c55e; color:#06110a; display:grid; place-items:center; font-weight:950; box-shadow: 0 18px 32px rgba(34,197,94,.30); transform: translateY(8px); opacity:0; transition:.16s ease; }
-    .track-card:hover .play-floating, .playlist-card:hover .play-floating { transform: translateY(0); opacity: 1; }
-    .track-card.is-playing { border-color: rgba(34,197,94,.42); background: rgba(34,197,94,.10); }
-    .track-info { padding: 12px 4px 4px; min-width:0; }
-    .track-info b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:14px; }
-    .track-info small { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--muted); font-weight:750; margin-top:5px; font-size:12px; }
-    .track-actions { display:flex; gap:6px; padding: 8px 2px 2px; }
-    .tiny-btn { min-width: 34px; height: 34px; border-radius: 13px; color:white; background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); display:grid; place-items:center; transition:.16s ease; }
-    .tiny-btn:hover, .tiny-btn.active { background: rgba(168,85,247,.25); }
-    .list { display:flex; flex-direction:column; gap: 8px; }
-    .track-row {
-      display:grid;
-      grid-template-columns: 42px 56px minmax(0, 1.4fr) minmax(120px,.7fr) 90px auto;
-      align-items:center;
-      gap: 12px;
-      min-height: 72px;
-      padding: 8px 12px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.045);
-      border:1px solid rgba(255,255,255,.06);
-      transition:.16s ease;
+    .genre-picker-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06), 0 0 18px rgba(179,102,255,.42);
     }
-    .track-row:hover, .track-row.is-playing { background: rgba(255,255,255,.08); }
-    .mini-cover { width: 52px; height: 52px; border-radius: 14px; display:grid; place-items:center; font-weight:950; overflow:hidden; }
-    .mini-cover img { width:100%; height:100%; object-fit:cover; }
-    .row-title b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .row-title small, .row-album, .row-duration { color: var(--muted); font-size: 12px; font-weight: 800; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .empty { border-radius: 28px; border:1px dashed rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding: 42px 22px; text-align:center; color: var(--muted); }
-    .player {
-      grid-column: 1 / 3;
-      grid-row: 2 / 3;
-      border-radius: 26px;
-      display:grid;
-      grid-template-columns: minmax(210px, .85fr) minmax(260px, 1.2fr) minmax(210px, .85fr);
-      align-items:center;
-      gap: 18px;
-      padding: 14px 18px;
-      min-width:0;
+    .genre-picker-chevron {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.07);
+      transition: transform .16s ease, background .16s ease;
     }
-    .now { display:flex; align-items:center; gap: 12px; min-width:0; }
-    .now .mini-cover { width: 62px; height: 62px; border-radius: 18px; }
-    .now b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .now small { display:block; color:var(--muted); font-weight:800; font-size:12px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .controls { display:flex; flex-direction:column; gap: 10px; min-width:0; }
-    .control-buttons { display:flex; align-items:center; justify-content:center; gap: 10px; }
-    .control { width: 40px; height: 40px; border-radius: 999px; background: transparent; color:white; display:grid; place-items:center; transition:.16s ease; }
-    .control:hover, .control.active { background: rgba(255,255,255,.09); }
-    .control.main-play { width: 50px; height:50px; background:white; color:#050508; font-size:16px; }
-    .control.main-play:hover { transform: scale(1.03); }
-    .progress-wrap { display:grid; grid-template-columns: 48px minmax(0,1fr) 48px; align-items:center; gap: 10px; color:var(--muted); font-size:11px; font-weight:850; }
-    input[type="range"] { width:100%; accent-color: #22c55e; }
-    .right-tools { display:flex; align-items:center; justify-content:flex-end; gap: 10px; min-width:0; }
-    .volume { display:flex; align-items:center; gap:8px; width:150px; }
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-      background: rgba(0,0,0,.64);
-      backdrop-filter: blur(14px);
+    .genre-picker.open .genre-picker-chevron { transform: rotate(180deg); background: rgba(179,102,255,.18); }
+    .genre-picker-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 10px);
+      z-index: 80;
+      display: none;
+      max-height: min(330px, 48vh);
+      overflow: auto;
+      padding: 10px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(179,102,255,.22), transparent 36%),
+        linear-gradient(180deg, rgba(18,18,30,.98), rgba(9,9,16,.97));
+      box-shadow: 0 26px 80px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(22px) saturate(1.18);
+      -webkit-backdrop-filter: blur(22px) saturate(1.18);
+      animation: genreMenuIn .16s ease-out;
     }
-    .modal.show { display:flex; }
-    .modal-card { width:min(520px, 100%); border-radius: 32px; padding: 22px; }
-    .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
-    .modal-head h3 { margin:0; font-size:20px; letter-spacing:-.04em; }
-    .field { margin-bottom: 12px; }
-    .field label { display:block; color:var(--muted); font-size:11px; font-weight:950; letter-spacing:.13em; text-transform:uppercase; margin-bottom:8px; }
-    .field input, .field select {
-      width:100%; min-height:48px; border-radius:16px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.08); color:white; outline:none; padding: 0 14px; font-weight:800;
+    .genre-picker.open .genre-picker-menu { display: grid; gap: 6px; }
+    @keyframes genreMenuIn { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: none; } }
+    .genre-picker-menu::-webkit-scrollbar { width: 8px; }
+    .genre-picker-menu::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
+    .genre-picker-menu::-webkit-scrollbar-thumb { background: rgba(179,102,255,.42); border-radius: 999px; }
+    .genre-option {
+      min-height: 43px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 12px;
+      background: transparent;
+      color: rgba(255,255,255,.76);
+      font-weight: 900;
+      text-align: left;
+      transition: .14s ease;
     }
-    .field select option { color:#111827; }
-    .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
-    .toast { position:fixed; right:18px; bottom:118px; z-index:60; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
-    .toast-item { border-radius:18px; padding:12px 14px; background:rgba(24,24,32,.95); border:1px solid rgba(255,255,255,.10); box-shadow:0 18px 44px rgba(0,0,0,.35); color:white; font-weight:850; font-size:13px; animation: toastIn .22s ease-out; }
-    @keyframes toastIn { from { opacity:0; transform: translateX(20px);} to { opacity:1; transform:none;} }
-    .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.52); z-index:30; }
-    @media (max-width: 980px) {
-      body { overflow: hidden; }
-      .app { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr) 124px; padding: 8px; gap: 8px; }
-      .sidebar { position:fixed; z-index:40; left:10px; top:10px; bottom:132px; width:min(300px, calc(100vw - 20px)); transform: translateX(calc(-100% - 16px)); transition:.2s ease; }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.show { display:block; }
-      .main { grid-column: 1; }
+    .genre-option:hover {
+      color: #fff;
+      background: rgba(255,255,255,.10);
+      transform: translateX(2px);
+    }
+    .genre-option.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(179,102,255,.42), rgba(34,197,94,.18));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 12px 30px rgba(179,102,255,.14);
+    }
+    .genre-option small {
+      color: rgba(255,255,255,.42);
+      font-size: .7rem;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .genre-option.custom {
+      border: 1px dashed rgba(179,102,255,.38);
+      background: rgba(179,102,255,.08);
+      color: #fff;
+    }
+    .genre-custom:not([hidden]) {
+      margin-top: 8px;
+      border-color: rgba(179,102,255,.34) !important;
+      background: rgba(179,102,255,.10) !important;
+      box-shadow: 0 0 0 4px rgba(179,102,255,.08);
+    }
+
+    .genre-custom[hidden] { display:none !important; }
+    .admin-chip-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .admin-chip { min-height:34px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.07); padding:0 12px; color:var(--muted); font-weight:900; font-size:.78rem; cursor:pointer; }
+    .admin-chip:hover { color:var(--text); background:rgba(255,255,255,.12); transform:translateY(-1px); }
+    .admin-mini-note { margin-top:10px; color:var(--muted); font-size:.78rem; line-height:1.5; }
+    .mini-actions button[data-download] { color:#dbeafe; border-color:rgba(96,165,250,.22); background:rgba(59,130,246,.12); }
+    .row-actions button[data-download] { color:#dbeafe; }
+    .kbd { border:1px solid var(--line); border-bottom-color:rgba(255,255,255,.22); background:rgba(255,255,255,.08); border-radius:9px; padding:3px 7px; color:var(--muted); font-size:.72rem; font-weight:900; }
+    .command-overlay { position:fixed; inset:0; z-index:75; background:rgba(0,0,0,.52); backdrop-filter:blur(14px); display:none; align-items:flex-start; justify-content:center; padding:9vh 16px; }
+    .command-overlay.show { display:flex; }
+    .command-panel { width:min(720px,100%); border-radius:30px; overflow:hidden; }
+    .command-panel input { width:100%; height:62px; background:transparent; border:0; border-bottom:1px solid var(--line); padding:0 20px; font-size:1.05rem; font-weight:900; }
+    .command-results { max-height:55vh; overflow:auto; padding:12px; display:grid; gap:8px; }
+    .command-item { display:grid; grid-template-columns:46px minmax(0,1fr) auto; gap:12px; align-items:center; border-radius:18px; padding:9px; background:rgba(255,255,255,.055); cursor:pointer; }
+    .command-item:hover { background:rgba(255,255,255,.12); }
+    .command-item .cover { width:46px; border-radius:14px; }
+    .mobile-nav { display:none; }
+    .sidebar-overlay { display:none; }
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) var(--player); }
+      .sidebar { position:fixed; left:14px; top:14px; bottom:14px; width:min(320px, calc(100vw - 28px)); z-index:50; transform:translateX(calc(-100% - 20px)); transition:.22s ease; }
+      .sidebar.open { transform:translateX(0); }
+      .sidebar-overlay { display:block; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:49; opacity:0; pointer-events:none; transition:.18s ease; }
+      .sidebar-overlay.show { opacity:1; pointer-events:auto; }
+      .player { grid-column:1; }
       .mobile-menu { display:grid; }
-      .topbar { grid-template-columns: auto minmax(0,1fr); }
-      .view-tools { grid-column: 1 / -1; justify-content:space-between; overflow-x:auto; }
-      .hero { grid-template-columns: 1fr; padding: 22px; }
-      .hero-card-stack { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .player { grid-column:1; grid-template-columns: 1fr; height:auto; align-items:stretch; padding: 10px; }
-      .right-tools { justify-content:center; }
-      .now { justify-content:center; text-align:left; }
-      .volume { width: 170px; }
-      .track-row { grid-template-columns: 36px 48px minmax(0,1fr) auto; }
-      .row-album, .row-duration { display:none; }
+      .hero, .topbar { grid-template-columns:1fr; }
+      .top-actions { justify-content:flex-start; }
+      .insights { grid-template-columns: repeat(2,1fr); }
     }
-    @media (max-width: 560px) {
-      .content { padding: 14px; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .grid.compact { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 34px; }
-      .hero-card-stack { grid-template-columns: 1fr; }
-      .track-card { border-radius: 20px; padding: 9px; }
-      .cover { border-radius: 17px; }
-      .track-actions { gap:4px; }
-      .tiny-btn { min-width: 31px; height:31px; border-radius: 12px; }
-      .select-dark { max-width: 48%; }
+    @media (max-width: 740px) {
+      :root { --player: 158px; }
+      .app { padding:8px; gap:8px; }
+      .main { border-radius:26px; }
+      .topbar { padding:12px; }
+      .content { padding:0 12px 20px; }
+      .hero { padding:20px; min-height: 300px; border-radius:26px; }
+      .hero h1, .hero h2 { font-size:2.6rem; }
+      .now-vinyl { width:220px; }
+      .player { border-radius:22px; grid-template-columns: 1fr; gap:8px; padding:10px; }
+      .player-extra { display:none; }
+      .now .cover { width:54px; border-radius:16px; }
+      .big-play { width:46px; height:46px; }
+      .round { width:38px; height:38px; }
+      .row { grid-template-columns: 40px 50px minmax(0,1fr) auto; }
+      .row .hide-sm { display:none; }
+      .row .cover { width:50px; }
+      .mini-actions button { min-height:32px; }
+      .form-grid, .admin-grid, .insights { grid-template-columns:1fr; }
+      .toast-wrap { bottom: calc(var(--player) + 14px); right:10px; width:calc(100vw - 20px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *:before, *:after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
     }
   </style>
 </head>
 <body>
+  <div class="aurora"></div><div class="noise"></div><div id="currentGlow" class="current-glow"></div>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <div class="app">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="brand-logo">♪</div>
-        <div><strong>DestAra Music</strong><span>DAM Player</span></div>
+        <div class="brand-mark"><span>DAM</span></div>
+        <div><h1>DestAra Music</h1><small>Cloudflare R2 Player</small></div>
       </div>
-      <div class="nav-group">
-        <div class="nav-title">Menu</div>
-        <button class="nav-btn active" data-view="home"><span class="nav-ico">⌂</span> Home</button>
-        <button class="nav-btn" data-view="search"><span class="nav-ico">⌕</span> Search</button>
-        <button class="nav-btn" data-view="library"><span class="nav-ico">▦</span> Library</button>
-        <button class="nav-btn" data-view="genres"><span class="nav-ico">◇</span> Kategori</button>
-        <button class="nav-btn" data-view="favorites"><span class="nav-ico">♥</span> Favorite</button>
-        <button class="nav-btn" data-view="recent"><span class="nav-ico">◷</span> Recently Played</button>
-        <button class="nav-btn" data-view="queue"><span class="nav-ico">☰</span> Queue</button>
+      <div class="nav-section"><div class="nav-title">Browse</div><div class="nav-list" id="navList"></div></div>
+      <div class="nav-section" style="overflow:auto"><div class="nav-title">Kategori Cepat</div><div class="nav-list" id="genreNav"></div></div>
+      <div class="sidebar-tools">
+        <div class="mini-card"><b>API aktif</b><small id="apiUrlText">Memuat...</small></div>
+        <button class="btn primary" id="openAdminBtn">✦ Admin Mode</button>
       </div>
-      <button class="create-btn" id="createPlaylistBtn">＋ Buat Playlist</button>
-      <div class="nav-title">Playlist</div>
-      <div class="playlist-list" id="playlistList"></div>
     </aside>
-
     <main class="main">
       <div class="topbar">
-        <button class="round-btn mobile-menu" id="mobileMenuBtn">☰</button>
-        <div class="searchbox">
-          <span>⌕</span>
-          <input id="globalSearch" placeholder="Cari lagu, artist, album, playlist, genre..." autocomplete="off" />
-        </div>
-        <div class="view-tools">
-          <select class="select-dark" id="sortSelect" title="Urutan lagu">
-            <option value="popular">Rekomendasi</option>
-            <option value="title-asc">Judul A-Z</option>
-            <option value="title-desc">Judul Z-A</option>
-            <option value="artist-asc">Artist A-Z</option>
-            <option value="genre-asc">Genre</option>
-            <option value="duration-desc">Durasi Terpanjang</option>
-          </select>
-          <select class="select-dark" id="viewModeSelect" title="Mode tampilan">
-            <option value="grid">Grid</option>
-            <option value="compact">Compact</option>
-            <option value="list">List</option>
-          </select>
+        <button class="icon-btn mobile-menu" id="mobileMenuBtn">☰</button>
+        <div class="search-wrap"><span class="sicon">⌕</span><input id="searchInput" placeholder="Cari lagu, artist, album, genre..." /><span class="kbd">Ctrl K</span></div>
+        <div class="top-actions">
+          <button class="chip" id="refreshBtn">↻ Refresh</button>
+          <button class="chip" id="cmdBtn">⌘ Command</button>
+          <button class="chip" id="themeBtn">✧ Mood</button>
         </div>
       </div>
       <div class="content" id="content"></div>
     </main>
-
     <section class="player">
-      <div class="now" id="nowInfo">
-        <div class="mini-cover" id="nowCover" style="background:linear-gradient(135deg,#27272a,#18181b)">♪</div>
-        <div style="min-width:0"><b>Belum ada lagu</b><small>Pilih lagu untuk memulai</small></div>
-      </div>
-      <div class="controls">
-        <div class="control-buttons">
-          <button class="control" id="shuffleBtn" title="Shuffle">⤨</button>
-          <button class="control" id="prevBtn" title="Previous">⏮</button>
-          <button class="control main-play" id="playBtn" title="Play/Pause">▶</button>
-          <button class="control" id="nextBtn" title="Next">⏭</button>
-          <button class="control" id="repeatBtn" title="Repeat">↻</button>
+      <div class="now" id="nowInfo"></div>
+      <div class="player-center">
+        <div class="controls">
+          <button class="round" id="shuffleBtn" title="Shuffle">⤨</button>
+          <button class="round" id="prevBtn" title="Previous">⏮</button>
+          <button class="big-play" id="playBtn" title="Play/Pause">▶</button>
+          <button class="round" id="nextBtn" title="Next">⏭</button>
+          <button class="round" id="repeatBtn" title="Repeat">↻</button>
         </div>
-        <div class="progress-wrap">
-          <span id="currentTime">0:00</span>
-          <input type="range" id="progressBar" min="0" max="100" value="0" />
-          <span id="durationTime">0:00</span>
-        </div>
+        <div class="progress-line"><span id="curTime">0:00</span><input id="seek" type="range" min="0" max="100" value="0" /><span id="durTime">0:00</span></div>
       </div>
-      <div class="right-tools">
-        <button class="tiny-btn" id="favNowBtn" title="Favorite">♡</button>
-        <button class="tiny-btn" id="queueNowBtn" title="Tambah ke Queue">☰</button>
-        <button class="tiny-btn" id="downloadNowBtn" title="Download">⇩</button>
-        <div class="volume"><span>🔊</span><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" /></div>
+      <div class="player-extra">
+        <div class="equalizer" id="eq"><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="icon-btn" id="favCurrentBtn" title="Favorite">♡</button>
+        <button class="icon-btn" id="downloadBtn" title="Download">⇩</button>
+        <button class="icon-btn" id="shareBtn" title="Copy link">⤴</button>
+        <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.9" />
       </div>
     </section>
   </div>
 
-  <div class="modal" id="playlistModal">
-    <div class="modal-card">
-      <div class="modal-head"><h3>Buat Playlist Baru</h3><button class="round-btn" data-close-modal>×</button></div>
-      <div class="field"><label>Nama Playlist</label><input id="playlistNameInput" placeholder="Contoh: Lagu Resepsi" /></div>
-      <div class="field"><label>Deskripsi</label><input id="playlistDescInput" placeholder="Keterangan singkat playlist" /></div>
-      <div class="modal-actions"><button class="secondary" data-close-modal>Batal</button><button class="primary" id="savePlaylistBtn">Simpan Playlist</button></div>
-    </div>
-  </div>
+  <div class="toast-wrap" id="toastWrap"></div>
 
-  <div class="modal" id="addModal">
-    <div class="modal-card">
-      <div class="modal-head"><h3>Tambah ke Playlist</h3><button class="round-btn" data-close-modal>×</button></div>
-      <div class="field"><label>Pilih Playlist</label><select id="addPlaylistSelect"></select></div>
-      <div class="modal-actions"><button class="secondary" data-close-modal>Batal</button><button class="primary" id="confirmAddPlaylistBtn">Tambah</button></div>
+  <div class="modal" id="adminModal"><div class="modal-card">
+    <div class="modal-head"><div><h3>Admin Mode DAM</h3><p>Upload, edit, hapus, cover, kategori, dan pindah folder R2. Token default Worker sementara: <span class="kbd">destradanmutiara</span>.</p></div><button class="icon-btn" data-close="adminModal">×</button></div>
+    <div class="admin-grid">
+      <div class="admin-card">
+        <span class="eyebrow">Keamanan</span><h3>Simpan Token</h3>
+        <div class="field"><label>Admin Token</label><input id="adminToken" type="password" placeholder="Token admin" /></div>
+        <div class="form-actions"><button class="btn" id="clearTokenBtn">Hapus Token</button><button class="btn primary" id="saveTokenBtn">Simpan Token</button></div>
+      </div>
+      <div class="admin-card">
+        <span class="eyebrow">Kategori</span><h3>Buat Folder/Kategori</h3>
+        <div class="form-grid"><div class="field"><label>Genre/Kategori Baru</label><input id="newGenre" placeholder="Jazz / Classic / Wedding" /></div><div class="field"><label>Album/Subfolder</label><input id="newAlbum" placeholder="Opsional" /></div></div>
+        <div class="admin-chip-row" id="quickGenreChips"></div>
+        <p class="admin-mini-note">Genre dropdown di upload/edit/pindah otomatis mengambil kategori yang sudah ada plus preset umum.</p>
+        <div class="form-actions"><button class="btn" id="refreshAdminLibraryBtn" type="button">Refresh Library</button><button class="btn primary" id="createFolderBtn">Buat Kategori</button></div>
+      </div>
     </div>
-  </div>
+    <div class="admin-card" style="margin-top:14px">
+      <span class="eyebrow">Upload</span><h3>Tambah Lagu Baru</h3>
+      <form id="uploadForm" class="dropzone">
+        <div class="form-grid">
+          <div class="field"><label>File Audio</label><input name="file" type="file" accept="audio/*" required /></div>
+          <div class="field"><label>Genre</label><div class="genre-select-wrap"><select name="genre" data-genre-select data-custom-target="uploadGenreCustom" data-selected="Classic"></select><input class="genre-custom" id="uploadGenreCustom" name="genreCustom" placeholder="Tulis genre baru" hidden /></div></div>
+          <div class="field"><label>Judul</label><input name="title" placeholder="Judul lagu" /></div>
+          <div class="field"><label>Artist</label><input name="artist" placeholder="Nama artist" /></div>
+          <div class="field" style="grid-column:1/-1"><label>Album</label><input name="album" placeholder="DestAra Music" /></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Upload Lagu</button></div>
+      </form>
+    </div>
+  </div></div>
 
-  <div class="toast" id="toast"></div>
+  <div class="modal" id="editModal"><div class="modal-card">
+    <div class="modal-head"><div><h3 id="editTitle">Edit Lagu</h3><p>Metadata disimpan irit di R2 sebagai <span class="kbd">dam/catalog.json</span>.</p></div><button class="icon-btn" data-close="editModal">×</button></div>
+    <form id="editForm">
+      <input type="hidden" name="key" />
+      <div class="form-grid">
+        <div class="field"><label>Judul</label><input name="title" /></div>
+        <div class="field"><label>Artist</label><input name="artist" /></div>
+        <div class="field"><label>Album</label><input name="album" /></div>
+        <div class="field"><label>Genre</label><div class="genre-select-wrap"><select name="genre" data-genre-select data-custom-target="editGenreCustom"></select><input class="genre-custom" id="editGenreCustom" name="genreCustom" placeholder="Tulis genre baru" hidden /></div></div>
+        <div class="field" style="grid-column:1/-1"><label>Cover Gambar</label><input name="cover" type="file" accept="image/*" /></div>
+      </div>
+      <div class="form-actions"><button class="btn" type="button" data-close="editModal">Batal</button><button class="btn primary" type="submit">Simpan Perubahan</button></div>
+    </form>
+  </div></div>
+
+  <div class="modal" id="moveModal"><div class="modal-card">
+    <div class="modal-head"><div><h3>Pindah Lagu</h3><p>Di R2, pindah berarti copy ke path baru lalu hapus file lama.</p></div><button class="icon-btn" data-close="moveModal">×</button></div>
+    <form id="moveForm">
+      <input type="hidden" name="key" />
+      <div class="form-grid"><div class="field"><label>Genre Tujuan</label><div class="genre-select-wrap"><select name="genre" data-genre-select data-custom-target="moveGenreCustom"></select><input class="genre-custom" id="moveGenreCustom" name="genreCustom" placeholder="Tulis genre tujuan" hidden /></div></div><div class="field"><label>Album/Subfolder Tujuan</label><input name="album" /></div></div>
+      <div class="form-actions"><button class="btn" type="button" data-close="moveModal">Batal</button><button class="btn primary" type="submit">Pindahkan</button></div>
+    </form>
+  </div></div>
+
+  <div class="modal" id="playlistModal"><div class="modal-card">
+    <div class="modal-head"><div><h3>Tambah ke Playlist</h3><p>Pilih playlist lokal browser atau buat baru.</p></div><button class="icon-btn" data-close="playlistModal">×</button></div>
+    <input type="hidden" id="playlistTrackId" />
+    <div class="form-grid"><div class="field"><label>Pilih Playlist</label><select id="playlistSelect"></select></div><div class="field"><label>Playlist Baru</label><input id="newPlaylistName" placeholder="Nama playlist baru" /></div></div>
+    <div class="form-actions"><button class="btn" data-close="playlistModal">Batal</button><button class="btn primary" id="addToPlaylistBtn">Tambahkan</button></div>
+  </div></div>
+
+  <div class="command-overlay" id="commandOverlay"><div class="command-panel">
+    <input id="commandInput" placeholder="Cari cepat lagu / halaman..." />
+    <div class="command-results" id="commandResults"></div>
+  </div></div>
+
+  <audio id="audio" preload="metadata"></audio>
 
   <script>
-    const SAMPLE_CATALOG = {"appName": "DestAra Music", "version": "1.0", "notes": "Ganti field src dengan URL musik Cloudflare/R2 kamu. Cover boleh kosong karena app membuat gradient otomatis.", "tracks": [{"id": "dam-001", "title": "Lavender Night", "artist": "DestAra Session", "album": "Wedding Atmosphere", "genre": "Chill", "mood": "Calm", "duration": 42, "src": "", "cover": "", "accent": ["#7c3aed", "#d946ef"], "year": 2026, "frequency": 261.63}, {"id": "dam-002", "title": "Golden Waltz", "artist": "DestAra Orchestra", "album": "Classic Romance", "genre": "Classic", "mood": "Elegant", "duration": 46, "src": "", "cover": "", "accent": ["#d4af37", "#7c2d12"], "year": 2026, "frequency": 329.63}, {"id": "dam-003", "title": "Moon Jazz", "artist": "DestAra Quartet", "album": "Late Dinner", "genre": "Jazz", "mood": "Smooth", "duration": 44, "src": "", "cover": "", "accent": ["#0ea5e9", "#312e81"], "year": 2026, "frequency": 293.66}, {"id": "dam-004", "title": "Sakura Piano", "artist": "Mutiara Keys", "album": "Soft Ceremony", "genre": "Piano", "mood": "Romantic", "duration": 40, "src": "", "cover": "", "accent": ["#f472b6", "#f9a8d4"], "year": 2026, "frequency": 349.23}, {"id": "dam-005", "title": "Acoustic Promise", "artist": "Destra Strings", "album": "Acoustic Vows", "genre": "Acoustic", "mood": "Warm", "duration": 48, "src": "", "cover": "", "accent": ["#22c55e", "#14b8a6"], "year": 2026, "frequency": 392.0}, {"id": "dam-006", "title": "Midnight Lofi", "artist": "DestAra Beats", "album": "Focus Room", "genre": "Lo-fi", "mood": "Focus", "duration": 45, "src": "", "cover": "", "accent": ["#334155", "#8b5cf6"], "year": 2026, "frequency": 220.0}, {"id": "dam-007", "title": "Wedding Entrance", "artist": "DestAra Ensemble", "album": "Grand Wedding", "genre": "Wedding", "mood": "Grand", "duration": 51, "src": "", "cover": "", "accent": ["#f97316", "#facc15"], "year": 2026, "frequency": 440.0}, {"id": "dam-008", "title": "Soft Religi", "artist": "DestAra Harmony", "album": "Peaceful Morning", "genre": "Religi", "mood": "Peaceful", "duration": 43, "src": "", "cover": "", "accent": ["#06b6d4", "#0f766e"], "year": 2026, "frequency": 246.94}, {"id": "dam-009", "title": "Pop Celebration", "artist": "DestAra Pop", "album": "Reception Lights", "genre": "Pop", "mood": "Happy", "duration": 47, "src": "", "cover": "", "accent": ["#ef4444", "#f97316"], "year": 2026, "frequency": 493.88}, {"id": "dam-010", "title": "Dangdut Smile", "artist": "DestAra Live", "album": "Party Time", "genre": "Dangdut", "mood": "Fun", "duration": 41, "src": "", "cover": "", "accent": ["#84cc16", "#eab308"], "year": 2026, "frequency": 277.18}, {"id": "dam-011", "title": "Ocean Instrumental", "artist": "DestAra Ambient", "album": "Blue Room", "genre": "Instrumental", "mood": "Airy", "duration": 49, "src": "", "cover": "", "accent": ["#0891b2", "#2563eb"], "year": 2026, "frequency": 369.99}, {"id": "dam-012", "title": "Royal Orchestra", "artist": "DestAra Symphony", "album": "Palace Hall", "genre": "Orchestra", "mood": "Luxury", "duration": 52, "src": "", "cover": "", "accent": ["#a16207", "#4c1d95"], "year": 2026, "frequency": 523.25}], "playlists": [{"id": "pl-wedding", "name": "Wedding Premium", "description": "Lagu yang cocok untuk momen wedding dan resepsi.", "trackIds": ["dam-007", "dam-004", "dam-002", "dam-005"]}, {"id": "pl-chill", "name": "Chill & Lo-fi", "description": "Tenang untuk kerja, santai, atau persiapan malam.", "trackIds": ["dam-001", "dam-006", "dam-011"]}, {"id": "pl-classic-jazz", "name": "Classic Jazz Room", "description": "Classic, jazz, piano, dan orchestra.", "trackIds": ["dam-002", "dam-003", "dam-004", "dam-012"]}, {"id": "pl-party", "name": "Reception Party", "description": "Lebih ramai untuk acara dan party.", "trackIds": ["dam-009", "dam-010", "dam-007"]}]};
+    const DEFAULT_API = 'https://destara-music-api.destra751.workers.dev/api';
+    const API_BASE = new URLSearchParams(location.search).get('api') || DEFAULT_API;
+    const LS = {
+      token:'dam_admin_token_v24', favorites:'dam_favorites_v24', recent:'dam_recent_v24', playlists:'dam_playlists_v24',
+      volume:'dam_volume_v24', view:'dam_view_v24', sort:'dam_sort_v24', mood:'dam_mood_v24'
+    };
+    const DEFAULT_GENRES = [
+      'Classic','Jazz','Pop','Wedding','Romantic','Piano','Lo-fi','Acoustic','Instrumental','Orchestra','Chill','Religi','Dangdut','EDM','Rock','R&B','Hip Hop','Keroncong','Sunda','Jawa','Bali','Nusantara','Soundtrack','Meditation','Kids','Other'
+    ];
     const $ = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-    const STORAGE = {
-      favorites: 'dam_favorites_v1', recent: 'dam_recent_v1', playlists: 'dam_user_playlists_v1', settings: 'dam_settings_v1'
-    };
+    const audio = $('#audio');
     const state = {
-      tracks: [], builtinPlaylists: [], userPlaylists: [], favorites: [], recent: [], queue: [], queueIndex: -1,
-      view: 'home', selectedGenre: null, selectedPlaylist: null, query: '', sort: 'popular', viewMode: 'grid',
-      currentId: null, isPlaying: false, shuffle: false, repeat: 'off', volume: .8,
-      addTrackId: null, demo: { timer:null, ctx:null, osc:null, gain:null, progress:0, duration:0 }
+      page:'home', filter:'', tracks:[], currentId:null, queue:[], queueIndex:-1, loading:true,
+      favorites: loadLS(LS.favorites, []), recent: loadLS(LS.recent, []), playlists: loadLS(LS.playlists, []),
+      shuffle:false, repeat:false, view: localStorage.getItem(LS.view) || 'grid', sort: localStorage.getItem(LS.sort) || 'title', mood: localStorage.getItem(LS.mood) || 'nebula'
     };
-    const audio = new Audio();
-    audio.preload = 'metadata';
-
-    function loadLS(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
-    function saveLS(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
-    function showToast(msg) {
-      const box = $('#toast'); const item = document.createElement('div'); item.className = 'toast-item'; item.textContent = msg; box.appendChild(item);
-      setTimeout(() => { item.style.opacity = '0'; item.style.transform = 'translateX(20px)'; setTimeout(() => item.remove(), 250); }, 2600);
-    }
-    function fmt(sec) { sec = Math.max(0, Math.floor(sec || 0)); const m = Math.floor(sec/60); const s = sec%60; return `${m}:${String(s).padStart(2,'0')}`; }
-    function safeId(prefix='id') { return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-    function getTrack(id) { return state.tracks.find(t => t.id === id); }
-    function firstLetter(t) { return (t?.title || 'D').trim().charAt(0).toUpperCase(); }
-    function gradient(track) { const a = track?.accent?.[0] || '#7c3aed'; const b = track?.accent?.[1] || '#22c55e'; return `linear-gradient(135deg, ${a}, ${b})`; }
-    function coverHTML(track, cls='cover') {
-      const bg = gradient(track);
-      if (track.cover) return `<div class="${cls}" style="background:${bg}"><img src="${escapeAttr(track.cover)}" loading="lazy" onerror="this.remove()"><span class="cover-letter">${firstLetter(track)}</span></div>`;
-      return `<div class="${cls}" style="background:${bg}"><span class="cover-letter">${firstLetter(track)}</span></div>`;
-    }
-    function miniCoverHTML(track) { return coverHTML(track, 'mini-cover'); }
-    function escapeHTML(str='') { return String(str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-    function escapeAttr(str='') { return escapeHTML(str); }
-
-    async function init() {
-      const settings = loadLS(STORAGE.settings, {});
-      state.favorites = loadLS(STORAGE.favorites, []);
-      state.recent = loadLS(STORAGE.recent, []);
-      state.userPlaylists = loadLS(STORAGE.playlists, []);
-      state.viewMode = settings.viewMode || 'grid'; state.sort = settings.sort || 'popular'; state.volume = Number(settings.volume ?? .8);
-      state.shuffle = Boolean(settings.shuffle); state.repeat = settings.repeat || 'off';
-      $('#viewModeSelect').value = state.viewMode; $('#sortSelect').value = state.sort; $('#volumeSlider').value = state.volume;
-      audio.volume = state.volume;
-      await loadCatalog(); bindEvents(); renderAll(); updatePlayerUI();
-    }
-    async function loadCatalog() {
-      let catalog = SAMPLE_CATALOG;
-      try {
-        const res = await fetch('music-catalog.json', { cache: 'no-store' });
-        if (res.ok) catalog = await res.json();
-      } catch (_) {}
-      state.tracks = (catalog.tracks || []).map((t, i) => ({
-        id: t.id || `track-${i+1}`, title: t.title || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'Single',
-        genre: t.genre || 'Other', mood: t.mood || '', duration: Number(t.duration || 0), src: t.src || t.url || '', cover: t.cover || '',
-        accent: t.accent || autoAccent(i), year: t.year || '', frequency: Number(t.frequency || 220 + (i*31)%280), popularity: 100 - i
-      }));
-      state.builtinPlaylists = catalog.playlists || [];
-      if (!state.queue.length) state.queue = state.tracks.map(t => t.id);
-    }
-    function autoAccent(i) { const palettes = [['#7c3aed','#d946ef'],['#22c55e','#0ea5e9'],['#f97316','#facc15'],['#ef4444','#8b5cf6'],['#06b6d4','#312e81'],['#84cc16','#14b8a6']]; return palettes[i % palettes.length]; }
-
-    function bindEvents() {
-      $$('.nav-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
-      $('#globalSearch').addEventListener('input', e => { state.query = e.target.value.trim(); state.view = state.query ? 'search' : state.view; setActiveNav(); renderContent(); });
-      $('#sortSelect').addEventListener('change', e => { state.sort = e.target.value; saveSettings(); renderContent(); });
-      $('#viewModeSelect').addEventListener('change', e => { state.viewMode = e.target.value; saveSettings(); renderContent(); });
-      $('#createPlaylistBtn').addEventListener('click', () => openModal('playlistModal'));
-      $('#savePlaylistBtn').addEventListener('click', saveNewPlaylist);
-      $('#confirmAddPlaylistBtn').addEventListener('click', confirmAddToPlaylist);
-      $$('[data-close-modal]').forEach(b => b.addEventListener('click', closeModals));
-      $('#mobileMenuBtn').addEventListener('click', () => toggleSidebar(true)); $('#sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
-      $('#playBtn').addEventListener('click', togglePlay); $('#prevBtn').addEventListener('click', prev); $('#nextBtn').addEventListener('click', next);
-      $('#shuffleBtn').addEventListener('click', () => { state.shuffle = !state.shuffle; saveSettings(); updatePlayerUI(); });
-      $('#repeatBtn').addEventListener('click', () => { state.repeat = state.repeat === 'off' ? 'all' : state.repeat === 'all' ? 'one' : 'off'; saveSettings(); updatePlayerUI(); });
-      $('#volumeSlider').addEventListener('input', e => { state.volume = Number(e.target.value); audio.volume = state.volume; if (state.demo.gain) state.demo.gain.gain.value = state.volume * .08; saveSettings(); });
-      $('#progressBar').addEventListener('input', e => seek(Number(e.target.value)));
-      $('#favNowBtn').addEventListener('click', () => state.currentId && toggleFavorite(state.currentId));
-      $('#queueNowBtn').addEventListener('click', () => state.currentId && addToQueue(state.currentId));
-      $('#downloadNowBtn').addEventListener('click', () => state.currentId && downloadTrack(state.currentId));
-      audio.addEventListener('timeupdate', updateProgress); audio.addEventListener('loadedmetadata', updateProgress); audio.addEventListener('ended', onEnded);
-      document.addEventListener('keydown', e => { if (e.target.matches('input,select')) return; if (e.code === 'Space') { e.preventDefault(); togglePlay(); } });
-    }
-    function saveSettings() { saveLS(STORAGE.settings, { viewMode: state.viewMode, sort: state.sort, volume: state.volume, shuffle: state.shuffle, repeat: state.repeat }); }
-    function toggleSidebar(open) { $('#sidebar').classList.toggle('open', open); $('#sidebarOverlay').classList.toggle('show', open); }
-    function openModal(id) { $('#' + id).classList.add('show'); }
-    function closeModals() { $$('.modal').forEach(m => m.classList.remove('show')); }
-    function setView(view, extra) { state.view = view; state.selectedGenre = extra?.genre || null; state.selectedPlaylist = extra?.playlist || null; setActiveNav(); renderContent(); toggleSidebar(false); }
-    function setActiveNav() { $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === state.view)); }
-    function renderAll() { renderPlaylists(); setActiveNav(); renderContent(); }
-
-    function renderPlaylists() {
-      const box = $('#playlistList'); const all = [...state.builtinPlaylists.map(p=>({...p,builtin:true})), ...state.userPlaylists];
-      box.innerHTML = all.map((p, i) => `<button class="playlist-mini" data-playlist="${escapeAttr(p.id)}"><div class="playlist-mini-cover" style="background:${gradient({accent:autoAccent(i)})}">♫</div><div style="min-width:0"><b>${escapeHTML(p.name)}</b><small>${(p.trackIds||[]).length} lagu</small></div></button>`).join('') || `<div class="empty">Belum ada playlist.</div>`;
-      $$('[data-playlist]', box).forEach(btn => btn.addEventListener('click', () => setView('playlist', { playlist: btn.dataset.playlist })));
-    }
-    function renderContent() {
-      const c = $('#content');
-      if (state.view === 'home') return renderHome(c);
-      if (state.view === 'search') return renderSearch(c);
-      if (state.view === 'library') return renderLibrary(c);
-      if (state.view === 'genres') return renderGenres(c);
-      if (state.view === 'favorites') return renderTrackSection(c, 'Favorite', 'Lagu yang kamu sukai.', state.favorites.map(getTrack).filter(Boolean));
-      if (state.view === 'recent') return renderTrackSection(c, 'Recently Played', 'Riwayat lagu yang baru diputar.', state.recent.map(getTrack).filter(Boolean));
-      if (state.view === 'queue') return renderTrackSection(c, 'Queue / Antrean', 'Urutan lagu yang akan diputar.', state.queue.map(getTrack).filter(Boolean), true);
-      if (state.view === 'genre') return renderTrackSection(c, state.selectedGenre || 'Kategori', 'Lagu dari kategori ini.', getTracks({ genre: state.selectedGenre }));
-      if (state.view === 'playlist') return renderPlaylistDetail(c);
-      renderHome(c);
-    }
-    function getTracks(filter={}) {
-      let list = [...state.tracks];
-      if (filter.genre) list = list.filter(t => t.genre === filter.genre);
-      if (filter.query || state.query) {
-        const q = (filter.query || state.query).toLowerCase();
-        list = list.filter(t => [t.title,t.artist,t.album,t.genre,t.mood].join(' ').toLowerCase().includes(q));
-      }
-      return sortTracks(list);
-    }
-    function sortTracks(list) {
-      const s = state.sort;
-      return [...list].sort((a,b) => {
-        if (s === 'title-asc') return a.title.localeCompare(b.title);
-        if (s === 'title-desc') return b.title.localeCompare(a.title);
-        if (s === 'artist-asc') return a.artist.localeCompare(b.artist);
-        if (s === 'genre-asc') return a.genre.localeCompare(b.genre) || a.title.localeCompare(b.title);
-        if (s === 'duration-desc') return (b.duration||0) - (a.duration||0);
-        return (b.popularity||0) - (a.popularity||0);
-      });
-    }
-    function renderHome(c) {
-      const genres = [...new Set(state.tracks.map(t => t.genre))].sort();
-      c.innerHTML = `
-        <section class="hero">
-          <div><span class="eyebrow">✦ Cloudflare Ready</span><h1>DestAra Music</h1><p>Player musik pribadi dengan playlist, kategori, search, favorite, queue, shuffle, repeat, dan cover gradient otomatis. Ganti URL lagu di <b>music-catalog.json</b> agar semua musik Cloudflare kamu tampil di sini.</p><div class="hero-actions"><button class="primary" id="heroPlay">▶ Putar Rekomendasi</button><button class="secondary" id="heroLibrary">Lihat Library</button></div></div>
-          <div class="hero-card-stack"><div class="stat-card"><b>${state.tracks.length}</b><span>Total Lagu</span></div><div class="stat-card"><b>${genres.length}</b><span>Kategori</span></div><div class="stat-card"><b>${state.builtinPlaylists.length + state.userPlaylists.length}</b><span>Playlist</span></div><div class="stat-card"><b>${state.favorites.length}</b><span>Favorite</span></div></div>
-        </section>
-        <section class="section"><div class="section-head"><div><h2>Kategori Musik</h2><small>Classic, Jazz, Pop, Chill, dan lainnya.</small></div></div><div class="chip-row">${genres.map(g => `<button class="chip" data-genre="${escapeAttr(g)}">${escapeHTML(g)}</button>`).join('')}</div></section>
-        <section class="section"><div class="section-head"><div><h2>Playlist Pilihan</h2><small>Koleksi siap putar.</small></div></div><div class="grid">${[...state.builtinPlaylists, ...state.userPlaylists].map((p,i)=>playlistCard(p,i)).join('')}</div></section>
-        <section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Langsung play dari katalog.</small></div></div>${tracksHTML(getTracks().slice(0,8))}</section>`;
-      $('#heroPlay')?.addEventListener('click', () => playTrack(getTracks()[0]?.id, getTracks().map(t=>t.id)));
-      $('#heroLibrary')?.addEventListener('click', () => setView('library'));
-      $$('[data-genre]', c).forEach(b => b.addEventListener('click', () => setView('genre', { genre: b.dataset.genre })));
-      bindDynamic(c);
-    }
-    function renderSearch(c) { const list = getTracks({ query: state.query }); renderTrackSection(c, state.query ? `Hasil Search: ${state.query}` : 'Search Music', 'Cari judul, artist, album, genre, atau mood.', list); }
-    function renderLibrary(c) { renderTrackSection(c, 'Library', 'Semua musik dari katalog Cloudflare/DAM.', getTracks()); }
-    function renderGenres(c) {
-      const genres = [...new Set(state.tracks.map(t => t.genre))].sort();
-      c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Kategori</h2><small>Pilih genre untuk melihat lagu.</small></div></div><div class="grid">${genres.map((g,i)=>genreCard(g,i)).join('')}</div></section>`; bindDynamic(c);
-    }
-    function renderPlaylistDetail(c) {
-      const p = [...state.builtinPlaylists, ...state.userPlaylists].find(x => x.id === state.selectedPlaylist);
-      if (!p) return renderHome(c); const tracks = (p.trackIds || []).map(getTrack).filter(Boolean);
-      c.innerHTML = `<section class="hero" style="min-height:220px"><div><span class="eyebrow">♫ Playlist</span><h1>${escapeHTML(p.name)}</h1><p>${escapeHTML(p.description || 'Playlist DestAra Music.')}</p><div class="hero-actions"><button class="primary" id="playPlaylist">▶ Putar Playlist</button>${p.user ? `<button class="secondary" id="deletePlaylist">Hapus Playlist</button>` : ''}</div></div><div class="hero-card-stack"><div class="stat-card"><b>${tracks.length}</b><span>Lagu</span></div><div class="stat-card"><b>${fmt(tracks.reduce((a,t)=>a+(t.duration||0),0))}</b><span>Total Durasi</span></div></div></section><section class="section">${tracksHTML(tracks)}</section>`;
-      $('#playPlaylist')?.addEventListener('click', () => tracks[0] && playTrack(tracks[0].id, tracks.map(t=>t.id)));
-      $('#deletePlaylist')?.addEventListener('click', () => { state.userPlaylists = state.userPlaylists.filter(x => x.id !== p.id); saveLS(STORAGE.playlists, state.userPlaylists); setView('home'); renderPlaylists(); showToast('Playlist dihapus.'); });
-      bindDynamic(c);
-    }
-    function renderTrackSection(c, title, subtitle, tracks, isQueue=false) {
-      c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>${escapeHTML(title)}</h2><small>${escapeHTML(subtitle)}</small></div>${tracks.length ? `<button class="pill-btn" id="playSection">▶ Putar Semua</button>` : ''}</div>${tracks.length ? tracksHTML(tracks, isQueue) : `<div class="empty">Belum ada lagu di bagian ini.</div>`}</section>`;
-      $('#playSection')?.addEventListener('click', () => playTrack(tracks[0].id, tracks.map(t=>t.id))); bindDynamic(c);
-    }
-    function tracksHTML(tracks, isQueue=false) { return state.viewMode === 'list' ? `<div class="list">${tracks.map((t,i)=>trackRow(t,i,isQueue)).join('')}</div>` : `<div class="grid ${state.viewMode === 'compact' ? 'compact' : ''}">${tracks.map(trackCard).join('')}</div>`; }
-    function trackCard(t) { const fav = state.favorites.includes(t.id); const playing = state.currentId === t.id; return `<article class="track-card ${playing?'is-playing':''}" data-track="${escapeAttr(t.id)}">${coverHTML(t)}<button class="play-floating" data-play="${escapeAttr(t.id)}">${playing && state.isPlaying ? '❚❚' : '▶'}</button><div class="track-info"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.genre)}</small></div><div class="track-actions"><button class="tiny-btn ${fav?'active':''}" data-fav="${escapeAttr(t.id)}">${fav?'♥':'♡'}</button><button class="tiny-btn" data-add="${escapeAttr(t.id)}">＋</button><button class="tiny-btn" data-queue="${escapeAttr(t.id)}">☰</button><button class="tiny-btn" data-download="${escapeAttr(t.id)}">⇩</button></div></article>`; }
-    function trackRow(t, i, isQueue=false) { const fav = state.favorites.includes(t.id); return `<article class="track-row ${state.currentId===t.id?'is-playing':''}" data-track="${escapeAttr(t.id)}"><button class="tiny-btn" data-play="${escapeAttr(t.id)}">${state.currentId===t.id&&state.isPlaying?'❚❚':'▶'}</button>${miniCoverHTML(t)}<div class="row-title"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.genre)}</small></div><div class="row-album">${escapeHTML(t.album)}</div><div class="row-duration">${fmt(t.duration)}</div><div style="display:flex;gap:6px"><button class="tiny-btn ${fav?'active':''}" data-fav="${escapeAttr(t.id)}">${fav?'♥':'♡'}</button><button class="tiny-btn" data-add="${escapeAttr(t.id)}">＋</button>${isQueue?`<button class="tiny-btn" data-remove-queue="${escapeAttr(t.id)}">×</button>`:`<button class="tiny-btn" data-queue="${escapeAttr(t.id)}">☰</button>`}</div></article>`; }
-    function playlistCard(p, i) { const tracks = (p.trackIds||[]).map(getTrack).filter(Boolean); return `<article class="playlist-card" data-open-playlist="${escapeAttr(p.id)}"><div class="cover" style="background:${gradient({accent:autoAccent(i)})}"><span class="cover-letter">♫</span></div><button class="play-floating" data-playlist-play="${escapeAttr(p.id)}">▶</button><div class="track-info"><b>${escapeHTML(p.name)}</b><small>${tracks.length} lagu • ${escapeHTML(p.description||'Playlist')}</small></div></article>`; }
-    function genreCard(g, i) { const count = state.tracks.filter(t=>t.genre===g).length; return `<article class="genre-card" data-open-genre="${escapeAttr(g)}"><div class="cover" style="background:${gradient({accent:autoAccent(i)})}"><span class="cover-letter">${escapeHTML(g.charAt(0))}</span></div><div class="track-info"><b>${escapeHTML(g)}</b><small>${count} lagu</small></div></article>`; }
-    function bindDynamic(root) {
-      $$('[data-play]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playTrack(b.dataset.play, visibleTrackIds()); }));
-      $$('[data-track]', root).forEach(card => card.addEventListener('dblclick', () => playTrack(card.dataset.track, visibleTrackIds())));
-      $$('[data-fav]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); toggleFavorite(b.dataset.fav); }));
-      $$('[data-add]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); openAddToPlaylist(b.dataset.add); }));
-      $$('[data-queue]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); addToQueue(b.dataset.queue); }));
-      $$('[data-download]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); downloadTrack(b.dataset.download); }));
-      $$('[data-open-playlist]', root).forEach(el => el.addEventListener('click', () => setView('playlist', { playlist: el.dataset.openPlaylist })));
-      $$('[data-playlist-play]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const p = [...state.builtinPlaylists,...state.userPlaylists].find(x=>x.id===b.dataset.playlistPlay); const ids=(p?.trackIds||[]).filter(getTrack); if(ids.length) playTrack(ids[0], ids); }));
-      $$('[data-open-genre]', root).forEach(el => el.addEventListener('click', () => setView('genre', { genre: el.dataset.openGenre })));
-      $$('[data-remove-queue]', root).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); state.queue = state.queue.filter(id => id !== b.dataset.removeQueue); renderContent(); showToast('Dihapus dari queue.'); }));
-    }
-    function visibleTrackIds() { return getTracks().map(t => t.id); }
-
-    function saveNewPlaylist() { const name = $('#playlistNameInput').value.trim(); const desc = $('#playlistDescInput').value.trim(); if (!name) return showToast('Nama playlist wajib diisi.'); state.userPlaylists.unshift({ id:safeId('upl'), name, description:desc, trackIds:[], user:true }); saveLS(STORAGE.playlists, state.userPlaylists); $('#playlistNameInput').value=''; $('#playlistDescInput').value=''; closeModals(); renderPlaylists(); showToast('Playlist dibuat.'); }
-    function openAddToPlaylist(trackId) { state.addTrackId = trackId; const all = state.userPlaylists; $('#addPlaylistSelect').innerHTML = all.length ? all.map(p=>`<option value="${escapeAttr(p.id)}">${escapeHTML(p.name)}</option>`).join('') : `<option value="">Buat playlist dulu</option>`; openModal('addModal'); }
-    function confirmAddToPlaylist() { const id = $('#addPlaylistSelect').value; if (!id || !state.addTrackId) return showToast('Playlist belum dipilih.'); const p = state.userPlaylists.find(x=>x.id===id); if (!p) return; if (!p.trackIds.includes(state.addTrackId)) p.trackIds.push(state.addTrackId); saveLS(STORAGE.playlists, state.userPlaylists); closeModals(); renderPlaylists(); showToast('Lagu ditambahkan ke playlist.'); }
-    function toggleFavorite(id) { state.favorites = state.favorites.includes(id) ? state.favorites.filter(x=>x!==id) : [id, ...state.favorites]; saveLS(STORAGE.favorites, state.favorites); renderContent(); updatePlayerUI(); showToast(state.favorites.includes(id) ? 'Masuk favorite.' : 'Dihapus dari favorite.'); }
-    function addRecent(id) { state.recent = [id, ...state.recent.filter(x=>x!==id)].slice(0, 40); saveLS(STORAGE.recent, state.recent); }
-    function addToQueue(id) { state.queue.push(id); showToast('Ditambahkan ke queue.'); if (state.view === 'queue') renderContent(); }
-    function downloadTrack(id) { const t = getTrack(id); if (!t) return; if (!t.src) return showToast('Demo tone tidak punya file download. Isi URL Cloudflare di catalog.'); const a = document.createElement('a'); a.href = t.src; a.download = `${t.title} - ${t.artist}`.replace(/[\\/:*?"<>|]/g,'-'); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
-
-    function playTrack(id, listIds) {
-      const t = getTrack(id); if (!t) return;
-      if (Array.isArray(listIds) && listIds.length) { state.queue = [...listIds]; state.queueIndex = state.queue.indexOf(id); }
-      else { if (!state.queue.includes(id)) state.queue.unshift(id); state.queueIndex = state.queue.indexOf(id); }
-      state.currentId = id; addRecent(id); stopDemo(); audio.pause(); audio.removeAttribute('src');
-      if (t.src) { audio.src = t.src; audio.volume = state.volume; audio.play().then(()=>{ state.isPlaying=true; updatePlayerUI(); renderContent(); }).catch(()=>{ state.isPlaying=false; showToast('Audio gagal diputar. Cek URL Cloudflare/CORS.'); updatePlayerUI(); }); }
-      else { startDemo(t); }
-      updatePlayerUI(); renderContent();
-    }
-    function togglePlay() { const t = getTrack(state.currentId); if (!t) return playTrack(getTracks()[0]?.id, getTracks().map(x=>x.id)); if (t.src) { if (audio.paused) audio.play().then(()=>{state.isPlaying=true; updatePlayerUI();}); else { audio.pause(); state.isPlaying=false; updatePlayerUI(); } } else { state.isPlaying ? pauseDemo() : startDemo(t, true); } }
-    function startDemo(t, resume=false) {
-      stopDemo(false); state.demo.duration = t.duration || 42; if (!resume) state.demo.progress = 0;
-      const AudioCtx = window.AudioContext || window.webkitAudioContext; if (AudioCtx) { state.demo.ctx = state.demo.ctx || new AudioCtx(); state.demo.osc = state.demo.ctx.createOscillator(); state.demo.gain = state.demo.ctx.createGain(); state.demo.osc.type = 'sine'; state.demo.osc.frequency.value = t.frequency || 261.63; state.demo.gain.gain.value = state.volume * .08; state.demo.osc.connect(state.demo.gain); state.demo.gain.connect(state.demo.ctx.destination); state.demo.osc.start(); }
-      state.isPlaying = true; state.demo.timer = setInterval(() => { state.demo.progress += .25; updateProgress(); if (state.demo.progress >= state.demo.duration) onEnded(); }, 250); updatePlayerUI();
-    }
-    function pauseDemo() { stopDemo(false); state.isPlaying = false; updatePlayerUI(); }
-    function stopDemo(reset=true) { if (state.demo.timer) clearInterval(state.demo.timer); state.demo.timer = null; try { state.demo.osc && state.demo.osc.stop(); } catch {} state.demo.osc = null; state.demo.gain = null; if (reset) state.demo.progress = 0; }
-    function seek(percent) { const t = getTrack(state.currentId); if (!t) return; if (t.src && audio.duration) audio.currentTime = (percent/100)*audio.duration; else state.demo.progress = (percent/100)*(state.demo.duration || t.duration || 42); updateProgress(); }
-    function next() { if (!state.queue.length) return; if (state.shuffle) state.queueIndex = Math.floor(Math.random()*state.queue.length); else state.queueIndex = (state.queueIndex + 1) % state.queue.length; playTrack(state.queue[state.queueIndex], state.queue); }
-    function prev() { if (!state.queue.length) return; state.queueIndex = state.queueIndex <= 0 ? state.queue.length - 1 : state.queueIndex - 1; playTrack(state.queue[state.queueIndex], state.queue); }
-    function onEnded() { if (state.repeat === 'one' && state.currentId) return playTrack(state.currentId, state.queue); if (state.repeat === 'off' && state.queueIndex >= state.queue.length - 1 && !state.shuffle) { state.isPlaying=false; stopDemo(); updatePlayerUI(); return; } next(); }
-    function updateProgress() { const t = getTrack(state.currentId); if (!t) return; let cur=0,dur=0; if (t.src) { cur = audio.currentTime || 0; dur = audio.duration || t.duration || 0; } else { cur = state.demo.progress || 0; dur = state.demo.duration || t.duration || 42; } $('#currentTime').textContent = fmt(cur); $('#durationTime').textContent = fmt(dur); $('#progressBar').value = dur ? Math.min(100, (cur/dur)*100) : 0; }
-    function updatePlayerUI() {
-      const t = getTrack(state.currentId); $('#playBtn').textContent = state.isPlaying ? '❚❚' : '▶'; $('#shuffleBtn').classList.toggle('active', state.shuffle); $('#repeatBtn').classList.toggle('active', state.repeat !== 'off'); $('#repeatBtn').textContent = state.repeat === 'one' ? '↺1' : '↻';
-      $('#favNowBtn').textContent = t && state.favorites.includes(t.id) ? '♥' : '♡'; $('#favNowBtn').classList.toggle('active', Boolean(t && state.favorites.includes(t.id)));
-      if (!t) { $('#nowInfo').innerHTML = `<div class="mini-cover" style="background:linear-gradient(135deg,#27272a,#18181b)">♪</div><div style="min-width:0"><b>Belum ada lagu</b><small>Pilih lagu untuk memulai</small></div>`; return; }
-      $('#nowInfo').innerHTML = `${miniCoverHTML(t)}<div style="min-width:0"><b>${escapeHTML(t.title)}</b><small>${escapeHTML(t.artist)} • ${escapeHTML(t.album)}</small></div>`; updateProgress();
-    }
+    const navItems = [
+      ['home','⌂','Home'], ['search','⌕','Search'], ['library','▦','Library'], ['genres','◇','Kategori'],
+      ['playlists','▱','Playlist'], ['favorites','♡','Favorite'], ['recent','◷','Recently'], ['queue','☰','Queue'], ['admin','✦','Admin']
+    ];
+    const gradients = [
+      'linear-gradient(135deg,#a855f7,#22c55e)', 'linear-gradient(135deg,#06b6d4,#7c3aed)', 'linear-gradient(135deg,#f43f5e,#f59e0b)',
+      'linear-gradient(135deg,#14b8a6,#84cc16)', 'linear-gradient(135deg,#6366f1,#ec4899)', 'linear-gradient(135deg,#0f172a,#a855f7)',
+      'linear-gradient(135deg,#f97316,#7c3aed)', 'linear-gradient(135deg,#22c55e,#0ea5e9)', 'linear-gradient(135deg,#eab308,#ef4444)'
+    ];
 
     init();
+    function init(){
+      $('#apiUrlText').textContent = API_BASE;
+      $('#adminToken').value = localStorage.getItem(LS.token) || '';
+      audio.volume = Number(localStorage.getItem(LS.volume) || .9); $('#volume').value = audio.volume;
+      bind(); renderNav(); loadTracks(); renderPlayer();
+    }
+    function bind(){
+      $('#searchInput').addEventListener('input', e=>{ state.filter=e.target.value; state.page='search'; renderNav(); render(); });
+      $('#refreshBtn').addEventListener('click', loadTracks);
+      $('#openAdminBtn').addEventListener('click', ()=>openModal('adminModal'));
+      $('#cmdBtn').addEventListener('click', openCommand);
+      $('#themeBtn').addEventListener('click', cycleMood);
+      $('#mobileMenuBtn').addEventListener('click', ()=>toggleSidebar(true)); $('#sidebarOverlay').addEventListener('click', ()=>toggleSidebar(false));
+      $('#playBtn').addEventListener('click', togglePlay); $('#nextBtn').addEventListener('click', nextTrack); $('#prevBtn').addEventListener('click', prevTrack);
+      $('#shuffleBtn').addEventListener('click', ()=>{ state.shuffle=!state.shuffle; renderPlayer(); });
+      $('#repeatBtn').addEventListener('click', ()=>{ state.repeat=!state.repeat; renderPlayer(); });
+      $('#seek').addEventListener('input', e=>{ if(audio.duration) audio.currentTime = (+e.target.value/100)*audio.duration; });
+      $('#volume').addEventListener('input', e=>{ audio.volume=+e.target.value; localStorage.setItem(LS.volume, audio.volume); });
+      $('#favCurrentBtn').addEventListener('click', ()=> state.currentId && toggleFavorite(state.currentId));
+      $('#downloadBtn').addEventListener('click', downloadCurrent); $('#shareBtn').addEventListener('click', shareCurrent);
+      audio.addEventListener('play', renderPlayer); audio.addEventListener('pause', renderPlayer); audio.addEventListener('timeupdate', renderProgress); audio.addEventListener('loadedmetadata', renderProgress); audio.addEventListener('ended', ()=> state.repeat ? playTrack(state.currentId, state.queue) : nextTrack());
+      document.addEventListener('click', delegatedClick);
+      $$('[data-close]').forEach(b=>b.addEventListener('click', e=>closeModal(e.currentTarget.dataset.close)));
+      $('#saveTokenBtn').addEventListener('click', ()=>{ localStorage.setItem(LS.token, $('#adminToken').value.trim()); toast('Token disimpan','Admin Mode siap dipakai.','good'); });
+      $('#clearTokenBtn').addEventListener('click', ()=>{ localStorage.removeItem(LS.token); $('#adminToken').value=''; toast('Token dihapus','Upload/edit akan ditolak sampai token diisi.'); });
+      $('#uploadForm').addEventListener('submit', uploadTrack); $('#createFolderBtn').addEventListener('click', createFolder); $('#refreshAdminLibraryBtn')?.addEventListener('click', loadTracks); $('#editForm').addEventListener('submit', saveEdit); $('#moveForm').addEventListener('submit', saveMove); $('#addToPlaylistBtn').addEventListener('click', addSelectedToPlaylist); hydrateGenreSelects(); renderQuickGenreChips();
+      $('#commandOverlay').addEventListener('click', e=>{ if(e.target.id==='commandOverlay') closeCommand(); }); $('#commandInput').addEventListener('input', renderCommand);
+      document.addEventListener('keydown', e=>{
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='k') { e.preventDefault(); openCommand(); }
+        if (e.key==='Escape') { closeCommand(); $$('.modal.show').forEach(m=>closeModal(m.id)); toggleSidebar(false); }
+        if (e.code==='Space' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); togglePlay(); }
+        if (e.altKey && e.key==='ArrowRight') nextTrack(); if (e.altKey && e.key==='ArrowLeft') prevTrack();
+      });
+    }
+    async function loadTracks(){
+      state.loading=true; render();
+      try{ const res = await fetch(API_BASE + '/tracks', {cache:'no-store'}); const data = await res.json(); if(!res.ok || data.error) throw new Error(data.message || 'API gagal'); state.tracks = Array.isArray(data) ? data.map(normalizeTrack) : []; if(!state.queue.length) state.queue=state.tracks.map(t=>t.id); state.loading=false; renderNav(); render(); hydrateGenreSelects(); renderQuickGenreChips(); toast('Library sinkron', `${state.tracks.length} lagu dari Cloudflare R2.`, 'good'); }
+      catch(err){ state.loading=false; render(); toast('Gagal memuat musik', err.message, 'bad'); }
+    }
+    function normalizeTrack(t, i){ return { ...t, id: t.id || makeId(t.key || t.src || i), title: t.title || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'DestAra Music', genre: t.genre || 'Music', gradientIndex: t.gradientIndex ?? i, size: Number(t.size || 0), uploaded: t.uploaded || '' }; }
+    function renderNav(){
+      $('#navList').innerHTML = navItems.map(([id,ic,label])=>`<button class="nav-btn ${state.page===id?'active':''}" data-page="${id}"><span class="left"><span class="icon">${ic}</span><span>${label}</span></span>${navCount(id)}</button>`).join('');
+      const genres = getGenres().slice(0,10);
+      $('#genreNav').innerHTML = genres.map((g,i)=>`<button class="nav-btn ${state.page==='genre:'+g?'active':''}" data-page="genre:${attr(g)}"><span class="left"><span class="icon">${esc(g[0])}</span><span>${esc(g)}</span></span><span class="count-badge">${state.tracks.filter(t=>t.genre===g).length}</span></button>`).join('') || `<div class="mini-card"><small>Belum ada genre.</small></div>`;
+    }
+    function navCount(id){ const n = id==='library'?state.tracks.length:id==='favorites'?state.favorites.length:id==='recent'?state.recent.length:id==='queue'?state.queue.length:id==='genres'?getGenres().length:id==='playlists'?(autoPlaylists().length+state.playlists.length):0; return n?`<span class="count-badge">${n}</span>`:''; }
+    function render(){
+      const c=$('#content'); if(state.loading){ c.innerHTML = `<div class="loading-skel">${Array.from({length:10},()=>'<div class="skeleton"></div>').join('')}</div>`; return; }
+      if(state.page==='home') return renderHome(c); if(state.page==='search') return renderTracks(c,'Search','Hasil pencarian dari library Cloudflare.', getFilteredTracks()); if(state.page==='library') return renderTracks(c,'Library','Semua lagu yang terbaca dari R2.', getFilteredTracks());
+      if(state.page==='genres') return renderGenres(c); if(state.page.startsWith('genre:')) { const g=state.page.slice(6); return renderTracks(c,g,`Kategori ${g}.`, sortTracks(state.tracks.filter(t=>t.genre===g))); }
+      if(state.page==='favorites') return renderTracks(c,'Favorite','Lagu yang kamu tandai.', state.favorites.map(getTrack).filter(Boolean)); if(state.page==='recent') return renderTracks(c,'Recently Played','Riwayat putar lokal browser.', state.recent.map(getTrack).filter(Boolean)); if(state.page==='queue') return renderTracks(c,'Queue','Antrean pemutaran sekarang.', state.queue.map(getTrack).filter(Boolean), true);
+      if(state.page==='playlists') return renderPlaylists(c); if(state.page.startsWith('playlist:')) return renderPlaylist(c, state.page.slice(9)); if(state.page==='admin') return renderAdmin(c);
+    }
+    function renderHome(c){
+      const current=getTrack(state.currentId) || state.tracks[0]; const genres=getGenres(); const rec=sortTracks([...state.tracks]).slice(0,8); const recent=state.recent.map(getTrack).filter(Boolean).slice(0,8);
+      c.innerHTML = `<section class="hero"><div><span class="eyebrow">✦ Cloudflare R2 Connected</span><h1>DestAra Music</h1><p>Music player premium dengan efek modern, queue, playlist, admin upload, edit, pindah kategori, dan cover otomatis dari gradient kalau belum ada gambar.</p><div class="hero-actions"><button class="btn primary" id="heroPlay">▶ Putar Semua</button><button class="btn" data-page="library">Library</button><button class="btn" data-page="admin">Admin Musik</button></div></div><div class="now-vinyl ${audio.paused?'paused':''}"><div class="vinyl-cover" style="background:${gradient(current||{})}">${current?.cover?`<img src="${attr(current.cover)}" alt="">`:`${esc((current?.title||'DAM').charAt(0))}`}</div></div></section>${insightsHTML()}${toolbarHTML()}<section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Lagu dari bucket Cloudflare kamu.</small></div><button class="btn" id="playRec">Putar Mix</button></div>${tracksHTML(rec)}</section>${recent.length?`<section class="section"><div class="section-head"><div><h2>Lanjutkan Dengarkan</h2><small>Riwayat lokal browser.</small></div></div>${tracksHTML(recent)}</section>`:''}<section class="section"><div class="section-head"><div><h2>Kategori Populer</h2><small>Genre otomatis dari folder R2.</small></div></div><div class="grid wide">${genres.slice(0,8).map(genreCard).join('')}</div></section>`;
+      $('#heroPlay')?.addEventListener('click',()=>playAll(state.tracks)); $('#playRec')?.addEventListener('click',()=>playAll(rec)); bindToolbar();
+    }
+    function insightsHTML(){ const genres=getGenres(); const totalSize=state.tracks.reduce((a,t)=>a+(t.size||0),0); return `<section class="section"><div class="insights"><div class="insight-card"><span class="eyebrow">Tracks</span><div class="num">${state.tracks.length}</div><small>Total lagu aktif</small></div><div class="insight-card"><span class="eyebrow">Genre</span><div class="num">${genres.length}</div><small>Kategori terbaca</small></div><div class="insight-card"><span class="eyebrow">Storage</span><div class="num">${sizeFmt(totalSize)}</div><small>Estimasi file audio</small></div><div class="insight-card"><span class="eyebrow">Mode</span><div class="num" style="font-size:1.2rem">${esc(state.view)}</div><small>Tampilan sekarang</small></div></div></section>`; }
+    function toolbarHTML(){ return `<div class="toolbar"><div class="seg"><button data-view="grid" class="${state.view==='grid'?'active':''}">Grid</button><button data-view="wide" class="${state.view==='wide'?'active':''}">Wide</button><button data-view="list" class="${state.view==='list'?'active':''}">List</button><button data-view="compact" class="${state.view==='compact'?'active':''}">Compact</button><button data-view="masonry" class="${state.view==='masonry'?'active':''}">Masonry</button></div><div class="seg"><button data-sort="title" class="${state.sort==='title'?'active':''}">Judul</button><button data-sort="artist" class="${state.sort==='artist'?'active':''}">Artist</button><button data-sort="genre" class="${state.sort==='genre'?'active':''}">Genre</button><button data-sort="newest" class="${state.sort==='newest'?'active':''}">Terbaru</button></div></div>`; }
+    function bindToolbar(){ $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view; localStorage.setItem(LS.view,state.view); render();})); $$('[data-sort]').forEach(b=>b.addEventListener('click',()=>{state.sort=b.dataset.sort; localStorage.setItem(LS.sort,state.sort); render();})); }
+    function renderTracks(c,title,sub,tracks,isQueue=false){ c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>${esc(title)}</h2><small>${esc(sub)}</small></div>${tracks.length?`<button class="btn primary" id="playSection">▶ Putar Semua</button>`:''}</div>${toolbarHTML()}${tracks.length?tracksHTML(tracks,isQueue):'<div class="empty">Belum ada lagu di bagian ini.</div>'}</section>`; $('#playSection')?.addEventListener('click',()=>playAll(tracks)); bindToolbar(); }
+    function renderGenres(c){ const genres=getGenres(); c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Kategori</h2><small>Otomatis dari folder R2 dan metadata.</small></div></div><div class="grid wide">${genres.map(genreCard).join('')}</div></section>`; }
+    function renderPlaylists(c){ const all=[...autoPlaylists(),...state.playlists]; c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Playlist</h2><small>Playlist bawaan dan playlist lokal browser.</small></div><button class="btn primary" id="newPlaylistBtn">+ Playlist</button></div><div class="grid wide">${all.map(playlistCard).join('')}</div></section>`; $('#newPlaylistBtn')?.addEventListener('click',()=>quickCreatePlaylist()); }
+    function renderPlaylist(c,id){ const p=[...autoPlaylists(),...state.playlists].find(x=>x.id===id); if(!p) return renderPlaylists(c); const tracks=(p.trackIds||[]).map(getTrack).filter(Boolean); c.innerHTML=`<section class="hero" style="min-height:250px"><div><span class="eyebrow">♫ Playlist</span><h1>${esc(p.name)}</h1><p>${esc(p.description||'Playlist DestAra Music.')}</p><div class="hero-actions"><button class="btn primary" id="playPlaylist">▶ Putar Playlist</button>${p.user?`<button class="btn danger" id="deletePlaylist">Hapus Playlist</button>`:''}</div></div><div class="now-vinyl paused"><div class="vinyl-cover" style="background:${gradient({id})}">♫</div></div></section><section class="section">${tracksHTML(tracks)}</section>`; $('#playPlaylist')?.addEventListener('click',()=>playAll(tracks)); $('#deletePlaylist')?.addEventListener('click',()=>deletePlaylist(id)); }
+    function renderAdmin(c){ c.innerHTML=`<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Admin Musik</h2><small>Kelola lagu langsung ke R2 lewat Worker API.</small></div><button class="btn primary" id="openAdminInside">Buka Panel Admin</button></div><div class="admin-grid"><div class="admin-card"><span class="eyebrow">Status</span><h2>${localStorage.getItem(LS.token)?'Token tersimpan':'Token belum ada'}</h2><p style="color:var(--muted);line-height:1.6">Request admin memakai header <span class="kbd">X-DAM-Token</span>. Jangan simpan credential Cloudflare di HTML.</p></div><div class="admin-card"><span class="eyebrow">Library</span><h2>${state.tracks.length} lagu</h2><p style="color:var(--muted);line-height:1.6">Metadata edit disimpan di R2 sebagai <span class="kbd">dam/catalog.json</span>.</p></div></div><section class="section"><div class="section-head"><div><h2>Kelola Lagu</h2><small>Edit, pindah, cover, hapus dari kartu lagu.</small></div></div>${tracksHTML(getFilteredTracks())}</section></section>`; $('#openAdminInside')?.addEventListener('click',()=>openModal('adminModal')); }
+    function tracksHTML(tracks,isQueue=false){ const sorted=isQueue?tracks:sortTracks(tracks); if(state.view==='list') return `<div class="list">${sorted.map((t,i)=>trackRow(t,i,isQueue)).join('')}</div>`; return `<div class="grid ${state.view==='compact'?'compact':''} ${state.view==='wide'?'wide':''} ${state.view==='masonry'?'masonry':''}">${sorted.map(trackCard).join('')}</div>`; }
+    function trackCard(t){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<article class="track-card ${playing?'playing':''}" data-track="${attr(t.id)}"><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" loading="lazy" alt="">`:`<span class="cover-letter">${esc(t.title.charAt(0))}</span>`}</div><button class="play-floating" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="track-info"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div><div class="mini-actions"><button data-fav="${attr(t.id)}">${fav?'♥':'♡'}</button><button data-queue="${attr(t.id)}">Queue</button><button data-addplaylist="${attr(t.id)}">Playlist</button><button data-download="${attr(t.id)}">Download</button><button data-edit="${attr(t.id)}">Edit</button><button data-move="${attr(t.id)}">Pindah</button><button data-del="${attr(t.id)}">Hapus</button></div></article>`; }
+    function trackRow(t,i,isQueue=false){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<div class="row ${playing?'playing':''}"><button class="ctrl" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:22px">${esc(t.title.charAt(0))}</span>`}</div><div><b>${esc(t.title)}</b><small>${esc(t.artist)}</small></div><small class="hide-sm">${esc(t.genre)}</small><small class="hide-sm">${esc(t.album)}</small><div class="row-actions"><button data-fav="${attr(t.id)}">${fav?'♥':'♡'}</button><button data-addplaylist="${attr(t.id)}">＋</button><button data-download="${attr(t.id)}">⇩</button><button data-edit="${attr(t.id)}">✎</button><button data-move="${attr(t.id)}">⇄</button><button data-del="${attr(t.id)}">🗑</button></div></div>`; }
+    function genreCard(g,i=0){ const count=state.tracks.filter(t=>t.genre===g).length; return `<article class="genre-card" data-page="genre:${attr(g)}"><div class="cover" style="background:${gradient({genre:g,gradientIndex:i})}"><span class="cover-letter">${esc(g.charAt(0))}</span></div><div class="track-info"><b>${esc(g)}</b><small>${count} lagu</small></div></article>`; }
+    function playlistCard(p,i=0){ return `<article class="playlist-card" data-page="playlist:${attr(p.id)}"><div class="cover" style="background:${gradient({gradientIndex:i,id:p.id})}"><span class="cover-letter">♫</span></div><div class="track-info"><b>${esc(p.name)}</b><small>${(p.trackIds||[]).length} lagu • ${esc(p.description||'Playlist')}</small></div></article>`; }
+    function delegatedClick(e){ const b=e.target.closest('button,[data-page],.genre-card,.playlist-card'); if(!b) return; const page=b.dataset.page || b.closest('[data-page]')?.dataset.page; if(page){ state.page=page; renderNav(); render(); toggleSidebar(false); return; } if(b.dataset.play) return playTrack(b.dataset.play); if(b.dataset.fav) return toggleFavorite(b.dataset.fav); if(b.dataset.queue) return addQueue(b.dataset.queue); if(b.dataset.addplaylist) return openPlaylistModal(b.dataset.addplaylist); if(b.dataset.download) return downloadTrackId(b.dataset.download); if(b.dataset.edit) return openEdit(b.dataset.edit); if(b.dataset.move) return openMove(b.dataset.move); if(b.dataset.del) return deleteTrack(b.dataset.del); }
+    function playAll(tracks){ if(!tracks.length) return; playTrack(tracks[0].id, tracks.map(t=>t.id)); }
+    function playTrack(id, queueIds){ const t=getTrack(id); if(!t) return; if(queueIds) state.queue=queueIds; else if(!state.queue.includes(id)) state.queue=[id,...state.queue]; state.currentId=id; state.queueIndex=Math.max(0,state.queue.indexOf(id)); audio.src=t.src; audio.play().catch(err=>toast('Audio belum bisa diputar',err.message,'bad')); addRecent(id); updateGlow(t); renderNav(); renderPlayer(); render(); }
+    function togglePlay(){ if(!state.currentId && state.tracks[0]) return playAll(state.tracks); audio.paused?audio.play():audio.pause(); renderPlayer(); render(); }
+    function nextTrack(){ if(!state.queue.length) return; let i=state.shuffle?Math.floor(Math.random()*state.queue.length):state.queueIndex+1; if(i>=state.queue.length) i=0; playTrack(state.queue[i], state.queue); }
+    function prevTrack(){ if(!state.queue.length) return; let i=state.queueIndex-1; if(i<0) i=state.queue.length-1; playTrack(state.queue[i], state.queue); }
+    function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); $('#eq').style.opacity=audio.paused?.35:1; $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
+    function renderProgress(){ const pct=audio.duration?(audio.currentTime/audio.duration)*100:0; $('#seek').value=pct||0; $('#curTime').textContent=fmt(audio.currentTime||0); $('#durTime').textContent=fmt(audio.duration||0); $('#playBtn').textContent=audio.paused?'▶':'⏸'; }
+    async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
+    async function createFolder(){ const genre=$('#newGenre').value.trim(), album=$('#newAlbum').value.trim(); if(!genre) return toast('Genre kosong','Isi nama genre/kategori dulu.','bad'); try{ const d=await adminFetch('/admin/folder',{method:'POST',json:{genre,album}}); toast('Kategori dibuat',d.message||genre,'good'); $('#newGenre').value=''; $('#newAlbum').value=''; await loadTracks(); }catch(err){toast('Gagal membuat kategori',err.message,'bad')} }
+    function openEdit(id){ const t=getTrack(id); if(!t) return; const f=$('#editForm'); f.key.value=t.key; f.title.value=t.title; f.artist.value=t.artist; f.album.value=t.album; setGenreSelectValue(f.genre,t.genre); f.cover.value=''; $('#editTitle').textContent='Edit ' + t.title; openModal('editModal'); }
+    async function saveEdit(e){ e.preventDefault(); const f=e.currentTarget, key=f.key.value, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); try{ setBusy(f,true); await adminFetch('/admin/track',{method:'PATCH',json:{key,title:f.title.value,artist:f.artist.value,album:f.album.value,genre}}); if(f.cover.files[0]){ const fd=new FormData(); fd.append('key',key); fd.append('cover',f.cover.files[0]); await adminFetch('/admin/cover',{method:'POST',body:fd}); } closeModal('editModal'); toast('Lagu diperbarui','Metadata dan cover disimpan.','good'); await loadTracks(); }catch(err){toast('Edit gagal',err.message,'bad')}finally{setBusy(f,false)} }
+    function openMove(id){ const t=getTrack(id); if(!t) return; const f=$('#moveForm'); f.key.value=t.key; setGenreSelectValue(f.genre,t.genre); f.album.value=t.album==='DestAra Music'?'':t.album; openModal('moveModal'); }
+    async function saveMove(e){ e.preventDefault(); const f=e.currentTarget, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre tujuan atau isi custom genre.','bad'); try{ setBusy(f,true); const d=await adminFetch('/admin/move',{method:'POST',json:{key:f.key.value,genre,album:f.album.value}}); closeModal('moveModal'); toast('Lagu dipindahkan',d.message||'Selesai.','good'); await loadTracks(); }catch(err){toast('Pindah gagal',err.message,'bad')}finally{setBusy(f,false)} }
+    async function deleteTrack(id){ const t=getTrack(id); if(!t || !confirm('Hapus lagu ini dari R2?\n\n'+t.title)) return; try{ await adminFetch('/admin/track',{method:'DELETE',json:{key:t.key}}); toast('Lagu dihapus',t.title,'good'); state.favorites=state.favorites.filter(x=>x!==id); state.queue=state.queue.filter(x=>x!==id); saveLS(LS.favorites,state.favorites); await loadTracks(); }catch(err){toast('Hapus gagal',err.message,'bad')} }
+    async function adminFetch(path, opts={}){ const token=localStorage.getItem(LS.token)||$('#adminToken')?.value.trim()||''; if(!token) throw new Error('Token admin belum diisi. Buka Admin Mode dan simpan token dulu.'); const headers={'X-DAM-Token':token}; let body=opts.body; if(opts.json){ headers['Content-Type']='application/json'; body=JSON.stringify(opts.json); } const res=await fetch(API_BASE+path,{method:opts.method||'GET',headers,body}); const data=await res.json().catch(()=>({})); if(!res.ok||data.error) throw new Error(data.message||'Request admin gagal.'); return data; }
+    function openPlaylistModal(id){ $('#playlistTrackId').value=id; renderPlaylistSelect(); openModal('playlistModal'); }
+    function renderPlaylistSelect(){ $('#playlistSelect').innerHTML = state.playlists.map(p=>`<option value="${attr(p.id)}">${esc(p.name)}</option>`).join('') || '<option value="">Buat playlist baru dulu</option>'; }
+    function addSelectedToPlaylist(){ const id=$('#playlistTrackId').value; let name=$('#newPlaylistName').value.trim(); let pid=$('#playlistSelect').value; if(name){ pid='pl_'+Date.now(); state.playlists.push({id:pid,name,description:'Playlist lokal',trackIds:[],user:true}); } const p=state.playlists.find(x=>x.id===pid); if(!p) return toast('Playlist kosong','Buat playlist baru dulu.','bad'); if(!p.trackIds.includes(id)) p.trackIds.push(id); saveLS(LS.playlists,state.playlists); closeModal('playlistModal'); $('#newPlaylistName').value=''; toast('Masuk playlist', getTrack(id)?.title || 'Lagu ditambahkan','good'); render(); }
+    function quickCreatePlaylist(){ const name=prompt('Nama playlist baru?'); if(!name) return; state.playlists.push({id:'pl_'+Date.now(),name:name.trim(),description:'Playlist lokal',trackIds:[],user:true}); saveLS(LS.playlists,state.playlists); render(); }
+    function deletePlaylist(id){ if(!confirm('Hapus playlist ini?')) return; state.playlists=state.playlists.filter(p=>p.id!==id); saveLS(LS.playlists,state.playlists); state.page='playlists'; renderNav(); render(); }
+    function toggleFavorite(id){ state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[id,...state.favorites]; saveLS(LS.favorites,state.favorites); renderNav(); renderPlayer(); render(); }
+    function addQueue(id){ if(!state.queue.includes(id)) state.queue.push(id); saveLS('dam_queue_v24', state.queue); renderNav(); toast('Ditambahkan ke Queue',getTrack(id)?.title||'Lagu','good'); }
+    function addRecent(id){ state.recent=[id,...state.recent.filter(x=>x!==id)].slice(0,30); saveLS(LS.recent,state.recent); }
+    function downloadTrackId(id){ const t=getTrack(id); if(!t) return; const a=document.createElement('a'); a.href=t.src; a.download=(t.artist+' - '+t.title)+'.mp3'; a.target='_blank'; a.rel='noopener'; a.click(); toast('Download dimulai', t.title, 'good'); }
+    function downloadCurrent(){ const t=getTrack(state.currentId); if(!t) return; downloadTrackId(t.id); }
+    function genreList(){ return [...new Set([...DEFAULT_GENRES, ...getGenres()])].filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
+    function genreOptionsHTML(selected=''){ const all=genreList(); const has=all.includes(selected); const extra=selected&&!has?`<option value="${attr(selected)}" selected>${esc(selected)} · sekarang</option>`:''; return `${extra}${all.map(g=>`<option value="${attr(g)}" ${g===selected?'selected':''}>${esc(g)}</option>`).join('')}<option value="__custom__">＋ Genre Custom...</option>`; }
+    function hydrateGenreSelects(root=document){
+      $$('select[data-genre-select]', root).forEach(sel=>{
+        const selected=sel.dataset.selected || (sel.value && sel.value!=='__custom__'?sel.value:'Classic');
+        sel.innerHTML=genreOptionsHTML(selected);
+        ensureGenrePicker(sel);
+        setGenreSelectValue(sel, selected);
+        sel.onchange=()=>{ toggleCustomGenre(sel); renderGenrePicker(sel); };
+      });
+      bindGenrePickerGlobalClose();
+    }
+    function ensureGenrePicker(sel){
+      if(!sel || sel.dataset.genrePickerReady==='1') return;
+      sel.dataset.genrePickerReady='1';
+      sel.classList.add('native-genre-select-hidden');
+      sel.setAttribute('aria-hidden','true');
+      sel.tabIndex=-1;
+      const picker=document.createElement('div');
+      picker.className='genre-picker';
+      picker.innerHTML=`<button class="genre-picker-button" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="genre-picker-value"><span class="genre-picker-dot"></span><span data-genre-current>Classic</span></span><span class="genre-picker-chevron">⌄</span></button><div class="genre-picker-menu" role="listbox"></div>`;
+      sel.insertAdjacentElement('afterend', picker);
+      picker.querySelector('.genre-picker-button').addEventListener('click', (event)=>{
+        event.preventDefault(); event.stopPropagation();
+        if(sel.disabled) return;
+        $$('.genre-picker.open').forEach(x=>{ if(x!==picker) x.classList.remove('open'); });
+        picker.classList.toggle('open');
+        picker.querySelector('.genre-picker-button').setAttribute('aria-expanded', picker.classList.contains('open') ? 'true' : 'false');
+        renderGenrePicker(sel);
+      });
+    }
+    function bindGenrePickerGlobalClose(){
+      if(window.__damGenrePickerCloseBound) return;
+      window.__damGenrePickerCloseBound=true;
+      document.addEventListener('click', (event)=>{
+        if(event.target.closest('.genre-picker')) return;
+        $$('.genre-picker.open').forEach(p=>{ p.classList.remove('open'); p.querySelector('.genre-picker-button')?.setAttribute('aria-expanded','false'); });
+      });
+      document.addEventListener('keydown', (event)=>{
+        if(event.key==='Escape') $$('.genre-picker.open').forEach(p=>{ p.classList.remove('open'); p.querySelector('.genre-picker-button')?.setAttribute('aria-expanded','false'); });
+      });
+    }
+    function renderGenrePicker(sel){
+      const picker=sel?.nextElementSibling?.classList?.contains('genre-picker') ? sel.nextElementSibling : null;
+      if(!picker) return;
+      const custom=$('#'+sel.dataset.customTarget);
+      const selected=sel.value==='__custom__' ? ((custom?.value||'').trim() || 'Genre Custom') : (sel.value || 'Classic');
+      picker.querySelector('[data-genre-current]').textContent=selected;
+      picker.querySelector('.genre-picker-button').disabled=!!sel.disabled;
+      const all=genreList();
+      const menu=picker.querySelector('.genre-picker-menu');
+      menu.innerHTML=all.map(g=>`<button class="genre-option ${g===sel.value?'active':''}" type="button" role="option" data-genre-option="${attr(g)}"><span>${esc(g)}</span>${g===sel.value?'<small>Dipilih</small>':''}</button>`).join('') + `<button class="genre-option custom ${sel.value==='__custom__'?'active':''}" type="button" role="option" data-genre-option="__custom__"><span>＋ Genre Custom</span><small>Buat baru</small></button>`;
+      $$('[data-genre-option]', menu).forEach(btn=>{
+        btn.addEventListener('click', (event)=>{
+          event.preventDefault(); event.stopPropagation();
+          chooseGenreOption(sel, btn.dataset.genreOption);
+        });
+      });
+    }
+    function chooseGenreOption(sel, value){
+      if(value==='__custom__'){
+        sel.value='__custom__';
+        sel.dataset.selected='__custom__';
+        toggleCustomGenre(sel);
+        renderGenrePicker(sel);
+        const picker=sel.nextElementSibling;
+        picker?.classList.remove('open');
+        picker?.querySelector('.genre-picker-button')?.setAttribute('aria-expanded','false');
+        return;
+      }
+      setGenreSelectValue(sel, value);
+      sel.dispatchEvent(new Event('change', {bubbles:true}));
+      const picker=sel.nextElementSibling;
+      picker?.classList.remove('open');
+      picker?.querySelector('.genre-picker-button')?.setAttribute('aria-expanded','false');
+    }
+    function setGenreSelectValue(sel, value){
+      if(!sel) return;
+      const val=value||'Classic';
+      sel.dataset.selected=val;
+      if(!sel.options.length) sel.innerHTML=genreOptionsHTML(val);
+      const exists=[...sel.options].some(o=>o.value===val);
+      sel.value=exists?val:'__custom__';
+      const custom=$('#'+sel.dataset.customTarget);
+      if(custom){ custom.hidden=sel.value!=='__custom__'; custom.value=exists?'':val; }
+      toggleCustomGenre(sel);
+      renderGenrePicker(sel);
+    }
+    function toggleCustomGenre(sel){ const custom=$('#'+sel.dataset.customTarget); if(!custom) return; custom.hidden=sel.value!=='__custom__'; if(!custom.hidden) custom.focus?.(); renderGenrePicker(sel); }
+    function getFormGenre(form){ const sel=form.genre; if(!sel) return ''; if(sel.value==='__custom__') return (form.genreCustom?.value||'').trim(); return (sel.value||'').trim(); }
+    function renderQuickGenreChips(){ const wrap=$('#quickGenreChips'); if(!wrap) return; wrap.innerHTML=DEFAULT_GENRES.slice(0,12).map(g=>`<button class="admin-chip" type="button" data-quick-genre="${attr(g)}">${esc(g)}</button>`).join(''); $$('[data-quick-genre]',wrap).forEach(btn=>btn.onclick=()=>{ $('#newGenre').value=btn.dataset.quickGenre; }); }
+    async function shareCurrent(){ const t=getTrack(state.currentId); if(!t) return; await navigator.clipboard.writeText(t.src).catch(()=>{}); toast('Link disalin',t.title,'good'); }
+    function openCommand(){ $('#commandOverlay').classList.add('show'); $('#commandInput').value=''; renderCommand(); setTimeout(()=>$('#commandInput').focus(),20); }
+    function closeCommand(){ $('#commandOverlay').classList.remove('show'); }
+    function renderCommand(){ const q=$('#commandInput').value.toLowerCase().trim(); const pages=navItems.map(x=>({type:'page',id:x[0],title:x[2],icon:x[1]})); const tracks=getFilteredTracks(q).slice(0,10).map(t=>({type:'track',id:t.id,title:t.title,sub:t.artist,track:t})); const items=[...pages.filter(p=>p.title.toLowerCase().includes(q)),...tracks]; $('#commandResults').innerHTML=items.map(it=>it.type==='page'?`<div class="command-item" data-cmd-page="${it.id}"><div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)">${it.icon}</div><div><b>${esc(it.title)}</b><small>Halaman</small></div><span>↵</span></div>`:`<div class="command-item" data-cmd-track="${it.id}"><div class="cover" style="background:${gradient(it.track)}">${it.track.cover?`<img src="${attr(it.track.cover)}">`:esc(it.title.charAt(0))}</div><div><b>${esc(it.title)}</b><small>${esc(it.sub)}</small></div><span>Play</span></div>`).join('') || '<div class="empty">Tidak ada hasil.</div>'; $$('[data-cmd-page]').forEach(x=>x.onclick=()=>{ state.page=x.dataset.cmdPage; closeCommand(); renderNav(); render(); }); $$('[data-cmd-track]').forEach(x=>x.onclick=()=>{ playTrack(x.dataset.cmdTrack); closeCommand(); }); }
+    function cycleMood(){ const moods=['nebula','forest','rose','ocean']; const i=(moods.indexOf(state.mood)+1)%moods.length; state.mood=moods[i]; localStorage.setItem(LS.mood,state.mood); const colors={nebula:['#a855f7','#22c55e'],forest:['#22c55e','#84cc16'],rose:['#f43f5e','#a855f7'],ocean:['#06b6d4','#6366f1']}[state.mood]; document.documentElement.style.setProperty('--accent',colors[0]); document.documentElement.style.setProperty('--accent2',colors[1]); toast('Mood diganti',state.mood,'good'); }
+    function updateGlow(t){ $('#currentGlow').style.background = `radial-gradient(circle, ${colorFor(t)}55, transparent 64%)`; }
+    function openModal(id){ $('#'+id).classList.add('show'); }
+    function closeModal(id){ $('#'+id).classList.remove('show'); }
+    function toggleSidebar(show){ $('#sidebar').classList.toggle('open', !!show); $('#sidebarOverlay').classList.toggle('show', !!show); }
+    function getFilteredTracks(q=state.filter){ const s=String(q||'').toLowerCase().trim(); const tracks=!s?state.tracks:state.tracks.filter(t=>[t.title,t.artist,t.album,t.genre,t.key].join(' ').toLowerCase().includes(s)); return sortTracks(tracks); }
+    function sortTracks(tracks){ const arr=[...tracks]; const key=state.sort; arr.sort((a,b)=> key==='artist'?a.artist.localeCompare(b.artist):key==='genre'?a.genre.localeCompare(b.genre):key==='newest'?String(b.uploaded).localeCompare(String(a.uploaded)):a.title.localeCompare(b.title)); return arr; }
+    function getGenres(){ return [...new Set(state.tracks.map(t=>t.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+    function autoPlaylists(){ const genres=getGenres(); return [{id:'auto_all',name:'All Music',description:'Semua lagu',trackIds:state.tracks.map(t=>t.id)},{id:'auto_wedding',name:'Wedding Mood',description:'Akad, romantic, wedding',trackIds:state.tracks.filter(t=>/wedding|akad|romantic|classic/i.test([t.genre,t.title,t.album].join(' '))).map(t=>t.id)},{id:'auto_focus',name:'Focus Flow',description:'Classic, Piano, Lo-fi',trackIds:state.tracks.filter(t=>/classic|piano|lo.?fi|instrumental/i.test([t.genre,t.title].join(' '))).map(t=>t.id)},...genres.slice(0,5).map(g=>({id:'auto_'+g.toLowerCase().replace(/\W+/g,'_'),name:g+' Mix',description:'Auto genre',trackIds:state.tracks.filter(t=>t.genre===g).map(t=>t.id)}))].filter(p=>p.trackIds.length); }
+    function getTrack(id){ return state.tracks.find(t=>t.id===id); }
+    function gradient(t={}){ return gradients[Math.abs(hash(String(t.id||t.key||t.genre||t.gradientIndex||0)))%gradients.length]; }
+    function colorFor(t={}){ const colors=['#a855f7','#22c55e','#06b6d4','#f43f5e','#f59e0b','#6366f1']; return colors[Math.abs(hash(String(t.id||t.key||0)))%colors.length]; }
+    function fmt(s){ s=Number(s)||0; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+    function sizeFmt(n){ if(!n) return '0 MB'; const u=['B','KB','MB','GB']; let i=0; while(n>=1024&&i<u.length-1){n/=1024;i++} return n.toFixed(i?1:0)+' '+u[i]; }
+    function setBusy(form,busy){ $$('button,input,select',form).forEach(el=>el.disabled=busy); $$('select[data-genre-select]',form).forEach(renderGenrePicker); }
+    function toast(title,msg,type=''){ const el=document.createElement('div'); el.className='toast'; el.innerHTML=`<b>${type==='bad'?'✕':type==='good'?'✓':'✦'} ${esc(title)}</b><small>${esc(msg||'')}</small>`; $('#toastWrap').appendChild(el); setTimeout(()=>{el.style.opacity=0;el.style.transform='translateY(8px)';setTimeout(()=>el.remove(),250)},3300); }
+    function hash(str){ let h=0; for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;} return h; }
+    function makeId(s){ return 'track_'+Math.abs(hash(String(s))); }
+    function esc(v){ return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    function attr(v){ return esc(v).replace(/'/g,'&#039;'); }
+    function loadLS(k,f){ try{return JSON.parse(localStorage.getItem(k))??f}catch{return f} }
+    function saveLS(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
   </script>
 </body>
 </html>
