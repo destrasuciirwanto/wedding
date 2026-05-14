@@ -133,6 +133,7 @@
     .nav-btn.active .icon { background: linear-gradient(135deg, var(--accent), #22c55e); box-shadow: 0 12px 24px rgba(168,85,247,.24); }
     .count-badge { min-width: 24px; padding: 4px 7px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--muted); font-size: .68rem; font-weight:900; text-align:center; }
     .sidebar-tools { margin-top:auto; display:grid; gap:10px; }
+    .sidebar-note { color: var(--muted); font-size: .74rem; line-height: 1.6; padding: 0 2px; }
     .mini-card { border:1px solid var(--line); background:rgba(255,255,255,.055); border-radius: 22px; padding: 14px; }
     .mini-card b { display:block; font-size:.84rem; }
     .mini-card small { color: var(--muted); line-height:1.5; display:block; margin-top: 4px; }
@@ -213,9 +214,16 @@
     .track-info { padding: 12px 3px 5px; min-width:0; }
     .track-info b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.93rem; letter-spacing:-.025em; }
     .track-info small { display:block; margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--muted); font-weight:700; font-size:.75rem; }
-    .mini-actions { display:flex; gap:7px; flex-wrap:wrap; padding: 0 3px 2px; }
-    .mini-actions button, .row-actions button { min-height:30px; border-radius:999px; padding:0 9px; background:rgba(255,255,255,.07); border:1px solid var(--line); color:var(--muted); font-size:.68rem; font-weight:950; }
-    .mini-actions button:hover, .row-actions button:hover { color:white; background:rgba(255,255,255,.13); }
+    .mini-actions { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px; padding: 4px 2px 0; }
+    .mini-actions button, .row-actions button {
+      min-height:38px; border-radius:16px; padding:0 10px; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05)); border:1px solid rgba(255,255,255,.10); color:#d4d4d8; font-size:.72rem; font-weight:900; display:inline-flex; align-items:center; justify-content:center; gap:7px; box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .mini-actions button:hover, .row-actions button:hover { color:white; background:linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.08)); }
+    .mini-actions button.wide { grid-column: 1 / -1; }
+    .mini-actions button[data-download] { background: linear-gradient(135deg, rgba(59,130,246,.22), rgba(99,102,241,.18)); border-color: rgba(96,165,250,.28); color: #eff6ff; }
+    .mini-actions button[data-fav] { color: #f5d0fe; }
+    .mini-actions button[data-edit], .mini-actions button[data-move], .mini-actions button[data-queue], .mini-actions button[data-addplaylist] { color: #e5e7eb; }
+    .mini-actions button[data-del] { background: linear-gradient(135deg, rgba(244,63,94,.16), rgba(190,24,93,.10)); border-color: rgba(244,63,94,.28); color: #fecdd3; }
     .list { display:flex; flex-direction:column; gap:9px; }
     .row { display:grid; grid-template-columns: 42px 58px minmax(0, 1.35fr) .7fr .7fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:20px; background:rgba(255,255,255,.065); padding:9px; transition:.16s ease; }
     .row:hover { background:rgba(255,255,255,.105); transform: translateX(2px); }
@@ -224,7 +232,8 @@
     .row b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .row small { color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .ctrl { width:42px; height:42px; border-radius:15px; display:grid; place-items:center; background:rgba(255,255,255,.09); border:1px solid var(--line); }
-    .row-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .row-actions { display:grid; grid-template-columns: repeat(6, 36px); gap:6px; justify-content:end; }
+    .row-actions button { width: 36px; min-height: 36px; padding: 0; border-radius: 12px; }
     .genre-card, .playlist-card { min-height: 160px; display:flex; flex-direction:column; justify-content:flex-end; cursor:pointer; }
     .genre-card .cover, .playlist-card .cover { height:110px; aspect-ratio:auto; }
     .insights { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
@@ -234,12 +243,13 @@
     .equalizer { display:flex; align-items:end; gap:3px; height:28px; }
     .equalizer i { display:block; width:4px; border-radius:999px; background:#22c55e; height:6px; animation:eq 1s ease-in-out infinite; opacity:.85; }
     .equalizer i:nth-child(2){animation-delay:.12s}.equalizer i:nth-child(3){animation-delay:.24s}.equalizer i:nth-child(4){animation-delay:.08s}.equalizer i:nth-child(5){animation-delay:.18s}
+    .equalizer.paused i { animation-play-state: paused; height: 8px; opacity: .35; }
     @keyframes eq { 0%,100%{height:6px} 50%{height:25px} }
     .player {
       grid-column: 2;
       border-radius: 28px;
       padding: 12px;
-      display:grid; grid-template-columns: minmax(220px, .95fr) minmax(300px, 1.3fr) minmax(200px, .75fr); align-items:center; gap:14px;
+      display:grid; grid-template-columns: minmax(220px, .95fr) minmax(300px, 1.25fr) minmax(150px, .55fr); align-items:center; gap:14px;
       position:relative; overflow:hidden;
     }
     .player:before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(168,85,247,.10), transparent 45%, rgba(34,197,94,.08)); pointer-events:none; }
@@ -248,15 +258,45 @@
     .now b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .now small { display:block; color:var(--muted); margin-top:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .player-center { position:relative; min-width:0; }
-    .controls { display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:9px; }
-    .big-play { width:54px; height:54px; border-radius:999px; display:grid; place-items:center; background:white; color:#050507; font-weight:950; box-shadow:0 16px 40px rgba(255,255,255,.12); }
-    .round { width:42px; height:42px; border-radius:999px; display:grid; place-items:center; background:rgba(255,255,255,.08); border:1px solid var(--line); color:var(--muted); }
-    .round.active { color:white; background:rgba(34,197,94,.19); border-color:rgba(34,197,94,.34); }
-    .progress-line { display:grid; grid-template-columns: 44px minmax(0,1fr) 44px; gap:9px; align-items:center; }
-    .progress-line span { color:var(--muted); font-size:.72rem; font-weight:900; text-align:center; }
+    .controls {
+      display:inline-flex; justify-content:center; align-items:center; gap:10px; margin:0 auto 11px; padding:10px 14px;
+      border:1px solid rgba(255,255,255,.08); border-radius:999px; background:rgba(255,255,255,.045); box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .big-play {
+      width:58px; height:58px; border-radius:999px; display:grid; place-items:center; background:linear-gradient(135deg,#ffffff,#f1f5f9); color:#050507; font-weight:950; box-shadow:0 16px 40px rgba(255,255,255,.12), 0 0 0 6px rgba(255,255,255,.03);
+    }
+    .round {
+      width:44px; height:44px; border-radius:999px; display:grid; place-items:center; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:var(--muted);
+    }
+    .round.active { color:white; background:rgba(34,197,94,.18); border-color:rgba(34,197,94,.34); box-shadow: 0 10px 24px rgba(34,197,94,.14); }
+    .progress-line {
+      display:grid; grid-template-columns: 48px minmax(0,1fr) 48px; gap:10px; align-items:center; padding: 0 2px;
+    }
+    .progress-line span { color:var(--muted); font-size:.74rem; font-weight:900; text-align:center; }
     input[type="range"] { width:100%; accent-color:#22c55e; }
-    .player-extra { position:relative; display:flex; align-items:center; justify-content:flex-end; gap:9px; flex-wrap:wrap; }
-    .volume { width:105px; }
+    #seek { height: 6px; }
+    #seek::-webkit-slider-runnable-track { height: 6px; border-radius:999px; background: linear-gradient(90deg, rgba(34,197,94,.55), rgba(255,255,255,.26)); }
+    #seek::-webkit-slider-thumb { -webkit-appearance:none; width: 16px; height:16px; border-radius:999px; background:#22c55e; margin-top:-5px; box-shadow:0 0 0 4px rgba(34,197,94,.18); }
+    #seek::-moz-range-track { height: 6px; border-radius:999px; background: linear-gradient(90deg, rgba(34,197,94,.55), rgba(255,255,255,.26)); }
+    #seek::-moz-range-thumb { width:16px; height:16px; border:0; border-radius:999px; background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.18); }
+    #volume::-webkit-slider-runnable-track { height:4px; border-radius:999px; background: rgba(255,255,255,.22); }
+    #volume::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:999px; background:#fff; margin-top:-5px; }
+    #volume::-moz-range-track { height:4px; border-radius:999px; background: rgba(255,255,255,.22); }
+    #volume::-moz-range-thumb { width:14px; height:14px; border:0; border-radius:999px; background:#fff; }
+    .player-extra { position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:nowrap; min-width:0; }
+    .player-action-group {
+      display:inline-flex; align-items:center; gap:8px; padding:6px; border-radius:999px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.045);
+    }
+    .player-side-btn {
+      width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); color:var(--text); box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .player-side-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.11); }
+    .player-side-btn .ico { font-size: 1rem; line-height:1; }
+    .volume-wrap {
+      display:inline-flex; align-items:center; gap:10px; padding: 0 12px; height: 52px; border-radius:999px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.045);
+    }
+    .volume-icon { color: var(--muted); font-size: .9rem; font-weight: 900; }
+    .volume { width:92px; min-width:92px; max-width:92px; }
     .empty { border:1px dashed rgba(255,255,255,.16); background:rgba(255,255,255,.05); border-radius:28px; padding:36px; text-align:center; color:var(--muted); font-weight:800; line-height:1.7; }
     .loading-skel { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:14px; }
     .skeleton { height:260px; border-radius:28px; background:linear-gradient(90deg, rgba(255,255,255,.05), rgba(255,255,255,.12), rgba(255,255,255,.05)); background-size:200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
@@ -278,6 +318,10 @@
     .field label { color:var(--muted); font-size:.72rem; font-weight:950; letter-spacing:.12em; text-transform:uppercase; }
     .field input, .field select, .field textarea {
       min-height:48px; border-radius:17px; border:1px solid var(--line); background:rgba(255,255,255,.08); padding:0 13px; font-weight:800;
+    }
+    .field input[type="file"] { padding: 8px; min-height: 56px; display:flex; align-items:center; color: var(--muted); }
+    .field input[type="file"]::file-selector-button {
+      border: 1px solid rgba(255,255,255,.14); background: linear-gradient(135deg, rgba(168,85,247,.85), rgba(34,197,94,.75)); color: white; min-height: 38px; border-radius: 12px; padding: 0 14px; font-weight: 900; margin-right: 12px; cursor: pointer;
     }
     .field textarea { padding:13px; min-height:110px; resize:vertical; }
     .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap; }
@@ -425,6 +469,12 @@
     .admin-chip { min-height:34px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.07); padding:0 12px; color:var(--muted); font-weight:900; font-size:.78rem; cursor:pointer; }
     .admin-chip:hover { color:var(--text); background:rgba(255,255,255,.12); transform:translateY(-1px); }
     .admin-mini-note { margin-top:10px; color:var(--muted); font-size:.78rem; line-height:1.5; }
+    .track-card .cover { margin-bottom: 2px; }
+    .track-card .track-info small { white-space: normal; line-height: 1.45; min-height: 2.15em; }
+    .track-card .track-info b { font-size: 1rem; }
+    .track-card { display:flex; flex-direction:column; gap:8px; }
+    .track-card .track-info { padding-top: 14px; }
+    .upload-note { margin-top: 12px; color: var(--muted); font-size: .8rem; line-height: 1.6; }
     .mini-actions button[data-download] { color:#dbeafe; border-color:rgba(96,165,250,.22); background:rgba(59,130,246,.12); }
     .row-actions button[data-download] { color:#dbeafe; }
     .kbd { border:1px solid var(--line); border-bottom-color:rgba(255,255,255,.22); background:rgba(255,255,255,.08); border-radius:9px; padding:3px 7px; color:var(--muted); font-size:.72rem; font-weight:900; }
@@ -488,8 +538,8 @@
       <div class="nav-section"><div class="nav-title">Browse</div><div class="nav-list" id="navList"></div></div>
       <div class="nav-section" style="overflow:auto"><div class="nav-title">Kategori Cepat</div><div class="nav-list" id="genreNav"></div></div>
       <div class="sidebar-tools">
-        <div class="mini-card"><b>API aktif</b><small id="apiUrlText">Memuat...</small></div>
         <button class="btn primary" id="openAdminBtn">✦ Admin Mode</button>
+        <small class="sidebar-note">Kelola upload, edit, hapus, pindah lagu, dan kategori dari panel admin.</small>
       </div>
     </aside>
     <main class="main">
@@ -518,10 +568,12 @@
       </div>
       <div class="player-extra">
         <div class="equalizer" id="eq"><i></i><i></i><i></i><i></i><i></i></div>
-        <button class="icon-btn" id="favCurrentBtn" title="Favorite">♡</button>
-        <button class="icon-btn" id="downloadBtn" title="Download">⇩</button>
-        <button class="icon-btn" id="shareBtn" title="Copy link">⤴</button>
-        <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.9" />
+        <div class="player-action-group">
+          <button class="player-side-btn" id="favCurrentBtn" title="Favorite"><span class="ico">♡</span></button>
+          <button class="player-side-btn" id="downloadBtn" title="Download"><span class="ico">⇩</span></button>
+          <button class="player-side-btn" id="shareBtn" title="Copy link"><span class="ico">⤴</span></button>
+        </div>
+        <div class="volume-wrap"><span class="volume-icon">♫</span><input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.9" /></div>
       </div>
     </section>
   </div>
@@ -548,13 +600,13 @@
       <span class="eyebrow">Upload</span><h3>Tambah Lagu Baru</h3>
       <form id="uploadForm" class="dropzone">
         <div class="form-grid">
-          <div class="field"><label>File Audio</label><input name="file" type="file" accept="audio/*" required /></div>
+          <div class="field"><label>File Audio</label><input name="file" type="file" accept="audio/*,.mp3,.mpeg,.mpga,.wav,.ogg,.m4a,.aac,.flac,.webm" required /></div>
           <div class="field"><label>Genre</label><div class="genre-select-wrap"><select name="genre" data-genre-select data-custom-target="uploadGenreCustom" data-selected="Classic"></select><input class="genre-custom" id="uploadGenreCustom" name="genreCustom" placeholder="Tulis genre baru" hidden /></div></div>
           <div class="field"><label>Judul</label><input name="title" placeholder="Judul lagu" /></div>
           <div class="field"><label>Artist</label><input name="artist" placeholder="Nama artist" /></div>
           <div class="field" style="grid-column:1/-1"><label>Album</label><input name="album" placeholder="DestAra Music" /></div>
         </div>
-        <div class="form-actions"><button class="btn primary" type="submit">Upload Lagu</button></div>
+        <div class="upload-note">File audio seperti MPEG, MP3, WAV, M4A, AAC, OGG, dan FLAC tetap dibaca sebagai lagu audio dan label download akan dibuat .mp3 agar seragam.</div><div class="form-actions"><button class="btn primary" type="submit">Upload Lagu</button></div>
       </form>
     </div>
   </div></div>
@@ -627,7 +679,7 @@
 
     init();
     function init(){
-      $('#apiUrlText').textContent = API_BASE;
+      $('#apiUrlText') && ($('#apiUrlText').textContent = API_BASE);
       $('#adminToken').value = localStorage.getItem(LS.token) || '';
       audio.volume = Number(localStorage.getItem(LS.volume) || .9); $('#volume').value = audio.volume;
       bind(); renderNav(); loadTracks(); renderPlayer();
@@ -665,7 +717,9 @@
       try{ const res = await fetch(API_BASE + '/tracks', {cache:'no-store'}); const data = await res.json(); if(!res.ok || data.error) throw new Error(data.message || 'API gagal'); state.tracks = Array.isArray(data) ? data.map(normalizeTrack) : []; if(!state.queue.length) state.queue=state.tracks.map(t=>t.id); state.loading=false; renderNav(); render(); hydrateGenreSelects(); renderQuickGenreChips(); toast('Library sinkron', `${state.tracks.length} lagu dari Cloudflare R2.`, 'good'); }
       catch(err){ state.loading=false; render(); toast('Gagal memuat musik', err.message, 'bad'); }
     }
-    function normalizeTrack(t, i){ return { ...t, id: t.id || makeId(t.key || t.src || i), title: t.title || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'DestAra Music', genre: t.genre || 'Music', gradientIndex: t.gradientIndex ?? i, size: Number(t.size || 0), uploaded: t.uploaded || '' }; }
+    function normalizeTrack(t, i){ return { ...t, id: t.id || makeId(t.key || t.src || i), title: t.title || inferTitleFromKey(t.key || t.src) || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'DestAra Music', genre: t.genre || 'Music', gradientIndex: t.gradientIndex ?? i, size: Number(t.size || 0), uploaded: t.uploaded || '', audioLabel: 'MP3' }; }
+    function inferTitleFromKey(value=''){ const raw=String(value||'').split('/').pop().split('?')[0]; return decodeURIComponent(raw).replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim(); }
+    function safeFileName(value=''){ return String(value||'DestAra Music').replace(/[\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim(); }
     function renderNav(){
       $('#navList').innerHTML = navItems.map(([id,ic,label])=>`<button class="nav-btn ${state.page===id?'active':''}" data-page="${id}"><span class="left"><span class="icon">${ic}</span><span>${label}</span></span>${navCount(id)}</button>`).join('');
       const genres = getGenres().slice(0,10);
@@ -693,7 +747,7 @@
     function renderPlaylist(c,id){ const p=[...autoPlaylists(),...state.playlists].find(x=>x.id===id); if(!p) return renderPlaylists(c); const tracks=(p.trackIds||[]).map(getTrack).filter(Boolean); c.innerHTML=`<section class="hero" style="min-height:250px"><div><span class="eyebrow">♫ Playlist</span><h1>${esc(p.name)}</h1><p>${esc(p.description||'Playlist DestAra Music.')}</p><div class="hero-actions"><button class="btn primary" id="playPlaylist">▶ Putar Playlist</button>${p.user?`<button class="btn danger" id="deletePlaylist">Hapus Playlist</button>`:''}</div></div><div class="now-vinyl paused"><div class="vinyl-cover" style="background:${gradient({id})}">♫</div></div></section><section class="section">${tracksHTML(tracks)}</section>`; $('#playPlaylist')?.addEventListener('click',()=>playAll(tracks)); $('#deletePlaylist')?.addEventListener('click',()=>deletePlaylist(id)); }
     function renderAdmin(c){ c.innerHTML=`<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Admin Musik</h2><small>Kelola lagu langsung ke R2 lewat Worker API.</small></div><button class="btn primary" id="openAdminInside">Buka Panel Admin</button></div><div class="admin-grid"><div class="admin-card"><span class="eyebrow">Status</span><h2>${localStorage.getItem(LS.token)?'Token tersimpan':'Token belum ada'}</h2><p style="color:var(--muted);line-height:1.6">Request admin memakai header <span class="kbd">X-DAM-Token</span>. Jangan simpan credential Cloudflare di HTML.</p></div><div class="admin-card"><span class="eyebrow">Library</span><h2>${state.tracks.length} lagu</h2><p style="color:var(--muted);line-height:1.6">Metadata edit disimpan di R2 sebagai <span class="kbd">dam/catalog.json</span>.</p></div></div><section class="section"><div class="section-head"><div><h2>Kelola Lagu</h2><small>Edit, pindah, cover, hapus dari kartu lagu.</small></div></div>${tracksHTML(getFilteredTracks())}</section></section>`; $('#openAdminInside')?.addEventListener('click',()=>openModal('adminModal')); }
     function tracksHTML(tracks,isQueue=false){ const sorted=isQueue?tracks:sortTracks(tracks); if(state.view==='list') return `<div class="list">${sorted.map((t,i)=>trackRow(t,i,isQueue)).join('')}</div>`; return `<div class="grid ${state.view==='compact'?'compact':''} ${state.view==='wide'?'wide':''} ${state.view==='masonry'?'masonry':''}">${sorted.map(trackCard).join('')}</div>`; }
-    function trackCard(t){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<article class="track-card ${playing?'playing':''}" data-track="${attr(t.id)}"><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" loading="lazy" alt="">`:`<span class="cover-letter">${esc(t.title.charAt(0))}</span>`}</div><button class="play-floating" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="track-info"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div><div class="mini-actions"><button data-fav="${attr(t.id)}">${fav?'♥':'♡'}</button><button data-queue="${attr(t.id)}">Queue</button><button data-addplaylist="${attr(t.id)}">Playlist</button><button data-download="${attr(t.id)}">Download</button><button data-edit="${attr(t.id)}">Edit</button><button data-move="${attr(t.id)}">Pindah</button><button data-del="${attr(t.id)}">Hapus</button></div></article>`; }
+    function trackCard(t){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<article class="track-card ${playing?'playing':''}" data-track="${attr(t.id)}"><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" loading="lazy" alt="">`:`<span class="cover-letter">${esc(t.title.charAt(0))}</span>`}</div><button class="play-floating" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="track-info"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div><div class="mini-actions"><button class="wide" data-download="${attr(t.id)}">⇩ Download</button><button data-fav="${attr(t.id)}">${fav?'♥ Tersimpan':'♡ Favorit'}</button><button data-queue="${attr(t.id)}">☰ Queue</button><button data-addplaylist="${attr(t.id)}">＋ Playlist</button><button data-edit="${attr(t.id)}">✎ Edit</button><button data-move="${attr(t.id)}">⇄ Pindah</button><button class="wide" data-del="${attr(t.id)}">🗑 Hapus</button></div></article>`; }
     function trackRow(t,i,isQueue=false){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<div class="row ${playing?'playing':''}"><button class="ctrl" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:22px">${esc(t.title.charAt(0))}</span>`}</div><div><b>${esc(t.title)}</b><small>${esc(t.artist)}</small></div><small class="hide-sm">${esc(t.genre)}</small><small class="hide-sm">${esc(t.album)}</small><div class="row-actions"><button data-fav="${attr(t.id)}">${fav?'♥':'♡'}</button><button data-addplaylist="${attr(t.id)}">＋</button><button data-download="${attr(t.id)}">⇩</button><button data-edit="${attr(t.id)}">✎</button><button data-move="${attr(t.id)}">⇄</button><button data-del="${attr(t.id)}">🗑</button></div></div>`; }
     function genreCard(g,i=0){ const count=state.tracks.filter(t=>t.genre===g).length; return `<article class="genre-card" data-page="genre:${attr(g)}"><div class="cover" style="background:${gradient({genre:g,gradientIndex:i})}"><span class="cover-letter">${esc(g.charAt(0))}</span></div><div class="track-info"><b>${esc(g)}</b><small>${count} lagu</small></div></article>`; }
     function playlistCard(p,i=0){ return `<article class="playlist-card" data-page="playlist:${attr(p.id)}"><div class="cover" style="background:${gradient({gradientIndex:i,id:p.id})}"><span class="cover-letter">♫</span></div><div class="track-info"><b>${esc(p.name)}</b><small>${(p.trackIds||[]).length} lagu • ${esc(p.description||'Playlist')}</small></div></article>`; }
@@ -703,9 +757,9 @@
     function togglePlay(){ if(!state.currentId && state.tracks[0]) return playAll(state.tracks); audio.paused?audio.play():audio.pause(); renderPlayer(); render(); }
     function nextTrack(){ if(!state.queue.length) return; let i=state.shuffle?Math.floor(Math.random()*state.queue.length):state.queueIndex+1; if(i>=state.queue.length) i=0; playTrack(state.queue[i], state.queue); }
     function prevTrack(){ if(!state.queue.length) return; let i=state.queueIndex-1; if(i<0) i=state.queue.length-1; playTrack(state.queue[i], state.queue); }
-    function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); $('#eq').style.opacity=audio.paused?.35:1; $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
+    function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); const eq=$('#eq'); eq.style.opacity=audio.paused?.35:1; eq.classList.toggle('paused', audio.paused || !t); $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
     function renderProgress(){ const pct=audio.duration?(audio.currentTime/audio.duration)*100:0; $('#seek').value=pct||0; $('#curTime').textContent=fmt(audio.currentTime||0); $('#durTime').textContent=fmt(audio.duration||0); $('#playBtn').textContent=audio.paused?'▶':'⏸'; }
-    async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
+    async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); const file=f.file?.files?.[0]; if(file && !f.title.value.trim()) f.title.value = inferTitleFromKey(file.name); if(file && !String(file.type||'').startsWith('audio/')) return toast('File tidak valid','Masukkan file audio seperti MP3/MPEG/WAV/M4A/OGG/AAC/FLAC.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); if(!fd.get('title')) fd.set('title', f.title.value.trim()); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
     async function createFolder(){ const genre=$('#newGenre').value.trim(), album=$('#newAlbum').value.trim(); if(!genre) return toast('Genre kosong','Isi nama genre/kategori dulu.','bad'); try{ const d=await adminFetch('/admin/folder',{method:'POST',json:{genre,album}}); toast('Kategori dibuat',d.message||genre,'good'); $('#newGenre').value=''; $('#newAlbum').value=''; await loadTracks(); }catch(err){toast('Gagal membuat kategori',err.message,'bad')} }
     function openEdit(id){ const t=getTrack(id); if(!t) return; const f=$('#editForm'); f.key.value=t.key; f.title.value=t.title; f.artist.value=t.artist; f.album.value=t.album; setGenreSelectValue(f.genre,t.genre); f.cover.value=''; $('#editTitle').textContent='Edit ' + t.title; openModal('editModal'); }
     async function saveEdit(e){ e.preventDefault(); const f=e.currentTarget, key=f.key.value, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); try{ setBusy(f,true); await adminFetch('/admin/track',{method:'PATCH',json:{key,title:f.title.value,artist:f.artist.value,album:f.album.value,genre}}); if(f.cover.files[0]){ const fd=new FormData(); fd.append('key',key); fd.append('cover',f.cover.files[0]); await adminFetch('/admin/cover',{method:'POST',body:fd}); } closeModal('editModal'); toast('Lagu diperbarui','Metadata dan cover disimpan.','good'); await loadTracks(); }catch(err){toast('Edit gagal',err.message,'bad')}finally{setBusy(f,false)} }
@@ -721,7 +775,7 @@
     function toggleFavorite(id){ state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[id,...state.favorites]; saveLS(LS.favorites,state.favorites); renderNav(); renderPlayer(); render(); }
     function addQueue(id){ if(!state.queue.includes(id)) state.queue.push(id); saveLS('dam_queue_v24', state.queue); renderNav(); toast('Ditambahkan ke Queue',getTrack(id)?.title||'Lagu','good'); }
     function addRecent(id){ state.recent=[id,...state.recent.filter(x=>x!==id)].slice(0,30); saveLS(LS.recent,state.recent); }
-    function downloadTrackId(id){ const t=getTrack(id); if(!t) return; const a=document.createElement('a'); a.href=t.src; a.download=(t.artist+' - '+t.title)+'.mp3'; a.target='_blank'; a.rel='noopener'; a.click(); toast('Download dimulai', t.title, 'good'); }
+    function downloadTrackId(id){ const t=getTrack(id); if(!t) return; const a=document.createElement('a'); a.href=t.src; a.download=safeFileName((t.artist+' - '+t.title).trim() || 'DestAra Music')+'.mp3'; a.target='_blank'; a.rel='noopener'; a.click(); toast('Download dimulai', t.title + ' • format unduhan .mp3', 'good'); }
     function downloadCurrent(){ const t=getTrack(state.currentId); if(!t) return; downloadTrackId(t.id); }
     function genreList(){ return [...new Set([...DEFAULT_GENRES, ...getGenres()])].filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
     function genreOptionsHTML(selected=''){ const all=genreList(); const has=all.includes(selected); const extra=selected&&!has?`<option value="${attr(selected)}" selected>${esc(selected)} · sekarang</option>`:''; return `${extra}${all.map(g=>`<option value="${attr(g)}" ${g===selected?'selected':''}>${esc(g)}</option>`).join('')}<option value="__custom__">＋ Genre Custom...</option>`; }
@@ -841,5 +895,462 @@
     function loadLS(k,f){ try{return JSON.parse(localStorage.getItem(k))??f}catch{return f} }
     function saveLS(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
   </script>
+
+
+<style id="dam-v29-spotify-polish">
+  /* ===============================
+     DAM V29 - PLAYER & ACTION POLISH
+     Fokus hanya DestAra Music.
+  =============================== */
+
+  .player {
+    background: #050505 !important;
+    border-color: rgba(255,255,255,.08) !important;
+    box-shadow: 0 -18px 60px rgba(0,0,0,.48) !important;
+    border-radius: 0 !important;
+    padding: 10px 18px !important;
+    grid-template-columns: minmax(220px, .9fr) minmax(420px, 1.45fr) minmax(230px, .9fr) !important;
+    gap: 18px !important;
+  }
+
+  .player:before {
+    background: linear-gradient(90deg, rgba(168,85,247,.10), transparent 45%, rgba(34,197,94,.08)) !important;
+    opacity: .55;
+  }
+
+  .now { gap: 12px !important; }
+
+  .now .cover {
+    width: 58px !important;
+    height: 58px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.38) !important;
+  }
+
+  .now b {
+    font-size: .92rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -.02em;
+  }
+
+  .now small {
+    font-size: .75rem !important;
+    color: rgba(255,255,255,.58) !important;
+  }
+
+  .player-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .controls {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 0 8px !important;
+    gap: 18px !important;
+  }
+
+  .round {
+    width: 34px !important;
+    height: 34px !important;
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255,255,255,.70) !important;
+    font-size: 1rem !important;
+  }
+
+  .round:hover {
+    color: #fff !important;
+    background: rgba(255,255,255,.08) !important;
+    transform: scale(1.06) !important;
+  }
+
+  .round.active {
+    color: #22c55e !important;
+    background: rgba(34,197,94,.10) !important;
+    box-shadow: none !important;
+  }
+
+  .big-play {
+    width: 48px !important;
+    height: 48px !important;
+    background: #fff !important;
+    color: #050505 !important;
+    box-shadow: 0 12px 30px rgba(255,255,255,.12) !important;
+  }
+
+  .big-play:hover { transform: scale(1.05) !important; }
+
+  .progress-line {
+    width: min(720px, 100%) !important;
+    grid-template-columns: 46px minmax(0,1fr) 46px !important;
+    gap: 10px !important;
+  }
+
+  .progress-line span {
+    color: rgba(255,255,255,.70) !important;
+    font-size: .72rem !important;
+  }
+
+  #seek { height: 5px !important; }
+
+  #seek::-webkit-slider-runnable-track {
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.28);
+  }
+
+  #seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: #fff;
+    margin-top: -4.5px;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.14);
+  }
+
+  #seek::-moz-range-track {
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.28);
+  }
+
+  #seek::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .player-extra {
+    gap: 10px !important;
+    justify-content: flex-end !important;
+  }
+
+  .equalizer { display: none !important; }
+
+  .player-action-group {
+    display: inline-flex !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .player-side-btn,
+  .player-extra .icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255,255,255,.62) !important;
+    box-shadow: none !important;
+  }
+
+  .player-side-btn:hover,
+  .player-extra .icon-btn:hover {
+    color: #fff !important;
+    background: rgba(255,255,255,.08) !important;
+    transform: scale(1.06) !important;
+  }
+
+  .volume-wrap {
+    width: 110px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    gap: 8px !important;
+  }
+
+  .volume-icon { color: rgba(255,255,255,.58) !important; }
+
+  .volume {
+    width: 84px !important;
+    min-width: 84px !important;
+    max-width: 84px !important;
+  }
+
+  .volume::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.26);
+  }
+
+  .volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: #fff;
+    margin-top: -4px;
+  }
+
+  .track-card { overflow: visible !important; }
+
+  .mini-actions {
+    position: relative !important;
+    display: block !important;
+    padding: 4px 2px 0 !important;
+    z-index: 10;
+  }
+
+  .dam-action-trigger {
+    width: 100% !important;
+    min-height: 42px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.11), rgba(255,255,255,.06)) !important;
+    color: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 14px !important;
+    font-weight: 950 !important;
+    font-size: .78rem !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06) !important;
+  }
+
+  .dam-action-trigger:hover {
+    background: linear-gradient(135deg, rgba(168,85,247,.22), rgba(34,197,94,.12)) !important;
+    border-color: rgba(168,85,247,.30) !important;
+  }
+
+  .dam-action-panel {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: calc(100% + 10px);
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: radial-gradient(circle at 12% 0%, rgba(168,85,247,.18), transparent 38%), linear-gradient(180deg, rgba(30,30,38,.98), rgba(18,18,24,.98));
+    box-shadow: 0 22px 60px rgba(0,0,0,.48);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .mini-actions.open .dam-action-panel {
+    display: grid;
+    animation: damMenuIn .16s ease-out;
+  }
+
+  @keyframes damMenuIn {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .dam-action-panel button {
+    min-height: 38px !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    background: rgba(255,255,255,.07) !important;
+    color: rgba(255,255,255,.82) !important;
+    font-size: .72rem !important;
+    font-weight: 900 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 0 10px !important;
+  }
+
+  .dam-action-panel button:hover {
+    background: rgba(255,255,255,.13) !important;
+    color: #fff !important;
+  }
+
+  .dam-action-panel button[data-download] {
+    grid-column: 1 / -1;
+    color: #dbeafe !important;
+    background: rgba(59,130,246,.14) !important;
+    border-color: rgba(96,165,250,.25) !important;
+  }
+
+  .dam-action-panel button[data-del] {
+    grid-column: 1 / -1;
+    color: #fecdd3 !important;
+    background: rgba(244,63,94,.14) !important;
+    border-color: rgba(244,63,94,.30) !important;
+  }
+
+  .row-actions {
+    position: relative !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+
+  .row-actions button {
+    min-width: 34px !important;
+    height: 34px !important;
+    border-radius: 999px !important;
+  }
+
+  .field input[type="file"] {
+    min-height: 56px !important;
+    padding: 8px !important;
+  }
+
+  .field input[type="file"]::file-selector-button {
+    border: 1px solid rgba(255,255,255,.14);
+    background: linear-gradient(135deg, rgba(168,85,247,.92), rgba(34,197,94,.78));
+    color: #fff;
+    min-height: 38px;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-weight: 950;
+    margin-right: 12px;
+    cursor: pointer;
+  }
+
+  .dam-format-note {
+    margin-top: 10px;
+    color: rgba(255,255,255,.56);
+    font-size: .78rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 740px) {
+    .player {
+      grid-template-columns: 1fr !important;
+      border-radius: 22px !important;
+      padding: 10px !important;
+    }
+
+    .player-extra { display: none !important; }
+    .controls { gap: 12px !important; }
+    .progress-line { width: 100% !important; }
+
+    .dam-action-panel {
+      position: static;
+      margin-top: 8px;
+    }
+  }
+</style>
+
+<script id="dam-v29-spotify-polish-script">
+(function () {
+  if (window.__DAM_V29_SPOTIFY_POLISH__) return;
+  window.__DAM_V29_SPOTIFY_POLISH__ = true;
+
+  function qs(selector, root = document) { return root.querySelector(selector); }
+  function qsa(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
+
+  function enhanceActionMenus() {
+    qsa('.track-card .mini-actions').forEach((actions) => {
+      if (actions.dataset.damDropdownReady === '1') return;
+      actions.dataset.damDropdownReady = '1';
+
+      const originalButtons = qsa('button', actions).filter((btn) => !btn.classList.contains('dam-action-trigger'));
+      if (!originalButtons.length) return;
+
+      originalButtons.forEach((btn) => {
+        if (btn.dataset.download) btn.innerHTML = '⇩ Download';
+        if (btn.dataset.fav) btn.innerHTML = btn.textContent.includes('♥') ? '♥ Favorit' : '♡ Favorit';
+        if (btn.dataset.queue) btn.innerHTML = '☰ Queue';
+        if (btn.dataset.addplaylist) btn.innerHTML = '+ Playlist';
+        if (btn.dataset.edit) btn.innerHTML = '✎ Edit';
+        if (btn.dataset.move) btn.innerHTML = '⇄ Pindah';
+        if (btn.dataset.del) btn.innerHTML = '🗑 Hapus';
+      });
+
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'dam-action-trigger';
+      trigger.innerHTML = '<span>⋯ Aksi Lagu</span><span>⌄</span>';
+
+      const panel = document.createElement('div');
+      panel.className = 'dam-action-panel';
+
+      originalButtons.forEach((btn) => panel.appendChild(btn));
+      actions.appendChild(trigger);
+      actions.appendChild(panel);
+
+      trigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        qsa('.mini-actions.open').forEach((openMenu) => {
+          if (openMenu !== actions) openMenu.classList.remove('open');
+        });
+        actions.classList.toggle('open');
+      });
+    });
+
+    qsa('.row-actions button').forEach((btn) => {
+      if (btn.dataset.damIconReady === '1') return;
+      btn.dataset.damIconReady = '1';
+      if (btn.dataset.download) btn.title = 'Download';
+      if (btn.dataset.fav) btn.title = 'Favorit';
+      if (btn.dataset.addplaylist) btn.title = 'Tambah ke Playlist';
+      if (btn.dataset.edit) btn.title = 'Edit';
+      if (btn.dataset.move) btn.title = 'Pindah';
+      if (btn.dataset.del) btn.title = 'Hapus';
+    });
+  }
+
+  function polishUploadInputs() {
+    qsa('input[type="file"][accept*="audio"]').forEach((input) => {
+      input.setAttribute('accept', 'audio/*,.mp3,.mpeg,.mpga,.wav,.ogg,.m4a,.aac,.flac,.webm');
+      const field = input.closest('.field');
+      if (field && !field.querySelector('.dam-format-note')) {
+        const note = document.createElement('div');
+        note.className = 'dam-format-note';
+        note.textContent = 'MPEG, MP3, WAV, M4A, AAC, OGG, FLAC, dan WEBM tetap dibaca sebagai file audio. Nama download dibuat rapi seperti MP3.';
+        field.appendChild(note);
+      }
+    });
+  }
+
+  function enhancePlayerButtons() {
+    const fav = qs('#favCurrentBtn');
+    const download = qs('#downloadBtn');
+    const share = qs('#shareBtn');
+
+    if (fav) {
+      const favText = fav.textContent.includes('♥') ? '♥' : '♡';
+      fav.classList.add('player-side-btn');
+      if (!fav.querySelector('.ico')) fav.innerHTML = '<span class="ico">' + favText + '</span>';
+    }
+    if (download) {
+      download.classList.add('player-side-btn');
+      if (!download.querySelector('.ico')) download.innerHTML = '<span class="ico">⇩</span>';
+    }
+    if (share) {
+      share.classList.add('player-side-btn');
+      if (!share.querySelector('.ico')) share.innerHTML = '<span class="ico">⤴</span>';
+    }
+  }
+
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest('.mini-actions')) {
+      qsa('.mini-actions.open').forEach((menu) => menu.classList.remove('open'));
+    }
+  }, true);
+
+  function run() {
+    enhanceActionMenus();
+    polishUploadInputs();
+    enhancePlayerButtons();
+  }
+
+  run();
+  const target = qs('#content') || document.body;
+  const observer = new MutationObserver(run);
+  observer.observe(target, { childList: true, subtree: true });
+  setInterval(run, 1200);
+})();
+</script>
+
 </body>
 </html>
