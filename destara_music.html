@@ -524,6 +524,56 @@
     @media (prefers-reduced-motion: reduce) {
       *, *:before, *:after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
     }
+  
+
+    /* DAM V30 - Admin password + Cloudflare folder dropdown fix */
+    #adminModal .dam-hidden-admin-token { display:none !important; }
+    #adminModal .admin-grid { grid-template-columns: 1fr; }
+    #adminModal .admin-grid > .admin-card:not(.dam-hidden-admin-token) { width: 100%; }
+    .modal { overflow-y:auto; align-items:flex-start; }
+    .modal.show { display:flex; }
+    .modal-card { overflow: visible; margin: min(4vh, 28px) auto; }
+    #adminModal .modal-card { width:min(980px, 100%); max-height:none; overflow:visible; }
+    .genre-picker { z-index: 5000; }
+    .genre-picker-menu {
+      z-index: 99999 !important;
+      max-height: min(390px, 58vh) !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+    .genre-option { min-height: 42px; }
+    .genre-option span, .genre-picker-value [data-genre-current] {
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .admin-password-card { width:min(520px, 100%) !important; }
+    .admin-password-card:before {
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      pointer-events:none;
+      background: radial-gradient(circle at 20% 0%, rgba(168,85,247,.20), transparent 36%), radial-gradient(circle at 90% 20%, rgba(34,197,94,.14), transparent 32%);
+      opacity:.8;
+    }
+    .admin-password-card > * { position:relative; }
+    .admin-password-form { display:grid; gap:14px; }
+    .admin-password-error {
+      color:#fecdd3;
+      border:1px solid rgba(244,63,94,.28);
+      background:rgba(244,63,94,.10);
+      border-radius:16px;
+      padding:10px 12px;
+      font-size:.85rem;
+      font-weight:800;
+    }
+    @media (max-width: 740px) {
+      #adminModal .modal-card { max-height:none; }
+      .genre-picker-menu { max-height: 52vh !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -578,21 +628,44 @@
     </section>
   </div>
 
+
+  <div class="modal" id="adminPasswordModal"><div class="modal-card admin-password-card">
+    <div class="modal-head">
+      <div>
+        <span class="eyebrow">Keamanan Admin</span>
+        <h3>Masuk Admin DAM</h3>
+        <p>Masukkan password untuk membuka upload, edit, hapus, pindah lagu, dan kategori Cloudflare R2.</p>
+      </div>
+      <button class="icon-btn" data-close="adminPasswordModal">×</button>
+    </div>
+    <form id="adminPasswordForm" class="admin-password-form">
+      <div class="field">
+        <label>Password Admin</label>
+        <input id="adminPasswordInput" type="password" placeholder="Masukkan password" autocomplete="current-password" />
+      </div>
+      <div class="admin-password-error" id="adminPasswordError" hidden>Password salah. Coba lagi.</div>
+      <div class="form-actions">
+        <button class="btn" type="button" data-close="adminPasswordModal">Batal</button>
+        <button class="btn primary" type="submit">Buka Admin</button>
+      </div>
+    </form>
+  </div></div>
+
   <div class="toast-wrap" id="toastWrap"></div>
 
   <div class="modal" id="adminModal"><div class="modal-card">
-    <div class="modal-head"><div><h3>Admin Mode DAM</h3><p>Upload, edit, hapus, cover, kategori, dan pindah folder R2. Token default Worker sementara: <span class="kbd">destradanmutiara</span>.</p></div><button class="icon-btn" data-close="adminModal">×</button></div>
+    <div class="modal-head"><div><h3>Admin Mode DAM</h3><p>Upload, edit, hapus, cover, kategori, dan pindah folder R2. Admin dibuka dengan password, tanpa kolom token manual.</p></div><button class="icon-btn" data-close="adminModal">×</button></div>
     <div class="admin-grid">
-      <div class="admin-card">
-        <span class="eyebrow">Keamanan</span><h3>Simpan Token</h3>
-        <div class="field"><label>Admin Token</label><input id="adminToken" type="password" placeholder="Token admin" /></div>
-        <div class="form-actions"><button class="btn" id="clearTokenBtn">Hapus Token</button><button class="btn primary" id="saveTokenBtn">Simpan Token</button></div>
+      <div class="admin-card dam-hidden-admin-token" hidden>
+        <input id="adminToken" type="password" autocomplete="off" />
+        <button class="btn" id="clearTokenBtn" type="button">Hapus Token</button>
+        <button class="btn primary" id="saveTokenBtn" type="button">Simpan Token</button>
       </div>
       <div class="admin-card">
         <span class="eyebrow">Kategori</span><h3>Buat Folder/Kategori</h3>
         <div class="form-grid"><div class="field"><label>Genre/Kategori Baru</label><input id="newGenre" placeholder="Jazz / Classic / Wedding" /></div><div class="field"><label>Album/Subfolder</label><input id="newAlbum" placeholder="Opsional" /></div></div>
         <div class="admin-chip-row" id="quickGenreChips"></div>
-        <p class="admin-mini-note">Genre dropdown di upload/edit/pindah otomatis mengambil kategori yang sudah ada plus preset umum.</p>
+        <p class="admin-mini-note">Genre dropdown di upload/edit/pindah mengikuti folder/kategori yang ada di Cloudflare R2.</p>
         <div class="form-actions"><button class="btn" id="refreshAdminLibraryBtn" type="button">Refresh Library</button><button class="btn primary" id="createFolderBtn">Buat Kategori</button></div>
       </div>
     </div>
@@ -652,6 +725,9 @@
   <script>
     const DEFAULT_API = 'https://destara-music-api.destra751.workers.dev/api';
     const API_BASE = new URLSearchParams(location.search).get('api') || DEFAULT_API;
+    const ADMIN_PASSWORD = 'destradanmutiara';
+    let adminUnlocked = false;
+    let pendingAdminAction = null;
     const LS = {
       token:'dam_admin_token_v24', favorites:'dam_favorites_v24', recent:'dam_recent_v24', playlists:'dam_playlists_v24',
       volume:'dam_volume_v24', view:'dam_view_v24', sort:'dam_sort_v24', mood:'dam_mood_v24'
@@ -663,7 +739,7 @@
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const audio = $('#audio');
     const state = {
-      page:'home', filter:'', tracks:[], currentId:null, queue:[], queueIndex:-1, loading:true,
+      page:'home', filter:'', tracks:[], folders:[], currentId:null, queue:[], queueIndex:-1, loading:true,
       favorites: loadLS(LS.favorites, []), recent: loadLS(LS.recent, []), playlists: loadLS(LS.playlists, []),
       shuffle:false, repeat:false, view: localStorage.getItem(LS.view) || 'grid', sort: localStorage.getItem(LS.sort) || 'title', mood: localStorage.getItem(LS.mood) || 'nebula'
     };
@@ -680,7 +756,7 @@
     init();
     function init(){
       $('#apiUrlText') && ($('#apiUrlText').textContent = API_BASE);
-      $('#adminToken').value = localStorage.getItem(LS.token) || '';
+      if($('#adminToken')) $('#adminToken').value = ''; localStorage.removeItem(LS.token);
       audio.volume = Number(localStorage.getItem(LS.volume) || .9); $('#volume').value = audio.volume;
       bind(); renderNav(); loadTracks(); renderPlayer();
     }
@@ -701,8 +777,8 @@
       audio.addEventListener('play', renderPlayer); audio.addEventListener('pause', renderPlayer); audio.addEventListener('timeupdate', renderProgress); audio.addEventListener('loadedmetadata', renderProgress); audio.addEventListener('ended', ()=> state.repeat ? playTrack(state.currentId, state.queue) : nextTrack());
       document.addEventListener('click', delegatedClick);
       $$('[data-close]').forEach(b=>b.addEventListener('click', e=>closeModal(e.currentTarget.dataset.close)));
-      $('#saveTokenBtn').addEventListener('click', ()=>{ localStorage.setItem(LS.token, $('#adminToken').value.trim()); toast('Token disimpan','Admin Mode siap dipakai.','good'); });
-      $('#clearTokenBtn').addEventListener('click', ()=>{ localStorage.removeItem(LS.token); $('#adminToken').value=''; toast('Token dihapus','Upload/edit akan ditolak sampai token diisi.'); });
+      $('#saveTokenBtn')?.addEventListener('click', ()=>{ if($('#adminToken')) $('#adminToken').value = ADMIN_PASSWORD; toast('Admin aktif','Admin Mode siap dipakai.','good'); });
+      $('#clearTokenBtn')?.addEventListener('click', ()=>{ localStorage.removeItem(LS.token); if($('#adminToken')) $('#adminToken').value=''; adminUnlocked=false; toast('Admin dikunci','Masukkan password lagi untuk admin.'); });
       $('#uploadForm').addEventListener('submit', uploadTrack); $('#createFolderBtn').addEventListener('click', createFolder); $('#refreshAdminLibraryBtn')?.addEventListener('click', loadTracks); $('#editForm').addEventListener('submit', saveEdit); $('#moveForm').addEventListener('submit', saveMove); $('#addToPlaylistBtn').addEventListener('click', addSelectedToPlaylist); hydrateGenreSelects(); renderQuickGenreChips();
       $('#commandOverlay').addEventListener('click', e=>{ if(e.target.id==='commandOverlay') closeCommand(); }); $('#commandInput').addEventListener('input', renderCommand);
       document.addEventListener('keydown', e=>{
@@ -714,8 +790,23 @@
     }
     async function loadTracks(){
       state.loading=true; render();
-      try{ const res = await fetch(API_BASE + '/tracks', {cache:'no-store'}); const data = await res.json(); if(!res.ok || data.error) throw new Error(data.message || 'API gagal'); state.tracks = Array.isArray(data) ? data.map(normalizeTrack) : []; if(!state.queue.length) state.queue=state.tracks.map(t=>t.id); state.loading=false; renderNav(); render(); hydrateGenreSelects(); renderQuickGenreChips(); toast('Library sinkron', `${state.tracks.length} lagu dari Cloudflare R2.`, 'good'); }
+      try{ const res = await fetch(API_BASE + '/tracks', {cache:'no-store'}); const data = await res.json(); if(!res.ok || data.error) throw new Error(data.message || 'API gagal'); state.tracks = Array.isArray(data) ? data.map(normalizeTrack) : []; await loadFolders(false); if(!state.queue.length) state.queue=state.tracks.map(t=>t.id); state.loading=false; renderNav(); render(); hydrateGenreSelects(); renderQuickGenreChips(); toast('Library sinkron', `${state.tracks.length} lagu dari Cloudflare R2.`, 'good'); }
       catch(err){ state.loading=false; render(); toast('Gagal memuat musik', err.message, 'bad'); }
+    }
+    async function loadFolders(showToast=false){
+      try{
+        const res = await fetch(API_BASE + '/folders', {cache:'no-store'});
+        const data = await res.json();
+        if(!res.ok || data.error) throw new Error(data.message || 'Folder gagal dimuat');
+        const folders = Array.isArray(data) ? data : (data.folders || []);
+        state.folders = [...new Set(folders.map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+        if(showToast) toast('Folder sinkron', `${state.folders.length} folder dari Cloudflare R2.`, 'good');
+        return state.folders;
+      }catch(err){
+        state.folders = state.folders || [];
+        if(showToast) toast('Folder gagal dimuat', err.message, 'bad');
+        return state.folders;
+      }
     }
     function normalizeTrack(t, i){ return { ...t, id: t.id || makeId(t.key || t.src || i), title: t.title || inferTitleFromKey(t.key || t.src) || 'Untitled', artist: t.artist || 'Unknown Artist', album: t.album || 'DestAra Music', genre: t.genre || 'Music', gradientIndex: t.gradientIndex ?? i, size: Number(t.size || 0), uploaded: t.uploaded || '', audioLabel: 'MP3' }; }
     function inferTitleFromKey(value=''){ const raw=String(value||'').split('/').pop().split('?')[0]; return decodeURIComponent(raw).replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim(); }
@@ -745,7 +836,7 @@
     function renderGenres(c){ const genres=getGenres(); c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Kategori</h2><small>Otomatis dari folder R2 dan metadata.</small></div></div><div class="grid wide">${genres.map(genreCard).join('')}</div></section>`; }
     function renderPlaylists(c){ const all=[...autoPlaylists(),...state.playlists]; c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Playlist</h2><small>Playlist bawaan dan playlist lokal browser.</small></div><button class="btn primary" id="newPlaylistBtn">+ Playlist</button></div><div class="grid wide">${all.map(playlistCard).join('')}</div></section>`; $('#newPlaylistBtn')?.addEventListener('click',()=>quickCreatePlaylist()); }
     function renderPlaylist(c,id){ const p=[...autoPlaylists(),...state.playlists].find(x=>x.id===id); if(!p) return renderPlaylists(c); const tracks=(p.trackIds||[]).map(getTrack).filter(Boolean); c.innerHTML=`<section class="hero" style="min-height:250px"><div><span class="eyebrow">♫ Playlist</span><h1>${esc(p.name)}</h1><p>${esc(p.description||'Playlist DestAra Music.')}</p><div class="hero-actions"><button class="btn primary" id="playPlaylist">▶ Putar Playlist</button>${p.user?`<button class="btn danger" id="deletePlaylist">Hapus Playlist</button>`:''}</div></div><div class="now-vinyl paused"><div class="vinyl-cover" style="background:${gradient({id})}">♫</div></div></section><section class="section">${tracksHTML(tracks)}</section>`; $('#playPlaylist')?.addEventListener('click',()=>playAll(tracks)); $('#deletePlaylist')?.addEventListener('click',()=>deletePlaylist(id)); }
-    function renderAdmin(c){ c.innerHTML=`<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Admin Musik</h2><small>Kelola lagu langsung ke R2 lewat Worker API.</small></div><button class="btn primary" id="openAdminInside">Buka Panel Admin</button></div><div class="admin-grid"><div class="admin-card"><span class="eyebrow">Status</span><h2>${localStorage.getItem(LS.token)?'Token tersimpan':'Token belum ada'}</h2><p style="color:var(--muted);line-height:1.6">Request admin memakai header <span class="kbd">X-DAM-Token</span>. Jangan simpan credential Cloudflare di HTML.</p></div><div class="admin-card"><span class="eyebrow">Library</span><h2>${state.tracks.length} lagu</h2><p style="color:var(--muted);line-height:1.6">Metadata edit disimpan di R2 sebagai <span class="kbd">dam/catalog.json</span>.</p></div></div><section class="section"><div class="section-head"><div><h2>Kelola Lagu</h2><small>Edit, pindah, cover, hapus dari kartu lagu.</small></div></div>${tracksHTML(getFilteredTracks())}</section></section>`; $('#openAdminInside')?.addEventListener('click',()=>openModal('adminModal')); }
+    function renderAdmin(c){ c.innerHTML=`<section class="section" style="margin-top:0"><div class="section-head"><div><h2>Admin Musik</h2><small>Kelola lagu langsung ke R2 lewat Worker API.</small></div><button class="btn primary" id="openAdminInside">Buka Panel Admin</button></div><div class="admin-grid"><div class="admin-card"><span class="eyebrow">Status</span><h2>${adminUnlocked?'Admin aktif':'Admin terkunci'}</h2><p style="color:var(--muted);line-height:1.6">Admin dibuka dengan password modern. Header keamanan dikirim otomatis ke Worker.</p></div><div class="admin-card"><span class="eyebrow">Library</span><h2>${state.tracks.length} lagu</h2><p style="color:var(--muted);line-height:1.6">Metadata edit disimpan di R2 sebagai <span class="kbd">dam/catalog.json</span>.</p></div></div><section class="section"><div class="section-head"><div><h2>Kelola Lagu</h2><small>Edit, pindah, cover, hapus dari kartu lagu.</small></div></div>${tracksHTML(getFilteredTracks())}</section></section>`; $('#openAdminInside')?.addEventListener('click',()=>openModal('adminModal')); }
     function tracksHTML(tracks,isQueue=false){ const sorted=isQueue?tracks:sortTracks(tracks); if(state.view==='list') return `<div class="list">${sorted.map((t,i)=>trackRow(t,i,isQueue)).join('')}</div>`; return `<div class="grid ${state.view==='compact'?'compact':''} ${state.view==='wide'?'wide':''} ${state.view==='masonry'?'masonry':''}">${sorted.map(trackCard).join('')}</div>`; }
     function trackCard(t){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<article class="track-card ${playing?'playing':''}" data-track="${attr(t.id)}"><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" loading="lazy" alt="">`:`<span class="cover-letter">${esc(t.title.charAt(0))}</span>`}</div><button class="play-floating" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="track-info"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div><div class="mini-actions"><button class="wide" data-download="${attr(t.id)}">⇩ Download</button><button data-fav="${attr(t.id)}">${fav?'♥ Tersimpan':'♡ Favorit'}</button><button data-queue="${attr(t.id)}">☰ Queue</button><button data-addplaylist="${attr(t.id)}">＋ Playlist</button><button data-edit="${attr(t.id)}">✎ Edit</button><button data-move="${attr(t.id)}">⇄ Pindah</button><button class="wide" data-del="${attr(t.id)}">🗑 Hapus</button></div></article>`; }
     function trackRow(t,i,isQueue=false){ const fav=state.favorites.includes(t.id), playing=t.id===state.currentId; return `<div class="row ${playing?'playing':''}"><button class="ctrl" data-play="${attr(t.id)}">${playing&&!audio.paused?'⏸':'▶'}</button><div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:22px">${esc(t.title.charAt(0))}</span>`}</div><div><b>${esc(t.title)}</b><small>${esc(t.artist)}</small></div><small class="hide-sm">${esc(t.genre)}</small><small class="hide-sm">${esc(t.album)}</small><div class="row-actions"><button data-fav="${attr(t.id)}">${fav?'♥':'♡'}</button><button data-addplaylist="${attr(t.id)}">＋</button><button data-download="${attr(t.id)}">⇩</button><button data-edit="${attr(t.id)}">✎</button><button data-move="${attr(t.id)}">⇄</button><button data-del="${attr(t.id)}">🗑</button></div></div>`; }
@@ -760,13 +851,13 @@
     function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); const eq=$('#eq'); eq.style.opacity=audio.paused?.35:1; eq.classList.toggle('paused', audio.paused || !t); $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
     function renderProgress(){ const pct=audio.duration?(audio.currentTime/audio.duration)*100:0; $('#seek').value=pct||0; $('#curTime').textContent=fmt(audio.currentTime||0); $('#durTime').textContent=fmt(audio.duration||0); $('#playBtn').textContent=audio.paused?'▶':'⏸'; }
     async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); const file=f.file?.files?.[0]; if(file && !f.title.value.trim()) f.title.value = inferTitleFromKey(file.name); if(file && !String(file.type||'').startsWith('audio/')) return toast('File tidak valid','Masukkan file audio seperti MP3/MPEG/WAV/M4A/OGG/AAC/FLAC.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); if(!fd.get('title')) fd.set('title', f.title.value.trim()); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
-    async function createFolder(){ const genre=$('#newGenre').value.trim(), album=$('#newAlbum').value.trim(); if(!genre) return toast('Genre kosong','Isi nama genre/kategori dulu.','bad'); try{ const d=await adminFetch('/admin/folder',{method:'POST',json:{genre,album}}); toast('Kategori dibuat',d.message||genre,'good'); $('#newGenre').value=''; $('#newAlbum').value=''; await loadTracks(); }catch(err){toast('Gagal membuat kategori',err.message,'bad')} }
+    async function createFolder(){ const genre=$('#newGenre').value.trim(), album=$('#newAlbum').value.trim(); if(!genre) return toast('Genre kosong','Isi nama genre/kategori dulu.','bad'); try{ const d=await adminFetch('/admin/folder',{method:'POST',json:{genre,album}}); toast('Kategori dibuat',d.message||genre,'good'); $('#newGenre').value=''; $('#newAlbum').value=''; await loadFolders(false); await loadTracks(); }catch(err){toast('Gagal membuat kategori',err.message,'bad')} }
     function openEdit(id){ const t=getTrack(id); if(!t) return; const f=$('#editForm'); f.key.value=t.key; f.title.value=t.title; f.artist.value=t.artist; f.album.value=t.album; setGenreSelectValue(f.genre,t.genre); f.cover.value=''; $('#editTitle').textContent='Edit ' + t.title; openModal('editModal'); }
     async function saveEdit(e){ e.preventDefault(); const f=e.currentTarget, key=f.key.value, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); try{ setBusy(f,true); await adminFetch('/admin/track',{method:'PATCH',json:{key,title:f.title.value,artist:f.artist.value,album:f.album.value,genre}}); if(f.cover.files[0]){ const fd=new FormData(); fd.append('key',key); fd.append('cover',f.cover.files[0]); await adminFetch('/admin/cover',{method:'POST',body:fd}); } closeModal('editModal'); toast('Lagu diperbarui','Metadata dan cover disimpan.','good'); await loadTracks(); }catch(err){toast('Edit gagal',err.message,'bad')}finally{setBusy(f,false)} }
     function openMove(id){ const t=getTrack(id); if(!t) return; const f=$('#moveForm'); f.key.value=t.key; setGenreSelectValue(f.genre,t.genre); f.album.value=t.album==='DestAra Music'?'':t.album; openModal('moveModal'); }
     async function saveMove(e){ e.preventDefault(); const f=e.currentTarget, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre tujuan atau isi custom genre.','bad'); try{ setBusy(f,true); const d=await adminFetch('/admin/move',{method:'POST',json:{key:f.key.value,genre,album:f.album.value}}); closeModal('moveModal'); toast('Lagu dipindahkan',d.message||'Selesai.','good'); await loadTracks(); }catch(err){toast('Pindah gagal',err.message,'bad')}finally{setBusy(f,false)} }
     async function deleteTrack(id){ const t=getTrack(id); if(!t || !confirm('Hapus lagu ini dari R2?\n\n'+t.title)) return; try{ await adminFetch('/admin/track',{method:'DELETE',json:{key:t.key}}); toast('Lagu dihapus',t.title,'good'); state.favorites=state.favorites.filter(x=>x!==id); state.queue=state.queue.filter(x=>x!==id); saveLS(LS.favorites,state.favorites); await loadTracks(); }catch(err){toast('Hapus gagal',err.message,'bad')} }
-    async function adminFetch(path, opts={}){ const token=localStorage.getItem(LS.token)||$('#adminToken')?.value.trim()||''; if(!token) throw new Error('Token admin belum diisi. Buka Admin Mode dan simpan token dulu.'); const headers={'X-DAM-Token':token}; let body=opts.body; if(opts.json){ headers['Content-Type']='application/json'; body=JSON.stringify(opts.json); } const res=await fetch(API_BASE+path,{method:opts.method||'GET',headers,body}); const data=await res.json().catch(()=>({})); if(!res.ok||data.error) throw new Error(data.message||'Request admin gagal.'); return data; }
+    async function adminFetch(path, opts={}){ const token=$('#adminToken')?.value.trim() || (adminUnlocked ? ADMIN_PASSWORD : ''); if(!token) throw new Error('Admin belum dibuka. Masukkan password admin dulu.'); const headers={'X-DAM-Token':token}; let body=opts.body; if(opts.json){ headers['Content-Type']='application/json'; body=JSON.stringify(opts.json); } const res=await fetch(API_BASE+path,{method:opts.method||'GET',headers,body}); const data=await res.json().catch(()=>({})); if(!res.ok||data.error) throw new Error(data.message||'Request admin gagal.'); return data; }
     function openPlaylistModal(id){ $('#playlistTrackId').value=id; renderPlaylistSelect(); openModal('playlistModal'); }
     function renderPlaylistSelect(){ $('#playlistSelect').innerHTML = state.playlists.map(p=>`<option value="${attr(p.id)}">${esc(p.name)}</option>`).join('') || '<option value="">Buat playlist baru dulu</option>'; }
     function addSelectedToPlaylist(){ const id=$('#playlistTrackId').value; let name=$('#newPlaylistName').value.trim(); let pid=$('#playlistSelect').value; if(name){ pid='pl_'+Date.now(); state.playlists.push({id:pid,name,description:'Playlist lokal',trackIds:[],user:true}); } const p=state.playlists.find(x=>x.id===pid); if(!p) return toast('Playlist kosong','Buat playlist baru dulu.','bad'); if(!p.trackIds.includes(id)) p.trackIds.push(id); saveLS(LS.playlists,state.playlists); closeModal('playlistModal'); $('#newPlaylistName').value=''; toast('Masuk playlist', getTrack(id)?.title || 'Lagu ditambahkan','good'); render(); }
@@ -777,7 +868,7 @@
     function addRecent(id){ state.recent=[id,...state.recent.filter(x=>x!==id)].slice(0,30); saveLS(LS.recent,state.recent); }
     function downloadTrackId(id){ const t=getTrack(id); if(!t) return; const a=document.createElement('a'); a.href=t.src; a.download=safeFileName((t.artist+' - '+t.title).trim() || 'DestAra Music')+'.mp3'; a.target='_blank'; a.rel='noopener'; a.click(); toast('Download dimulai', t.title + ' • format unduhan .mp3', 'good'); }
     function downloadCurrent(){ const t=getTrack(state.currentId); if(!t) return; downloadTrackId(t.id); }
-    function genreList(){ return [...new Set([...DEFAULT_GENRES, ...getGenres()])].filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
+    function genreList(){ const live=[...new Set([...(state.folders||[]), ...state.tracks.map(t=>t.genre).filter(Boolean)])].filter(Boolean); const source=live.length?live:DEFAULT_GENRES; return [...new Set(source)].sort((a,b)=>a.localeCompare(b)); }
     function genreOptionsHTML(selected=''){ const all=genreList(); const has=all.includes(selected); const extra=selected&&!has?`<option value="${attr(selected)}" selected>${esc(selected)} · sekarang</option>`:''; return `${extra}${all.map(g=>`<option value="${attr(g)}" ${g===selected?'selected':''}>${esc(g)}</option>`).join('')}<option value="__custom__">＋ Genre Custom...</option>`; }
     function hydrateGenreSelects(root=document){
       $$('select[data-genre-select]', root).forEach(sel=>{
@@ -867,7 +958,7 @@
     }
     function toggleCustomGenre(sel){ const custom=$('#'+sel.dataset.customTarget); if(!custom) return; custom.hidden=sel.value!=='__custom__'; if(!custom.hidden) custom.focus?.(); renderGenrePicker(sel); }
     function getFormGenre(form){ const sel=form.genre; if(!sel) return ''; if(sel.value==='__custom__') return (form.genreCustom?.value||'').trim(); return (sel.value||'').trim(); }
-    function renderQuickGenreChips(){ const wrap=$('#quickGenreChips'); if(!wrap) return; wrap.innerHTML=DEFAULT_GENRES.slice(0,12).map(g=>`<button class="admin-chip" type="button" data-quick-genre="${attr(g)}">${esc(g)}</button>`).join(''); $$('[data-quick-genre]',wrap).forEach(btn=>btn.onclick=()=>{ $('#newGenre').value=btn.dataset.quickGenre; }); }
+    function renderQuickGenreChips(){ const wrap=$('#quickGenreChips'); if(!wrap) return; wrap.innerHTML=genreList().slice(0,14).map(g=>`<button class="admin-chip" type="button" data-quick-genre="${attr(g)}">${esc(g)}</button>`).join(''); $$('[data-quick-genre]',wrap).forEach(btn=>btn.onclick=()=>{ $('#newGenre').value=btn.dataset.quickGenre; }); }
     async function shareCurrent(){ const t=getTrack(state.currentId); if(!t) return; await navigator.clipboard.writeText(t.src).catch(()=>{}); toast('Link disalin',t.title,'good'); }
     function openCommand(){ $('#commandOverlay').classList.add('show'); $('#commandInput').value=''; renderCommand(); setTimeout(()=>$('#commandInput').focus(),20); }
     function closeCommand(){ $('#commandOverlay').classList.remove('show'); }
@@ -879,7 +970,7 @@
     function toggleSidebar(show){ $('#sidebar').classList.toggle('open', !!show); $('#sidebarOverlay').classList.toggle('show', !!show); }
     function getFilteredTracks(q=state.filter){ const s=String(q||'').toLowerCase().trim(); const tracks=!s?state.tracks:state.tracks.filter(t=>[t.title,t.artist,t.album,t.genre,t.key].join(' ').toLowerCase().includes(s)); return sortTracks(tracks); }
     function sortTracks(tracks){ const arr=[...tracks]; const key=state.sort; arr.sort((a,b)=> key==='artist'?a.artist.localeCompare(b.artist):key==='genre'?a.genre.localeCompare(b.genre):key==='newest'?String(b.uploaded).localeCompare(String(a.uploaded)):a.title.localeCompare(b.title)); return arr; }
-    function getGenres(){ return [...new Set(state.tracks.map(t=>t.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+    function getGenres(){ return genreList(); }
     function autoPlaylists(){ const genres=getGenres(); return [{id:'auto_all',name:'All Music',description:'Semua lagu',trackIds:state.tracks.map(t=>t.id)},{id:'auto_wedding',name:'Wedding Mood',description:'Akad, romantic, wedding',trackIds:state.tracks.filter(t=>/wedding|akad|romantic|classic/i.test([t.genre,t.title,t.album].join(' '))).map(t=>t.id)},{id:'auto_focus',name:'Focus Flow',description:'Classic, Piano, Lo-fi',trackIds:state.tracks.filter(t=>/classic|piano|lo.?fi|instrumental/i.test([t.genre,t.title].join(' '))).map(t=>t.id)},...genres.slice(0,5).map(g=>({id:'auto_'+g.toLowerCase().replace(/\W+/g,'_'),name:g+' Mix',description:'Auto genre',trackIds:state.tracks.filter(t=>t.genre===g).map(t=>t.id)}))].filter(p=>p.trackIds.length); }
     function getTrack(id){ return state.tracks.find(t=>t.id===id); }
     function gradient(t={}){ return gradients[Math.abs(hash(String(t.id||t.key||t.genre||t.gradientIndex||0)))%gradients.length]; }
@@ -1349,6 +1440,94 @@
   const observer = new MutationObserver(run);
   observer.observe(target, { childList: true, subtree: true });
   setInterval(run, 1200);
+})();
+</script>
+
+
+<script id="dam-v30-admin-password-folders">
+(function(){
+  if (window.__DAM_V30_ADMIN_PASSWORD_FOLDERS__) return;
+  window.__DAM_V30_ADMIN_PASSWORD_FOLDERS__ = true;
+
+  const PASSWORD = 'destradanmutiara';
+  let pendingClick = null;
+
+  function qs(selector, root=document){ return root.querySelector(selector); }
+  function qsa(selector, root=document){ return Array.from(root.querySelectorAll(selector)); }
+
+  function isAdminTrigger(el){
+    if (!el) return false;
+    if (el.id === 'openAdminBtn') return true;
+    if (el.id === 'openAdminInside') return true;
+    if (el.dataset && el.dataset.page === 'admin') return true;
+    if (el.dataset && (el.dataset.edit || el.dataset.move || el.dataset.del)) return true;
+    return false;
+  }
+
+  function adminIsUnlocked(){
+    return Boolean(qs('#adminToken')?.value === PASSWORD);
+  }
+
+  function openPasswordModal(callback){
+    pendingClick = callback || null;
+    const input = qs('#adminPasswordInput');
+    const err = qs('#adminPasswordError');
+    if (err) err.hidden = true;
+    if (input) input.value = '';
+    qs('#adminPasswordModal')?.classList.add('show');
+    setTimeout(()=>input?.focus(), 60);
+  }
+
+  function closePasswordModal(){
+    qs('#adminPasswordModal')?.classList.remove('show');
+  }
+
+  document.addEventListener('click', function(event){
+    const target = event.target.closest('button,[data-page]');
+    if (!target || !isAdminTrigger(target)) return;
+    if (adminIsUnlocked()) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+
+    openPasswordModal(function(){
+      setTimeout(()=>target.click(), 80);
+    });
+  }, true);
+
+  qs('#adminPasswordForm')?.addEventListener('submit', function(event){
+    event.preventDefault();
+    const input = qs('#adminPasswordInput');
+    const err = qs('#adminPasswordError');
+    const value = (input?.value || '').trim();
+
+    if (value !== PASSWORD) {
+      if (err) err.hidden = false;
+      input?.focus();
+      return;
+    }
+
+    const token = qs('#adminToken');
+    if (token) token.value = PASSWORD;
+    localStorage.removeItem('dam_admin_token_v24');
+    closePasswordModal();
+
+    if (typeof window.toast === 'function') {
+      window.toast('Admin terbuka', 'Mode admin DAM siap dipakai.', 'good');
+    }
+
+    const run = pendingClick;
+    pendingClick = null;
+    if (typeof run === 'function') run();
+  });
+
+  qsa('[data-close="adminPasswordModal"]').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      pendingClick = null;
+      closePasswordModal();
+    });
+  });
 })();
 </script>
 
