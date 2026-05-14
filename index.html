@@ -7254,7 +7254,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="md:col-span-2"><label class="ultra-label">Catatan Bebas</label><textarea id="inputIsi" rows="5" placeholder="Tuliskan catatan penting, inspirasi, atau ide..." required class="ultra-textarea resize-none"></textarea></div>
+                    <div class="md:col-span-2"><label class="ultra-label">Judul Catatan</label><input type="text" id="inputJudulNote" placeholder="Contoh: Catatan Meeting Vendor, Ide Dekorasi, Reminder Keluarga" required class="ultra-input"></div>
+                    <div class="md:col-span-2"><label class="ultra-label">Isi Catatan</label><textarea id="inputIsi" rows="5" placeholder="Tuliskan catatan penting, inspirasi, atau ide..." required class="ultra-textarea resize-none"></textarea></div>
                 `;
             } else if (categoryId === 'doorprize') {
                 formInner = `
@@ -7901,8 +7902,11 @@
                 }
 
             } else if (categoryId === 'notes') {
+                const judulNote = (document.getElementById('inputJudulNote')?.value || '').trim();
+                const isiNote = (document.getElementById('inputIsi')?.value || '').trim();
                 itemData = {
-                    isi: document.getElementById('inputIsi').value,
+                    judul: judulNote,
+                    isi: isiNote,
                     tanggal: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
                 };
             } else if (categoryId === 'doorprize') {
@@ -8230,7 +8234,7 @@
                 vendor: item.nama,
                 timeline: item.kegiatan,
                 checklist: item.tugas,
-                notes: 'Catatan Wedding',
+                notes: item.judul || 'Catatan Wedding',
                 attire: item.nama,
                 dekor: item.nama
             };
@@ -8267,10 +8271,10 @@
             const dataSource = Array.isArray(rawData) ? rawData : [];
             const q = String(window.xmenuSearch['notes'] || '').toLowerCase().trim();
             const data = q
-                ? dataSource.filter(item => `${item.isi || ''} ${item.tanggal || ''}`.toLowerCase().includes(q))
+                ? dataSource.filter(item => `${item.judul || ''} ${item.isi || ''} ${item.tanggal || ''}`.toLowerCase().includes(q))
                 : dataSource;
             const totalWords = dataSource.reduce((sum, item) => {
-                const words = String(item.isi || '').trim().split(/\s+/).filter(Boolean).length;
+                const words = `${item.judul || ''} ${item.isi || ''}`.trim().split(/\s+/).filter(Boolean).length;
                 return sum + words;
             }, 0);
             const latestDate = dataSource.length ? escapeHTML(dataSource[dataSource.length - 1].tanggal || 'Tersimpan') : 'Belum ada';
@@ -8283,13 +8287,12 @@
 
             const noteCards = data.map((item, index) => {
                 const rawText = String(item.isi || '').trim();
-                const cleanLines = rawText.split(/\n+/).map(line => line.trim()).filter(Boolean);
-                const firstLine = cleanLines[0] || 'Catatan Wedding';
-                const title = firstLine.length > 64 ? `${firstLine.slice(0, 64)}...` : firstLine;
-                const body = cleanLines.length > 1 ? cleanLines.slice(1).join('\n') : rawText;
-                const bodyText = body || 'Belum ada detail tambahan.';
+                const fallbackTitleSource = rawText.split(/\n+/).map(line => line.trim()).filter(Boolean)[0] || 'Catatan Wedding';
+                const rawTitle = String(item.judul || fallbackTitleSource).trim();
+                const title = rawTitle.length > 72 ? `${rawTitle.slice(0, 72)}...` : rawTitle;
+                const bodyText = rawText || 'Belum ada detail tambahan.';
                 const tone = notePalette[index % notePalette.length];
-                const wordCount = rawText ? rawText.split(/\s+/).filter(Boolean).length : 0;
+                const wordCount = `${item.judul || ''} ${rawText}`.trim().split(/\s+/).filter(Boolean).length;
                 const noteNumber = String(index + 1).padStart(2, '0');
                 return `
                     <article class="group relative overflow-hidden rounded-[2rem] border ${tone.ring} bg-gradient-to-br ${tone.paper} p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl">
@@ -8340,7 +8343,7 @@
                             </div>
                         </div>
                         <div class="relative z-10 mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_240px] lg:items-center">
-                            <div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i><input class="xmenu-search border-white/10 bg-white/10 pl-11 text-white placeholder:text-white/35 focus:border-amber-200 focus:bg-white/15" value="${escapeHTML(window.xmenuSearch['notes'] || '')}" oninput="setXmenuSearch('notes', this.value)" placeholder="Cari isi catatan, ide, vendor, reminder..."></div>
+                            <div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i><input class="xmenu-search border-white/10 bg-white/10 pl-11 text-white placeholder:text-white/35 focus:border-amber-200 focus:bg-white/15" value="${escapeHTML(window.xmenuSearch['notes'] || '')}" oninput="setXmenuSearch('notes', this.value)" placeholder="Cari judul, isi catatan, ide, vendor, reminder..."></div>
                             <div class="rounded-3xl border border-white/10 bg-white/10 px-4 py-3 text-xs font-black text-white/65"><i class="fa-solid fa-lightbulb text-amber-200 mr-2"></i> Edit dan hapus tetap tersedia di tiap catatan.</div>
                         </div>
                     </div>
@@ -9512,7 +9515,8 @@
                     ${data.map(item => `
                         <div class="sticky-note rounded-bl-3xl shadow-md p-6 relative group transform hover:-rotate-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
                             <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-red-400/20 rounded-full flex items-center justify-center"><div class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div></div>
-                            <p class="text-gray-800 font-medium whitespace-pre-wrap text-sm leading-relaxed mt-2">${item.isi}</p>
+                            <h4 class="text-gray-900 font-black text-base leading-snug mb-3">${escapeHTML(item.judul || 'Catatan Wedding')}</h4>
+                            <p class="text-gray-800 font-medium whitespace-pre-wrap text-sm leading-relaxed mt-2">${escapeHTML(item.isi || '')}</p>
                             <div class="flex justify-between items-end mt-6 text-[10px] text-gray-400 font-semibold border-t border-[#F2EFC2] pt-2">
                                 <span>${item.tanggal}</span>
                                 <button onclick="deleteItem('${item.id}', '${categoryId}')" class="text-red-400 hover:text-red-600 opacity-100 md:opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash text-sm"></i></button>
@@ -10195,6 +10199,9 @@
                 if(document.getElementById('inputLokasiTimeline')) document.getElementById('inputLokasiTimeline').value = item.lokasi || '';
                 if(document.getElementById('inputCatatanTimeline')) document.getElementById('inputCatatanTimeline').value = item.catatan || '';
             } else if (categoryId === 'notes') {
+                const fallbackJudulNote = String(item.isi || '').split(/\n+/).map(line => line.trim()).filter(Boolean)[0] || '';
+                const judulNoteEl = document.getElementById('inputJudulNote');
+                if (judulNoteEl) judulNoteEl.value = item.judul || fallbackJudulNote;
                 document.getElementById('inputIsi').value = item.isi || '';
             } else if (categoryId === 'vendor') {
                 document.getElementById('inputNama').value = item.nama;
