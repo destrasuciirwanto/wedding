@@ -15,18 +15,18 @@
   <style>
     :root{--bg:#eef2f7;--panel:rgba(255,255,255,.88);--panel-solid:#fff;--text:#101828;--muted:#667085;--line:#e5eaf1;--primary:#2957ff;--primary2:#6c4cff;--danger:#ef4444;--shadow:0 14px 40px rgba(16,24,40,.12);--soft:0 6px 18px rgba(16,24,40,.10);--page-width:794px;--page-min-height:1123px;--page-padding:72px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     [data-theme=dark]{--bg:#101522;--panel:rgba(23,31,48,.9);--panel-solid:#182033;--text:#eef2ff;--muted:#a9b4c6;--line:rgba(255,255,255,.12);--shadow:0 18px 50px rgba(0,0,0,.34);--soft:0 8px 24px rgba(0,0,0,.28)}
-    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.pdf-hint{display:none!important}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left;pointer-events:auto;cursor:move}.pdf-annotation *{pointer-events:none}.pdf-annotation .ann-handle,.pdf-annotation .ann-rotate{pointer-events:auto}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft);pointer-events:auto}.pdf-stylebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.48)}.pdf-stylebar label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}.pdf-stylebar input[type=color]{width:28px;height:24px;border:0;border-radius:7px;background:transparent;padding:0;cursor:pointer}.ann-ellipse{border:2px solid #f97316;background:rgba(249,115,22,.05);border-radius:999px}.ann-redact{background:#000}.ann-note{background:#fff3a3;border:1px solid #d4a017;border-radius:6px;padding:6px;color:#3b2f00;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.18);white-space:pre-wrap;overflow:hidden}.ann-stamp{border:3px solid #ef4444;color:#ef4444;background:rgba(255,255,255,.6);font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);font-size:22px}.ann-mark{color:#16a34a;font-weight:900;font-size:28px;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}.ann-ellipse.selected,.ann-redact.selected,.ann-note.selected,.ann-stamp.selected,.ann-mark.selected,.ann-image.selected{outline:2px solid var(--primary);outline-offset:2px}.pdf-layer.cursor-image{cursor:copy}.pdf-mini-input{height:28px;border-radius:8px;border:1px solid var(--line);padding:0 6px;background:var(--panel-solid);color:var(--text);font-size:12px;min-width:62px}.pdf-tool.danger{background:rgba(239,68,68,.12);color:#b42318;border-color:rgba(239,68,68,.22)}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.docbar{display:none;align-items:center;gap:6px;height:30px;padding:3px 10px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.docbar.has-docs{display:flex}.docbar-label{flex:0 0 auto;color:var(--muted);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.doctabs-scroll{display:flex;align-items:center;gap:5px;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.doctabs-scroll::-webkit-scrollbar{display:none}.doc-tab{height:24px;max-width:210px;display:inline-flex;align-items:center;gap:6px;padding:0 6px 0 9px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.54);color:var(--muted);font-size:11px;white-space:nowrap;flex:0 0 auto}.doc-tab.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 6px 16px rgba(41,87,255,.18)}.doc-tab-name{overflow:hidden;text-overflow:ellipsis;max-width:150px}.doc-tab-dirty{width:6px;height:6px;border-radius:999px;background:#f97316;display:none}.doc-tab.dirty .doc-tab-dirty{display:block}.doc-tab-close{width:18px;height:18px;border-radius:999px;display:grid;place-items:center;background:transparent;color:inherit;padding:0}.doc-tab-close:hover{background:rgba(0,0,0,.10)}.docbar-actions{flex:0 0 auto;display:flex;gap:4px;margin-left:auto}.docbar-btn{height:22px;width:26px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.58);color:var(--muted);display:grid;place-items:center}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.pdf-hint{display:none!important}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left;pointer-events:auto;cursor:move}.pdf-annotation *{pointer-events:none}.pdf-annotation .ann-handle,.pdf-annotation .ann-rotate{pointer-events:auto}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft);pointer-events:auto}.pdf-stylebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.48)}.pdf-stylebar label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}.pdf-stylebar input[type=color]{width:28px;height:24px;border:0;border-radius:7px;background:transparent;padding:0;cursor:pointer}.ann-ellipse{border:2px solid #f97316;background:rgba(249,115,22,.05);border-radius:999px}.ann-redact{background:#000}.ann-note{background:#fff3a3;border:1px solid #d4a017;border-radius:6px;padding:6px;color:#3b2f00;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.18);white-space:pre-wrap;overflow:hidden}.ann-stamp{border:3px solid #ef4444;color:#ef4444;background:rgba(255,255,255,.6);font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);font-size:22px}.ann-mark{color:#16a34a;font-weight:900;font-size:28px;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}.ann-ellipse.selected,.ann-redact.selected,.ann-note.selected,.ann-stamp.selected,.ann-mark.selected,.ann-image.selected{outline:2px solid var(--primary);outline-offset:2px}.pdf-layer.cursor-image{cursor:copy}.pdf-mini-input{height:28px;border-radius:8px;border:1px solid var(--line);padding:0 6px;background:var(--panel-solid);color:var(--text);font-size:12px;min-width:62px}.pdf-tool.danger{background:rgba(239,68,68,.12);color:#b42318;border-color:rgba(239,68,68,.22)}
 .pdf-toolbar-grouped{position:sticky;top:0;z-index:25;max-width:1280px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px;box-shadow:var(--soft);backdrop-filter:blur(12px)}
 .pdf-menu{position:relative}.pdf-menu summary{height:32px;display:flex;align-items:center;gap:6px;list-style:none;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.68);padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}.pdf-menu summary::-webkit-details-marker{display:none}.pdf-menu[open] summary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.pdf-menu-body{position:absolute;top:38px;left:0;z-index:60;min-width:230px;max-width:min(520px,90vw);display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--panel-solid);box-shadow:var(--shadow)}.pdf-menu:not([open]) .pdf-menu-body{display:none}.pdf-style-grid{min-width:360px}.style-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:5px 6px;background:rgba(255,255,255,.58);font-size:11px;color:var(--muted);font-weight:800}.style-chip input[type=color]{width:30px;height:26px;padding:0;border:0;background:transparent}.palette-row{display:flex;gap:5px;width:100%;padding-top:3px}.palette-row button{width:26px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--sw)}
 .pdf-style-smart{min-width:330px;display:grid!important;grid-template-columns:1fr;gap:8px}.smart-head{display:grid;gap:2px;width:100%;padding:2px 2px 4px}.smart-head strong{font-size:12px;color:var(--text)}.smart-head span{font-size:11px;color:var(--muted);line-height:1.35}.smart-row{display:flex;align-items:center;gap:7px;width:100%;padding:6px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.58)}.smart-row.hidden{display:none!important}.smart-row label{min-width:74px;font-size:11px;color:var(--muted);font-weight:900}.smart-row select{height:28px;min-width:110px;border-radius:9px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);font-size:12px;padding:0 7px;outline:0}.smart-row input[type=color]{width:32px;height:28px;border:0;border-radius:8px;background:transparent;padding:0;cursor:pointer}.swatch-preview{width:28px;height:28px;border-radius:9px;border:1px solid var(--line);background:var(--sw,#000)}.swatch-preview.transparent{background:linear-gradient(45deg,#ddd 25%,transparent 25%),linear-gradient(-45deg,#ddd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ddd 75%),linear-gradient(-45deg,transparent 75%,#ddd 75%);background-size:10px 10px;background-position:0 0,0 5px,5px -5px,-5px 0}.pdf-tool.warn{background:rgba(245,158,11,.14);color:#92400e;border-color:rgba(245,158,11,.28)}
 .ann-handle{position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border-radius:5px;background:var(--primary);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:nwse-resize;z-index:10}.ann-rotate{position:absolute;right:-8px;top:-26px;width:16px;height:16px;border-radius:999px;background:#fff;border:2px solid var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:grab;z-index:10}
-.sheet-wrap{width:100%;max-width:100%;overflow:auto;background:var(--panel-solid);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow)}.sheet-grid{border-collapse:collapse;min-width:980px;width:max-content;background:#fff;color:#111827}.sheet-grid th{position:sticky;top:0;z-index:4;background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;border:1px solid #dbe3ee;height:30px;min-width:74px}.sheet-grid th.row-head{left:0;z-index:5;min-width:46px}.sheet-grid td{border:1px solid #e2e8f0;min-width:110px;height:30px;padding:0}.sheet-grid input{width:100%;height:29px;border:0;padding:0 7px;outline:0;background:transparent;color:#111827}.sheet-grid input:focus{box-shadow:inset 0 0 0 2px var(--primary);background:#fff}.formula-name{width:62px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--muted);font-size:12px}.formula-input{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;outline:0}.statusbar{height:30px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}.statusbar .spacer{flex:1}.zoombar{position:fixed;right:16px;bottom:42px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.zoom-btn{width:30px;height:30px;min-height:30px;border-radius:999px}.zoom-percent{min-width:50px;text-align:center;font-size:12px;color:var(--muted)}.drop-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(15,23,42,.56);backdrop-filter:blur(10px)}.drop-overlay.show{display:flex}.drop-box{position:relative;width:min(620px,94vw);padding:38px 28px;border-radius:28px;border:2px dashed rgba(255,255,255,.55);color:#fff;background:rgba(15,23,42,.72);text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.35)}.drop-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14)}.toast-wrap{position:fixed;right:16px;top:16px;z-index:200;display:grid;gap:8px}.toast{min-width:250px;max-width:360px;padding:11px 12px;border-radius:14px;background:#101828;color:#fff;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px}.toast.good{background:#067647}.toast.warn{background:#b54708}.toast.bad{background:#b42318}.modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.48);backdrop-filter:blur(8px);padding:18px}.modal.show{display:flex}.modal-card{width:min(480px,96vw);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px}.modal-card h3{margin:0 0 12px}.modal-card label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.modal-card input{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);padding:8px;background:var(--panel);color:var(--text);outline:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.focus-mode .tabs,.focus-mode .ribbon,.focus-mode .statusbar{display:none}.focus-mode .topbar{opacity:.86}svg{width:16px;height:16px;flex:0 0 auto}@media(max-width:760px){.brand{min-width:auto}.brand-title,.qbtn span,.tool-btn span,.pdf-tool span,.sheet-btn span,.file-pill,.group-title{display:none}.ribbon{max-height:132px}.doc-page{width:min(96vw,var(--page-width));padding:36px}}@media print{body{background:white;overflow:auto}.topbar,.tabs,.ribbon,.statusbar,.zoombar,.modebar,.pdf-toolbar-local{display:none!important}.workspace{padding:0;overflow:visible;background:white}.doc-page{box-shadow:none;margin:0;width:auto;min-height:auto}}
+.sheet-wrap{width:100%;max-width:100%;overflow:auto;background:var(--panel-solid);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow)}.sheet-grid{border-collapse:collapse;min-width:980px;width:max-content;background:#fff;color:#111827}.sheet-grid th{position:sticky;top:0;z-index:4;background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;border:1px solid #dbe3ee;height:30px;min-width:74px}.sheet-grid th.row-head{left:0;z-index:5;min-width:46px}.sheet-grid td{border:1px solid #e2e8f0;min-width:110px;height:30px;padding:0}.sheet-grid input{width:100%;height:29px;border:0;padding:0 7px;outline:0;background:transparent;color:#111827}.sheet-grid input:focus{box-shadow:inset 0 0 0 2px var(--primary);background:#fff}.formula-name{width:62px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--muted);font-size:12px}.formula-input{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;outline:0}.statusbar{height:30px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}.statusbar .spacer{flex:1}.zoombar{position:fixed;right:16px;bottom:42px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.zoom-btn{width:30px;height:30px;min-height:30px;border-radius:999px}.zoom-percent{min-width:50px;text-align:center;font-size:12px;color:var(--muted)}.drop-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(15,23,42,.56);backdrop-filter:blur(10px)}.drop-overlay.show{display:flex}.drop-box{position:relative;width:min(620px,94vw);padding:38px 28px;border-radius:28px;border:2px dashed rgba(255,255,255,.55);color:#fff;background:rgba(15,23,42,.72);text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.35)}.drop-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14)}.toast-wrap{position:fixed;right:16px;top:16px;z-index:200;display:grid;gap:8px}.toast{min-width:250px;max-width:360px;padding:11px 12px;border-radius:14px;background:#101828;color:#fff;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px}.toast.good{background:#067647}.toast.warn{background:#b54708}.toast.bad{background:#b42318}.modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.48);backdrop-filter:blur(8px);padding:18px}.modal.show{display:flex}.modal-card{width:min(480px,96vw);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px}.modal-card h3{margin:0 0 12px}.modal-card label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.modal-card input{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);padding:8px;background:var(--panel);color:var(--text);outline:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.focus-mode .tabs,.focus-mode .ribbon,.focus-mode .statusbar,.focus-mode .docbar{display:none}.focus-mode .topbar{opacity:.86}svg{width:16px;height:16px;flex:0 0 auto}@media(max-width:760px){.doc-tab-name{max-width:92px}.brand{min-width:auto}.brand-title,.qbtn span,.tool-btn span,.pdf-tool span,.sheet-btn span,.file-pill,.group-title{display:none}.ribbon{max-height:132px}.doc-page{width:min(96vw,var(--page-width));padding:36px}}@media print{body{background:white;overflow:auto}.topbar,.tabs,.ribbon,.statusbar,.zoombar,.modebar,.pdf-toolbar-local{display:none!important}.workspace{padding:0;overflow:visible;background:white}.doc-page{box-shadow:none;margin:0;width:auto;min-height:auto}}
   </style>
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
   <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara Dokumen</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
-  <nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
+  <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview menjaga layout lebih rapi. Edit Cepat membuat isi bisa diketik dan diformat.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
@@ -101,6 +101,7 @@
 
   const $ = (id) => document.getElementById(id);
   const appRoot = $('appRoot');
+  const docTabsEl = $('docTabs');
   const tabsEl = $('tabs');
   const ribbonEl = $('ribbon');
   const workspace = $('workspace');
@@ -165,7 +166,10 @@
     sheetUndo: [],
     sheetRedo: [],
     activeCell: { r: 0, c: 0 },
-    renderToken: 0
+    renderToken: 0,
+    documents: [],
+    activeDocId: null,
+    restoringDocument: false
   };
 
   const tabs = ['File','Edit','Format','Sisipkan','Layout','PDF','Spreadsheet','Tampilan','Alat'];
@@ -173,7 +177,7 @@
     File: [
       {title:'File', items:[btn('open','folder-open','Buka'),btn('save','save','Simpan'),btn('saveAs','save-all','Save As'),btn('print','printer','Print')]},
       {title:'Export', items:[btn('exportHtml','file-code','HTML'),btn('exportText','file-text','TXT'),btn('exportDocx','file-type','DOCX'),btn('exportPdfPrint','file-down','PDF'),btn('exportCsv','table','CSV'),btn('exportXlsx','file-spreadsheet','XLSX')]},
-      {title:'Info', items:[btn('fileInfo','info','Info'),btn('newDoc','file-plus','Dokumen Baru')]}
+      {title:'Info', items:[btn('fileInfo','info','Info'),btn('newDoc','file-plus','Dokumen Baru'),btn('closeActiveDoc','x-circle','Tutup Tab')]}
     ],
     Edit: [
       {title:'Cepat', items:[btn('undo','undo-2','Undo'),btn('redo','redo-2','Redo'),btn('clear','eraser','Bersihkan')]},
@@ -229,6 +233,7 @@
     if (window.pdfjsLib) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     }
+    renderDocTabs();
     renderTabs();
     renderRibbon();
     bindEvents();
@@ -283,6 +288,12 @@
   }
 
   function handleClick(e){
+    const closeDocBtn = e.target.closest('[data-close-doc]');
+    if (closeDocBtn) { e.preventDefault(); e.stopPropagation(); closeDocument(closeDocBtn.dataset.closeDoc); return; }
+    const docBtn = e.target.closest('[data-doc-id]');
+    if (docBtn) { e.preventDefault(); switchDocument(docBtn.dataset.docId); return; }
+    const docActionBtn = e.target.closest('[data-doc-action]');
+    if (docActionBtn) { e.preventDefault(); if (docActionBtn.dataset.docAction === 'new') newDoc(); return; }
     const tabBtn = e.target.closest('[data-tab]');
     if (tabBtn) { state.activeTab = tabBtn.dataset.tab; renderTabs(); renderRibbon(); return; }
     const pdfToolBtn = e.target.closest('[data-pdf-tool]');
@@ -318,7 +329,7 @@
       const map = {
         open: openPicker, save: () => saveCurrent(false), saveAs: () => saveCurrent(true), print: () => window.print(),
         closeDrop: hideDropOverlay, undo: performUndo, redo: performRedo, clear: clearCurrent,
-        exportHtml, exportText, exportDocx, exportPdfPrint, exportCsv, exportXlsx, fileInfo, newDoc,
+        exportHtml, exportText, exportDocx, exportPdfPrint, exportCsv, exportXlsx, fileInfo, newDoc, closeActiveDoc,
         selectAll: () => document.execCommand('selectAll'), copy: () => document.execCommand('copy'), cut: () => document.execCommand('cut'), paste: pasteFromClipboard,
         openFind: () => findModal.classList.add('show'), closeFind: () => findModal.classList.remove('show'), findNext, replaceAll,
         insertTable, insertImage: () => imageInput.click(), insertLink, insertHr: () => insertHtml('<hr>'), insertDate, insertCheckbox, insertSignature, insertSymbol,
@@ -376,7 +387,22 @@
     fileInput.click();
   }
 
-  async function openFile(file, handle){
+  async function openFile(file, handle, options = {}){
+    const reuseActive = options && options.reuseActive;
+    if (!reuseActive) {
+      captureActiveDocument();
+      const id = uid();
+      state.activeDocId = id;
+      state.documents.push({ id, title:file && file.name ? file.name : 'dokumen', file, fileHandle:handle || null, mode:'loading', ext:getExt(file && file.name ? file.name : 'dokumen'), dirty:false, createdAt:Date.now() });
+      renderDocTabs();
+      resetVisualWorkspaces();
+    }
+    await loadFileIntoCurrentState(file, handle);
+    captureActiveDocument();
+    renderDocTabs();
+  }
+
+  async function loadFileIntoCurrentState(file, handle){
     state.file = file; state.fileHandle = handle; state.fileName = file.name || 'dokumen'; state.ext = getExt(state.fileName); state.dirty = false; saveText.textContent = 'Tersimpan';
     fileNameEl.textContent = state.fileName;
     status('Membuka ' + state.fileName + '...');
@@ -388,6 +414,159 @@
     toast('Format belum didukung: .' + state.ext, 'warn');
     status('Format tidak didukung');
   }
+
+  function resetVisualWorkspaces(){
+    docPreview.innerHTML = '';
+    docEditor.innerHTML = '';
+    pdfPages.innerHTML = '';
+    sheetGrid.innerHTML = '';
+    state.pdfDoc = null;
+    state.selectedAnnotationId = null;
+  }
+
+  function serializeArrayBuffer(buf){ return buf ? buf.slice(0) : null; }
+  function cloneJson(value){ return JSON.parse(JSON.stringify(value || [])); }
+
+  function captureActiveDocument(){
+    if (!state.activeDocId) return;
+    const doc = state.documents.find(d => d.id === state.activeDocId);
+    if (!doc) return;
+    doc.title = state.fileName || doc.title || 'dokumen';
+    doc.file = state.file || null;
+    doc.fileHandle = state.fileHandle || null;
+    doc.fileName = state.fileName;
+    doc.ext = state.ext;
+    doc.mode = state.mode;
+    doc.docMode = state.docMode;
+    doc.dirty = !!state.dirty;
+    doc.zoom = state.zoom;
+    doc.activeTab = state.activeTab;
+    doc.lastDocxBuffer = serializeArrayBuffer(state.lastDocxBuffer);
+    doc.docEditHtml = state.docEditHtml || '';
+    doc.docPreviewHtml = docPreview.innerHTML || '';
+    doc.docEditorHtml = docEditor.innerHTML || '';
+    doc.pdfBytes = serializeArrayBuffer(state.pdfBytes);
+    doc.pdfAnnotations = cloneJson(state.pdfAnnotations);
+    doc.pdfUndo = cloneJson(state.pdfUndo);
+    doc.pdfRedo = cloneJson(state.pdfRedo);
+    doc.pdfTool = state.pdfTool;
+    doc.pdfTextColor = state.pdfTextColor;
+    doc.pdfHighlightColor = state.pdfHighlightColor;
+    doc.pdfRectBorderColor = state.pdfRectBorderColor;
+    doc.pdfRectFillColor = state.pdfRectFillColor;
+    doc.pdfLineColor = state.pdfLineColor;
+    doc.pdfDrawColor = state.pdfDrawColor;
+    doc.pdfTextSize = state.pdfTextSize;
+    doc.pdfStrokeWidth = state.pdfStrokeWidth;
+    doc.pdfOpacity = state.pdfOpacity;
+    doc.pdfRotation = state.pdfRotation || 0;
+    doc.sheetData = (state.sheetData || []).map(row => row.slice());
+    doc.sheetUndo = cloneJson(state.sheetUndo);
+    doc.sheetRedo = cloneJson(state.sheetRedo);
+    doc.activeCell = state.activeCell ? {...state.activeCell} : {r:0,c:0};
+  }
+
+  async function switchDocument(id){
+    if (!id || id === state.activeDocId) return;
+    captureActiveDocument();
+    const doc = state.documents.find(d => d.id === id);
+    if (!doc) return;
+    state.activeDocId = id;
+    await restoreDocument(doc);
+    renderDocTabs();
+  }
+
+  async function restoreDocument(doc){
+    state.restoringDocument = true;
+    resetVisualWorkspaces();
+    state.file = doc.file || null;
+    state.fileHandle = doc.fileHandle || null;
+    state.fileName = doc.fileName || doc.title || 'dokumen';
+    state.ext = doc.ext || getExt(state.fileName);
+    state.mode = doc.mode || 'empty';
+    state.docMode = doc.docMode || 'preview';
+    state.dirty = !!doc.dirty;
+    state.zoom = doc.zoom || 1;
+    state.activeTab = doc.activeTab || (state.mode === 'pdf' ? 'PDF' : state.mode === 'sheet' ? 'Spreadsheet' : state.mode === 'doc' ? 'Format' : 'File');
+    state.lastDocxBuffer = serializeArrayBuffer(doc.lastDocxBuffer);
+    state.docEditHtml = doc.docEditHtml || '';
+    state.pdfBytes = serializeArrayBuffer(doc.pdfBytes);
+    state.pdfAnnotations = cloneJson(doc.pdfAnnotations);
+    state.pdfUndo = cloneJson(doc.pdfUndo);
+    state.pdfRedo = cloneJson(doc.pdfRedo);
+    state.pdfTool = doc.pdfTool || 'select';
+    state.pdfTextColor = doc.pdfTextColor || '#111827';
+    state.pdfHighlightColor = doc.pdfHighlightColor || '#fff176';
+    state.pdfRectBorderColor = doc.pdfRectBorderColor || '#f97316';
+    state.pdfRectFillColor = doc.pdfRectFillColor ?? '#ffffff';
+    state.pdfLineColor = doc.pdfLineColor || '#2563eb';
+    state.pdfDrawColor = doc.pdfDrawColor || '#2563eb';
+    state.pdfTextSize = doc.pdfTextSize || 16;
+    state.pdfStrokeWidth = doc.pdfStrokeWidth || 3;
+    state.pdfOpacity = doc.pdfOpacity || 0.38;
+    state.pdfRotation = doc.pdfRotation || 0;
+    state.selectedAnnotationId = null;
+    state.sheetData = (doc.sheetData || []).map(row => row.slice());
+    state.sheetUndo = cloneJson(doc.sheetUndo);
+    state.sheetRedo = cloneJson(doc.sheetRedo);
+    state.activeCell = doc.activeCell ? {...doc.activeCell} : {r:0,c:0};
+    fileNameEl.textContent = state.mode === 'empty' ? 'Belum ada file' : state.fileName;
+    saveText.textContent = state.dirty ? 'Belum disimpan' : 'Tersimpan';
+    setMode(state.mode);
+    if (state.mode === 'doc') {
+      docPreview.innerHTML = doc.docPreviewHtml || '';
+      docEditor.innerHTML = doc.docEditorHtml || state.docEditHtml || '';
+      docPreviewWrap.classList.toggle('hidden', state.docMode !== 'preview');
+      docEditWrap.classList.toggle('hidden', state.docMode !== 'edit');
+      setDocModeButtons();
+      updateWordCount();
+    } else if (state.mode === 'pdf') {
+      if (state.pdfBytes) {
+        state.pdfDoc = await pdfjsLib.getDocument({ data: state.pdfBytes.slice(0) }).promise;
+        await renderAllPdfPages();
+      }
+      updatePdfStyleControls();
+      syncActivePdfTools();
+    } else if (state.mode === 'sheet') {
+      renderSheet();
+    }
+    renderTabs(); renderRibbon(); updateZoomUI(); applyZoom(); updateWordCount();
+    status('Aktif: ' + state.fileName);
+    state.restoringDocument = false;
+  }
+
+  function renderDocTabs(){
+    if (!docTabsEl) return;
+    const docs = state.documents || [];
+    docTabsEl.classList.toggle('has-docs', docs.length > 0);
+    if (!docs.length) { docTabsEl.innerHTML = ''; return; }
+    docTabsEl.innerHTML = `<div class="docbar-label">Dokumen</div><div class="doctabs-scroll">${docs.map(d => `<div class="doc-tab ${d.id===state.activeDocId?'active':''} ${d.dirty?'dirty':''}" data-doc-id="${escapeAttr(d.id)}" title="${escapeAttr(d.title || 'dokumen')}" role="button" tabindex="0"><span class="doc-tab-dirty"></span><i data-lucide="${docIcon(d.ext || '')}"></i><span class="doc-tab-name">${escapeHtml(d.title || 'dokumen')}</span><button class="doc-tab-close" data-close-doc="${escapeAttr(d.id)}" title="Tutup">×</button></div>`).join('')}</div><div class="docbar-actions"><button class="docbar-btn" data-doc-action="new" title="Dokumen baru"><i data-lucide="plus"></i></button></div>`;
+    refreshIcons();
+  }
+
+  function docIcon(ext){
+    if (ext === 'pdf') return 'file-type-2';
+    if (ext === 'docx' || ext === 'doc') return 'file-text';
+    if (['xlsx','xls','ods','csv'].includes(ext)) return 'table';
+    return 'file';
+  }
+
+  async function closeDocument(id){
+    const doc = state.documents.find(d => d.id === id);
+    if (!doc) return;
+    if (id === state.activeDocId) captureActiveDocument();
+    if (doc.dirty && !confirm('Dokumen ini belum disimpan. Tutup tetap?')) return;
+    const idx = state.documents.findIndex(d => d.id === id);
+    state.documents.splice(idx, 1);
+    if (state.activeDocId === id) {
+      const next = state.documents[idx] || state.documents[idx-1];
+      if (next) { state.activeDocId = next.id; await restoreDocument(next); }
+      else { state.activeDocId = null; resetVisualWorkspaces(); setMode('empty'); fileNameEl.textContent='Belum ada file'; saveText.textContent='Belum disimpan'; status('Tidak ada dokumen terbuka'); }
+    }
+    renderDocTabs();
+  }
+
+  function closeActiveDoc(){ if (!state.activeDocId) return toast('Tidak ada tab dokumen.', 'warn'); closeDocument(state.activeDocId); }
 
   function setMode(mode){
     state.mode = mode;
@@ -1204,42 +1383,30 @@
   }
   async function newBlankPdf(){
     if (!window.PDFLib) return toast('Library PDF belum termuat.', 'warn');
-    if (state.dirty && state.mode === 'pdf' && !confirm('PDF sekarang belum disimpan. Buat PDF kosong baru?')) return;
+    captureActiveDocument();
     const pdfDoc = await PDFLib.PDFDocument.create();
     pdfDoc.addPage([595.28, 841.89]);
     const bytes = await pdfDoc.save();
+    const id = uid();
+    state.activeDocId = id;
+    state.documents.push({id,title:'pdf-kosong.pdf',file:null,fileHandle:null,fileName:'pdf-kosong.pdf',ext:'pdf',mode:'pdf',dirty:true,createdAt:Date.now()});
     state.file = null;
     state.fileHandle = null;
     state.fileName = 'pdf-kosong.pdf';
     state.ext = 'pdf';
     fileNameEl.textContent = state.fileName;
     await loadPdf(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
-    state.dirty = false;
+    state.dirty = true;
     saveText.textContent = 'Belum disimpan';
+    captureActiveDocument(); renderDocTabs();
     toast('PDF kosong siap diedit.', 'good');
   }
+
   function closePdf(){
     if (state.mode !== 'pdf') return toast('Tidak ada PDF yang sedang dibuka.', 'warn');
-    if (state.dirty && !confirm('PDF belum disimpan. Tutup/kosongkan PDF ini?')) return;
-    state.pdfDoc = null;
-    state.pdfBytes = null;
-    state.pdfAnnotations = [];
-    state.pdfUndo = [];
-    state.pdfRedo = [];
-    state.selectedAnnotationId = null;
-    state.pdfRotation = 0;
-    state.file = null;
-    state.fileHandle = null;
-    state.fileName = 'dokumen.html';
-    state.ext = 'html';
-    state.dirty = false;
-    pdfPages.innerHTML = '';
-    fileNameEl.textContent = 'Belum ada file';
-    saveText.textContent = 'Belum disimpan';
-    status('PDF ditutup. Silakan buka PDF baru atau buat PDF kosong.');
-    setMode('empty');
-    state.activeTab = 'File'; renderTabs(); renderRibbon();
+    return closeActiveDoc();
   }
+
   function pdfDeleteSelected(){ if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn'); if (!state.selectedAnnotationId) return toast('Pilih anotasi dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== state.selectedAnnotationId); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); }
   function clearPdfAnnotations(){ if (state.mode !== 'pdf') return; if (!confirm('Hapus semua anotasi PDF?')) return; pushPdfHistory(); state.pdfAnnotations = []; markDirty(); redrawPdfAnnotations(); }
 
@@ -1436,7 +1603,7 @@
     else if(state.mode==='doc') { blob = await makeDocBlob(); if(!/\.(docx|html|txt|md)$/i.test(name)) name = baseName(name)+'.html'; }
     else return toast('Belum ada file untuk disimpan.', 'warn');
     await writeBlob(blob, name, asNew);
-    state.dirty=false; saveText.textContent='Tersimpan'; status('File disimpan'); toast('File berhasil disimpan.', 'good');
+    state.dirty=false; saveText.textContent='Tersimpan'; captureActiveDocument(); renderDocTabs(); status('File disimpan'); toast('File berhasil disimpan.', 'good');
   }
   async function writeBlob(blob, suggestedName, asNew){
     if(!asNew && state.fileHandle && state.fileHandle.createWritable) {
@@ -1474,8 +1641,8 @@
 
   function updateWordCount(){ const txt = state.mode==='doc' ? (docEditor.innerText || docPreview.textContent || '') : state.mode==='sheet' ? state.sheetData.flat().join(' ') : ''; const words = txt.trim() ? txt.trim().split(/\s+/).length : 0; countText.textContent = words + ' kata'; }
   function fileInfo(){ const info = [`Nama: ${state.fileName}`, `Mode: ${state.mode}`, `Ekstensi: .${state.ext}`, `Status: ${state.dirty?'belum disimpan':'tersimpan'}`, state.file ? `Ukuran: ${formatBytes(state.file.size)}` : 'Ukuran: -'].join('\n'); alert(info); }
-  function newDoc(){ state.file=null; state.fileHandle=null; state.fileName='dokumen-baru.html'; state.ext='html'; fileNameEl.textContent=state.fileName; setMode('doc'); state.docMode='edit'; docEditor.innerHTML='<h1>Dokumen Baru</h1><p></p>'; docPreview.innerHTML=''; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons(); markDirty(); updateWordCount(); status('Dokumen baru dibuat'); }
-  async function reloadFile(){ if(state.file) return openFile(state.file, state.fileHandle); toast('Tidak ada file untuk dimuat ulang.', 'warn'); }
+  function newDoc(){ captureActiveDocument(); const id=uid(); state.activeDocId=id; state.documents.push({id,title:'dokumen-baru.html',file:null,fileHandle:null,fileName:'dokumen-baru.html',ext:'html',mode:'doc',docMode:'edit',dirty:true,createdAt:Date.now()}); state.file=null; state.fileHandle=null; state.fileName='dokumen-baru.html'; state.ext='html'; fileNameEl.textContent=state.fileName; setMode('doc'); state.docMode='edit'; state.docEditHtml='<h1>Dokumen Baru</h1><p></p>'; docEditor.innerHTML=state.docEditHtml; docPreview.innerHTML=''; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons(); markDirty(); updateWordCount(); captureActiveDocument(); renderDocTabs(); status('Dokumen baru dibuat'); }
+  async function reloadFile(){ if(state.file) return openFile(state.file, state.fileHandle, {reuseActive:true}); toast('Tidak ada file untuk dimuat ulang.', 'warn'); }
 
   function handleKeys(e){
     if(e.key==='Escape') { hideDropOverlay(); findModal.classList.remove('show'); }
@@ -1516,7 +1683,7 @@
   function toggleFocus(){ document.body.classList.toggle('focus-mode'); }
   function fullscreen(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
 
-  function markDirty(){ state.dirty=true; saveText.textContent='Belum disimpan'; }
+  function markDirty(){ state.dirty=true; saveText.textContent='Belum disimpan'; const d=state.documents.find(x=>x.id===state.activeDocId); if(d){ d.dirty=true; d.title=state.fileName || d.title; } renderDocTabs(); }
   function status(msg){ statusText.textContent = msg; }
   function toast(msg, type=''){ const t=document.createElement('div'); t.className='toast '+type; t.innerHTML=`<i data-lucide="${type==='bad'?'alert-triangle':type==='warn'?'info':'check-circle'}"></i><span>${escapeHtml(msg)}</span>`; $('toastWrap').appendChild(t); refreshIcons(); setTimeout(()=>{t.style.opacity='0'; t.style.transform='translateY(-8px)'; setTimeout(()=>t.remove(),220);}, 3600); }
   function warn(msg){ toast(msg,'warn'); }
