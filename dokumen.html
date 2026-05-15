@@ -1,0 +1,1677 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dokumen Web - Editor Lokal</title>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-2: #eef3ff;
+      --text: #172033;
+      --muted: #6b7280;
+      --line: #dce3f0;
+      --brand: #2563eb;
+      --brand-2: #1d4ed8;
+      --danger: #dc2626;
+      --ok: #16a34a;
+      --shadow: 0 14px 30px rgba(15, 23, 42, .10);
+      --radius: 16px;
+      --ribbon-h: 146px;
+      --status-h: 30px;
+      --sidebar-w: 250px;
+    }
+    [data-theme="dark"] {
+      --bg: #0e1726;
+      --panel: #111827;
+      --panel-2: #172033;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --line: #263244;
+      --brand: #60a5fa;
+      --brand-2: #3b82f6;
+      --shadow: 0 14px 30px rgba(0, 0, 0, .35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow: hidden;
+    }
+    button, select, input, textarea {
+      font: inherit;
+      color: inherit;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      min-height: 34px;
+      transition: .15s ease;
+    }
+    button:hover { border-color: var(--brand); color: var(--brand); }
+    button.primary { background: var(--brand); border-color: var(--brand); color: white; }
+    button.primary:hover { background: var(--brand-2); color: white; }
+    button.danger { color: var(--danger); }
+    button.small { min-height: 28px; padding: 5px 8px; font-size: 12px; border-radius: 8px; }
+    button.icon { width: 36px; padding: 6px; text-align: center; }
+    select, input[type="text"], input[type="number"], input[type="color"] {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 10px;
+      min-height: 34px;
+      padding: 6px 9px;
+    }
+    input[type="color"] { width: 42px; padding: 3px; }
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: var(--ribbon-h) 1fr var(--status-h);
+    }
+    .top {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, .06);
+      z-index: 5;
+      display: grid;
+      grid-template-rows: 44px 38px 1fr;
+    }
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .logo {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      font-weight: 900;
+    }
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      min-width: 0;
+      flex: 1;
+    }
+    #fileName {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 360px;
+      color: var(--text);
+      font-weight: 650;
+    }
+    .autosave-pill {
+      font-size: 12px;
+      background: var(--panel-2);
+      color: var(--brand);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 9px;
+    }
+    .tabs {
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 4px;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+    }
+    .tab {
+      border: 0;
+      border-radius: 0;
+      min-height: 37px;
+      padding: 9px 14px;
+      background: transparent;
+      color: var(--muted);
+      border-bottom: 3px solid transparent;
+    }
+    .tab.active {
+      color: var(--brand);
+      border-bottom-color: var(--brand);
+      font-weight: 700;
+    }
+    .ribbon {
+      overflow-x: auto;
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      padding: 8px 12px;
+    }
+    .panel {
+      display: none;
+      width: 100%;
+      gap: 8px;
+      align-items: center;
+      min-width: max-content;
+    }
+    .panel.active { display: flex; }
+    .group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-right: 10px;
+      margin-right: 2px;
+      border-right: 1px solid var(--line);
+    }
+    .group.vertical {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+      text-align: center;
+    }
+    .main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+    }
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 12px;
+      overflow-y: auto;
+    }
+    .side-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .side-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+    .side-card p, .side-card li {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px dashed var(--line);
+      padding: 7px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+      overflow: auto;
+      padding: 22px;
+    }
+    .welcome {
+      max-width: 900px;
+      margin: 20px auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+    .welcome h1 {
+      margin: 0 0 10px 0;
+      font-size: 34px;
+      letter-spacing: -.04em;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .action-card {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      min-height: 120px;
+    }
+    .action-card:hover { border-color: var(--brand); }
+    .action-card strong { display: block; margin-bottom: 8px; }
+    .action-card span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .editor-wrap, .sheet-wrap, .pdf-wrap {
+      display: none;
+      min-height: 100%;
+    }
+    .editor-wrap.active, .sheet-wrap.active, .pdf-wrap.active { display: block; }
+    .page {
+      width: 794px;
+      min-height: 1123px;
+      margin: 0 auto 30px auto;
+      background: white;
+      color: #111827;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+      padding: 76px 86px;
+      outline: none;
+      transform-origin: top center;
+    }
+    .page:empty:before {
+      content: "Mulai mengetik dokumen di sini...";
+      color: #9ca3af;
+    }
+    .page img { max-width: 100%; resize: both; }
+    .page table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+    }
+    .page td, .page th {
+      border: 1px solid #9ca3af;
+      padding: 7px;
+      min-width: 60px;
+    }
+    .page .page-break {
+      border-top: 2px dashed #94a3b8;
+      margin: 24px 0;
+      page-break-after: always;
+      height: 8px;
+    }
+    .sheet-shell {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-width: 900px;
+    }
+    .formula-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      background: var(--panel-2);
+    }
+    #cellName {
+      width: 70px;
+      text-align: center;
+      font-weight: 700;
+    }
+    #formulaInput { flex: 1; }
+    .sheet-scroll {
+      max-height: calc(100vh - var(--ribbon-h) - var(--status-h) - 88px);
+      overflow: auto;
+    }
+    .sheet {
+      border-collapse: collapse;
+      width: max-content;
+      background: white;
+      color: #111827;
+    }
+    .sheet th, .sheet td {
+      border: 1px solid #d1d5db;
+      min-width: 110px;
+      height: 30px;
+      padding: 0;
+      font-size: 13px;
+    }
+    .sheet th {
+      background: #f3f4f6;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      font-weight: 700;
+    }
+    .sheet th.row-head {
+      left: 0;
+      z-index: 3;
+      min-width: 50px;
+      width: 50px;
+      position: sticky;
+    }
+    .sheet td.row-head {
+      min-width: 50px;
+      width: 50px;
+      background: #f3f4f6;
+      text-align: center;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      font-weight: 700;
+    }
+    .sheet input {
+      border: 0;
+      width: 100%;
+      height: 100%;
+      padding: 4px 6px;
+      background: transparent;
+      color: inherit;
+      outline: none;
+    }
+    .sheet input:focus {
+      outline: 2px solid #2563eb;
+      outline-offset: -2px;
+      background: #eff6ff;
+    }
+    .pdf-stage {
+      display: grid;
+      place-items: start center;
+      gap: 12px;
+    }
+    .pdf-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+    .pdf-canvas-wrap {
+      position: relative;
+      background: #777;
+      padding: 10px;
+      border-radius: 12px;
+      overflow: auto;
+      max-width: calc(100vw - var(--sidebar-w) - 70px);
+      max-height: calc(100vh - var(--ribbon-h) - var(--status-h) - 88px);
+    }
+    #pdfCanvas { display: block; background: white; }
+    .drop-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(37, 99, 235, .16);
+      z-index: 20;
+      backdrop-filter: blur(4px);
+      place-items: center;
+      padding: 22px;
+    }
+    .drop-overlay.active { display: grid; }
+    .drop-box {
+      position: relative;
+      width: min(560px, calc(100vw - 44px));
+      border: 3px dashed var(--brand);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 28px;
+      padding: 48px 42px 38px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .drop-box h2 { margin-bottom: 8px; }
+    .drop-box p { color: var(--muted); }
+    .drop-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .drop-close:hover { filter: brightness(.96); }
+    .drop-hint {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .38);
+      z-index: 30;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      width: min(560px, 100%);
+      padding: 18px;
+    }
+    .modal h2 { margin: 0 0 12px 0; }
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .modal label {
+      display: grid;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 44px;
+      background: #111827;
+      color: white;
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .2s ease;
+      z-index: 40;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .statusbar {
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .statusbar div { display: flex; align-items: center; gap: 12px; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) {
+      :root { --sidebar-w: 0px; --ribbon-h: 180px; }
+      .main { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .cards { grid-template-columns: 1fr; }
+      .page { width: 100%; padding: 40px 28px; }
+      .top { grid-template-rows: 44px 38px 98px; }
+    }
+    @media print {
+      body { background: white; overflow: visible; }
+      .top, .sidebar, .statusbar { display: none; }
+      .app, .main, .workspace { display: block; height: auto; overflow: visible; padding: 0; }
+      .page { box-shadow: none; border: 0; width: auto; margin: 0; min-height: auto; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <header class="top">
+      <div class="titlebar">
+        <div class="brand"><div class="logo">D</div><span>Dokumen Web</span></div>
+        <div class="file-meta"><span id="fileName">Belum ada file</span><span id="modeBadge" class="autosave-pill">Siap</span></div>
+        <button class="small" id="themeBtn">Tema</button>
+        <button class="small" id="fullscreenBtn">Layar Penuh</button>
+      </div>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="file">File</button>
+        <button class="tab" data-tab="home">Beranda</button>
+        <button class="tab" data-tab="insert">Sisipkan</button>
+        <button class="tab" data-tab="layout">Layout</button>
+        <button class="tab" data-tab="sheet">Spreadsheet</button>
+        <button class="tab" data-tab="pdf">PDF</button>
+        <button class="tab" data-tab="view">Tampilan</button>
+        <button class="tab" data-tab="tools">Alat</button>
+      </nav>
+      <section class="ribbon">
+        <div class="panel active" data-panel="file">
+          <div class="group">
+            <button class="primary" id="openBtn">Buka</button>
+            <button id="saveBtn">Simpan</button>
+            <button id="saveAsBtn">Simpan Sebagai</button>
+            <button id="printBtn">Print/PDF</button>
+          </div>
+          <div class="group">
+            <button id="newDocBtn">Dokumen Baru</button>
+            <button id="newSheetBtn">Sheet Baru</button>
+            <button id="downloadHtmlBtn">Export HTML</button>
+            <button id="downloadDocBtn">Export Word .doc</button>
+            <button id="downloadXlsxBtn">Export XLSX</button>
+          </div>
+          <div class="group">
+            <button id="clearBtn" class="danger">Bersihkan</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="home">
+          <div class="group">
+            <select id="styleSelect" title="Style">
+              <option value="P">Normal</option>
+              <option value="H1">Judul 1</option>
+              <option value="H2">Judul 2</option>
+              <option value="H3">Judul 3</option>
+              <option value="BLOCKQUOTE">Kutipan</option>
+              <option value="PRE">Kode</option>
+            </select>
+            <select id="fontSelect" title="Font">
+              <option>Arial</option><option>Calibri</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option><option>Courier New</option>
+            </select>
+            <select id="fontSizeSelect" title="Ukuran">
+              <option value="2">10</option><option value="3" selected>12</option><option value="4">14</option><option value="5">18</option><option value="6">24</option><option value="7">36</option>
+            </select>
+          </div>
+          <div class="group">
+            <button class="icon" data-cmd="bold"><b>B</b></button>
+            <button class="icon" data-cmd="italic"><i>I</i></button>
+            <button class="icon" data-cmd="underline"><u>U</u></button>
+            <button class="icon" data-cmd="strikeThrough"><s>S</s></button>
+            <input type="color" id="textColor" value="#111827" title="Warna teks" />
+            <input type="color" id="highlightColor" value="#fff176" title="Highlight" />
+          </div>
+          <div class="group">
+            <button class="icon" data-cmd="justifyLeft">Kiri</button>
+            <button class="icon" data-cmd="justifyCenter">Tengah</button>
+            <button class="icon" data-cmd="justifyRight">Kanan</button>
+            <button class="icon" data-cmd="justifyFull">Rata</button>
+          </div>
+          <div class="group">
+            <button data-cmd="insertUnorderedList">Bullet</button>
+            <button data-cmd="insertOrderedList">Nomor</button>
+            <button data-cmd="outdent">Outdent</button>
+            <button data-cmd="indent">Indent</button>
+          </div>
+          <div class="group">
+            <button data-cmd="undo">Undo</button>
+            <button data-cmd="redo">Redo</button>
+            <button data-cmd="removeFormat">Hapus Format</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="insert">
+          <div class="group">
+            <button id="insertTableBtn">Tabel</button>
+            <button id="insertImageBtn">Gambar</button>
+            <button id="insertLinkBtn">Link</button>
+            <button id="insertHrBtn">Garis</button>
+            <button id="insertPageBreakBtn">Page Break</button>
+          </div>
+          <div class="group">
+            <button id="insertDateBtn">Tanggal</button>
+            <button id="insertCheckboxBtn">Checkbox</button>
+            <button id="insertSignatureBtn">Tanda Tangan</button>
+            <button id="insertCodeBtn">Blok Kode</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="layout">
+          <div class="group">
+            <select id="pageSizeSelect">
+              <option value="a4">A4</option>
+              <option value="letter">Letter</option>
+              <option value="legal">Legal</option>
+            </select>
+            <select id="marginSelect">
+              <option value="normal">Margin Normal</option>
+              <option value="narrow">Margin Sempit</option>
+              <option value="wide">Margin Lebar</option>
+            </select>
+            <select id="zoomSelect">
+              <option value="0.8">80%</option><option value="1" selected>100%</option><option value="1.15">115%</option><option value="1.3">130%</option><option value="1.5">150%</option>
+            </select>
+          </div>
+          <div class="group">
+            <button id="lineHeightBtn">Line Height</button>
+            <button id="clearDocStyleBtn">Reset Style</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="sheet">
+          <div class="group">
+            <button id="sheetAddRowBtn">Tambah Baris</button>
+            <button id="sheetAddColBtn">Tambah Kolom</button>
+            <button id="sheetDelRowBtn">Hapus Baris</button>
+            <button id="sheetDelColBtn">Hapus Kolom</button>
+          </div>
+          <div class="group">
+            <button id="sumBtn">SUM</button>
+            <button id="avgBtn">AVG</button>
+            <button id="minBtn">MIN</button>
+            <button id="maxBtn">MAX</button>
+            <button id="countBtn">COUNT</button>
+          </div>
+          <div class="group">
+            <button id="sortAscBtn">Sort A-Z</button>
+            <button id="sortDescBtn">Sort Z-A</button>
+            <button id="clearCellBtn">Clear Cell</button>
+            <button id="csvBtn">Export CSV</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="pdf">
+          <div class="group">
+            <button id="pdfPrevBtn">Sebelumnya</button>
+            <button id="pdfNextBtn">Berikutnya</button>
+            <span id="pdfPageInfo" class="autosave-pill">PDF belum dibuka</span>
+          </div>
+          <div class="group">
+            <button id="pdfTextBtn">Teks</button>
+            <button id="pdfHighlightBtn">Highlight</button>
+            <button id="pdfLastDelBtn">Hapus Anotasi</button>
+            <button id="pdfExportBtn">Simpan PDF</button>
+          </div>
+          <div class="group">
+            <select id="pdfZoomSelect"><option value="1">100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option></select>
+          </div>
+        </div>
+        <div class="panel" data-panel="view">
+          <div class="group">
+            <button id="toggleSidebarBtn">Sidebar</button>
+            <button id="focusBtn">Mode Fokus</button>
+            <button id="readBtn">Mode Baca</button>
+            <button id="spellBtn">Spellcheck</button>
+          </div>
+          <div class="group">
+            <button id="zoomMinusBtn">Zoom -</button>
+            <button id="zoomPlusBtn">Zoom +</button>
+            <button id="fitBtn">Fit Width</button>
+          </div>
+        </div>
+        <div class="panel" data-panel="tools">
+          <div class="group">
+            <button id="findBtn">Cari/Ganti</button>
+            <button id="upperBtn">UPPERCASE</button>
+            <button id="lowerBtn">lowercase</button>
+            <button id="titleBtn">Title Case</button>
+            <button id="wordStatsBtn">Statistik</button>
+          </div>
+          <div class="group">
+            <button id="cleanSpacesBtn">Rapikan Spasi</button>
+            <button id="copyAllBtn">Copy Semua</button>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main class="main">
+      <aside class="sidebar" id="sidebar">
+        <div class="side-card">
+          <h3>Drag & Drop</h3>
+          <p>Tarik file ke area editor untuk membuka TXT, HTML, DOCX, XLSX, CSV, atau PDF.</p>
+        </div>
+        <div class="side-card">
+          <h3>File Terakhir</h3>
+          <div id="recentList"></div>
+        </div>
+        <div class="side-card">
+          <h3>Shortcut</h3>
+          <ul>
+            <li>Ctrl+O buka file</li>
+            <li>Ctrl+S simpan</li>
+            <li>Ctrl+B/I/U format teks</li>
+            <li>Ctrl+F cari/ganti</li>
+          </ul>
+        </div>
+        <div class="side-card">
+          <h3>Status</h3>
+          <p id="sideStatus">Belum ada dokumen aktif.</p>
+        </div>
+      </aside>
+      <section class="workspace" id="workspace">
+        <div class="welcome" id="welcome">
+          <h1>Satu web untuk dokumen lokal.</h1>
+          <p>Buka, edit, drag-drop, lalu simpan file dari browser. Cocok untuk dokumen cepat tanpa buka aplikasi berat.</p>
+          <div class="cards">
+            <div class="action-card" id="welcomeOpen"><strong>Buka File</strong><span>DOCX, XLSX, CSV, PDF, TXT, HTML.</span></div>
+            <div class="action-card" id="welcomeDoc"><strong>Buat Dokumen</strong><span>Editor seperti Word dengan toolbar lengkap.</span></div>
+            <div class="action-card" id="welcomeSheet"><strong>Buat Spreadsheet</strong><span>Tabel, formula dasar, import/export XLSX.</span></div>
+          </div>
+        </div>
+        <div class="editor-wrap" id="editorWrap">
+          <article id="docEditor" class="page" contenteditable="true" spellcheck="true"></article>
+        </div>
+        <div class="sheet-wrap" id="sheetWrap">
+          <div class="sheet-shell">
+            <div class="formula-bar">
+              <input id="cellName" value="A1" readonly />
+              <input id="formulaInput" type="text" placeholder="Isi cell atau formula, contoh: =SUM(A1:A5)" />
+              <button id="formulaApplyBtn">Apply</button>
+            </div>
+            <div class="sheet-scroll"><table id="sheetTable" class="sheet"></table></div>
+          </div>
+        </div>
+        <div class="pdf-wrap" id="pdfWrap">
+          <div class="pdf-stage">
+            <div class="pdf-card">Klik tombol PDF > Teks atau Highlight, lalu klik/drag di halaman.</div>
+            <div class="pdf-canvas-wrap" id="pdfCanvasWrap"><canvas id="pdfCanvas"></canvas></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="statusbar">
+      <div><span id="statusText">Siap</span><span id="docStats">0 kata</span></div>
+      <div><span id="saveStatus">Belum disimpan</span><span id="zoomStatus">100%</span></div>
+    </footer>
+  </div>
+
+  <input id="fileInput" type="file" class="hidden" accept=".txt,.md,.html,.htm,.doc,.docx,.csv,.xls,.xlsx,.ods,.pdf" />
+  <input id="imageInput" type="file" class="hidden" accept="image/*" />
+
+  <div class="drop-overlay" id="dropOverlay" aria-hidden="true">
+    <div class="drop-box" role="dialog" aria-label="Area unggah dokumen">
+      <button class="drop-close" id="dropCloseBtn" type="button" title="Tutup" aria-label="Tutup drag and drop">&times;</button>
+      <h2>Lepaskan file di sini</h2>
+      <p>Dokumen Web akan membuka file lokal Anda.</p>
+      <div class="drop-hint">Tekan Esc atau klik tombol × untuk batal.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Siap</div>
+
+  <div class="modal-backdrop" id="findModal">
+    <div class="modal">
+      <h2>Cari dan Ganti</h2>
+      <div class="modal-grid">
+        <label>Cari <input type="text" id="findText" /></label>
+        <label>Ganti dengan <input type="text" id="replaceText" /></label>
+      </div>
+      <div class="modal-actions"><button id="findCloseBtn">Tutup</button><button id="findNextBtn">Cari</button><button class="primary" id="replaceBtn">Ganti Semua</button></div>
+    </div>
+  </div>
+
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const appRoot = $("appRoot");
+    const docEditor = $("docEditor");
+    const workspace = $("workspace");
+    const welcome = $("welcome");
+    const editorWrap = $("editorWrap");
+    const sheetWrap = $("sheetWrap");
+    const pdfWrap = $("pdfWrap");
+    const toastEl = $("toast");
+    const fileInput = $("fileInput");
+    const imageInput = $("imageInput");
+
+    const state = {
+      kind: "none",
+      fileName: "Belum ada file",
+      fileHandle: null,
+      dirty: false,
+      zoom: 1,
+      sideVisible: true,
+      focus: false,
+      sheet: { rows: 50, cols: 26, data: [] },
+      selectedCell: { r: 0, c: 0 },
+      pdfBytes: null,
+      pdfDoc: null,
+      pdfPage: 1,
+      pdfPages: 0,
+      pdfZoom: 1,
+      pdfMode: "none",
+      pdfAnnotations: [],
+      pdfDrag: null
+    };
+
+    function toast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 1800);
+    }
+
+    function setDirty(value = true) {
+      state.dirty = value;
+      $("saveStatus").textContent = value ? "Ada perubahan" : "Tersimpan";
+      $("modeBadge").textContent = state.kind === "none" ? "Siap" : state.kind.toUpperCase();
+    }
+
+    function setFileName(name) {
+      state.fileName = name || "Tanpa judul";
+      $("fileName").textContent = state.fileName;
+      addRecent(state.fileName);
+    }
+
+    function setMode(kind) {
+      state.kind = kind;
+      welcome.classList.toggle("hidden", kind !== "none");
+      editorWrap.classList.toggle("active", kind === "doc");
+      sheetWrap.classList.toggle("active", kind === "sheet");
+      pdfWrap.classList.toggle("active", kind === "pdf");
+      $("modeBadge").textContent = kind === "none" ? "Siap" : kind.toUpperCase();
+      updateStats();
+    }
+
+    function addRecent(name) {
+      if (!name || name === "Belum ada file") return;
+      const list = JSON.parse(localStorage.getItem("dokumenRecent") || "[]").filter(x => x !== name);
+      list.unshift(name);
+      localStorage.setItem("dokumenRecent", JSON.stringify(list.slice(0, 8)));
+      renderRecent();
+    }
+
+    function renderRecent() {
+      const list = JSON.parse(localStorage.getItem("dokumenRecent") || "[]");
+      $("recentList").innerHTML = list.length ? list.map(x => `<div class="recent-item"><span>${escapeHtml(x)}</span></div>`).join("") : "<p>Belum ada.</p>";
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+    }
+
+    function extOf(name) {
+      return (name.split(".").pop() || "").toLowerCase();
+    }
+
+    function blobDownload(blob, name) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function writeBlobToHandle(blob, suggestedName) {
+      if (state.fileHandle && window.showSaveFilePicker) {
+        try {
+          const writable = await state.fileHandle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          setDirty(false);
+          toast("File disimpan ke lokal");
+          return true;
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+      blobDownload(blob, suggestedName || state.fileName || "dokumen.bin");
+      setDirty(false);
+      toast("File diunduh");
+      return true;
+    }
+
+    async function saveAsBlob(blob, suggestedName, accept) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({ suggestedName, types: accept ? [{ description: "File", accept }] : undefined });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          state.fileHandle = handle;
+          setFileName(handle.name || suggestedName);
+          setDirty(false);
+          toast("File disimpan");
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+          console.warn(err);
+        }
+      }
+      blobDownload(blob, suggestedName);
+      setDirty(false);
+    }
+
+    async function openNative() {
+      if (window.showOpenFilePicker) {
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            multiple: false,
+            types: [{ description: "Dokumen", accept: {
+              "text/plain": [".txt", ".md"],
+              "text/html": [".html", ".htm"],
+              "application/pdf": [".pdf"],
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+              "text/csv": [".csv"]
+            }}]
+          });
+          const file = await handle.getFile();
+          await loadFile(file, handle);
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+          console.warn(err);
+        }
+      }
+      fileInput.click();
+    }
+
+    async function loadFile(file, handle = null) {
+      state.fileHandle = handle;
+      const ext = extOf(file.name);
+      setFileName(file.name);
+      $("statusText").textContent = "Membuka " + file.name;
+      try {
+        if (["txt", "md"].includes(ext)) {
+          docEditor.innerHTML = `<p>${escapeHtml(await file.text()).replace(/\n/g, "<br>")}</p>`;
+          setMode("doc");
+        } else if (["html", "htm", "doc"].includes(ext)) {
+          docEditor.innerHTML = await file.text();
+          setMode("doc");
+        } else if (ext === "docx") {
+          if (!window.mammoth) throw new Error("Library DOCX belum termuat. Cek koneksi internet.");
+          const arrayBuffer = await file.arrayBuffer();
+          const result = await mammoth.convertToHtml({ arrayBuffer });
+          docEditor.innerHTML = result.value || "";
+          setMode("doc");
+          toast("DOCX dibuka. Export terbaik: HTML atau Word .doc");
+        } else if (["xlsx", "xls", "ods", "csv"].includes(ext)) {
+          const arrayBuffer = await file.arrayBuffer();
+          loadWorkbook(arrayBuffer, ext);
+          setMode("sheet");
+        } else if (ext === "pdf") {
+          await loadPdf(await file.arrayBuffer());
+          setMode("pdf");
+        } else {
+          docEditor.innerHTML = `<p>${escapeHtml(await file.text()).replace(/\n/g, "<br>")}</p>`;
+          setMode("doc");
+        }
+        setDirty(false);
+        updateStats();
+        $("statusText").textContent = "Berhasil membuka file";
+      } catch (err) {
+        console.error(err);
+        toast("Gagal membuka file: " + err.message);
+        $("statusText").textContent = "Gagal membuka file";
+      }
+    }
+
+    function newDoc() {
+      state.fileHandle = null;
+      setFileName("dokumen-baru.html");
+      docEditor.innerHTML = "<h1>Judul Dokumen</h1><p>Tulis isi dokumen Anda di sini.</p>";
+      setMode("doc");
+      setDirty(true);
+      docEditor.focus();
+    }
+
+    function newSheet() {
+      state.fileHandle = null;
+      setFileName("spreadsheet-baru.xlsx");
+      state.sheet = { rows: 50, cols: 26, data: [] };
+      state.selectedCell = { r: 0, c: 0 };
+      renderSheet();
+      setMode("sheet");
+      setDirty(true);
+    }
+
+    function fullHtml() {
+      return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(state.fileName)}</title></head><body>${docEditor.innerHTML}</body></html>`;
+    }
+
+    async function saveCurrent() {
+      if (state.kind === "doc") {
+        const ext = extOf(state.fileName);
+        if (["txt", "md"].includes(ext)) {
+          await writeBlobToHandle(new Blob([docEditor.innerText], { type: "text/plain;charset=utf-8" }), state.fileName);
+        } else if (["html", "htm"].includes(ext)) {
+          await writeBlobToHandle(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), state.fileName);
+        } else if (ext === "doc") {
+          await writeBlobToHandle(new Blob([wordCompatibleHtml()], { type: "application/msword" }), state.fileName);
+        } else {
+          await saveAsBlob(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
+        }
+      } else if (state.kind === "sheet") {
+        await exportXlsx(false);
+      } else if (state.kind === "pdf") {
+        await exportAnnotatedPdf(false);
+      } else {
+        toast("Belum ada file aktif");
+      }
+    }
+
+    async function saveAsCurrent() {
+      if (state.kind === "doc") {
+        await saveAsBlob(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
+      } else if (state.kind === "sheet") {
+        await exportXlsx(true);
+      } else if (state.kind === "pdf") {
+        await exportAnnotatedPdf(true);
+      } else toast("Belum ada file aktif");
+    }
+
+    function cleanBase(name) {
+      return (name || "dokumen").replace(/\.[^.]+$/, "").replace(/[^a-z0-9-_]+/gi, "-") || "dokumen";
+    }
+
+    function wordCompatibleHtml() {
+      return `<!doctype html><html><head><meta charset="utf-8"></head><body>${docEditor.innerHTML}</body></html>`;
+    }
+
+    function exportHtml() {
+      if (state.kind !== "doc") return toast("Mode dokumen belum aktif");
+      blobDownload(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html");
+    }
+
+    function exportWordDoc() {
+      if (state.kind !== "doc") return toast("Mode dokumen belum aktif");
+      blobDownload(new Blob([wordCompatibleHtml()], { type: "application/msword" }), cleanBase(state.fileName) + ".doc");
+    }
+
+    function exec(cmd, value = null) {
+      if (state.kind !== "doc") setMode("doc");
+      docEditor.focus();
+      document.execCommand(cmd, false, value);
+      setDirty(true);
+      updateStats();
+    }
+
+    function updateStats() {
+      let stats = "0 kata";
+      if (state.kind === "doc") {
+        const text = docEditor.innerText.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        const chars = text.length;
+        stats = `${words} kata / ${chars} karakter`;
+        $("sideStatus").textContent = `Dokumen aktif. ${stats}.`;
+      } else if (state.kind === "sheet") {
+        stats = `${state.sheet.rows} baris x ${state.sheet.cols} kolom`;
+        $("sideStatus").textContent = `Spreadsheet aktif. ${stats}.`;
+      } else if (state.kind === "pdf") {
+        stats = `PDF ${state.pdfPage}/${state.pdfPages}, ${state.pdfAnnotations.length} anotasi`;
+        $("sideStatus").textContent = stats;
+      } else {
+        $("sideStatus").textContent = "Belum ada dokumen aktif.";
+      }
+      $("docStats").textContent = stats;
+      $("zoomStatus").textContent = Math.round(state.zoom * 100) + "%";
+    }
+
+    function insertHtml(html) {
+      docEditor.focus();
+      document.execCommand("insertHTML", false, html);
+      setDirty(true);
+      updateStats();
+    }
+
+    function insertTable() {
+      const rows = Math.max(1, parseInt(prompt("Jumlah baris", "3") || "3", 10));
+      const cols = Math.max(1, parseInt(prompt("Jumlah kolom", "3") || "3", 10));
+      let html = "<table><tbody>";
+      for (let r = 0; r < rows; r++) {
+        html += "<tr>";
+        for (let c = 0; c < cols; c++) html += "<td>&nbsp;</td>";
+        html += "</tr>";
+      }
+      html += "</tbody></table>";
+      insertHtml(html);
+    }
+
+    function insertLink() {
+      const url = prompt("Masukkan URL", "https://");
+      if (!url) return;
+      exec("createLink", url);
+    }
+
+    function transformSelection(fn) {
+      if (state.kind !== "doc") return;
+      const sel = window.getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) {
+        docEditor.innerText = fn(docEditor.innerText);
+      } else {
+        const text = sel.toString();
+        document.execCommand("insertText", false, fn(text));
+      }
+      setDirty(true);
+      updateStats();
+    }
+
+    function titleCase(str) {
+      return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+    }
+
+    function applyPageLayout() {
+      const size = $("pageSizeSelect").value;
+      const margin = $("marginSelect").value;
+      const sizes = { a4: [794, 1123], letter: [816, 1056], legal: [816, 1344] };
+      const margins = { normal: [76, 86], narrow: [38, 42], wide: [96, 112] };
+      const [w, h] = sizes[size];
+      const [tb, lr] = margins[margin];
+      docEditor.style.width = w + "px";
+      docEditor.style.minHeight = h + "px";
+      docEditor.style.padding = `${tb}px ${lr}px`;
+      setDirty(true);
+    }
+
+    function setZoom(z) {
+      state.zoom = Math.max(.5, Math.min(2.5, z));
+      docEditor.style.transform = `scale(${state.zoom})`;
+      docEditor.style.marginBottom = `${30 + (state.zoom - 1) * 1123}px`;
+      $("zoomSelect").value = String(state.zoom);
+      updateStats();
+    }
+
+    function loadWorkbook(arrayBuffer, ext) {
+      if (!window.XLSX) throw new Error("Library spreadsheet belum termuat. Cek koneksi internet.");
+      const wb = XLSX.read(arrayBuffer, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
+      const rows = Math.max(50, data.length || 1);
+      const cols = Math.max(26, ...data.map(r => r.length || 0), 1);
+      state.sheet = { rows, cols, data };
+      renderSheet();
+    }
+
+    function ensureSheetSize(r, c) {
+      while (state.sheet.data.length <= r) state.sheet.data.push([]);
+      while (state.sheet.data[r].length <= c) state.sheet.data[r].push("");
+    }
+
+    function colName(index) {
+      let s = "";
+      let n = index + 1;
+      while (n > 0) {
+        const m = (n - 1) % 26;
+        s = String.fromCharCode(65 + m) + s;
+        n = Math.floor((n - m) / 26);
+      }
+      return s;
+    }
+
+    function cellRef(r, c) { return colName(c) + (r + 1); }
+
+    function parseRef(ref) {
+      const m = /^([A-Z]+)(\d+)$/i.exec(ref.trim());
+      if (!m) return null;
+      let c = 0;
+      for (const ch of m[1].toUpperCase()) c = c * 26 + (ch.charCodeAt(0) - 64);
+      return { r: parseInt(m[2], 10) - 1, c: c - 1 };
+    }
+
+    function rawCell(r, c) {
+      return (state.sheet.data[r] && state.sheet.data[r][c] != null) ? String(state.sheet.data[r][c]) : "";
+    }
+
+    function numberCell(r, c) {
+      const v = displayCell(r, c, new Set([`${r},${c}`]));
+      const n = parseFloat(String(v).replace(/,/g, ""));
+      return isNaN(n) ? 0 : n;
+    }
+
+    function rangeValues(range) {
+      const parts = range.split(":");
+      const a = parseRef(parts[0]);
+      const b = parseRef(parts[1] || parts[0]);
+      if (!a || !b) return [];
+      const vals = [];
+      const r1 = Math.min(a.r, b.r), r2 = Math.max(a.r, b.r);
+      const c1 = Math.min(a.c, b.c), c2 = Math.max(a.c, b.c);
+      for (let r = r1; r <= r2; r++) for (let c = c1; c <= c2; c++) vals.push(numberCell(r, c));
+      return vals;
+    }
+
+    function displayCell(r, c, seen = new Set()) {
+      const raw = rawCell(r, c);
+      if (!raw.startsWith("=")) return raw;
+      const key = `${r},${c}`;
+      if (seen.has(key)) return "#CYCLE";
+      seen.add(key);
+      try {
+        let expr = raw.slice(1).trim();
+        expr = expr.replace(/(SUM|AVG|AVERAGE|MIN|MAX|COUNT)\(([A-Z]+\d+(?::[A-Z]+\d+)?)\)/gi, (_, fn, range) => {
+          const vals = rangeValues(range);
+          if (fn.toUpperCase() === "SUM") return vals.reduce((a, b) => a + b, 0);
+          if (["AVG", "AVERAGE"].includes(fn.toUpperCase())) return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+          if (fn.toUpperCase() === "MIN") return vals.length ? Math.min(...vals) : 0;
+          if (fn.toUpperCase() === "MAX") return vals.length ? Math.max(...vals) : 0;
+          if (fn.toUpperCase() === "COUNT") return vals.filter(v => !isNaN(v)).length;
+          return 0;
+        });
+        expr = expr.replace(/\b[A-Z]+\d+\b/gi, (ref) => {
+          const p = parseRef(ref);
+          return p ? numberCell(p.r, p.c) : 0;
+        });
+        if (!/^[0-9+\-*/().,\s]+$/.test(expr)) return "#ERR";
+        const val = Function(`"use strict"; return (${expr});`)();
+        return Number.isFinite(val) ? Math.round(val * 100000000) / 100000000 : "#ERR";
+      } catch (e) {
+        return "#ERR";
+      }
+    }
+
+    function renderSheet() {
+      const table = $("sheetTable");
+      let html = "<thead><tr><th class='row-head'></th>";
+      for (let c = 0; c < state.sheet.cols; c++) html += `<th>${colName(c)}</th>`;
+      html += "</tr></thead><tbody>";
+      for (let r = 0; r < state.sheet.rows; r++) {
+        html += `<tr><td class='row-head'>${r + 1}</td>`;
+        for (let c = 0; c < state.sheet.cols; c++) {
+          const value = escapeHtml(String(displayCell(r, c)));
+          html += `<td><input data-r="${r}" data-c="${c}" value="${value}" /></td>`;
+        }
+        html += "</tr>";
+      }
+      html += "</tbody>";
+      table.innerHTML = html;
+      updateStats();
+    }
+
+    function selectCell(r, c, input) {
+      state.selectedCell = { r, c };
+      $("cellName").value = cellRef(r, c);
+      $("formulaInput").value = rawCell(r, c);
+      if (input) input.value = rawCell(r, c);
+    }
+
+    function applyFormulaBar() {
+      const { r, c } = state.selectedCell;
+      ensureSheetSize(r, c);
+      state.sheet.data[r][c] = $("formulaInput").value;
+      renderSheet();
+      setDirty(true);
+    }
+
+    async function exportXlsx(forceSaveAs = false) {
+      if (state.kind !== "sheet") return toast("Mode spreadsheet belum aktif");
+      const data = [];
+      for (let r = 0; r < state.sheet.rows; r++) {
+        const row = [];
+        for (let c = 0; c < state.sheet.cols; c++) row.push(rawCell(r, c));
+        data.push(row);
+      }
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+      const out = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([out], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const name = cleanBase(state.fileName) + ".xlsx";
+      if (forceSaveAs) await saveAsBlob(blob, name, { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] });
+      else await writeBlobToHandle(blob, name);
+    }
+
+    function exportCsv() {
+      if (state.kind !== "sheet") return toast("Mode spreadsheet belum aktif");
+      const lines = [];
+      for (let r = 0; r < state.sheet.rows; r++) {
+        const row = [];
+        for (let c = 0; c < state.sheet.cols; c++) row.push('"' + rawCell(r, c).replace(/"/g, '""') + '"');
+        lines.push(row.join(","));
+      }
+      blobDownload(new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" }), cleanBase(state.fileName) + ".csv");
+    }
+
+    function sheetFunction(fn) {
+      const range = prompt(`Range untuk ${fn}`, "A1:A5");
+      if (!range) return;
+      const { r, c } = state.selectedCell;
+      ensureSheetSize(r, c);
+      state.sheet.data[r][c] = `=${fn}(${range.toUpperCase()})`;
+      renderSheet();
+      setDirty(true);
+    }
+
+    function sortBySelectedColumn(dir) {
+      const c = state.selectedCell.c;
+      state.sheet.data.sort((a, b) => String(a[c] || "").localeCompare(String(b[c] || "")) * dir);
+      renderSheet();
+      setDirty(true);
+    }
+
+    async function loadPdf(arrayBuffer) {
+      if (!window.pdfjsLib || !window.PDFLib) throw new Error("Library PDF belum termuat. Cek koneksi internet.");
+      state.pdfBytes = arrayBuffer;
+      state.pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+      state.pdfPages = state.pdfDoc.numPages;
+      state.pdfPage = 1;
+      state.pdfAnnotations = [];
+      await renderPdfPage();
+    }
+
+    async function renderPdfPage() {
+      if (!state.pdfDoc) return;
+      const page = await state.pdfDoc.getPage(state.pdfPage);
+      const viewport = page.getViewport({ scale: state.pdfZoom });
+      const canvas = $("pdfCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      drawPdfAnnotations(ctx, canvas.width, canvas.height);
+      $("pdfPageInfo").textContent = `Halaman ${state.pdfPage}/${state.pdfPages}`;
+      updateStats();
+    }
+
+    function drawPdfAnnotations(ctx, w, h) {
+      const anns = state.pdfAnnotations.filter(a => a.page === state.pdfPage);
+      for (const a of anns) {
+        if (a.type === "text") {
+          ctx.save();
+          ctx.font = `${a.size || 16}px Arial`;
+          ctx.fillStyle = a.color || "#dc2626";
+          ctx.fillText(a.text, a.x * w, a.y * h);
+          ctx.restore();
+        } else if (a.type === "highlight") {
+          ctx.save();
+          ctx.fillStyle = "rgba(255, 241, 118, .45)";
+          ctx.fillRect(a.x * w, a.y * h, a.w * w, a.h * h);
+          ctx.strokeStyle = "rgba(202, 138, 4, .8)";
+          ctx.strokeRect(a.x * w, a.y * h, a.w * w, a.h * h);
+          ctx.restore();
+        }
+      }
+    }
+
+    async function exportAnnotatedPdf(forceSaveAs = false) {
+      if (state.kind !== "pdf" || !state.pdfBytes) return toast("PDF belum aktif");
+      const { PDFDocument, rgb, StandardFonts } = PDFLib;
+      const doc = await PDFDocument.load(state.pdfBytes.slice(0));
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+      for (const a of state.pdfAnnotations) {
+        const page = doc.getPage(a.page - 1);
+        const pw = page.getWidth();
+        const ph = page.getHeight();
+        if (a.type === "text") {
+          page.drawText(a.text, { x: a.x * pw, y: ph - a.y * ph, size: a.size || 12, font, color: rgb(0.86, 0.15, 0.15) });
+        } else if (a.type === "highlight") {
+          page.drawRectangle({ x: a.x * pw, y: ph - (a.y + a.h) * ph, width: a.w * pw, height: a.h * ph, color: rgb(1, .93, .18), opacity: .35 });
+        }
+      }
+      const bytes = await doc.save();
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const name = cleanBase(state.fileName) + "-edit.pdf";
+      if (forceSaveAs) await saveAsBlob(blob, name, { "application/pdf": [".pdf"] });
+      else await writeBlobToHandle(blob, name);
+    }
+
+    function openFindModal() { $("findModal").classList.add("active"); $("findText").focus(); }
+    function closeFindModal() { $("findModal").classList.remove("active"); }
+    function findNext() {
+      const q = $("findText").value;
+      if (!q) return;
+      if (state.kind === "doc") {
+        docEditor.focus();
+        document.execCommand("findString", false, q);
+      } else if (state.kind === "sheet") {
+        for (let r = 0; r < state.sheet.rows; r++) {
+          for (let c = 0; c < state.sheet.cols; c++) {
+            if (rawCell(r, c).toLowerCase().includes(q.toLowerCase())) {
+              const input = document.querySelector(`input[data-r="${r}"][data-c="${c}"]`);
+              if (input) { input.focus(); selectCell(r, c, input); return; }
+            }
+          }
+        }
+        toast("Tidak ditemukan");
+      }
+    }
+    function replaceAll() {
+      const q = $("findText").value, rpl = $("replaceText").value;
+      if (!q) return;
+      if (state.kind === "doc") {
+        const safe = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        docEditor.innerHTML = docEditor.innerHTML.replace(new RegExp(safe, "gi"), escapeHtml(rpl));
+      } else if (state.kind === "sheet") {
+        for (let r = 0; r < state.sheet.rows; r++) for (let c = 0; c < state.sheet.cols; c++) {
+          const v = rawCell(r, c);
+          if (v.includes(q)) { ensureSheetSize(r, c); state.sheet.data[r][c] = v.split(q).join(rpl); }
+        }
+        renderSheet();
+      }
+      setDirty(true);
+      closeFindModal();
+    }
+
+    document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.add("active");
+    }));
+
+    document.querySelectorAll("[data-cmd]").forEach(btn => btn.addEventListener("click", () => exec(btn.dataset.cmd)));
+    $("fontSelect").addEventListener("change", e => exec("fontName", e.target.value));
+    $("fontSizeSelect").addEventListener("change", e => exec("fontSize", e.target.value));
+    $("styleSelect").addEventListener("change", e => exec("formatBlock", e.target.value));
+    $("textColor").addEventListener("input", e => exec("foreColor", e.target.value));
+    $("highlightColor").addEventListener("input", e => exec("hiliteColor", e.target.value));
+
+    $("openBtn").onclick = openNative;
+    $("welcomeOpen").onclick = openNative;
+    $("newDocBtn").onclick = newDoc;
+    $("welcomeDoc").onclick = newDoc;
+    $("newSheetBtn").onclick = newSheet;
+    $("welcomeSheet").onclick = newSheet;
+    $("saveBtn").onclick = saveCurrent;
+    $("saveAsBtn").onclick = saveAsCurrent;
+    $("printBtn").onclick = () => window.print();
+    $("downloadHtmlBtn").onclick = exportHtml;
+    $("downloadDocBtn").onclick = exportWordDoc;
+    $("downloadXlsxBtn").onclick = () => exportXlsx(true);
+    $("clearBtn").onclick = () => { if (confirm("Bersihkan workspace?")) { docEditor.innerHTML = ""; state.sheet = { rows: 50, cols: 26, data: [] }; state.pdfDoc = null; state.pdfBytes = null; setMode("none"); setFileName("Belum ada file"); setDirty(false); } };
+
+    $("insertTableBtn").onclick = insertTable;
+    $("insertImageBtn").onclick = () => imageInput.click();
+    $("insertLinkBtn").onclick = insertLink;
+    $("insertHrBtn").onclick = () => exec("insertHorizontalRule");
+    $("insertPageBreakBtn").onclick = () => insertHtml('<div class="page-break"></div>');
+    $("insertDateBtn").onclick = () => insertHtml(new Date().toLocaleDateString("id-ID"));
+    $("insertCheckboxBtn").onclick = () => insertHtml('<label><input type="checkbox"> Checklist</label>');
+    $("insertSignatureBtn").onclick = () => insertHtml('<p style="margin-top:60px">Hormat saya,</p><p style="margin-top:70px">________________________</p>');
+    $("insertCodeBtn").onclick = () => insertHtml('<pre style="background:#f3f4f6;padding:12px;border-radius:10px"><code>// tulis kode di sini</code></pre>');
+
+    $("pageSizeSelect").onchange = applyPageLayout;
+    $("marginSelect").onchange = applyPageLayout;
+    $("zoomSelect").onchange = e => setZoom(parseFloat(e.target.value));
+    $("lineHeightBtn").onclick = () => { docEditor.style.lineHeight = prompt("Line height", docEditor.style.lineHeight || "1.5") || docEditor.style.lineHeight; setDirty(true); };
+    $("clearDocStyleBtn").onclick = () => { docEditor.removeAttribute("style"); docEditor.className = "page"; setZoom(1); setDirty(true); };
+
+    $("themeBtn").onclick = () => { document.body.dataset.theme = document.body.dataset.theme === "dark" ? "" : "dark"; };
+    $("fullscreenBtn").onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    $("toggleSidebarBtn").onclick = () => { state.sideVisible = !state.sideVisible; $("sidebar").style.display = state.sideVisible ? "block" : "none"; document.documentElement.style.setProperty("--sidebar-w", state.sideVisible ? "250px" : "0px"); };
+    $("focusBtn").onclick = () => { state.focus = !state.focus; $("sidebar").style.display = state.focus ? "none" : (state.sideVisible ? "block" : "none"); document.documentElement.style.setProperty("--ribbon-h", state.focus ? "44px" : "146px"); document.querySelector(".tabs").style.display = state.focus ? "none" : "flex"; document.querySelector(".ribbon").style.display = state.focus ? "none" : "flex"; };
+    $("readBtn").onclick = () => { docEditor.contentEditable = docEditor.contentEditable === "false" ? "true" : "false"; toast(docEditor.contentEditable === "false" ? "Mode baca aktif" : "Mode edit aktif"); };
+    $("spellBtn").onclick = () => { docEditor.spellcheck = !docEditor.spellcheck; toast("Spellcheck: " + (docEditor.spellcheck ? "aktif" : "mati")); };
+    $("zoomMinusBtn").onclick = () => setZoom(state.zoom - .1);
+    $("zoomPlusBtn").onclick = () => setZoom(state.zoom + .1);
+    $("fitBtn").onclick = () => { const z = Math.max(.55, Math.min(1.4, (workspace.clientWidth - 70) / docEditor.offsetWidth)); setZoom(z); };
+
+    $("findBtn").onclick = openFindModal;
+    $("findCloseBtn").onclick = closeFindModal;
+    $("findNextBtn").onclick = findNext;
+    $("replaceBtn").onclick = replaceAll;
+    $("upperBtn").onclick = () => transformSelection(s => s.toUpperCase());
+    $("lowerBtn").onclick = () => transformSelection(s => s.toLowerCase());
+    $("titleBtn").onclick = () => transformSelection(titleCase);
+    $("cleanSpacesBtn").onclick = () => transformSelection(s => s.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n"));
+    $("copyAllBtn").onclick = async () => { await navigator.clipboard.writeText(state.kind === "doc" ? docEditor.innerText : JSON.stringify(state.sheet.data)); toast("Disalin"); };
+    $("wordStatsBtn").onclick = () => alert($("docStats").textContent);
+
+    imageInput.onchange = () => {
+      const file = imageInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => insertHtml(`<img src="${reader.result}" alt="gambar">`);
+      reader.readAsDataURL(file);
+      imageInput.value = "";
+    };
+
+    fileInput.onchange = () => { const file = fileInput.files[0]; if (file) loadFile(file, null); fileInput.value = ""; };
+
+    docEditor.addEventListener("input", () => { setDirty(true); updateStats(); });
+
+    $("sheetTable").addEventListener("focusin", e => {
+      if (e.target.matches("input[data-r]")) selectCell(parseInt(e.target.dataset.r), parseInt(e.target.dataset.c), e.target);
+    });
+    $("sheetTable").addEventListener("input", e => {
+      if (e.target.matches("input[data-r]")) {
+        const r = parseInt(e.target.dataset.r), c = parseInt(e.target.dataset.c);
+        ensureSheetSize(r, c);
+        state.sheet.data[r][c] = e.target.value;
+        $("formulaInput").value = e.target.value;
+        setDirty(true);
+      }
+    });
+    $("sheetTable").addEventListener("focusout", e => {
+      if (e.target.matches("input[data-r]")) e.target.value = displayCell(parseInt(e.target.dataset.r), parseInt(e.target.dataset.c));
+    });
+    $("sheetTable").addEventListener("paste", e => {
+      if (!e.target.matches("input[data-r]")) return;
+      const text = e.clipboardData.getData("text");
+      if (!text.includes("\t") && !text.includes("\n")) return;
+      e.preventDefault();
+      const sr = parseInt(e.target.dataset.r), sc = parseInt(e.target.dataset.c);
+      text.trimEnd().split(/\r?\n/).forEach((line, ri) => line.split("\t").forEach((val, ci) => { ensureSheetSize(sr + ri, sc + ci); state.sheet.data[sr + ri][sc + ci] = val; }));
+      renderSheet();
+      setDirty(true);
+    });
+    $("formulaApplyBtn").onclick = applyFormulaBar;
+    $("formulaInput").addEventListener("keydown", e => { if (e.key === "Enter") applyFormulaBar(); });
+    $("sheetAddRowBtn").onclick = () => { state.sheet.rows += 10; renderSheet(); setDirty(true); };
+    $("sheetAddColBtn").onclick = () => { state.sheet.cols += 5; renderSheet(); setDirty(true); };
+    $("sheetDelRowBtn").onclick = () => { if (state.sheet.rows > 1) { state.sheet.data.splice(state.selectedCell.r, 1); state.sheet.rows--; renderSheet(); setDirty(true); } };
+    $("sheetDelColBtn").onclick = () => { if (state.sheet.cols > 1) { state.sheet.data.forEach(r => r.splice(state.selectedCell.c, 1)); state.sheet.cols--; renderSheet(); setDirty(true); } };
+    $("sumBtn").onclick = () => sheetFunction("SUM");
+    $("avgBtn").onclick = () => sheetFunction("AVG");
+    $("minBtn").onclick = () => sheetFunction("MIN");
+    $("maxBtn").onclick = () => sheetFunction("MAX");
+    $("countBtn").onclick = () => sheetFunction("COUNT");
+    $("sortAscBtn").onclick = () => sortBySelectedColumn(1);
+    $("sortDescBtn").onclick = () => sortBySelectedColumn(-1);
+    $("clearCellBtn").onclick = () => { const { r, c } = state.selectedCell; ensureSheetSize(r, c); state.sheet.data[r][c] = ""; renderSheet(); setDirty(true); };
+    $("csvBtn").onclick = exportCsv;
+
+    $("pdfPrevBtn").onclick = async () => { if (state.pdfPage > 1) { state.pdfPage--; await renderPdfPage(); } };
+    $("pdfNextBtn").onclick = async () => { if (state.pdfPage < state.pdfPages) { state.pdfPage++; await renderPdfPage(); } };
+    $("pdfTextBtn").onclick = () => { state.pdfMode = state.pdfMode === "text" ? "none" : "text"; toast("Mode PDF: " + state.pdfMode); };
+    $("pdfHighlightBtn").onclick = () => { state.pdfMode = state.pdfMode === "highlight" ? "none" : "highlight"; toast("Mode PDF: " + state.pdfMode); };
+    $("pdfLastDelBtn").onclick = async () => { state.pdfAnnotations.pop(); await renderPdfPage(); setDirty(true); };
+    $("pdfExportBtn").onclick = () => exportAnnotatedPdf(true);
+    $("pdfZoomSelect").onchange = async e => { state.pdfZoom = parseFloat(e.target.value); await renderPdfPage(); };
+
+    const pdfCanvas = $("pdfCanvas");
+    pdfCanvas.addEventListener("click", async e => {
+      if (state.pdfMode !== "text" || !state.pdfDoc) return;
+      const text = prompt("Teks anotasi", "Catatan");
+      if (!text) return;
+      const rect = pdfCanvas.getBoundingClientRect();
+      state.pdfAnnotations.push({ type: "text", page: state.pdfPage, text, x: (e.clientX - rect.left) / pdfCanvas.width, y: (e.clientY - rect.top) / pdfCanvas.height, size: 16 });
+      setDirty(true);
+      await renderPdfPage();
+    });
+    pdfCanvas.addEventListener("mousedown", e => {
+      if (state.pdfMode !== "highlight" || !state.pdfDoc) return;
+      const rect = pdfCanvas.getBoundingClientRect();
+      state.pdfDrag = { x: (e.clientX - rect.left) / pdfCanvas.width, y: (e.clientY - rect.top) / pdfCanvas.height };
+    });
+    pdfCanvas.addEventListener("mouseup", async e => {
+      if (state.pdfMode !== "highlight" || !state.pdfDrag) return;
+      const rect = pdfCanvas.getBoundingClientRect();
+      const x2 = (e.clientX - rect.left) / pdfCanvas.width, y2 = (e.clientY - rect.top) / pdfCanvas.height;
+      const x = Math.min(state.pdfDrag.x, x2), y = Math.min(state.pdfDrag.y, y2);
+      const w = Math.abs(x2 - state.pdfDrag.x), h = Math.abs(y2 - state.pdfDrag.y);
+      if (w > .005 && h > .005) state.pdfAnnotations.push({ type: "highlight", page: state.pdfPage, x, y, w, h });
+      state.pdfDrag = null;
+      setDirty(true);
+      await renderPdfPage();
+    });
+
+    let dragDepth = 0;
+    let dragLastSeen = 0;
+    let dragWatchTimer = null;
+    const dropOverlay = $("dropOverlay");
+
+    function dragHasFiles(e) {
+      const types = Array.from(e.dataTransfer?.types || []);
+      return types.includes("Files");
+    }
+
+    function showDropOverlay() {
+      dragLastSeen = Date.now();
+      dropOverlay.classList.add("active");
+      dropOverlay.setAttribute("aria-hidden", "false");
+      clearInterval(dragWatchTimer);
+      dragWatchTimer = setInterval(() => {
+        if (Date.now() - dragLastSeen > 900) hideDropOverlay();
+      }, 300);
+    }
+
+    function hideDropOverlay() {
+      dragDepth = 0;
+      clearInterval(dragWatchTimer);
+      dragWatchTimer = null;
+      dropOverlay.classList.remove("active");
+      dropOverlay.setAttribute("aria-hidden", "true");
+    }
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach(type => {
+      window.addEventListener(type, e => {
+        if (!dragHasFiles(e)) return;
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
+    });
+
+    window.addEventListener("dragenter", e => {
+      if (!dragHasFiles(e)) return;
+      dragDepth += 1;
+      showDropOverlay();
+    });
+
+    window.addEventListener("dragover", e => {
+      if (!dragHasFiles(e)) return;
+      dragLastSeen = Date.now();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+      if (!dropOverlay.classList.contains("active")) showDropOverlay();
+    });
+
+    window.addEventListener("dragleave", e => {
+      if (!dragHasFiles(e)) return;
+      dragDepth = Math.max(0, dragDepth - 1);
+      if (dragDepth === 0 || e.clientX <= 0 || e.clientY <= 0 || e.clientX >= innerWidth || e.clientY >= innerHeight) hideDropOverlay();
+    });
+
+    window.addEventListener("drop", e => {
+      if (!dragHasFiles(e)) return;
+      const file = e.dataTransfer?.files?.[0];
+      hideDropOverlay();
+      if (file) loadFile(file, null);
+    });
+
+    $("dropCloseBtn").addEventListener("click", hideDropOverlay);
+    dropOverlay.addEventListener("click", e => { if (e.target === dropOverlay) hideDropOverlay(); });
+    window.addEventListener("blur", hideDropOverlay);
+
+    window.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); saveCurrent(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "o") { e.preventDefault(); openNative(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") { e.preventDefault(); openFindModal(); }
+      if (e.key === "Escape") hideDropOverlay();
+    });
+
+    window.addEventListener("beforeunload", e => {
+      if (!state.dirty) return;
+      e.preventDefault();
+      e.returnValue = "";
+    });
+
+    renderRecent();
+    renderSheet();
+    updateStats();
+  </script>
+</body>
+</html>
