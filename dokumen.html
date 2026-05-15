@@ -53,6 +53,16 @@
 [data-theme=dark] .pdf-tool.warn{background:rgba(245,158,11,.18);color:#fbbf24;border-color:rgba(245,158,11,.32)}
 [data-theme=dark] .pdf-tool.danger{background:rgba(239,68,68,.18);color:#fca5a5;border-color:rgba(239,68,68,.32)}
 
+/* PDF toolbar v2: banyak fitur, tetapi tetap rapi dan hanya satu dropdown terbuka. */
+.pdf-toolbar-grouped{width:calc(100% - 16px);max-width:none;align-items:center;gap:7px;overflow:visible}
+.pdf-menu-body.wide{min-width:460px;max-width:min(760px,94vw)}
+.pdf-menu-body .pdf-tool{min-width:0}
+.pdf-style-smart .palette-row{align-items:center;flex-wrap:wrap}
+.pdf-toolbar-grouped .pdf-menu summary span{font-weight:900}
+.pdf-annotation.locked{outline:2px dashed #f59e0b!important;outline-offset:2px}
+.pdf-annotation.locked::after{content:'🔒';position:absolute;right:-10px;top:-12px;width:20px;height:20px;border-radius:999px;background:#f59e0b;color:#111827;font-size:12px;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.24);z-index:12}
+@media(max-width:760px){.pdf-menu-body.wide{min-width:min(92vw,420px)}.pdf-toolbar-grouped{gap:5px}.pdf-toolbar-grouped .pdf-menu summary span{display:inline!important}}
+
 </style>
 </head>
 <body>
@@ -63,8 +73,8 @@
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview menjaga layout lebih rapi. Edit Cepat membuat isi bisa diketik dan diformat.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
-  <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body">
-    <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih</span></button>
+  <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide">
+    <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih/Geser</span></button>
     <button class="pdf-tool" data-pdf-tool="text"><i data-lucide="type"></i><span>Teks</span></button>
     <button class="pdf-tool" data-pdf-tool="highlight"><i data-lucide="highlighter"></i><span>Highlight</span></button>
     <button class="pdf-tool" data-pdf-tool="rect"><i data-lucide="square"></i><span>Kotak</span></button>
@@ -73,48 +83,79 @@
     <button class="pdf-tool" data-pdf-tool="arrow"><i data-lucide="move-up-right"></i><span>Panah</span></button>
     <button class="pdf-tool" data-pdf-tool="draw"><i data-lucide="pen-line"></i><span>Coret</span></button>
     <button class="pdf-tool danger" data-pdf-tool="redact"><i data-lucide="shield-x"></i><span>Sensor</span></button>
+    <button class="pdf-tool" data-pdf-tool="erase"><i data-lucide="eraser"></i><span>Hapus Klik</span></button>
   </div></details>
   <details class="pdf-menu pdf-style-menu"><summary><i data-lucide="palette"></i><span>Warna & Gaya</span></summary><div class="pdf-menu-body pdf-style-smart" id="pdfStyleSmart">
     <div class="smart-head"><strong id="pdfStyleTitle">Gaya alat: Pilih</strong><span id="pdfStyleDesc">Pilih alat PDF atau klik objek untuk mengubah warna dan ukurannya.</span></div>
     <div class="smart-row" id="pdfMainColorRow"><label id="pdfMainColorLabel">Warna</label><span class="swatch-preview" id="pdfMainSwatch"></span><select data-action="pdfSmartMainPreset" id="pdfSmartMainPreset"><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="#ffffff">Putih</option><option value="__custom">Custom</option></select><input type="color" value="#2563eb" data-action="pdfSmartMainColor" id="pdfSmartMainColor"></div>
     <div class="smart-row hidden" id="pdfFillColorRow"><label id="pdfFillColorLabel">Isi</label><span class="swatch-preview transparent" id="pdfFillSwatch"></span><select data-action="pdfSmartFillPreset" id="pdfSmartFillPreset"><option value="transparent">Transparan</option><option value="#ffffff">Putih</option><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="__custom">Custom</option></select><input type="color" value="#ffffff" data-action="pdfSmartFillColor" id="pdfSmartFillColor"></div>
-    <div class="smart-row hidden" id="pdfTextSizeRow"><label>Ukuran teks</label><select data-action="pdfSmartTextSize" id="pdfSmartTextSize"><option value="10">10</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="20">20</option><option value="24">24</option><option value="32">32</option><option value="48">48</option></select></div>
-    <div class="smart-row hidden" id="pdfStrokeRow"><label>Ketebalan</label><select data-action="pdfSmartStrokeWidth" id="pdfSmartStrokeWidth"><option value="1">1px</option><option value="2">2px</option><option value="3">3px</option><option value="5">5px</option><option value="8">8px</option><option value="12">12px</option></select></div>
-    <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><select data-action="pdfSmartOpacity" id="pdfSmartOpacity"><option value="0.18">Tipis</option><option value="0.38">Normal</option><option value="0.60">Tebal</option><option value="0.85">Solid</option></select></div>
+    <div class="smart-row hidden" id="pdfTextSizeRow"><label>Ukuran teks</label><select data-action="pdfSmartTextSize" id="pdfSmartTextSize"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="20">20</option><option value="24">24</option><option value="32">32</option><option value="48">48</option><option value="64">64</option></select></div>
+    <div class="smart-row hidden" id="pdfStrokeRow"><label>Ketebalan</label><select data-action="pdfSmartStrokeWidth" id="pdfSmartStrokeWidth"><option value="1">1px</option><option value="2">2px</option><option value="3">3px</option><option value="5">5px</option><option value="8">8px</option><option value="12">12px</option><option value="18">18px</option></select></div>
+    <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><select data-action="pdfSmartOpacity" id="pdfSmartOpacity"><option value="0.12">Sangat tipis</option><option value="0.18">Tipis</option><option value="0.38">Normal</option><option value="0.60">Tebal</option><option value="0.85">Solid</option></select></div>
+    <div class="palette-row"><button style="--sw:#111827" data-action="pdfPresetColor" data-color="#111827" title="Hitam"></button><button style="--sw:#ef4444" data-action="pdfPresetColor" data-color="#ef4444" title="Merah"></button><button style="--sw:#f97316" data-action="pdfPresetColor" data-color="#f97316" title="Oranye"></button><button style="--sw:#facc15" data-action="pdfPresetColor" data-color="#facc15" title="Kuning"></button><button style="--sw:#22c55e" data-action="pdfPresetColor" data-color="#22c55e" title="Hijau"></button><button style="--sw:#2563eb" data-action="pdfPresetColor" data-color="#2563eb" title="Biru"></button><button style="--sw:#9333ea" data-action="pdfPresetColor" data-color="#9333ea" title="Ungu"></button><button style="--sw:#ffffff" data-action="pdfPresetColor" data-color="#ffffff" title="Putih"></button><button class="pdf-tool" data-action="pdfSetFillTransparent"><i data-lucide="droplets"></i><span>Isi Transparan</span></button></div>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body">
+  <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body wide">
     <button class="pdf-tool" data-pdf-tool="note"><i data-lucide="sticky-note"></i><span>Note</span></button>
-    <button class="pdf-tool" data-pdf-tool="stamp"><i data-lucide="badge-check"></i><span>Stempel</span></button>
+    <button class="pdf-tool" data-pdf-tool="stamp"><i data-lucide="badge-check"></i><span>Stempel bebas</span></button>
+    <button class="pdf-tool" data-action="pdfAddApprovedStamp"><i data-lucide="badge-check"></i><span>APPROVED</span></button>
+    <button class="pdf-tool" data-action="pdfAddDraftStamp"><i data-lucide="badge"></i><span>DRAFT</span></button>
+    <button class="pdf-tool" data-action="pdfAddRejectedStamp"><i data-lucide="badge-x"></i><span>REJECTED</span></button>
+    <button class="pdf-tool" data-action="pdfAddDateStamp"><i data-lucide="calendar-plus"></i><span>Tanggal</span></button>
+    <button class="pdf-tool" data-action="pdfAddWatermarkDraft"><i data-lucide="stamp"></i><span>Watermark</span></button>
+    <button class="pdf-tool" data-action="pdfAddPageNumbers"><i data-lucide="list-ordered"></i><span>Nomor Halaman</span></button>
     <button class="pdf-tool" data-pdf-tool="check"><i data-lucide="check"></i><span>Ceklis</span></button>
     <button class="pdf-tool" data-pdf-tool="cross"><i data-lucide="x"></i><span>Silang</span></button>
-    <button class="pdf-tool" data-action="pdfImageStamp"><i data-lucide="image-plus"></i><span>Gambar</span></button>
+    <button class="pdf-tool" data-action="pdfImageStamp"><i data-lucide="image-plus"></i><span>Gambar/TTD</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="move-3d"></i><span>Objek</span></summary><div class="pdf-menu-body">
+  <details class="pdf-menu"><summary><i data-lucide="move-3d"></i><span>Objek</span></summary><div class="pdf-menu-body wide">
     <button class="pdf-tool" data-action="pdfEditSelectedText"><i data-lucide="pencil"></i><span>Edit Teks</span></button>
-    <button class="pdf-tool" data-action="pdfRotateSelectedLeft"><i data-lucide="rotate-ccw"></i><span>Putar -15°</span></button>
-    <button class="pdf-tool" data-action="pdfRotateSelectedRight"><i data-lucide="rotate-cw"></i><span>Putar +15°</span></button>
-    <button class="pdf-tool" data-action="pdfGrowSelected"><i data-lucide="maximize"></i><span>Perbesar</span></button>
-    <button class="pdf-tool" data-action="pdfShrinkSelected"><i data-lucide="minimize"></i><span>Perkecil</span></button>
-    <button class="pdf-tool" data-action="pdfBringFront"><i data-lucide="bring-to-front"></i><span>Depan</span></button>
-    <button class="pdf-tool" data-action="pdfSendBack"><i data-lucide="send-to-back"></i><span>Belakang</span></button>
     <button class="pdf-tool" data-action="pdfDuplicateSelected"><i data-lucide="copy-plus"></i><span>Duplikat</span></button>
     <button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus</span></button>
+    <button class="pdf-tool" data-action="pdfCopySelected"><i data-lucide="copy"></i><span>Copy</span></button>
+    <button class="pdf-tool" data-action="pdfPasteObject"><i data-lucide="clipboard-paste"></i><span>Paste</span></button>
+    <button class="pdf-tool" data-action="pdfLockSelected"><i data-lucide="lock"></i><span>Kunci</span></button>
+    <button class="pdf-tool" data-action="pdfUnlockSelected"><i data-lucide="unlock"></i><span>Buka Kunci</span></button>
+    <button class="pdf-tool" data-action="pdfBringFront"><i data-lucide="bring-to-front"></i><span>Depan</span></button>
+    <button class="pdf-tool" data-action="pdfSendBack"><i data-lucide="send-to-back"></i><span>Belakang</span></button>
+    <button class="pdf-tool" data-action="pdfResetSelectedRotation"><i data-lucide="rotate-3d"></i><span>Reset Putar</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="settings-2"></i><span>Aksi</span></summary><div class="pdf-menu-body">
+  <details class="pdf-menu"><summary><i data-lucide="align-center"></i><span>Rapi</span></summary><div class="pdf-menu-body wide">
+    <button class="pdf-tool" data-action="pdfAlignLeft"><i data-lucide="align-start-vertical"></i><span>Kiri</span></button>
+    <button class="pdf-tool" data-action="pdfAlignCenter"><i data-lucide="align-center-vertical"></i><span>Tengah X</span></button>
+    <button class="pdf-tool" data-action="pdfAlignRight"><i data-lucide="align-end-vertical"></i><span>Kanan</span></button>
+    <button class="pdf-tool" data-action="pdfAlignTop"><i data-lucide="align-start-horizontal"></i><span>Atas</span></button>
+    <button class="pdf-tool" data-action="pdfAlignMiddle"><i data-lucide="align-center-horizontal"></i><span>Tengah Y</span></button>
+    <button class="pdf-tool" data-action="pdfAlignBottom"><i data-lucide="align-end-horizontal"></i><span>Bawah</span></button>
+    <button class="pdf-tool" data-action="pdfNudgeLeft"><i data-lucide="arrow-left"></i><span>Geser kiri</span></button>
+    <button class="pdf-tool" data-action="pdfNudgeRight"><i data-lucide="arrow-right"></i><span>Geser kanan</span></button>
+    <button class="pdf-tool" data-action="pdfNudgeUp"><i data-lucide="arrow-up"></i><span>Geser atas</span></button>
+    <button class="pdf-tool" data-action="pdfNudgeDown"><i data-lucide="arrow-down"></i><span>Geser bawah</span></button>
+    <button class="pdf-tool" data-action="pdfGrowSelected"><i data-lucide="maximize"></i><span>Perbesar</span></button>
+    <button class="pdf-tool" data-action="pdfShrinkSelected"><i data-lucide="minimize"></i><span>Perkecil</span></button>
+    <button class="pdf-tool" data-action="pdfRotateSelectedLeft"><i data-lucide="rotate-ccw"></i><span>Putar -15°</span></button>
+    <button class="pdf-tool" data-action="pdfRotateSelectedRight"><i data-lucide="rotate-cw"></i><span>Putar +15°</span></button>
+  </div></details>
+  <details class="pdf-menu"><summary><i data-lucide="file-stack"></i><span>Halaman</span></summary><div class="pdf-menu-body wide">
+    <button class="pdf-tool" data-action="pdfSearchText"><i data-lucide="search"></i><span>Cari teks</span></button>
+    <button class="pdf-tool" data-action="pdfRotateView"><i data-lucide="rotate-cw"></i><span>Putar View</span></button>
+    <button class="pdf-tool" data-action="fitWidth"><i data-lucide="maximize"></i><span>Fit Width</span></button>
+    <button class="pdf-tool" data-action="zoomOut"><i data-lucide="zoom-out"></i><span>Zoom -</span></button>
+    <button class="pdf-tool" data-action="zoomReset"><i data-lucide="rotate-ccw"></i><span>100%</span></button>
+    <button class="pdf-tool" data-action="zoomIn"><i data-lucide="zoom-in"></i><span>Zoom +</span></button>
+    <button class="pdf-tool" data-action="pdfClearCurrentPageAnnotations"><i data-lucide="eraser"></i><span>Bersihkan Halaman</span></button>
+    <button class="pdf-tool" data-action="clearPdfAnnotations"><i data-lucide="trash-2"></i><span>Bersihkan Semua Editan</span></button>
+  </div></details>
+  <details class="pdf-menu"><summary><i data-lucide="settings-2"></i><span>Aksi</span></summary><div class="pdf-menu-body wide">
+    <button class="pdf-tool" data-action="save"><i data-lucide="save"></i><span>Simpan PDF</span></button>
+    <button class="pdf-tool" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button>
     <button class="pdf-tool" data-action="undo"><i data-lucide="undo-2"></i><span>Undo</span></button>
     <button class="pdf-tool" data-action="redo"><i data-lucide="redo-2"></i><span>Redo</span></button>
-    <button class="pdf-tool" data-action="pdfSearchText"><i data-lucide="search"></i><span>Cari</span></button>
-    <button class="pdf-tool" data-action="pdfRotateView"><i data-lucide="rotate-cw"></i><span>Putar View</span></button>
     <button class="pdf-tool" data-action="replacePdf"><i data-lucide="folder-open"></i><span>Ganti PDF</span></button>
     <button class="pdf-tool" data-action="newBlankPdf"><i data-lucide="file-plus"></i><span>PDF Kosong</span></button>
     <button class="pdf-tool warn" data-action="closePdf"><i data-lucide="x-circle"></i><span>Tutup PDF</span></button>
-    <button class="pdf-tool" data-action="clearPdfAnnotations"><i data-lucide="eraser"></i><span>Bersihkan Anotasi</span></button>
-    <button class="pdf-tool" data-action="pdfCopySelected"><i data-lucide="copy"></i><span>Copy Objek</span></button>
-    <button class="pdf-tool" data-action="pdfPasteObject"><i data-lucide="clipboard-paste"></i><span>Paste Objek</span></button>
-    <button class="pdf-tool" data-action="pdfResetSelectedRotation"><i data-lucide="rotate-3d"></i><span>Reset Putar</span></button>
     <button class="pdf-tool" data-action="pdfExportAnnotations"><i data-lucide="download"></i><span>Export Editan</span></button>
     <button class="pdf-tool" data-action="pdfImportAnnotations"><i data-lucide="upload"></i><span>Import Editan</span></button>
-    <button class="pdf-tool" data-action="save"><i data-lucide="save"></i><span>Simpan PDF</span></button>
+    <button class="pdf-tool" data-action="print"><i data-lucide="printer"></i><span>Print</span></button>
   </div></details>
 </div><div class="pdf-pages" id="pdfPages"></div></section>
     <section class="workspace-pane" id="sheetPane"><div class="formula-bar"><div class="formula-name" id="cellName">A1</div><input class="formula-input" id="formulaInput" placeholder="Ketik nilai atau formula: =SUM(A1:A5)" /></div><div class="sheet-wrap"><table class="sheet-grid" id="sheetGrid"></table></div></section>
@@ -308,6 +349,8 @@
   function bindEvents(){
     document.addEventListener('click', handleClick);
     document.addEventListener('change', handleChange);
+    document.addEventListener('input', handleInput);
+    document.addEventListener('toggle', handlePdfMenuToggle, true);
     document.addEventListener('keydown', handleKeys);
     fileInput.addEventListener('change', e => { const file = e.target.files && e.target.files[0]; if (file) openFile(file, null); e.target.value = ''; });
     imageInput.addEventListener('change', insertImageFromInput);
@@ -330,10 +373,14 @@
     if (tabBtn) { state.activeTab = tabBtn.dataset.tab; renderTabs(); renderRibbon(); return; }
     const pdfToolBtn = e.target.closest('[data-pdf-tool]');
     if (pdfToolBtn) { setPdfTool(pdfToolBtn.dataset.pdfTool); return; }
+    const formActionEl = e.target.closest('select[data-action],input[data-action],textarea[data-action]');
+    if (formActionEl) return;
     const actionEl = e.target.closest('[data-action]');
     if (!actionEl) return;
     const action = actionEl.dataset.action;
     runAction(action, actionEl);
+    const pdfMenu = actionEl.closest && actionEl.closest('.pdf-menu');
+    if (pdfMenu && !actionEl.matches('select,input,textarea')) setTimeout(() => pdfMenu.removeAttribute('open'), 0);
   }
 
   function handleChange(e){
@@ -355,6 +402,25 @@
     if (action === 'pdfSmartTextSize') setPdfSetting('pdfTextSize', el.value);
   }
 
+
+
+  function handleInput(e){
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    if (action === 'pdfSmartMainColor') setPdfSmartMainColor(el.value);
+    if (action === 'pdfSmartFillColor') setPdfSmartFillColor(el.value);
+    if (['pdfTextColor','pdfHighlightColor','pdfRectBorderColor','pdfRectFillColor','pdfLineColor','pdfDrawColor'].includes(action)) setPdfColor(action, el.value);
+  }
+
+  function handlePdfMenuToggle(e){
+    const menu = e.target;
+    if (!menu || !menu.classList || !menu.classList.contains('pdf-menu') || !menu.open) return;
+    document.querySelectorAll('.pdf-menu[open]').forEach(other => { if (other !== menu) other.removeAttribute('open'); });
+    updatePdfStyleControls();
+    refreshIcons();
+  }
+
   async function runAction(action, sourceEl){
     try {
       if (action.startsWith('cmd:')) return execDocCommand(action.slice(4));
@@ -368,7 +434,7 @@
         h1: () => execDocCommand('formatBlock','H1'), h2: () => execDocCommand('formatBlock','H2'), quote: () => execDocCommand('formatBlock','BLOCKQUOTE'), codeBlock: insertCodeBlock,
         removeFormat: () => execDocCommand('removeFormat'),
         pageA4: () => setPageSize('A4'), pageLetter: () => setPageSize('Letter'), marginNormal: () => setMargin(72), marginNarrow: () => setMargin(36), marginWide: () => setMargin(96), insertPageBreak, fitWidth, pageWidth,
-        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle,
+        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle, pdfSetFillTransparent, pdfAddApprovedStamp, pdfAddDraftStamp, pdfAddRejectedStamp, pdfAddDateStamp, pdfAddPageNumbers, pdfAddWatermarkDraft, pdfAlignLeft, pdfAlignCenter, pdfAlignRight, pdfAlignTop, pdfAlignMiddle, pdfAlignBottom, pdfNudgeLeft, pdfNudgeRight, pdfNudgeUp, pdfNudgeDown, pdfLockSelected, pdfUnlockSelected, pdfClearCurrentPageAnnotations,
         sheetAddRow, sheetDeleteRow, sheetAddCol, sheetDeleteCol, sheetFormulaSum, sheetFormulaAvg, sheetSortAsc: () => sortSheet(true), sheetSortDesc: () => sortSheet(false),
         zoomOut: () => changeZoom(-0.1), zoomReset: () => setZoom(1), zoomIn: () => changeZoom(0.1), toggleTheme, toggleFocus, fullscreen, updateCount: updateWordCount,
         docPreview: showDocPreview, docEdit: enterDocEdit, normalizeDoc, reloadFile
@@ -731,7 +797,7 @@
 
   function setPdfColor(action, value){
     state[action] = value;
-    document.querySelectorAll(`[data-action="${action}"]`).forEach(input => { if (input.value !== value) input.value = value; });
+    document.querySelectorAll(`[data-action="${action}"]`).forEach(input => { if (input.type === 'color' && isTransparentColor(value)) return; if (input.value !== value) input.value = value; });
     applyPdfColorToSelected(action, value);
     updatePdfStyleHint();
     updatePdfStyleControls();
@@ -1121,6 +1187,7 @@
     pushPdfHistory();
     const copy = JSON.parse(JSON.stringify(ann));
     copy.id = uid();
+    copy.locked = false;
     if ('x' in copy) copy.x = clamp(copy.x + 0.025, 0, .96);
     if ('y' in copy) copy.y = clamp(copy.y + 0.025, 0, .96);
     if ('x1' in copy) { copy.x1 = clamp(copy.x1 + 0.025, 0, 1); copy.x2 = clamp(copy.x2 + 0.025, 0, 1); copy.y1 = clamp(copy.y1 + 0.025, 0, 1); copy.y2 = clamp(copy.y2 + 0.025, 0, 1); }
@@ -1196,6 +1263,7 @@
       if (ann.type === 'check' || ann.type === 'cross') { el.classList.add('ann-mark'); el.textContent = ann.text || (ann.type==='check'?'✓':'✕'); el.style.color = ann.color || (ann.type==='check'?'#16a34a':'#ef4444'); el.style.fontSize=(ann.size||28)+'px'; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
       if (ann.type === 'image') { el.classList.add('ann-image'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); el.innerHTML = `<img src="${ann.dataUrl}" alt="PDF image">`; }
       if (ann.rotation) el.style.transform = `rotate(${ann.rotation}deg)`;
+      if (ann.locked) el.classList.add('locked');
       if (ann.id === state.selectedAnnotationId && ['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) {
         const h=document.createElement('span'); h.className='ann-handle'; h.title='Tarik untuk ubah ukuran'; h.addEventListener('mousedown', startResizeAnnotation); el.appendChild(h);
         const rr=document.createElement('span'); rr.className='ann-rotate'; rr.title='Tarik untuk putar'; rr.addEventListener('mousedown', startRotateAnnotation); el.appendChild(rr);
@@ -1221,6 +1289,7 @@
   function startResizeAnnotation(e){
     e.preventDefault(); e.stopPropagation();
     const el=e.currentTarget.closest('.pdf-annotation'); const id=el&&el.dataset.id; const ann=state.pdfAnnotations.find(a=>a.id===id); if(!ann) return;
+    if (ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn');
     const layer=el.parentElement; const r=layer.getBoundingClientRect(); const sx=e.clientX, sy=e.clientY; const ow=ann.w||.05, oh=ann.h||.05; pushPdfHistory();
     const move=ev=>{ ann.w=clamp(ow+(ev.clientX-sx)/r.width,.01,1); ann.h=clamp(oh+(ev.clientY-sy)/r.height,.01,1); redrawPdfAnnotations(); };
     const up=()=>{document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); markDirty();};
@@ -1229,6 +1298,7 @@
   function startRotateAnnotation(e){
     e.preventDefault(); e.stopPropagation();
     const el=e.currentTarget.closest('.pdf-annotation'); const id=el&&el.dataset.id; const ann=state.pdfAnnotations.find(a=>a.id===id); if(!ann) return;
+    if (ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn');
     const layer=el.parentElement; const lr=layer.getBoundingClientRect(); const cx=(ann.x+(ann.w||.05)/2)*lr.width+lr.left, cy=(ann.y+(ann.h||.05)/2)*lr.height+lr.top; const startAngle=Math.atan2(e.clientY-cy,e.clientX-cx)*180/Math.PI; const base=ann.rotation||0; pushPdfHistory();
     const move=ev=>{ const a=Math.atan2(ev.clientY-cy,ev.clientX-cx)*180/Math.PI; ann.rotation=base+(a-startAngle); redrawPdfAnnotations(); };
     const up=()=>{document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); markDirty();};
@@ -1241,7 +1311,7 @@
     e.preventDefault(); e.stopPropagation();
     const id = e.currentTarget.dataset.id;
     const ann = state.pdfAnnotations.find(a => a.id === id); if (!ann) return;
-    if (state.pdfTool === 'erase') { pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== id); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); return; }
+    if (state.pdfTool === 'erase') { if (ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== id); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); return; }
 
     // Semua objek PDF sekarang bisa langsung digeser setelah diklik.
     // Kalau user masih berada di tool lain, klik objek otomatis masuk mode Pilih.
@@ -1255,6 +1325,7 @@
     state.selectedAnnotationId = id;
     syncPdfInputsFromAnnotation(ann);
     redrawPdfAnnotations();
+    if (ann.locked) { toast('Objek terkunci. Buka kunci dulu untuk menggeser.', 'warn'); return; }
 
     const layer = document.querySelector(`.pdf-layer[data-page-index="${ann.pageIndex}"]`) || e.currentTarget.parentElement;
     const r = layer.getBoundingClientRect();
@@ -1303,6 +1374,7 @@
   function clonePdfAnnotationForPaste(ann){
     const copy = JSON.parse(JSON.stringify(ann));
     copy.id = uid();
+    copy.locked = false;
     if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(copy.type)) {
       copy.x = clamp((copy.x || 0) + 0.025, 0, Math.max(0, 1 - (copy.w || 0.05)));
       copy.y = clamp((copy.y || 0) + 0.025, 0, Math.max(0, 1 - (copy.h || 0.05)));
@@ -1345,6 +1417,7 @@
   function nudgeSelectedPdf(dx, dy){
     const ann = state.selectedAnnotationId ? state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId) : null;
     if (!ann) return false;
+    if (ann.locked) { toast('Objek terkunci. Buka kunci dulu.', 'warn'); return false; }
     pushPdfHistory();
     if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) {
       ann.x = clamp((ann.x || 0) + dx, 0, Math.max(0, 1 - (ann.w || 0.05)));
@@ -1396,12 +1469,12 @@
   }
   function pdfRotateSelectedLeft(){ rotateSelectedPdf(-15); }
   function pdfRotateSelectedRight(){ rotateSelectedPdf(15); }
-  function rotateSelectedPdf(delta){ const ann=getSelectedPdfAnnotation(); if(!ann) return; pushPdfHistory(); ann.rotation=((ann.rotation||0)+delta)%360; markDirty(); redrawPdfAnnotations(); }
+  function rotateSelectedPdf(delta){ const ann=getSelectedPdfAnnotation(); if(!ann) return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); ann.rotation=((ann.rotation||0)+delta)%360; markDirty(); redrawPdfAnnotations(); }
   function pdfGrowSelected(){ resizeSelectedPdf(1.12); }
   function pdfShrinkSelected(){ resizeSelectedPdf(0.88); }
-  function resizeSelectedPdf(f){ const ann=getSelectedPdfAnnotation(); if(!ann) return; pushPdfHistory(); if(['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)){ann.w=clamp((ann.w||.05)*f,.005,1); ann.h=clamp((ann.h||.05)*f,.005,1);} else if(['line','arrow'].includes(ann.type)){const cx=(ann.x1+ann.x2)/2, cy=(ann.y1+ann.y2)/2; ann.x1=clamp(cx+(ann.x1-cx)*f,0,1); ann.x2=clamp(cx+(ann.x2-cx)*f,0,1); ann.y1=clamp(cy+(ann.y1-cy)*f,0,1); ann.y2=clamp(cy+(ann.y2-cy)*f,0,1);} else if(ann.type==='draw'&&ann.points){const cx=ann.points.reduce((a,p)=>a+p.x,0)/ann.points.length, cy=ann.points.reduce((a,p)=>a+p.y,0)/ann.points.length; ann.points=ann.points.map(p=>({x:clamp(cx+(p.x-cx)*f,0,1),y:clamp(cy+(p.y-cy)*f,0,1)}));} markDirty(); redrawPdfAnnotations(); }
-  function pdfBringFront(){ const ann=getSelectedPdfAnnotation(); if(!ann)return; pushPdfHistory(); state.pdfAnnotations=state.pdfAnnotations.filter(a=>a.id!==ann.id); state.pdfAnnotations.push(ann); markDirty(); redrawPdfAnnotations(); }
-  function pdfSendBack(){ const ann=getSelectedPdfAnnotation(); if(!ann)return; pushPdfHistory(); state.pdfAnnotations=state.pdfAnnotations.filter(a=>a.id!==ann.id); state.pdfAnnotations.unshift(ann); markDirty(); redrawPdfAnnotations(); }
+  function resizeSelectedPdf(f){ const ann=getSelectedPdfAnnotation(); if(!ann) return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); if(['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)){ann.w=clamp((ann.w||.05)*f,.005,1); ann.h=clamp((ann.h||.05)*f,.005,1);} else if(['line','arrow'].includes(ann.type)){const cx=(ann.x1+ann.x2)/2, cy=(ann.y1+ann.y2)/2; ann.x1=clamp(cx+(ann.x1-cx)*f,0,1); ann.x2=clamp(cx+(ann.x2-cx)*f,0,1); ann.y1=clamp(cy+(ann.y1-cy)*f,0,1); ann.y2=clamp(cy+(ann.y2-cy)*f,0,1);} else if(ann.type==='draw'&&ann.points){const cx=ann.points.reduce((a,p)=>a+p.x,0)/ann.points.length, cy=ann.points.reduce((a,p)=>a+p.y,0)/ann.points.length; ann.points=ann.points.map(p=>({x:clamp(cx+(p.x-cx)*f,0,1),y:clamp(cy+(p.y-cy)*f,0,1)}));} markDirty(); redrawPdfAnnotations(); }
+  function pdfBringFront(){ const ann=getSelectedPdfAnnotation(); if(!ann)return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations=state.pdfAnnotations.filter(a=>a.id!==ann.id); state.pdfAnnotations.push(ann); markDirty(); redrawPdfAnnotations(); }
+  function pdfSendBack(){ const ann=getSelectedPdfAnnotation(); if(!ann)return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations=state.pdfAnnotations.filter(a=>a.id!==ann.id); state.pdfAnnotations.unshift(ann); markDirty(); redrawPdfAnnotations(); }
   function pdfPresetColor(el){ const c=el && el.dataset ? el.dataset.color : null; if(!c) return; setPdfSmartMainColor(c); }
 
 
@@ -1441,7 +1514,95 @@
     return closeActiveDoc();
   }
 
-  function pdfDeleteSelected(){ if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn'); if (!state.selectedAnnotationId) return toast('Pilih anotasi dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== state.selectedAnnotationId); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); }
+
+  function currentPdfPageIndex(){
+    const selected = selectedPdfAnnotation();
+    if (selected) return selected.pageIndex || 0;
+    const layers = Array.from(document.querySelectorAll('.pdf-layer'));
+    if (!layers.length) return 0;
+    const centerY = window.innerHeight / 2;
+    let best = layers[0], bestDist = Infinity;
+    layers.forEach(layer => { const r=layer.getBoundingClientRect(); const d=Math.abs((r.top+r.bottom)/2-centerY); if(d<bestDist){best=layer; bestDist=d;} });
+    return Number(best.dataset.pageIndex || 0);
+  }
+  function addPdfAnnotationAtCenter(ann){
+    if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
+    pushPdfHistory();
+    const pageIndex = currentPdfPageIndex();
+    const full = { id:uid(), pageIndex, ...ann };
+    state.pdfAnnotations.push(full);
+    state.selectedAnnotationId = full.id;
+    markDirty(); redrawPdfAnnotations(); updatePdfStyleControls();
+    return full;
+  }
+  function pdfAddStampText(text, color){
+    addPdfAnnotationAtCenter({ type:'stamp', x:.32, y:.38, w:.36, h:.075, text, color: color || state.pdfTextColor || '#ef4444', size: Math.max(20, state.pdfTextSize + 8), rotation:-8 });
+  }
+  function pdfAddApprovedStamp(){ pdfAddStampText('APPROVED', '#16a34a'); }
+  function pdfAddDraftStamp(){ pdfAddStampText('DRAFT', '#ef4444'); }
+  function pdfAddRejectedStamp(){ pdfAddStampText('REJECTED', '#ef4444'); }
+  function pdfAddDateStamp(){ addPdfAnnotationAtCenter({ type:'text', x:.08, y:.08, w:.24, h:.04, text:new Date().toLocaleDateString('id-ID'), color:state.pdfTextColor, size:state.pdfTextSize }); }
+  function pdfAddWatermarkDraft(){
+    if (state.mode !== 'pdf' || !state.pdfDoc) return toast('Buka PDF dulu.', 'warn');
+    pushPdfHistory();
+    const total = state.pdfDoc.numPages || 1;
+    for (let pageIndex=0; pageIndex<total; pageIndex++) state.pdfAnnotations.push({ id:uid(), type:'stamp', pageIndex, x:.22, y:.42, w:.56, h:.10, text:'DRAFT', color:'#ef4444', size:54, rotation:-20 });
+    markDirty(); redrawPdfAnnotations(); toast('Watermark DRAFT ditambah ke semua halaman.', 'good');
+  }
+  function pdfAddPageNumbers(){
+    if (state.mode !== 'pdf' || !state.pdfDoc) return toast('Buka PDF dulu.', 'warn');
+    pushPdfHistory();
+    const total = state.pdfDoc.numPages || 1;
+    for (let i=0;i<total;i++) state.pdfAnnotations.push({ id:uid(), type:'text', pageIndex:i, x:.82, y:.955, w:.14, h:.03, text:`${i+1} / ${total}`, color:state.pdfTextColor, size:11 });
+    markDirty(); redrawPdfAnnotations(); toast('Nomor halaman ditambahkan.', 'good');
+  }
+  function annBounds(ann){
+    if (!ann) return null;
+    if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) return {x:ann.x||0,y:ann.y||0,w:ann.w||.05,h:ann.h||.05};
+    if (ann.type === 'line' || ann.type === 'arrow') return {x:Math.min(ann.x1,ann.x2), y:Math.min(ann.y1,ann.y2), w:Math.abs(ann.x2-ann.x1), h:Math.abs(ann.y2-ann.y1)};
+    if (ann.type === 'draw' && ann.points && ann.points.length) {
+      const xs=ann.points.map(p=>p.x), ys=ann.points.map(p=>p.y); return {x:Math.min(...xs), y:Math.min(...ys), w:Math.max(...xs)-Math.min(...xs), h:Math.max(...ys)-Math.min(...ys)};
+    }
+    return {x:0,y:0,w:.05,h:.05};
+  }
+  function moveAnnBy(ann, dx, dy){
+    if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) { ann.x=clamp((ann.x||0)+dx,0,Math.max(0,1-(ann.w||0))); ann.y=clamp((ann.y||0)+dy,0,Math.max(0,1-(ann.h||0))); return; }
+    if (ann.type === 'line' || ann.type === 'arrow') { ann.x1=clamp(ann.x1+dx,0,1); ann.x2=clamp(ann.x2+dx,0,1); ann.y1=clamp(ann.y1+dy,0,1); ann.y2=clamp(ann.y2+dy,0,1); return; }
+    if (ann.type === 'draw' && ann.points) ann.points = ann.points.map(p=>({x:clamp(p.x+dx,0,1), y:clamp(p.y+dy,0,1)}));
+  }
+  function alignSelectedPdf(pos){
+    const ann=getSelectedPdfAnnotation(); if(!ann) return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn');
+    const b=annBounds(ann); if(!b) return; let tx=b.x, ty=b.y;
+    if(pos==='left') tx=.03; if(pos==='center') tx=(1-b.w)/2; if(pos==='right') tx=.97-b.w;
+    if(pos==='top') ty=.03; if(pos==='middle') ty=(1-b.h)/2; if(pos==='bottom') ty=.97-b.h;
+    pushPdfHistory(); moveAnnBy(ann, tx-b.x, ty-b.y); markDirty(); redrawPdfAnnotations();
+  }
+  function pdfAlignLeft(){ alignSelectedPdf('left'); }
+  function pdfAlignCenter(){ alignSelectedPdf('center'); }
+  function pdfAlignRight(){ alignSelectedPdf('right'); }
+  function pdfAlignTop(){ alignSelectedPdf('top'); }
+  function pdfAlignMiddle(){ alignSelectedPdf('middle'); }
+  function pdfAlignBottom(){ alignSelectedPdf('bottom'); }
+  function nudgePdfSelectedBy(dx,dy){ const ann=getSelectedPdfAnnotation(); if(!ann) return; if(ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); moveAnnBy(ann,dx,dy); markDirty(); redrawPdfAnnotations(); }
+  function pdfNudgeLeft(){ nudgePdfSelectedBy(-.01,0); }
+  function pdfNudgeRight(){ nudgePdfSelectedBy(.01,0); }
+  function pdfNudgeUp(){ nudgePdfSelectedBy(0,-.01); }
+  function pdfNudgeDown(){ nudgePdfSelectedBy(0,.01); }
+  function pdfLockSelected(){ const ann=getSelectedPdfAnnotation(); if(!ann) return; ann.locked=true; markDirty(); redrawPdfAnnotations(); toast('Objek dikunci.', 'good'); }
+  function pdfUnlockSelected(){ const ann=getSelectedPdfAnnotation(); if(!ann) return; ann.locked=false; markDirty(); redrawPdfAnnotations(); toast('Kunci objek dibuka.', 'good'); }
+  function pdfSetFillTransparent(){
+    const type = currentPdfStyleType();
+    if (!['rect','ellipse','note'].includes(type)) return toast('Transparan hanya untuk isi kotak/oval/note.', 'warn');
+    setPdfSmartFillColor('transparent');
+  }
+  function pdfClearCurrentPageAnnotations(){
+    if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
+    const pageIndex = currentPdfPageIndex();
+    if (!confirm('Hapus semua editan di halaman ini?')) return;
+    pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => (a.pageIndex||0) !== pageIndex); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations();
+  }
+
+  function pdfDeleteSelected(){ if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn'); if (!state.selectedAnnotationId) return toast('Pilih anotasi dulu.', 'warn'); const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId); if (ann && ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== state.selectedAnnotationId); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); }
   function clearPdfAnnotations(){ if (state.mode !== 'pdf') return; if (!confirm('Hapus semua anotasi PDF?')) return; pushPdfHistory(); state.pdfAnnotations = []; markDirty(); redrawPdfAnnotations(); }
 
   async function savePdfBlob(){
