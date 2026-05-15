@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Destara PDF Pro</title>
+  <title>Destara File Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
@@ -249,14 +249,368 @@
   .pdf-menu-body.wide{grid-template-columns:repeat(2,minmax(120px,1fr))!important}
 }
 
-  </style>
+
+/* Empty state lock: sebelum ada file/dokumen, semua alat dikunci kecuali Buka dan drag-drop. */
+.app.no-document .tabs,
+.app.no-document .ribbon,
+.app.no-document .docbar,
+.app.no-document .zoombar{opacity:.48;filter:grayscale(.35)}
+.app.no-document button:disabled,
+.app.no-document select:disabled,
+.app.no-document input:disabled,
+.app.no-document textarea:disabled,
+.app.no-document .pdf-menu summary[data-disabled="true"]{opacity:.42!important;cursor:not-allowed!important;box-shadow:none!important;transform:none!important}
+.app.no-document .qbtn[data-action="open"],
+.app.no-document .empty-card .qbtn[data-action="open"]{opacity:1!important;filter:none!important;cursor:pointer!important}
+.pdf-menu-body,.pdf-menu-body.wide,.pdf-style-smart{margin-top:0!important}
+
+  
+
+/* === Smart popup system: mengganti alert/confirm/prompt bawaan browser === */
+.tp-modal-backdrop{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.56);backdrop-filter:blur(12px);animation:tpFadeIn .14s ease}
+.tp-modal-card{width:min(760px,calc(100vw - 28px));max-height:min(88vh,760px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(209,219,234,.95);border-radius:26px;background:rgba(255,255,255,.98);color:#111827;box-shadow:0 30px 90px rgba(16,24,40,.28);animation:tpPopIn .16s ease}
+.tp-modal-card.tp-modal-wide{width:min(1040px,calc(100vw - 28px))}.tp-modal-head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #e6edf8;background:linear-gradient(135deg,#f7faff,#eef4ff)}
+.tp-modal-title-wrap{display:flex;gap:12px;align-items:flex-start;min-width:0}.tp-modal-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(41,87,255,.22);flex:0 0 auto}.tp-modal-icon svg{width:20px;height:20px}
+.tp-modal-head h3{margin:0;font-size:19px;letter-spacing:-.02em}.tp-modal-sub{margin:4px 0 0;color:#667085;font-size:13px;line-height:1.45}.tp-modal-close{width:34px;height:34px;border-radius:999px;background:#fff;border:1px solid #dbe5f3;color:#475569;font-size:22px;line-height:1;display:grid;place-items:center}.tp-modal-close:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.12)}
+.tp-modal-body{min-height:0;overflow:auto;padding:18px 20px;display:grid;gap:14px}.tp-modal-message{padding:13px 14px;border:1px solid #dfe7f3;border-radius:16px;background:#f8fafc;color:#1f2937;font-size:13px;line-height:1.6;white-space:pre-wrap}.tp-modal-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.tp-modal-panel{border:1px solid #dfe7f3;border-radius:18px;background:#f8fafc;padding:14px}.tp-modal-panel h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#40506a}.tp-modal-panel p,.tp-modal-panel li{font-size:12.5px;line-height:1.55;color:#667085}.tp-modal-panel ul{margin:8px 0 0;padding-left:18px}.tp-modal-field{display:grid;gap:7px}.tp-modal-field label{font-size:12px;font-weight:900;color:#40506a;letter-spacing:.03em}.tp-modal-input,.tp-modal-textarea,.tp-modal-select{width:100%;min-height:42px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;color:#111827;padding:9px 12px;outline:0;font:inherit;font-size:14px}.tp-modal-textarea{min-height:110px;resize:vertical}.tp-modal-input:focus,.tp-modal-textarea:focus,.tp-modal-select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(41,87,255,.12)}.tp-modal-help{font-size:11.5px;color:#667085}.tp-modal-quick{display:flex;gap:7px;flex-wrap:wrap}.tp-chip-btn{min-height:31px;border-radius:999px;border:1px solid #d5dfef;background:#fff;color:#334155;padding:0 10px;font-size:12px;font-weight:800}.tp-chip-btn:hover{border-color:#b9c9ef;background:#eef4ff;transform:translateY(-1px)}.tp-modal-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid #e6edf8;background:#fbfdff}.tp-modal-btn{min-height:38px;border-radius:13px;border:1px solid #d5dfef;background:#fff;color:#1f2937;padding:0 14px;font-weight:800}.tp-modal-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 10px 22px rgba(41,87,255,.20)}.tp-modal-btn.danger{color:#fff;border-color:transparent;background:linear-gradient(135deg,#ef4444,#f97316)}.tp-modal-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,24,40,.12)}.tp-modal-range-preview{display:grid;gap:8px}.tp-range-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid #e1e9f8;border-radius:13px;background:#fff}.tp-range-row strong{font-size:13px}.tp-range-row span{font-size:12px;color:#667085}.tp-modal-color-row{display:grid;grid-template-columns:1fr 48px;gap:9px;align-items:center}.tp-modal-color-row input[type=color]{height:42px;width:48px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;padding:4px}.tp-modal-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#0f172a;color:#e5e7eb;border-radius:14px;padding:12px;overflow:auto;white-space:pre-wrap;max-height:220px}
+@keyframes tpFadeIn{from{opacity:0}to{opacity:1}}@keyframes tpPopIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+[data-theme=dark] .tp-modal-card{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.22);box-shadow:0 30px 90px rgba(0,0,0,.55)}[data-theme=dark] .tp-modal-head{background:linear-gradient(135deg,#172033,#202a3e);border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-sub,[data-theme=dark] .tp-modal-panel p,[data-theme=dark] .tp-modal-panel li,[data-theme=dark] .tp-modal-help{color:#cbd5e1}[data-theme=dark] .tp-modal-message,[data-theme=dark] .tp-modal-panel{background:#172033;border-color:rgba(148,163,184,.18);color:#e5e7eb}[data-theme=dark] .tp-modal-panel h4{color:#dbeafe}[data-theme=dark] .tp-modal-input,[data-theme=dark] .tp-modal-textarea,[data-theme=dark] .tp-modal-select{background:#0f172a;border-color:rgba(148,163,184,.25);color:#f8fafc}[data-theme=dark] .tp-modal-actions{background:#0f172a;border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-close,[data-theme=dark] .tp-modal-btn,[data-theme=dark] .tp-chip-btn,[data-theme=dark] .tp-range-row{background:#1e293b;border-color:rgba(148,163,184,.22);color:#f8fafc}[data-theme=dark] .tp-chip-btn:hover{background:#2a3650;border-color:rgba(129,151,255,.48)}
+@media(max-width:760px){.tp-modal-card,.tp-modal-card.tp-modal-wide{width:calc(100vw - 18px);max-height:92vh;border-radius:22px}.tp-modal-grid{grid-template-columns:1fr}.tp-modal-head,.tp-modal-body,.tp-modal-actions{padding-left:14px;padding-right:14px}.tp-modal-actions{justify-content:stretch}.tp-modal-btn{flex:1}}
+
+
+
+/* FINAL FIX: pilihan transparan tersedia untuk semua warna PDF. */
+.palette-row .transparent-tool{min-width:154px!important;justify-content:center!important}
+.palette-row .transparent-tool:before{content:"";width:18px;height:18px;border-radius:7px;border:1px solid rgba(100,116,139,.42);background:linear-gradient(45deg,#cbd5e1 25%,transparent 25%),linear-gradient(-45deg,#cbd5e1 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#cbd5e1 75%),linear-gradient(-45deg,transparent 75%,#cbd5e1 75%);background-size:9px 9px;background-position:0 0,0 4.5px,4.5px -4.5px,-4.5px 0}
+#pdfSmartMainPreset option[value="transparent"],#pdfSmartFillPreset option[value="transparent"]{font-weight:800}
+
+</style>
+
+
+<style id="destara-popup-close-fix-final">
+/* FINAL FIX: popup PDF nempel tepat di bawah tombol menu, bukan turun jauh ke area dokumen. */
+.pdf-toolbar-grouped{
+  overflow:visible!important;
+  position:sticky!important;
+  z-index:5000!important;
+}
+.pdf-toolbar-grouped .pdf-menu{
+  position:relative!important;
+  overflow:visible!important;
+}
+.pdf-toolbar-grouped .pdf-menu[open]{z-index:100000!important}
+.pdf-toolbar-grouped .pdf-menu .pdf-menu-body,
+.pdf-toolbar-grouped .pdf-menu .pdf-menu-body.wide,
+.pdf-toolbar-grouped .pdf-menu .pdf-style-smart{
+  position:absolute!important;
+  top:calc(100% + 4px)!important;
+  left:var(--pdf-local-left,0px)!important;
+  right:auto!important;
+  margin-top:0!important;
+  transform:none!important;
+  z-index:100000!important;
+  width:var(--pdf-pop-width,min(680px,calc(100vw - 18px)))!important;
+  max-width:calc(100vw - 18px)!important;
+  max-height:var(--pdf-pop-max-height,calc(100vh - 72px))!important;
+  overflow:auto!important;
+}
+@media(max-width:760px){
+  .pdf-toolbar-grouped .pdf-menu .pdf-menu-body,
+  .pdf-toolbar-grouped .pdf-menu .pdf-menu-body.wide,
+  .pdf-toolbar-grouped .pdf-menu .pdf-style-smart{
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
+  }
+}
+
+
+/* === Smart popup system: mengganti alert/confirm/prompt bawaan browser === */
+.tp-modal-backdrop{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.56);backdrop-filter:blur(12px);animation:tpFadeIn .14s ease}
+.tp-modal-card{width:min(760px,calc(100vw - 28px));max-height:min(88vh,760px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(209,219,234,.95);border-radius:26px;background:rgba(255,255,255,.98);color:#111827;box-shadow:0 30px 90px rgba(16,24,40,.28);animation:tpPopIn .16s ease}
+.tp-modal-card.tp-modal-wide{width:min(1040px,calc(100vw - 28px))}.tp-modal-head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #e6edf8;background:linear-gradient(135deg,#f7faff,#eef4ff)}
+.tp-modal-title-wrap{display:flex;gap:12px;align-items:flex-start;min-width:0}.tp-modal-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(41,87,255,.22);flex:0 0 auto}.tp-modal-icon svg{width:20px;height:20px}
+.tp-modal-head h3{margin:0;font-size:19px;letter-spacing:-.02em}.tp-modal-sub{margin:4px 0 0;color:#667085;font-size:13px;line-height:1.45}.tp-modal-close{width:34px;height:34px;border-radius:999px;background:#fff;border:1px solid #dbe5f3;color:#475569;font-size:22px;line-height:1;display:grid;place-items:center}.tp-modal-close:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.12)}
+.tp-modal-body{min-height:0;overflow:auto;padding:18px 20px;display:grid;gap:14px}.tp-modal-message{padding:13px 14px;border:1px solid #dfe7f3;border-radius:16px;background:#f8fafc;color:#1f2937;font-size:13px;line-height:1.6;white-space:pre-wrap}.tp-modal-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.tp-modal-panel{border:1px solid #dfe7f3;border-radius:18px;background:#f8fafc;padding:14px}.tp-modal-panel h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#40506a}.tp-modal-panel p,.tp-modal-panel li{font-size:12.5px;line-height:1.55;color:#667085}.tp-modal-panel ul{margin:8px 0 0;padding-left:18px}.tp-modal-field{display:grid;gap:7px}.tp-modal-field label{font-size:12px;font-weight:900;color:#40506a;letter-spacing:.03em}.tp-modal-input,.tp-modal-textarea,.tp-modal-select{width:100%;min-height:42px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;color:#111827;padding:9px 12px;outline:0;font:inherit;font-size:14px}.tp-modal-textarea{min-height:110px;resize:vertical}.tp-modal-input:focus,.tp-modal-textarea:focus,.tp-modal-select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(41,87,255,.12)}.tp-modal-help{font-size:11.5px;color:#667085}.tp-modal-quick{display:flex;gap:7px;flex-wrap:wrap}.tp-chip-btn{min-height:31px;border-radius:999px;border:1px solid #d5dfef;background:#fff;color:#334155;padding:0 10px;font-size:12px;font-weight:800}.tp-chip-btn:hover{border-color:#b9c9ef;background:#eef4ff;transform:translateY(-1px)}.tp-modal-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid #e6edf8;background:#fbfdff}.tp-modal-btn{min-height:38px;border-radius:13px;border:1px solid #d5dfef;background:#fff;color:#1f2937;padding:0 14px;font-weight:800}.tp-modal-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 10px 22px rgba(41,87,255,.20)}.tp-modal-btn.danger{color:#fff;border-color:transparent;background:linear-gradient(135deg,#ef4444,#f97316)}.tp-modal-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,24,40,.12)}.tp-modal-range-preview{display:grid;gap:8px}.tp-range-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid #e1e9f8;border-radius:13px;background:#fff}.tp-range-row strong{font-size:13px}.tp-range-row span{font-size:12px;color:#667085}.tp-modal-color-row{display:grid;grid-template-columns:1fr 48px;gap:9px;align-items:center}.tp-modal-color-row input[type=color]{height:42px;width:48px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;padding:4px}.tp-modal-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#0f172a;color:#e5e7eb;border-radius:14px;padding:12px;overflow:auto;white-space:pre-wrap;max-height:220px}
+@keyframes tpFadeIn{from{opacity:0}to{opacity:1}}@keyframes tpPopIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+[data-theme=dark] .tp-modal-card{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.22);box-shadow:0 30px 90px rgba(0,0,0,.55)}[data-theme=dark] .tp-modal-head{background:linear-gradient(135deg,#172033,#202a3e);border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-sub,[data-theme=dark] .tp-modal-panel p,[data-theme=dark] .tp-modal-panel li,[data-theme=dark] .tp-modal-help{color:#cbd5e1}[data-theme=dark] .tp-modal-message,[data-theme=dark] .tp-modal-panel{background:#172033;border-color:rgba(148,163,184,.18);color:#e5e7eb}[data-theme=dark] .tp-modal-panel h4{color:#dbeafe}[data-theme=dark] .tp-modal-input,[data-theme=dark] .tp-modal-textarea,[data-theme=dark] .tp-modal-select{background:#0f172a;border-color:rgba(148,163,184,.25);color:#f8fafc}[data-theme=dark] .tp-modal-actions{background:#0f172a;border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-close,[data-theme=dark] .tp-modal-btn,[data-theme=dark] .tp-chip-btn,[data-theme=dark] .tp-range-row{background:#1e293b;border-color:rgba(148,163,184,.22);color:#f8fafc}[data-theme=dark] .tp-chip-btn:hover{background:#2a3650;border-color:rgba(129,151,255,.48)}
+@media(max-width:760px){.tp-modal-card,.tp-modal-card.tp-modal-wide{width:calc(100vw - 18px);max-height:92vh;border-radius:22px}.tp-modal-grid{grid-template-columns:1fr}.tp-modal-head,.tp-modal-body,.tp-modal-actions{padding-left:14px;padding-right:14px}.tp-modal-actions{justify-content:stretch}.tp-modal-btn{flex:1}}
+
+</style>
+
+
+<style id="destara-brand-dropdown-fix-v1">
+/* Logo kiri atas: ganti P menjadi TP MD dan lebarnya cukup. */
+.brand{min-width:220px!important}
+.brand-logo{
+  width:58px!important;
+  min-width:58px!important;
+  height:30px!important;
+  border-radius:10px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  letter-spacing:.04em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  padding:0 6px!important;
+}
+
+/* Dropdown Warna & Gaya: select jangan kecil/ketutup. */
+.pdf-style-smart{
+  min-width:620px!important;
+  max-width:min(720px,calc(100vw - 18px))!important;
+  gap:12px!important;
+}
+.pdf-style-smart .smart-row{
+  min-height:54px!important;
+  overflow:visible!important;
+}
+#pdfMainColorRow,
+#pdfFillColorRow{
+  grid-template-columns:122px 38px minmax(230px,1fr) 58px 54px!important;
+}
+#pdfTextSizeRow,
+#pdfStrokeRow,
+#pdfOpacityRow{
+  grid-template-columns:150px minmax(260px,1fr)!important;
+}
+#pdfTextSizeRow select,
+#pdfStrokeRow select,
+#pdfOpacityRow select{
+  grid-column:2!important;
+  width:100%!important;
+  min-width:260px!important;
+  height:38px!important;
+  font-size:14px!important;
+  padding:0 12px!important;
+}
+#pdfMainColorRow select,
+#pdfFillColorRow select{
+  width:100%!important;
+  min-width:230px!important;
+  height:38px!important;
+  font-size:14px!important;
+  padding:0 12px!important;
+}
+#pdfMainColorRow input[type=color],
+#pdfFillColorRow input[type=color]{
+  width:48px!important;
+  min-width:48px!important;
+  height:38px!important;
+  border:1px solid var(--line)!important;
+  border-radius:11px!important;
+  background:var(--panel-solid)!important;
+  padding:3px!important;
+}
+#pdfMainColorRow label,
+#pdfFillColorRow label,
+#pdfTextSizeRow label,
+#pdfStrokeRow label,
+#pdfOpacityRow label{
+  font-size:12px!important;
+  color:var(--text)!important;
+  font-weight:900!important;
+  letter-spacing:.02em!important;
+}
+.picker-label{
+  color:var(--muted)!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  text-transform:uppercase!important;
+  text-align:right!important;
+  white-space:nowrap!important;
+}
+#pdfMainColorLabel::after{
+  content:' warna';
+  color:var(--muted);
+  font-weight:800;
+  text-transform:none;
+}
+@media(max-width:760px){
+  .brand{min-width:auto!important}
+  .brand-logo{width:30px!important;min-width:30px!important;font-size:14px!important}
+  .pdf-style-smart{min-width:calc(100vw - 16px)!important;width:calc(100vw - 16px)!important}
+  #pdfMainColorRow,#pdfFillColorRow{grid-template-columns:82px 32px minmax(130px,1fr) 48px 44px!important}
+  #pdfTextSizeRow,#pdfStrokeRow,#pdfOpacityRow{grid-template-columns:112px minmax(150px,1fr)!important}
+  #pdfTextSizeRow select,#pdfStrokeRow select,#pdfOpacityRow select{min-width:150px!important}
+  #pdfMainColorRow select,#pdfFillColorRow select{min-width:130px!important}
+  .picker-label{font-size:10px!important}
+}
+
+
+/* === Smart popup system: mengganti alert/confirm/prompt bawaan browser === */
+.tp-modal-backdrop{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.56);backdrop-filter:blur(12px);animation:tpFadeIn .14s ease}
+.tp-modal-card{width:min(760px,calc(100vw - 28px));max-height:min(88vh,760px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(209,219,234,.95);border-radius:26px;background:rgba(255,255,255,.98);color:#111827;box-shadow:0 30px 90px rgba(16,24,40,.28);animation:tpPopIn .16s ease}
+.tp-modal-card.tp-modal-wide{width:min(1040px,calc(100vw - 28px))}.tp-modal-head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #e6edf8;background:linear-gradient(135deg,#f7faff,#eef4ff)}
+.tp-modal-title-wrap{display:flex;gap:12px;align-items:flex-start;min-width:0}.tp-modal-icon{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(41,87,255,.22);flex:0 0 auto}.tp-modal-icon svg{width:20px;height:20px}
+.tp-modal-head h3{margin:0;font-size:19px;letter-spacing:-.02em}.tp-modal-sub{margin:4px 0 0;color:#667085;font-size:13px;line-height:1.45}.tp-modal-close{width:34px;height:34px;border-radius:999px;background:#fff;border:1px solid #dbe5f3;color:#475569;font-size:22px;line-height:1;display:grid;place-items:center}.tp-modal-close:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.12)}
+.tp-modal-body{min-height:0;overflow:auto;padding:18px 20px;display:grid;gap:14px}.tp-modal-message{padding:13px 14px;border:1px solid #dfe7f3;border-radius:16px;background:#f8fafc;color:#1f2937;font-size:13px;line-height:1.6;white-space:pre-wrap}.tp-modal-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.tp-modal-panel{border:1px solid #dfe7f3;border-radius:18px;background:#f8fafc;padding:14px}.tp-modal-panel h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#40506a}.tp-modal-panel p,.tp-modal-panel li{font-size:12.5px;line-height:1.55;color:#667085}.tp-modal-panel ul{margin:8px 0 0;padding-left:18px}.tp-modal-field{display:grid;gap:7px}.tp-modal-field label{font-size:12px;font-weight:900;color:#40506a;letter-spacing:.03em}.tp-modal-input,.tp-modal-textarea,.tp-modal-select{width:100%;min-height:42px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;color:#111827;padding:9px 12px;outline:0;font:inherit;font-size:14px}.tp-modal-textarea{min-height:110px;resize:vertical}.tp-modal-input:focus,.tp-modal-textarea:focus,.tp-modal-select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(41,87,255,.12)}.tp-modal-help{font-size:11.5px;color:#667085}.tp-modal-quick{display:flex;gap:7px;flex-wrap:wrap}.tp-chip-btn{min-height:31px;border-radius:999px;border:1px solid #d5dfef;background:#fff;color:#334155;padding:0 10px;font-size:12px;font-weight:800}.tp-chip-btn:hover{border-color:#b9c9ef;background:#eef4ff;transform:translateY(-1px)}.tp-modal-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid #e6edf8;background:#fbfdff}.tp-modal-btn{min-height:38px;border-radius:13px;border:1px solid #d5dfef;background:#fff;color:#1f2937;padding:0 14px;font-weight:800}.tp-modal-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 10px 22px rgba(41,87,255,.20)}.tp-modal-btn.danger{color:#fff;border-color:transparent;background:linear-gradient(135deg,#ef4444,#f97316)}.tp-modal-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,24,40,.12)}.tp-modal-range-preview{display:grid;gap:8px}.tp-range-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid #e1e9f8;border-radius:13px;background:#fff}.tp-range-row strong{font-size:13px}.tp-range-row span{font-size:12px;color:#667085}.tp-modal-color-row{display:grid;grid-template-columns:1fr 48px;gap:9px;align-items:center}.tp-modal-color-row input[type=color]{height:42px;width:48px;border:1px solid #cfd9e8;border-radius:14px;background:#fff;padding:4px}.tp-modal-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#0f172a;color:#e5e7eb;border-radius:14px;padding:12px;overflow:auto;white-space:pre-wrap;max-height:220px}
+@keyframes tpFadeIn{from{opacity:0}to{opacity:1}}@keyframes tpPopIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+[data-theme=dark] .tp-modal-card{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.22);box-shadow:0 30px 90px rgba(0,0,0,.55)}[data-theme=dark] .tp-modal-head{background:linear-gradient(135deg,#172033,#202a3e);border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-sub,[data-theme=dark] .tp-modal-panel p,[data-theme=dark] .tp-modal-panel li,[data-theme=dark] .tp-modal-help{color:#cbd5e1}[data-theme=dark] .tp-modal-message,[data-theme=dark] .tp-modal-panel{background:#172033;border-color:rgba(148,163,184,.18);color:#e5e7eb}[data-theme=dark] .tp-modal-panel h4{color:#dbeafe}[data-theme=dark] .tp-modal-input,[data-theme=dark] .tp-modal-textarea,[data-theme=dark] .tp-modal-select{background:#0f172a;border-color:rgba(148,163,184,.25);color:#f8fafc}[data-theme=dark] .tp-modal-actions{background:#0f172a;border-color:rgba(148,163,184,.18)}[data-theme=dark] .tp-modal-close,[data-theme=dark] .tp-modal-btn,[data-theme=dark] .tp-chip-btn,[data-theme=dark] .tp-range-row{background:#1e293b;border-color:rgba(148,163,184,.22);color:#f8fafc}[data-theme=dark] .tp-chip-btn:hover{background:#2a3650;border-color:rgba(129,151,255,.48)}
+@media(max-width:760px){.tp-modal-card,.tp-modal-card.tp-modal-wide{width:calc(100vw - 18px);max-height:92vh;border-radius:22px}.tp-modal-grid{grid-template-columns:1fr}.tp-modal-head,.tp-modal-body,.tp-modal-actions{padding-left:14px;padding-right:14px}.tp-modal-actions{justify-content:stretch}.tp-modal-btn{flex:1}}
+
+</style>
+
+
+
+<style id="destara-style-popup-no-horizontal-scroll-v2">
+/* FIX: Warna & Gaya tidak boleh kepotong dan tidak boleh punya scroll kanan-kiri. */
+.pdf-toolbar-grouped .pdf-menu .pdf-style-smart,
+.pdf-style-smart{
+  width:var(--pdf-pop-width, min(700px, calc(100vw - 18px)))!important;
+  min-width:0!important;
+  max-width:calc(100vw - 18px)!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  padding:14px!important;
+  gap:12px!important;
+}
+.pdf-style-smart *,
+.pdf-style-smart *::before,
+.pdf-style-smart *::after{
+  box-sizing:border-box!important;
+  max-width:100%!important;
+}
+.pdf-style-smart .smart-head{
+  width:100%!important;
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+}
+.pdf-style-smart .smart-row{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:visible!important;
+  align-items:center!important;
+}
+#pdfMainColorRow,
+#pdfFillColorRow{
+  display:grid!important;
+  grid-template-columns:minmax(92px,128px) 38px minmax(0,1fr) max-content 48px!important;
+  gap:10px!important;
+}
+#pdfTextSizeRow,
+#pdfStrokeRow,
+#pdfOpacityRow{
+  display:grid!important;
+  grid-template-columns:minmax(118px,160px) minmax(0,1fr)!important;
+  gap:10px!important;
+}
+#pdfMainColorRow label,
+#pdfFillColorRow label,
+#pdfTextSizeRow label,
+#pdfStrokeRow label,
+#pdfOpacityRow label{
+  min-width:0!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+#pdfMainColorRow select,
+#pdfFillColorRow select,
+#pdfTextSizeRow select,
+#pdfStrokeRow select,
+#pdfOpacityRow select{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:38px!important;
+  font-size:14px!important;
+  padding:0 12px!important;
+  text-align:left!important;
+  text-transform:none!important;
+}
+#pdfMainColorRow .swatch-preview,
+#pdfFillColorRow .swatch-preview{
+  width:30px!important;
+  height:30px!important;
+  justify-self:center!important;
+}
+#pdfMainColorRow input[type="color"],
+#pdfFillColorRow input[type="color"]{
+  width:42px!important;
+  min-width:42px!important;
+  height:34px!important;
+  padding:2px!important;
+  justify-self:end!important;
+}
+.pdf-style-smart .picker-label{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  width:auto!important;
+  padding:0 2px!important;
+  white-space:nowrap!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  color:var(--muted)!important;
+  text-transform:uppercase!important;
+}
+.pdf-style-smart .palette-row{
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:8px!important;
+  overflow-x:hidden!important;
+  overflow-y:visible!important;
+}
+.pdf-style-smart .palette-row button:not(.pdf-tool){
+  flex:0 0 30px!important;
+  width:30px!important;
+  min-width:30px!important;
+  height:30px!important;
+}
+.pdf-style-smart .palette-row .pdf-tool{
+  flex:1 1 150px!important;
+  min-width:130px!important;
+  max-width:220px!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+.pdf-style-smart .palette-row .pdf-tool span{
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px){
+  .pdf-toolbar-grouped .pdf-menu .pdf-style-smart,
+  .pdf-style-smart{
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
+    padding:12px!important;
+  }
+  #pdfMainColorRow,
+  #pdfFillColorRow{
+    grid-template-columns:1fr 32px minmax(0,1fr) 46px!important;
+  }
+  #pdfMainColorRow .picker-label,
+  #pdfFillColorRow .picker-label{
+    grid-column:3!important;
+    justify-content:flex-start!important;
+    align-self:end!important;
+  }
+  #pdfMainColorRow input[type="color"],
+  #pdfFillColorRow input[type="color"]{
+    grid-column:4!important;
+  }
+  #pdfTextSizeRow,
+  #pdfStrokeRow,
+  #pdfOpacityRow{
+    grid-template-columns:1fr!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
-  <header class="topbar"><div class="brand"><div class="brand-logo">P</div><div class="brand-title">Destara PDF Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
   <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
-    <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>PDF editor web</h1><p>Tarik PDF ke sini atau klik Buka. Fokus untuk gabung PDF, pisah PDF, atur urutan halaman, anotasi, watermark, nomor halaman, tanda tangan, OCR sederhana, dan export.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih PDF</span></button><div class="file-types"><span class="chip">Buka PDF</span><span class="chip">Gabung PDF</span><span class="chip">Pisah PDF</span><span class="chip">Atur Halaman</span><span class="chip">Anotasi</span></div></div></section>
+    <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor file web</h1><p>Tarik PDF, Word, Excel, gambar, PowerPoint, HTML, TXT, atau CSV ke sini. Fitur paling lengkap tetap untuk PDF, sementara file lain bisa dibuka untuk preview, edit ringan, dan export sesuai dukungan browser.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih File</span></button><div class="file-types"><span class="chip">PDF Pro</span><span class="chip">Word/DOCX</span><span class="chip">Excel/CSV</span><span class="chip">Gambar</span><span class="chip">PPTX/HTML/TXT</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><select class="mode-select" data-action="pageSizeSelect" id="paperSizeSelect" title="Ukuran kertas"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option></select><select class="mode-select" data-action="pageOrientationSelect" id="paperOrientationSelect" title="Orientasi"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select><select class="mode-select" data-action="marginSelect" id="marginSelect" title="Margin"><option value="72">Margin normal</option><option value="36">Margin kecil</option><option value="96">Margin lebar</option></select><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview Word menjaga pemisah halaman. Edit Cepat untuk mengetik.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
   <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Pilih & Tulis</div>
@@ -276,12 +630,12 @@
   </div></details>
   <details class="pdf-menu pdf-style-menu"><summary><i data-lucide="palette"></i><span>Warna & Gaya</span></summary><div class="pdf-menu-body pdf-style-smart" id="pdfStyleSmart">
     <div class="smart-head"><strong id="pdfStyleTitle">Gaya alat: Pilih</strong><span id="pdfStyleDesc">Pilih alat PDF atau klik objek untuk mengubah warna dan ukurannya.</span></div>
-    <div class="smart-row" id="pdfMainColorRow"><label id="pdfMainColorLabel">Warna</label><span class="swatch-preview" id="pdfMainSwatch"></span><select data-action="pdfSmartMainPreset" id="pdfSmartMainPreset"><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="#ffffff">Putih</option><option value="__custom">Custom</option></select><input type="color" value="#2563eb" data-action="pdfSmartMainColor" id="pdfSmartMainColor"></div>
-    <div class="smart-row hidden" id="pdfFillColorRow"><label id="pdfFillColorLabel">Isi</label><span class="swatch-preview transparent" id="pdfFillSwatch"></span><select data-action="pdfSmartFillPreset" id="pdfSmartFillPreset"><option value="transparent">Transparan</option><option value="#ffffff">Putih</option><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="__custom">Custom</option></select><input type="color" value="#ffffff" data-action="pdfSmartFillColor" id="pdfSmartFillColor"></div>
+    <div class="smart-row color-smart-row" id="pdfMainColorRow"><label id="pdfMainColorLabel">Font</label><span class="swatch-preview" id="pdfMainSwatch"></span><select data-action="pdfSmartMainPreset" id="pdfSmartMainPreset" title="Pilih warna"><option value="transparent">Transparan</option><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="#ffffff">Putih</option><option value="__custom">Custom</option></select><span class="picker-label">Picker</span><input type="color" value="#2563eb" data-action="pdfSmartMainColor" id="pdfSmartMainColor" title="Picker color"></div>
+    <div class="smart-row hidden color-smart-row" id="pdfFillColorRow"><label id="pdfFillColorLabel">Isi</label><span class="swatch-preview transparent" id="pdfFillSwatch"></span><select data-action="pdfSmartFillPreset" id="pdfSmartFillPreset" title="Pilih warna"><option value="transparent">Transparan</option><option value="#ffffff">Putih</option><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="__custom">Custom</option></select><span class="picker-label">Picker</span><input type="color" value="#ffffff" data-action="pdfSmartFillColor" id="pdfSmartFillColor" title="Picker color"></div>
     <div class="smart-row hidden" id="pdfTextSizeRow"><label>Ukuran teks</label><select data-action="pdfSmartTextSize" id="pdfSmartTextSize"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="20">20</option><option value="24">24</option><option value="32">32</option><option value="48">48</option><option value="64">64</option></select></div>
     <div class="smart-row hidden" id="pdfStrokeRow"><label>Ketebalan</label><select data-action="pdfSmartStrokeWidth" id="pdfSmartStrokeWidth"><option value="1">1px</option><option value="2">2px</option><option value="3">3px</option><option value="5">5px</option><option value="8">8px</option><option value="12">12px</option><option value="18">18px</option></select></div>
     <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><select data-action="pdfSmartOpacity" id="pdfSmartOpacity"><option value="0.12">Sangat tipis</option><option value="0.18">Tipis</option><option value="0.38">Normal</option><option value="0.60">Tebal</option><option value="0.85">Solid</option></select></div>
-    <div class="palette-row"><button style="--sw:#111827" data-action="pdfPresetColor" data-color="#111827" title="Hitam"></button><button style="--sw:#ef4444" data-action="pdfPresetColor" data-color="#ef4444" title="Merah"></button><button style="--sw:#f97316" data-action="pdfPresetColor" data-color="#f97316" title="Oranye"></button><button style="--sw:#facc15" data-action="pdfPresetColor" data-color="#facc15" title="Kuning"></button><button style="--sw:#22c55e" data-action="pdfPresetColor" data-color="#22c55e" title="Hijau"></button><button style="--sw:#2563eb" data-action="pdfPresetColor" data-color="#2563eb" title="Biru"></button><button style="--sw:#9333ea" data-action="pdfPresetColor" data-color="#9333ea" title="Ungu"></button><button style="--sw:#ffffff" data-action="pdfPresetColor" data-color="#ffffff" title="Putih"></button><button class="pdf-tool" data-action="pdfSetFillTransparent"><i data-lucide="droplets"></i><span>Isi Transparan</span></button></div>
+    <div class="palette-row"><button style="--sw:#111827" data-action="pdfPresetColor" data-color="#111827" title="Hitam"></button><button style="--sw:#ef4444" data-action="pdfPresetColor" data-color="#ef4444" title="Merah"></button><button style="--sw:#f97316" data-action="pdfPresetColor" data-color="#f97316" title="Oranye"></button><button style="--sw:#facc15" data-action="pdfPresetColor" data-color="#facc15" title="Kuning"></button><button style="--sw:#22c55e" data-action="pdfPresetColor" data-color="#22c55e" title="Hijau"></button><button style="--sw:#2563eb" data-action="pdfPresetColor" data-color="#2563eb" title="Biru"></button><button style="--sw:#9333ea" data-action="pdfPresetColor" data-color="#9333ea" title="Ungu"></button><button style="--sw:#ffffff" data-action="pdfPresetColor" data-color="#ffffff" title="Putih"></button><button class="pdf-tool transparent-tool" data-action="pdfPresetColor" data-color="transparent" title="Warna aktif transparan"><i data-lucide="droplets"></i><span>Warna Transparan</span></button><button class="pdf-tool" data-action="pdfSetFillTransparent"><i data-lucide="droplets"></i><span>Isi Transparan</span></button></div>
   </div></details>
   <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Catatan & Stempel</div>
     <button class="pdf-tool" data-pdf-tool="note"><i data-lucide="sticky-note"></i><span>Note</span></button>
@@ -422,10 +776,13 @@
   <footer class="statusbar"><span id="statusText">Siap</span><span id="modeText">Mode: kosong</span><span class="spacer"></span><span id="countText">0 kata</span><span id="saveText">Belum disimpan</span></footer>
 </div>
 <div class="zoombar"><button class="zoom-btn" data-action="zoomOut" title="Zoom out"><i data-lucide="minus"></i></button><button class="zoom-btn" data-action="zoomReset" title="Reset zoom"><i data-lucide="rotate-ccw"></i></button><div class="zoom-percent" id="zoomPercent">100%</div><button class="zoom-btn" data-action="zoomIn" title="Zoom in"><i data-lucide="plus"></i></button></div>
-<div class="drop-overlay" id="dropOverlay"><div class="drop-box" id="dropBox"><button class="drop-close" data-action="closeDrop">×</button><div class="empty-icon"><i data-lucide="download-cloud"></i></div><h2>Lepaskan PDF di sini</h2><p>File PDF akan langsung dibuka ke editor PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Pilih file manual</span></button></div></div>
+<div class="drop-overlay" id="dropOverlay"><div class="drop-box" id="dropBox"><button class="drop-close" data-action="closeDrop">×</button><div class="empty-icon"><i data-lucide="download-cloud"></i></div><h2>Lepaskan file di sini</h2><p>PDF akan masuk ke editor PDF. Word, Excel, gambar, PPTX, HTML, TXT, dan CSV akan dibuka di mode yang sesuai.</p><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Pilih file manual</span></button></div></div>
 <div class="toast-wrap" id="toastWrap"></div>
+
+<div id="tpModalRoot" aria-live="polite"></div>
+
 <div class="modal" id="findModal"><div class="modal-card"><h3>Cari dan ganti</h3><label>Cari</label><input id="findText" /><label>Ganti dengan</label><input id="replaceText" /><div class="modal-actions"><button class="qbtn" data-action="closeFind">Batal</button><button class="qbtn" data-action="findNext">Cari</button><button class="qbtn primary" data-action="replaceAll">Ganti semua</button></div></div></div>
-<input type="file" id="fileInput" hidden accept=".pdf,application/pdf" /><input type="file" id="imageInput" hidden accept="image/*" />
+<input type="file" id="fileInput" hidden accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.doc,application/msword,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xls,application/vnd.ms-excel,.ods,application/vnd.oasis.opendocument.spreadsheet,.csv,text/csv,.txt,text/plain,.md,.html,text/html,.htm,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,image/*,.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,.ppt,application/vnd.ms-powerpoint" /><input type="file" id="imageInput" hidden accept="image/*" />
 <script id="appScript">
 
 (function(){
@@ -459,7 +816,169 @@
   const dropOverlay = $('dropOverlay');
   const fileInput = $('fileInput');
   const imageInput = $('imageInput');
+  const allFileAccept = fileInput ? fileInput.getAttribute('accept') : '';
   const findModal = $('findModal');
+
+  const tpModalRoot = $('tpModalRoot');
+
+  function tpHumanTitle(message, fallback){
+    const raw = String(message || '').trim();
+    if (!raw) return fallback || 'Aksi';
+    const first = raw.split('\n')[0].replace(/[:：]+$/,'').trim();
+    return first.length > 72 ? (fallback || 'Aksi') : first;
+  }
+  function tpModalDetails(message){
+    const parts = String(message || '').split('\n').map(x => x.trim()).filter(Boolean);
+    return parts.slice(1).join('\n');
+  }
+  function tpModalIcon(type){
+    return type === 'confirm' ? 'help-circle' : type === 'prompt' ? 'square-pen' : type === 'danger' ? 'alert-triangle' : 'sparkles';
+  }
+  function tpMakeButton(label, cls, value){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tp-modal-btn ' + (cls || '');
+    b.textContent = label;
+    b.dataset.value = value || '';
+    return b;
+  }
+  function appModal(opts){
+    return new Promise(resolve => {
+      const options = opts || {};
+      const root = tpModalRoot || document.body;
+      const backdrop = document.createElement('div');
+      backdrop.className = 'tp-modal-backdrop';
+      const card = document.createElement('div');
+      card.className = 'tp-modal-card ' + (options.wide ? 'tp-modal-wide' : '');
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-modal', 'true');
+      card.innerHTML = `
+        <div class="tp-modal-head">
+          <div class="tp-modal-title-wrap">
+            <div class="tp-modal-icon"><i data-lucide="${escapeAttr(options.icon || tpModalIcon(options.type))}"></i></div>
+            <div><h3>${escapeHtml(options.title || 'Aksi')}</h3><div class="tp-modal-sub">${escapeHtml(options.subtitle || 'Atur pilihan dengan tampilan aplikasi, bukan popup bawaan browser.')}</div></div>
+          </div>
+          <button class="tp-modal-close" type="button" aria-label="Tutup">×</button>
+        </div>
+        <div class="tp-modal-body"></div>
+        <div class="tp-modal-actions"></div>`;
+      const body = card.querySelector('.tp-modal-body');
+      const actions = card.querySelector('.tp-modal-actions');
+      if (options.html) body.innerHTML = options.html;
+      else if (options.message) body.innerHTML = `<div class="tp-modal-message">${escapeHtml(String(options.message))}</div>`;
+      if (options.fields && options.fields.length) {
+        const wrap = document.createElement('div');
+        wrap.className = options.grid ? 'tp-modal-grid' : '';
+        options.fields.forEach(f => {
+          const field = document.createElement('div');
+          field.className = 'tp-modal-field';
+          const type = f.type || 'text';
+          if (type === 'textarea') {
+            field.innerHTML = `<label for="${escapeAttr(f.id)}">${escapeHtml(f.label || f.id)}</label><textarea class="tp-modal-textarea" id="${escapeAttr(f.id)}" placeholder="${escapeAttr(f.placeholder || '')}">${escapeHtml(f.value || '')}</textarea>${f.help ? `<div class="tp-modal-help">${escapeHtml(f.help)}</div>` : ''}`;
+          } else if (type === 'select') {
+            field.innerHTML = `<label for="${escapeAttr(f.id)}">${escapeHtml(f.label || f.id)}</label><select class="tp-modal-select" id="${escapeAttr(f.id)}">${(f.options || []).map(o => `<option value="${escapeAttr(o.value)}" ${String(o.value)===String(f.value)?'selected':''}>${escapeHtml(o.label)}</option>`).join('')}</select>${f.help ? `<div class="tp-modal-help">${escapeHtml(f.help)}</div>` : ''}`;
+          } else if (type === 'color') {
+            field.innerHTML = `<label for="${escapeAttr(f.id)}">${escapeHtml(f.label || f.id)}</label><div class="tp-modal-color-row"><input class="tp-modal-input" id="${escapeAttr(f.id)}" value="${escapeAttr(f.value || '#000000')}" placeholder="${escapeAttr(f.placeholder || '#000000')}"><input type="color" value="${escapeAttr(/^#[0-9a-fA-F]{6}$/.test(f.value || '') ? f.value : '#000000')}" data-color-target="${escapeAttr(f.id)}" title="Picker warna"></div>${f.help ? `<div class="tp-modal-help">${escapeHtml(f.help)}</div>` : ''}`;
+          } else {
+            field.innerHTML = `<label for="${escapeAttr(f.id)}">${escapeHtml(f.label || f.id)}</label><input class="tp-modal-input" id="${escapeAttr(f.id)}" type="${escapeAttr(type)}" value="${escapeAttr(f.value || '')}" placeholder="${escapeAttr(f.placeholder || '')}">${f.help ? `<div class="tp-modal-help">${escapeHtml(f.help)}</div>` : ''}`;
+          }
+          wrap.appendChild(field);
+        });
+        body.appendChild(wrap);
+      }
+      if (options.extraHtml) {
+        const extra = document.createElement('div');
+        extra.innerHTML = options.extraHtml;
+        body.appendChild(extra);
+      }
+      (options.buttons || []).forEach(btn => actions.appendChild(tpMakeButton(btn.label, btn.className, btn.value)));
+      if (!options.buttons || !options.buttons.length) {
+        if (options.cancelText !== null) actions.appendChild(tpMakeButton(options.cancelText || 'Batal', '', 'cancel'));
+        actions.appendChild(tpMakeButton(options.okText || 'OK', 'primary', 'ok'));
+      }
+      let done = false;
+      function readFields(){
+        const data = {};
+        (options.fields || []).forEach(f => { const el = card.querySelector('#' + CSS.escape(f.id)); data[f.id] = el ? el.value : ''; });
+        return data;
+      }
+      function close(result){
+        if (done) return; done = true;
+        backdrop.style.opacity = '0';
+        card.style.transform = 'translateY(8px) scale(.98)';
+        setTimeout(() => backdrop.remove(), 120);
+        resolve(result);
+      }
+      backdrop.appendChild(card); root.appendChild(backdrop); refreshIcons();
+      const firstInput = card.querySelector('input,textarea,select');
+      setTimeout(() => { if (firstInput) { firstInput.focus(); if (firstInput.select) firstInput.select(); } else card.querySelector('.tp-modal-btn.primary')?.focus(); }, 30);
+      card.querySelector('.tp-modal-close').addEventListener('click', () => close({action:'cancel', fields:readFields()}));
+      actions.addEventListener('click', e => { const b = e.target.closest('.tp-modal-btn'); if (!b) return; close({action:b.dataset.value || 'ok', fields:readFields()}); });
+      body.addEventListener('click', e => {
+        const chip = e.target.closest('[data-tp-set]');
+        if (!chip) return;
+        const target = card.querySelector('#' + CSS.escape(chip.dataset.tpTarget || 'value'));
+        if (target) { target.value = chip.dataset.tpSet || ''; target.dispatchEvent(new Event('input', {bubbles:true})); target.focus(); }
+      });
+      body.addEventListener('input', e => {
+        const picker = e.target.closest('[data-color-target]');
+        if (!picker) return;
+        const target = card.querySelector('#' + CSS.escape(picker.dataset.colorTarget));
+        if (target) target.value = picker.value;
+      });
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Escape') close({action:'cancel', fields:readFields()});
+        if (e.key === 'Enter' && !e.shiftKey && !e.target.matches('textarea')) { e.preventDefault(); close({action:'ok', fields:readFields()}); }
+      });
+    });
+  }
+  async function appAlert(message, title){
+    await appModal({type:'info', icon:'info', title:title || tpHumanTitle(message, 'Informasi'), subtitle:'Detail informasi dari aplikasi.', message:String(message || ''), cancelText:null, okText:'Mengerti'});
+  }
+  async function appConfirm(message, title){
+    const res = await appModal({type:'confirm', icon:'help-circle', title:title || tpHumanTitle(message, 'Konfirmasi'), subtitle:'Pilih lanjut atau batal. Tidak memakai popup bawaan browser.', message:String(message || ''), okText:'Lanjutkan', cancelText:'Batal'});
+    return res.action === 'ok';
+  }
+  async function appPrompt(message, defaultValue, title){
+    const raw = String(message || '');
+    const lower = raw.toLowerCase();
+    const isColor = lower.includes('warna') || lower.includes('hex') || /^#[0-9a-fA-F]{3,6}$/.test(String(defaultValue || ''));
+    const details = tpModalDetails(raw);
+    const field = { id:'value', label: isColor ? 'Nilai warna / Font warna' : 'Input', value: defaultValue || '', placeholder: isColor ? '#2563eb' : '' };
+    if (isColor) field.type = 'color';
+    const extra = [];
+    if (details) extra.push(`<div class="tp-modal-message">${escapeHtml(details)}</div>`);
+    if (lower.includes('halaman') || lower.includes('range')) {
+      extra.push(`<div class="tp-modal-panel"><h4>Pilihan cepat halaman</h4><div class="tp-modal-quick"><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1-">Mulai dari halaman 1</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1,3,5">Ganjil contoh</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="2,4,6">Genap contoh</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1-3,5,8-10">Range campur</button></div><ul><li>Pakai koma untuk halaman terpisah.</li><li>Pakai tanda minus untuk rentang halaman.</li><li>Contoh: 1-3,5,8-10.</li></ul></div>`);
+    }
+    if (isColor) {
+      extra.push(`<div class="tp-modal-panel"><h4>Preset warna</h4><div class="tp-modal-quick"><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#111827">Hitam</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#ef4444">Merah</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#facc15">Kuning</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#22c55e">Hijau</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#2563eb">Biru</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="#9333ea">Ungu</button></div></div>`);
+    }
+    if (lower.includes('watermark')) {
+      extra.push(`<div class="tp-modal-panel"><h4>Detail watermark</h4><ul><li>Teks akan ditempatkan sebagai layer editan, jadi masih bisa digeser dan dihapus sebelum disimpan.</li><li>Gunakan warna, rotasi, opacity, dan target halaman untuk hasil yang lebih rapi.</li></ul></div>`);
+    } else if (lower.includes('metadata') || lower.includes('title pdf') || lower.includes('author') || lower.includes('subject') || lower.includes('keywords')) {
+      extra.push(`<div class="tp-modal-panel"><h4>Detail metadata</h4><ul><li>Metadata membantu pencarian dan identitas file PDF.</li><li>Isi seperlunya; kosongkan jika tidak ingin diubah.</li></ul></div>`);
+    } else if (lower.includes('field') || lower.includes('form')) {
+      extra.push(`<div class="tp-modal-panel"><h4>Detail form</h4><ul><li>Nama field harus sama dengan nama field yang ada di PDF.</li><li>Gunakan tombol List Field untuk melihat daftar field sebelum mengisi.</li></ul></div>`);
+    } else if (!details && !isColor && !(lower.includes('halaman') || lower.includes('range'))) {
+      extra.push(`<div class="tp-modal-panel"><h4>Detail fitur</h4><ul><li>Input ini dipakai langsung oleh fitur yang sedang dijalankan.</li><li>Tekan Terapkan untuk lanjut, atau Batal untuk membatalkan tanpa mengubah dokumen.</li></ul></div>`);
+    }
+    const res = await appModal({type:'prompt', icon:'square-pen', title:title || tpHumanTitle(raw, 'Input'), subtitle:'Isi detailnya di popup aplikasi yang lebih jelas.', fields:[field], extraHtml:extra.join(''), okText:'Terapkan', cancelText:'Batal'});
+    return res.action === 'ok' ? res.fields.value : null;
+  }
+  async function appPageRangeModal(title, total, def){
+    const totalText = Number(total || 0);
+    const res = await appModal({
+      type:'prompt', icon:'scissors', wide:true,
+      title:title || 'Pilih halaman',
+      subtitle:'Atur halaman dengan cepat dan detail. Cocok untuk pisah, extract, hapus, import, atau label halaman.',
+      fields:[{id:'value', label:'Range halaman', value:def || ('1-' + totalText), placeholder:'1-3,5,8-10', help:'Masukkan nomor halaman. Total halaman: ' + totalText}],
+      extraHtml:`<div class="tp-modal-grid"><div class="tp-modal-panel"><h4>Preset cepat</h4><div class="tp-modal-quick"><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1-${totalText}">Semua halaman</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1">Halaman pertama</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="${totalText}">Halaman terakhir</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1-3">3 halaman awal</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="1,3,5">Contoh ganjil</button><button class="tp-chip-btn" data-tp-target="value" data-tp-set="2,4,6">Contoh genap</button></div></div><div class="tp-modal-panel"><h4>Format range</h4><div class="tp-modal-range-preview"><div class="tp-range-row"><strong>1-3</strong><span>halaman 1 sampai 3</span></div><div class="tp-range-row"><strong>1,5,10</strong><span>halaman tertentu</span></div><div class="tp-range-row"><strong>1-3,5,8-10</strong><span>gabungan rentang</span></div></div></div></div>`,
+      okText:'Gunakan halaman', cancelText:'Batal'
+    });
+    return res.action === 'ok' ? res.fields.value : null;
+  }
+
 
   const state = {
     activeTab: 'File',
@@ -582,8 +1101,54 @@
 
   function refreshIcons(){ if (window.lucide) window.lucide.createIcons(); }
 
+  function hasActiveDocument(){
+    return !!state.activeDocId && ['doc','pdf','sheet'].includes(state.mode);
+  }
+
+  function isUiLocked(){
+    return !hasActiveDocument();
+  }
+
+  function isAlwaysEnabledTarget(target){
+    if (!target) return false;
+    const actionEl = target.closest && target.closest('[data-action]');
+    const action = actionEl && actionEl.dataset ? actionEl.dataset.action : '';
+    return action === 'open' || action === 'closeDrop';
+  }
+
+  function shouldBlockLockedTarget(target){
+    if (!isUiLocked() || isAlwaysEnabledTarget(target)) return false;
+    return !!(target && target.closest && target.closest('button,select,input,textarea,summary,[data-tab],[data-pdf-tool],[data-doc-id],[data-doc-action]'));
+  }
+
+  function notifyNeedFile(){
+    const now = Date.now();
+    if (notifyNeedFile.last && now - notifyNeedFile.last < 1800) return;
+    notifyNeedFile.last = now;
+    toast('Masukkan file atau drag-drop dokumen dulu, baru fitur bisa dipakai.', 'warn');
+  }
+
+  function updateToolAvailability(){
+    const locked = isUiLocked();
+    appRoot.classList.toggle('no-document', locked);
+    const controls = document.querySelectorAll('button[data-action],button[data-pdf-tool],select[data-action],input[data-action],textarea[data-action],.tab-btn,.pdf-menu summary');
+    controls.forEach(el => {
+      const allow = isAlwaysEnabledTarget(el);
+      const disabled = locked && !allow;
+      if ('disabled' in el) el.disabled = disabled;
+      el.classList.toggle('disabled-tool', disabled);
+      el.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+      if (el.matches && el.matches('.pdf-menu summary')) {
+        if (disabled) el.setAttribute('data-disabled', 'true');
+        else el.removeAttribute('data-disabled');
+      }
+    });
+    if (locked) document.querySelectorAll('.pdf-menu[open]').forEach(menu => menu.removeAttribute('open'));
+  }
+
   function renderTabs(){
     tabsEl.innerHTML = tabs.map(t => `<button class="tab-btn ${t===state.activeTab?'active':''}" data-tab="${t}">${t}</button>`).join('');
+    updateToolAvailability();
   }
 
   function renderRibbon(){
@@ -591,6 +1156,7 @@
     ribbonEl.innerHTML = groups.map(group => `<div class="group"><div class="group-title">${escapeHtml(group.title)}</div>${group.items.map(renderTool).join('')}</div>`).join('');
     syncActivePdfTools();
     refreshIcons();
+    updateToolAvailability();
   }
 
   function renderTool(item){
@@ -629,6 +1195,7 @@
   }
 
   function handleClick(e){
+    if (shouldBlockLockedTarget(e.target)) { e.preventDefault(); e.stopPropagation(); notifyNeedFile(); return; }
     const closeDocBtn = e.target.closest('[data-close-doc]');
     if (closeDocBtn) { e.preventDefault(); e.stopPropagation(); closeDocument(closeDocBtn.dataset.closeDoc); return; }
     const docBtn = e.target.closest('[data-doc-id]');
@@ -638,7 +1205,7 @@
     const tabBtn = e.target.closest('[data-tab]');
     if (tabBtn) { state.activeTab = tabBtn.dataset.tab; renderTabs(); renderRibbon(); return; }
     const pdfSummary = e.target.closest('.pdf-menu summary');
-    if (pdfSummary) setTimeout(() => positionPdfMenu(pdfSummary.closest('.pdf-menu')), 0);
+    if (pdfSummary) requestAnimationFrame(() => positionPdfMenu(pdfSummary.closest('.pdf-menu')));
     const pdfToolBtn = e.target.closest('[data-pdf-tool]');
     if (pdfToolBtn) { setPdfTool(pdfToolBtn.dataset.pdfTool); return; }
     const formActionEl = e.target.closest('select[data-action],input[data-action],textarea[data-action]');
@@ -692,12 +1259,13 @@
     const rect = summary.getBoundingClientRect();
     const viewportW = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
     const viewportH = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320);
-    const desired = body.classList.contains('pdf-style-smart') ? 560 : body.classList.contains('wide') ? 720 : 420;
+    const desired = body.classList.contains('pdf-style-smart') ? 700 : body.classList.contains('wide') ? 720 : 420;
     const width = Math.max(280, Math.min(desired, viewportW - 24));
+    const gap = 3;
     const left = Math.max(12, Math.min(rect.left, viewportW - width - 12));
-    let top = rect.bottom + 8;
-    if (top > viewportH - 90) top = Math.max(12, rect.top - 8 - Math.min(460, viewportH - 24));
-    const maxHeight = Math.max(160, viewportH - top - 12);
+    let top = rect.bottom + gap;
+    if (top > viewportH - 90) top = Math.max(12, rect.top - gap - Math.min(460, viewportH - 24));
+    const maxHeight = Math.max(160, viewportH - top - 8);
     body.style.setProperty('--pdf-pop-left', left + 'px');
     body.style.setProperty('--pdf-pop-top', top + 'px');
     body.style.setProperty('--pdf-pop-width', width + 'px');
@@ -713,11 +1281,12 @@
     if (!menu || !menu.classList || !menu.classList.contains('pdf-menu')) return;
     if (!menu.open) return;
     document.querySelectorAll('.pdf-menu[open]').forEach(other => { if (other !== menu) other.removeAttribute('open'); });
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       positionPdfMenu(menu);
       updatePdfStyleControls();
       refreshIcons();
-    }, 0);
+      requestAnimationFrame(() => positionPdfMenu(menu));
+    });
   }
 
   async function runAction(action, sourceEl){
@@ -780,7 +1349,31 @@
   async function openPicker(){
     hideDropOverlay();
     if (window.showOpenFilePicker) {
-      const [handle] = await window.showOpenFilePicker({ multiple:false, types:[{ description:'PDF', accept:{ 'application/pdf':['.pdf'] }}]});
+      const [handle] = await window.showOpenFilePicker({
+        multiple:false,
+        types:[{
+          description:'PDF, Office, gambar, HTML, dan teks',
+          accept:{
+            'application/pdf':['.pdf'],
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document':['.docx'],
+            'application/msword':['.doc'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx'],
+            'application/vnd.ms-excel':['.xls'],
+            'application/vnd.oasis.opendocument.spreadsheet':['.ods'],
+            'text/csv':['.csv'],
+            'text/plain':['.txt','.md'],
+            'text/html':['.html','.htm'],
+            'image/png':['.png'],
+            'image/jpeg':['.jpg','.jpeg'],
+            'image/webp':['.webp'],
+            'image/gif':['.gif'],
+            'image/bmp':['.bmp'],
+            'image/svg+xml':['.svg'],
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation':['.pptx'],
+            'application/vnd.ms-powerpoint':['.ppt']
+          }
+        }]
+      });
       const file = await handle.getFile();
       return openFile(file, handle);
     }
@@ -804,16 +1397,21 @@
 
   async function loadFileIntoCurrentState(file, handle){
     state.file = file; state.fileHandle = handle; state.fileName = file.name || 'dokumen'; state.ext = getExt(state.fileName); state.dirty = false; saveText.textContent = 'Tersimpan';
-    if (state.ext !== 'pdf') { toast('Aplikasi ini sekarang difokuskan untuk PDF. Pilih file .pdf.', 'warn'); status('Format non-PDF ditolak'); return; }
     fileNameEl.textContent = state.fileName;
     status('Membuka ' + state.fileName + '...');
     const buffer = await file.arrayBuffer();
+
     if (state.ext === 'pdf') return loadPdf(buffer);
     if (state.ext === 'docx') return loadDocx(buffer);
+    if (state.ext === 'doc') return loadLegacyOfficeNotice('Word DOC lama', 'Format .doc lama berbasis binary tidak bisa dipreview penuh langsung di browser ini. Simpan ulang sebagai .docx agar isi bisa dibuka dan diedit.');
     if (['xlsx','xls','ods','csv'].includes(state.ext)) return loadSheet(buffer, state.ext);
-    if (['txt','md','html','htm'].includes(state.ext)) return loadTextDoc(buffer, state.ext);
-    toast('Format belum didukung: .' + state.ext, 'warn');
-    status('Format tidak didukung');
+    if (['txt','md','html','htm','json','xml','css','js'].includes(state.ext)) return loadTextDoc(buffer, state.ext);
+    if (isImageFile(state.ext, file.type)) return loadImageDoc(buffer, state.ext, file.type);
+    if (state.ext === 'pptx') return loadPptxPreview(buffer);
+    if (state.ext === 'ppt') return loadLegacyOfficeNotice('PowerPoint PPT lama', 'Format .ppt lama berbasis binary tidak bisa dipreview penuh langsung di browser ini. Simpan ulang sebagai .pptx agar teks slide bisa dibaca.');
+
+    toast('Format belum didukung penuh: .' + state.ext + '. File tidak diubah.', 'warn');
+    return loadLegacyOfficeNotice('Format belum didukung', 'File .' + state.ext + ' belum punya pembaca khusus di aplikasi ini. PDF, DOCX, XLS/XLSX/ODS/CSV, gambar, PPTX, HTML, TXT, MD, JSON, XML, CSS, dan JS sudah disiapkan.');
   }
 
   function resetVisualWorkspaces(){
@@ -956,6 +1554,9 @@
     if (ext === 'pdf') return 'file-type-2';
     if (ext === 'docx' || ext === 'doc') return 'file-text';
     if (['xlsx','xls','ods','csv'].includes(ext)) return 'table';
+    if (['png','jpg','jpeg','webp','gif','bmp','svg'].includes(ext)) return 'image';
+    if (['pptx','ppt'].includes(ext)) return 'presentation';
+    if (['html','htm','txt','md','json','xml','css','js'].includes(ext)) return 'file-code';
     return 'file';
   }
 
@@ -963,7 +1564,7 @@
     const doc = state.documents.find(d => d.id === id);
     if (!doc) return;
     if (id === state.activeDocId) captureActiveDocument();
-    if (doc.dirty && !confirm('Dokumen ini belum disimpan. Tutup tetap?')) return;
+    if (doc.dirty && !await appConfirm('Dokumen ini belum disimpan. Tutup tetap?')) return;
     const idx = state.documents.findIndex(d => d.id === id);
     state.documents.splice(idx, 1);
     if (state.activeDocId === id) {
@@ -986,6 +1587,101 @@
     modeText.textContent = 'Mode: ' + (mode === 'doc' ? 'Dokumen' : mode === 'pdf' ? 'PDF' : mode === 'sheet' ? 'Spreadsheet' : 'kosong');
     applyZoom();
     refreshIcons();
+    updateToolAvailability();
+  }
+
+  function isImageFile(ext, mime){
+    return /^image\//i.test(mime || '') || ['png','jpg','jpeg','webp','gif','bmp','svg'].includes(String(ext || '').toLowerCase());
+  }
+
+  function imageMimeFromExt(ext, mime){
+    if (mime && /^image\//i.test(mime)) return mime;
+    const map = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', gif:'image/gif', bmp:'image/bmp', svg:'image/svg+xml' };
+    return map[String(ext || '').toLowerCase()] || 'image/png';
+  }
+
+  function bufferToDataUrl(buffer, mime){
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    }
+    return `data:${mime || 'application/octet-stream'};base64,${btoa(binary)}`;
+  }
+
+  async function loadImageDoc(buffer, ext, mime){
+    const imgMime = imageMimeFromExt(ext, mime);
+    const dataUrl = bufferToDataUrl(buffer, imgMime);
+    setMode('doc');
+    state.docMode = 'preview';
+    state.docEditHtml = `<p><img src="${dataUrl}" alt="${escapeAttr(state.fileName)}" style="max-width:100%;height:auto"></p>`;
+    docEditor.innerHTML = state.docEditHtml;
+    docPreview.innerHTML = `<div class="doc-page"><h2>Preview Gambar</h2><p>${escapeHtml(state.fileName)}</p><img src="${dataUrl}" alt="${escapeAttr(state.fileName)}" style="max-width:100%;height:auto;display:block;margin:16px auto"></div>`;
+    docPreviewWrap.classList.remove('hidden');
+    docEditWrap.classList.add('hidden');
+    setDocModeButtons();
+    state.activeTab = 'Alat'; renderTabs(); renderRibbon();
+    updateWordCount();
+    status('Gambar dibuka sebagai preview.');
+  }
+
+  async function loadPptxPreview(buffer){
+    if (!window.JSZip) throw new Error('Library ZIP belum termuat, sehingga PPTX belum bisa dibaca.');
+    const zip = await JSZip.loadAsync(buffer);
+    const slideFiles = Object.keys(zip.files)
+      .filter(name => /^ppt\/slides\/slide\d+\.xml$/i.test(name))
+      .sort((a,b) => Number((a.match(/slide(\d+)\.xml/i) || [0,0])[1]) - Number((b.match(/slide(\d+)\.xml/i) || [0,0])[1]));
+    if (!slideFiles.length) return loadLegacyOfficeNotice('PPTX kosong/tidak terbaca', 'Struktur slide tidak ditemukan di file ini.');
+
+    const slides = [];
+    for (const name of slideFiles) {
+      const xmlText = await zip.file(name).async('text');
+      const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
+      const texts = Array.from(xml.getElementsByTagName('a:t')).map(node => node.textContent || '').filter(Boolean);
+      const slideNo = Number((name.match(/slide(\d+)\.xml/i) || [0, slides.length + 1])[1]);
+      slides.push({ no: slideNo, texts });
+    }
+
+    setMode('doc');
+    state.docMode = 'preview';
+    const previewHtml = slides.map(slide => {
+      const body = slide.texts.length
+        ? slide.texts.map(t => `<p>${escapeHtml(t)}</p>`).join('')
+        : '<p><em>Slide ini tidak berisi teks yang bisa diekstrak.</em></p>';
+      return `<div class="doc-page"><h2>Slide ${slide.no}</h2>${body}</div>`;
+    }).join('');
+    const editHtml = `<h1>${escapeHtml(baseName(state.fileName))}</h1>` + slides.map(slide => {
+      const body = slide.texts.length ? slide.texts.map(t => `<p>${escapeHtml(t)}</p>`).join('') : '<p></p>';
+      return `<h2>Slide ${slide.no}</h2>${body}`;
+    }).join('');
+
+    docPreview.innerHTML = previewHtml;
+    docEditor.innerHTML = editHtml;
+    state.docEditHtml = editHtml;
+    docPreviewWrap.classList.remove('hidden');
+    docEditWrap.classList.add('hidden');
+    setDocModeButtons();
+    state.activeTab = 'Alat'; renderTabs(); renderRibbon();
+    updateWordCount();
+    status('PPTX dibuka sebagai preview teks dasar. Layout asli slide belum dirender penuh.');
+    toast('PPTX berhasil dibaca sebagai preview teks. Untuk layout penuh, gunakan PowerPoint/LibreOffice.', 'warn');
+  }
+
+  function loadLegacyOfficeNotice(title, message){
+    setMode('doc');
+    state.docMode = 'preview';
+    const html = `<div class="doc-page"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(message)}</p><p>File aktif: <strong>${escapeHtml(state.fileName)}</strong></p></div>`;
+    docPreview.innerHTML = html;
+    docEditor.innerHTML = `<h2>${escapeHtml(title)}</h2><p>${escapeHtml(message)}</p>`;
+    state.docEditHtml = docEditor.innerHTML;
+    docPreviewWrap.classList.remove('hidden');
+    docEditWrap.classList.add('hidden');
+    setDocModeButtons();
+    state.activeTab = 'Alat'; renderTabs(); renderRibbon();
+    updateWordCount();
+    status(title + ' dibuka sebagai informasi.');
+    toast(message, 'warn');
   }
 
   async function loadTextDoc(buffer, ext){
@@ -1263,7 +1959,7 @@
     if (strokeRow) strokeRow.classList.toggle('hidden', !['rect','ellipse','line','arrow','draw'].includes(type));
     if (opacityRow) opacityRow.classList.toggle('hidden', !['highlight','rect','ellipse'].includes(type));
     if (mainLabel) {
-      mainLabel.textContent = ['rect','ellipse'].includes(type) ? 'Border' : ['line','arrow'].includes(type) ? 'Garis' : type === 'draw' ? 'Coret' : type === 'highlight' ? 'Highlight' : 'Warna';
+      mainLabel.textContent = ['text','note','stamp','check','cross'].includes(type) ? 'Font' : ['rect','ellipse'].includes(type) ? 'Border' : ['line','arrow'].includes(type) ? 'Garis' : type === 'draw' ? 'Coret' : type === 'highlight' ? 'Highlight' : 'Warna';
     }
     if (fillLabel) fillLabel.textContent = type === 'note' ? 'Latar' : 'Isi';
     const mainVal = mainColorForStyleType(type);
@@ -1286,7 +1982,7 @@
   function setPdfSmartMainColor(value){
     const type = currentPdfStyleType();
     const key = pdfMainColorKeyFor(type);
-    if (!key || isTransparentColor(value)) return;
+    if (!key) return;
     setPdfColor(key, value);
     updatePdfStyleControls();
   }
@@ -1488,8 +2184,8 @@
   }
 
 
-  function createPdfStamp(layer, pageIndex, x, y){
-    const text = prompt('Teks stempel:', 'APPROVED');
+  async function createPdfStamp(layer, pageIndex, x, y){
+    const text = await appPrompt('Teks stempel:', 'APPROVED');
     if (!text) return;
     const r = layer.getBoundingClientRect();
     pushPdfHistory();
@@ -1531,11 +2227,11 @@
     markDirty(); redrawPdfAnnotations(); setPdfTool('select');
   }
 
-  function pdfEditSelectedText(){
+  async function pdfEditSelectedText(){
     if (!state.selectedAnnotationId) return toast('Pilih teks/note/stempel dulu.', 'warn');
     const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
     if (!ann || !['text','note','stamp'].includes(ann.type)) return toast('Objek yang dipilih bukan teks.', 'warn');
-    const next = prompt('Edit teks:', ann.text || '');
+    const next = await appPrompt('Edit teks:', ann.text || '');
     if (next == null) return;
     pushPdfHistory(); ann.text = next; markDirty(); redrawPdfAnnotations();
   }
@@ -1557,7 +2253,7 @@
 
   async function pdfSearchText(){
     if (!state.pdfDoc) return toast('Buka PDF dulu.', 'warn');
-    const q = prompt('Cari teks dalam PDF:', state.pdfSearchQuery || '');
+    const q = await appPrompt('Cari teks dalam PDF:', state.pdfSearchQuery || '');
     if (!q) return;
     state.pdfSearchQuery = q;
     for (let i=1; i<=state.pdfDoc.numPages; i++) {
@@ -1840,13 +2536,13 @@
 
   function focusPdfStyle(){
     const menu = document.querySelector('.pdf-style-menu');
-    if (menu) { menu.open = true; menu.scrollIntoView({block:'nearest', inline:'nearest'}); }
+    if (menu) { menu.open = true; menu.scrollIntoView({block:'nearest', inline:'nearest'}); requestAnimationFrame(() => positionPdfMenu(menu)); }
     updatePdfStyleControls();
   }
   function replacePdf(){
     fileInput.accept = '.pdf';
     fileInput.click();
-    setTimeout(() => { fileInput.accept = '.pdf,application/pdf'; }, 500);
+    setTimeout(() => { fileInput.accept = allFileAccept || fileInput.accept; }, 500);
   }
   async function newBlankPdf(){
     if (!window.PDFLib) return toast('Library PDF belum termuat.', 'warn');
@@ -1955,15 +2651,15 @@
     if (!['rect','ellipse','note'].includes(type)) return toast('Transparan hanya untuk isi kotak/oval/note.', 'warn');
     setPdfSmartFillColor('transparent');
   }
-  function pdfClearCurrentPageAnnotations(){
+  async function pdfClearCurrentPageAnnotations(){
     if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
     const pageIndex = currentPdfPageIndex();
-    if (!confirm('Hapus semua editan di halaman ini?')) return;
+    if (!await appConfirm('Hapus semua editan di halaman ini?')) return;
     pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => (a.pageIndex||0) !== pageIndex); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations();
   }
 
   function pdfDeleteSelected(){ if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn'); if (!state.selectedAnnotationId) return toast('Pilih anotasi dulu.', 'warn'); const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId); if (ann && ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== state.selectedAnnotationId); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); }
-  function clearPdfAnnotations(){ if (state.mode !== 'pdf') return; if (!confirm('Hapus semua anotasi PDF?')) return; pushPdfHistory(); state.pdfAnnotations = []; markDirty(); redrawPdfAnnotations(); }
+  async function clearPdfAnnotations(){ if (state.mode !== 'pdf') return; if (!await appConfirm('Hapus semua anotasi PDF?')) return; pushPdfHistory(); state.pdfAnnotations = []; markDirty(); redrawPdfAnnotations(); }
 
 
   function ensurePdfOpen(){ if (state.mode !== 'pdf' || !state.pdfBytes || !state.pdfDoc) { toast('Buka PDF dulu.', 'warn'); return false; } return true; }
@@ -1983,7 +2679,7 @@
     }
     return [...new Set(out)];
   }
-  function promptPageRange(title, total, def='1-' ){ const val = prompt(`${title}\nTotal halaman: ${total}\nContoh: 1-3,5,8-10`, def + total); if (val == null) return null; return parsePageRange(val, total); }
+  async function promptPageRange(title, total, def='1-' ){ const val = await appPageRangeModal(title, total, def + total); if (val == null) return null; return parsePageRange(val, total); }
   async function copyPagesToNewPdf(srcDoc, pageIndexes){ const out = await PDFLib.PDFDocument.create(); const copied = await out.copyPages(srcDoc, pageIndexes); copied.forEach(p => out.addPage(p)); return bytesToArrayBuffer(await out.save()); }
   async function setPdfBytesAndRender(arrayBuffer, annotations, name, dirty=true){
     state.pdfBytes = bytesToArrayBuffer(arrayBuffer);
@@ -2016,7 +2712,7 @@
     status('Menggabungkan PDF...');
     const out = await PDFLib.PDFDocument.create();
     let names = [];
-    if (state.pdfBytes && confirm('Sertakan PDF yang sedang dibuka sebagai file pertama?')) {
+    if (state.pdfBytes && await appConfirm('Sertakan PDF yang sedang dibuka sebagai file pertama?')) {
       const cur = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0));
       const pages = await out.copyPages(cur, cur.getPageIndices()); pages.forEach(p => out.addPage(p)); names.push(baseName(state.fileName));
     }
@@ -2032,7 +2728,7 @@
   async function splitPdfByRange(){
     if (!ensurePdfOpen()) return;
     const total = state.pdfDoc.numPages;
-    const range = promptPageRange('Pilih halaman yang akan dijadikan PDF baru', total, '1-');
+    const range = await promptPageRange('Pilih halaman yang akan dijadikan PDF baru', total, '1-');
     if (!range || !range.length) return;
     const src = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0));
     const bytes = await copyPagesToNewPdf(src, range);
@@ -2089,7 +2785,7 @@
     if (!ensurePdfOpen()) return;
     const src = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0));
     const total = src.getPageCount();
-    const pos = clamp(Number(prompt(`Sisipkan halaman kosong sebelum halaman nomor berapa?\n1-${total+1}`, String(currentPdfPageIndex()+2))) || total+1, 1, total+1) - 1;
+    const pos = clamp(Number(await appPrompt(`Sisipkan halaman kosong sebelum halaman nomor berapa?\n1-${total+1}`, String(currentPdfPageIndex()+2))) || total+1, 1, total+1) - 1;
     const ref = src.getPages()[Math.min(pos, total-1)];
     src.insertPage(pos, ref ? [ref.getWidth(), ref.getHeight()] : [595.28, 841.89]);
     const anns = state.pdfAnnotations.map(a => ({...a, pageIndex: Number(a.pageIndex||0) >= pos ? Number(a.pageIndex||0)+1 : Number(a.pageIndex||0)}));
@@ -2099,8 +2795,8 @@
     if (!ensurePdfOpen()) return;
     const files = await pickPdfFiles(false); if (!files.length) return;
     const importDoc = await PDFLib.PDFDocument.load(await files[0].arrayBuffer());
-    const range = promptPageRange('Halaman dari PDF sumber yang akan diimpor', importDoc.getPageCount(), '1-'); if (!range || !range.length) return;
-    const insertAfter = clamp(Number(prompt('Masukkan setelah halaman nomor:', String(currentPdfPageIndex()+1))) || currentPdfPageIndex()+1, 0, state.pdfDoc.numPages);
+    const range = await promptPageRange('Halaman dari PDF sumber yang akan diimpor', importDoc.getPageCount(), '1-'); if (!range || !range.length) return;
+    const insertAfter = clamp(Number(await appPrompt('Masukkan setelah halaman nomor:', String(currentPdfPageIndex()+1))) || currentPdfPageIndex()+1, 0, state.pdfDoc.numPages);
     const src = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const out = await PDFLib.PDFDocument.create();
     const before = src.getPageIndices().filter(i => i < insertAfter); const after = src.getPageIndices().filter(i => i >= insertAfter);
     (await out.copyPages(src, before)).forEach(p=>out.addPage(p)); (await out.copyPages(importDoc, range)).forEach(p=>out.addPage(p)); (await out.copyPages(src, after)).forEach(p=>out.addPage(p));
@@ -2109,9 +2805,9 @@
   }
   async function pdfDeletePages(){
     if (!ensurePdfOpen()) return;
-    const total = state.pdfDoc.numPages; const del = promptPageRange('Halaman yang akan dihapus', total, String(currentPdfPageIndex()+1)); if (!del || !del.length) return;
+    const total = state.pdfDoc.numPages; const del = await promptPageRange('Halaman yang akan dihapus', total, String(currentPdfPageIndex()+1)); if (!del || !del.length) return;
     if (del.length >= total) return toast('Tidak bisa menghapus semua halaman.', 'warn');
-    if (!confirm('Hapus halaman: ' + del.map(i=>i+1).join(', ') + '?')) return;
+    if (!await appConfirm('Hapus halaman: ' + del.map(i=>i+1).join(', ') + '?')) return;
     const keep = Array.from({length:total}, (_,i)=>i).filter(i => !del.includes(i)); await rebuildPdfByOrder(keep, state.fileName); toast('Halaman dihapus.', 'good');
   }
   async function pdfExtractPages(){ return splitPdfByRange(); }
@@ -2119,8 +2815,8 @@
     if (!ensurePdfOpen()) return;
     const files = await pickPdfFiles(false); if (!files.length) return;
     const importDoc = await PDFLib.PDFDocument.load(await files[0].arrayBuffer());
-    const impRange = promptPageRange('Halaman dari PDF sumber untuk mengganti', importDoc.getPageCount(), '1-'); if (!impRange || !impRange.length) return;
-    const repRange = promptPageRange('Halaman PDF aktif yang akan diganti', state.pdfDoc.numPages, String(currentPdfPageIndex()+1)); if (!repRange || !repRange.length) return;
+    const impRange = await promptPageRange('Halaman dari PDF sumber untuk mengganti', importDoc.getPageCount(), '1-'); if (!impRange || !impRange.length) return;
+    const repRange = await promptPageRange('Halaman PDF aktif yang akan diganti', state.pdfDoc.numPages, String(currentPdfPageIndex()+1)); if (!repRange || !repRange.length) return;
     const repSet = new Set(repRange); const src = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const out = await PDFLib.PDFDocument.create();
     for (let i=0;i<src.getPageCount();i++) { if (repSet.has(i)) { if (i === repRange[0]) (await out.copyPages(importDoc, impRange)).forEach(p=>out.addPage(p)); } else { (await out.copyPages(src, [i])).forEach(p=>out.addPage(p)); } }
     const offset = impRange.length - repRange.length;
@@ -2130,9 +2826,9 @@
   }
   async function pdfCropPages(){
     if (!ensurePdfOpen()) return;
-    const v = prompt('Margin crop dalam point: kiri,atas,kanan,bawah\nContoh: 20,20,20,20', '20,20,20,20'); if (v == null) return;
+    const v = await appPrompt('Margin crop dalam point: kiri,atas,kanan,bawah\nContoh: 20,20,20,20', '20,20,20,20'); if (v == null) return;
     const m = v.split(',').map(x => Math.max(0, Number(x.trim()) || 0)); if (m.length < 4) return toast('Format margin salah.', 'warn');
-    const all = confirm('Terapkan crop ke semua halaman?\nOK = semua, Batal = halaman aktif saja');
+    const all = await appConfirm('Terapkan crop ke semua halaman?\nOK = semua, Batal = halaman aktif saja');
     const doc = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const pages = doc.getPages(); const targets = all ? pages.map((_,i)=>i) : [currentPdfPageIndex()];
     for (const i of targets) { const p = pages[i]; const W=p.getWidth(), H=p.getHeight(); const left=m[0], top=m[1], right=m[2], bottom=m[3]; p.setCropBox(left, bottom, Math.max(1, W-left-right), Math.max(1, H-top-bottom)); }
     await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Crop halaman diterapkan.', 'good');
@@ -2140,11 +2836,11 @@
   async function pdfSetPageSize(){
     if (!ensurePdfOpen()) return;
     const presets = {A4:[595.28,841.89], Letter:[612,792], Legal:[612,1008], F4:[612,936]};
-    const val = prompt('Ukuran halaman: A4, Letter, Legal, F4, atau custom width,height point', 'A4'); if (!val) return;
+    const val = await appPrompt('Ukuran halaman: A4, Letter, Legal, F4, atau custom width,height point', 'A4'); if (!val) return;
     let size = presets[val.trim()] || presets[val.trim().toUpperCase()];
     if (!size && val.includes(',')) size = val.split(',').map(n => Number(n.trim())).filter(Boolean);
     if (!size || size.length < 2) return toast('Ukuran tidak dikenali.', 'warn');
-    const all = confirm('Terapkan ukuran ke semua halaman? OK = semua, Batal = halaman aktif');
+    const all = await appConfirm('Terapkan ukuran ke semua halaman? OK = semua, Batal = halaman aktif');
     const doc = await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const pages = doc.getPages(); const targets = all ? pages.map((_,i)=>i) : [currentPdfPageIndex()];
     targets.forEach(i => pages[i].setSize(size[0], size[1]));
     await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Ukuran halaman diubah.', 'good');
@@ -2161,7 +2857,7 @@
   async function pdfStraightenPages(){ toast('Straighten otomatis butuh deteksi kemiringan OCR. Untuk saat ini gunakan Rotate Left/Right.', 'warn'); }
   async function pdfToImage(){
     if (!ensurePdfOpen()) return;
-    const all = confirm('Export semua halaman ke ZIP PNG?\nOK = semua, Batal = halaman aktif saja');
+    const all = await appConfirm('Export semua halaman ke ZIP PNG?\nOK = semua, Batal = halaman aktif saja');
     if (all && !window.JSZip) return toast('JSZip belum termuat.', 'warn');
     const indexes = all ? Array.from({length:state.pdfDoc.numPages}, (_,i)=>i) : [currentPdfPageIndex()];
     const zip = all ? new JSZip() : null;
@@ -2194,10 +2890,10 @@
     downloadBlob(new Blob([bytes], {type:'application/pdf'}), baseName(state.fileName) + '-compressed.pdf');
     toast('PDF dikompres ringan. Hasil tergantung struktur file asli.', 'good');
   }
-  function pdfAddCustomWatermark(){ const text = prompt('Teks watermark:', 'CONFIDENTIAL'); if (!text) return; if (state.mode !== 'pdf' || !state.pdfDoc) return toast('Buka PDF dulu.', 'warn'); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++) state.pdfAnnotations.push({id:uid(), type:'stamp', pageIndex:i, x:.15, y:.42, w:.70, h:.10, text:text.toUpperCase(), color:state.pdfTextColor || '#ef4444', size:46, rotation:-20}); markDirty(); redrawPdfAnnotations(); }
-  function pdfAddHeaderFooter(){ if(!ensurePdfOpen()) return; const head=prompt('Teks header (kosongkan jika tidak perlu):',''); if(head===null) return; const foot=prompt('Teks footer (kosongkan jika tidak perlu):',''); if(foot===null) return; pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++){ if(head) state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.025,w:.8,h:.03,text:head,color:state.pdfTextColor,size:10}); if(foot) state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.955,w:.8,h:.03,text:foot.replaceAll('{page}', String(i+1)).replaceAll('{total}', String(total)),color:state.pdfTextColor,size:10}); } markDirty(); redrawPdfAnnotations(); toast('Header/footer ditambahkan.', 'good'); }
-  function pdfSetBackgroundColor(){ if(!ensurePdfOpen()) return; const color=prompt('Warna background/overlay hex:', '#fff7cc'); if(!color) return; const opacity=Number(prompt('Transparansi 0.05 - 1:', '0.18') || 0.18); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=total-1;i>=0;i--) state.pdfAnnotations.unshift({id:uid(),type:'highlight',pageIndex:i,x:0,y:0,w:1,h:1,color,opacity:clamp(opacity,.05,1)}); markDirty(); redrawPdfAnnotations(); toast('Background/overlay ditambahkan.', 'good'); }
-  function pdfAddLink(){ if(!ensurePdfOpen()) return; const url=prompt('URL link:', 'https://'); if(!url) return; const text=prompt('Teks yang terlihat:', url) || url; const ann = addPdfAnnotationAtCenter({type:'text',x:.12,y:.12,w:.42,h:.035,text,color:'#2563eb',size:state.pdfTextSize,url}); if(ann) toast('Link ditambahkan. Link aktif setelah PDF disimpan.', 'good'); }
+  async function pdfAddCustomWatermark(){ const text = await appPrompt('Teks watermark:', 'CONFIDENTIAL'); if (!text) return; if (state.mode !== 'pdf' || !state.pdfDoc) return toast('Buka PDF dulu.', 'warn'); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++) state.pdfAnnotations.push({id:uid(), type:'stamp', pageIndex:i, x:.15, y:.42, w:.70, h:.10, text:text.toUpperCase(), color:state.pdfTextColor || '#ef4444', size:46, rotation:-20}); markDirty(); redrawPdfAnnotations(); }
+  async function pdfAddHeaderFooter(){ if(!ensurePdfOpen()) return; const head=await appPrompt('Teks header (kosongkan jika tidak perlu):',''); if(head===null) return; const foot=await appPrompt('Teks footer (kosongkan jika tidak perlu):',''); if(foot===null) return; pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++){ if(head) state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.025,w:.8,h:.03,text:head,color:state.pdfTextColor,size:10}); if(foot) state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.955,w:.8,h:.03,text:foot.replaceAll('{page}', String(i+1)).replaceAll('{total}', String(total)),color:state.pdfTextColor,size:10}); } markDirty(); redrawPdfAnnotations(); toast('Header/footer ditambahkan.', 'good'); }
+  async function pdfSetBackgroundColor(){ if(!ensurePdfOpen()) return; const color=await appPrompt('Warna background/overlay hex:', '#fff7cc'); if(!color) return; const opacity=Number(await appPrompt('Transparansi 0.05 - 1:', '0.18') || 0.18); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=total-1;i>=0;i--) state.pdfAnnotations.unshift({id:uid(),type:'highlight',pageIndex:i,x:0,y:0,w:1,h:1,color,opacity:clamp(opacity,.05,1)}); markDirty(); redrawPdfAnnotations(); toast('Background/overlay ditambahkan.', 'good'); }
+  async function pdfAddLink(){ if(!ensurePdfOpen()) return; const url=await appPrompt('URL link:', 'https://'); if(!url) return; const text=await appPrompt('Teks yang terlihat:', url) || url; const ann = addPdfAnnotationAtCenter({type:'text',x:.12,y:.12,w:.42,h:.035,text,color:'#2563eb',size:state.pdfTextSize,url}); if(ann) toast('Link ditambahkan. Link aktif setelah PDF disimpan.', 'good'); }
   async function pdfAttachFile(){ if(!ensurePdfOpen()) return; const files = await new Promise(resolve=>{ const i=document.createElement('input'); i.type='file'; i.onchange=()=>resolve(Array.from(i.files||[])); i.click(); }); if(!files.length) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); if (typeof doc.attach !== 'function') return toast('Versi pdf-lib ini belum mendukung attachment.', 'warn'); const f=files[0]; await doc.attach(await f.arrayBuffer(), f.name, { mimeType:f.type || 'application/octet-stream', description:'Attachment dari Destara PDF Pro', creationDate:new Date(), modificationDate:new Date() }); await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Attachment disisipkan ke PDF.', 'good'); }
   function pdfDrawSignature(){
     if (!ensurePdfOpen()) return;
@@ -2209,8 +2905,8 @@
     modal.querySelector('[data-close]').onclick=()=>modal.remove(); modal.querySelector('[data-clear]').onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
     modal.querySelector('[data-apply]').onclick=()=>{ state.pdfPendingImageData=canvas.toDataURL('image/png'); state.pdfPendingImageType='image/png'; modal.remove(); addPdfAnnotationAtCenter({type:'image',x:.30,y:.72,w:.28,h:.09,dataUrl:state.pdfPendingImageData,imageType:'image/png'}); toast('Tanda tangan disisipkan. Geser/resize jika perlu.', 'good'); };
   }
-  async function pdfListFormFields(){ if(!ensurePdfOpen()) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const form=doc.getForm(); const names=form.getFields().map(f=>`${f.getName()} (${f.constructor.name})`); alert(names.length ? names.join('\n') : 'Tidak ada field form terdeteksi.'); }
-  async function pdfFillFormField(){ if(!ensurePdfOpen()) return; const name=prompt('Nama field form:'); if(!name) return; const value=prompt('Isi field:', ''); if(value==null) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const form=doc.getForm(); try { const field=form.getTextField(name); field.setText(value); } catch(err) { return toast('Field teks tidak ditemukan: ' + name, 'warn'); } await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Field form diisi.', 'good'); }
+  async function pdfListFormFields(){ if(!ensurePdfOpen()) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const form=doc.getForm(); const names=form.getFields().map(f=>`${f.getName()} (${f.constructor.name})`); await appAlert(names.length ? names.join('\n') : 'Tidak ada field form terdeteksi.'); }
+  async function pdfFillFormField(){ if(!ensurePdfOpen()) return; const name=await appPrompt('Nama field form:'); if(!name) return; const value=await appPrompt('Isi field:', ''); if(value==null) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const form=doc.getForm(); try { const field=form.getTextField(name); field.setText(value); } catch(err) { return toast('Field teks tidak ditemukan: ' + name, 'warn'); } await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Field form diisi.', 'good'); }
   async function pdfFlattenForm(){ if(!ensurePdfOpen()) return; const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const form=doc.getForm(); form.flatten(); await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Form diflatten.', 'good'); }
   function pdfUnsupportedSecurity(){ toast('Encrypt/certificate digital valid butuh library/back-end khusus. Fitur visual keamanan tersedia lewat watermark dan timestamp.', 'warn'); }
 
@@ -2219,7 +2915,7 @@
   function closeAnyMiniDrawer(){ document.querySelectorAll('.pdf-mini-drawer').forEach(el => el.remove()); }
   function scrollToPdfPage(index){ const el = document.querySelector(`.pdf-page[data-page-index="${index}"]`); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }
   async function pdfDuplicateCurrentPage(){ if(!ensurePdfOpen()) return; const idx=currentPdfPageIndex(); const order=getPdfPageOrderAll(); order.splice(idx+1,0,idx); await rebuildPdfByOrder(order, state.fileName); toast('Halaman aktif diduplikat.', 'good'); }
-  async function pdfReversePages(){ if(!ensurePdfOpen()) return; if(!confirm('Balik urutan semua halaman?')) return; await rebuildPdfByOrder(getPdfPageOrderAll().reverse(), baseName(state.fileName)+'-reverse.pdf'); toast('Urutan halaman dibalik.', 'good'); }
+  async function pdfReversePages(){ if(!ensurePdfOpen()) return; if(!await appConfirm('Balik urutan semua halaman?')) return; await rebuildPdfByOrder(getPdfPageOrderAll().reverse(), baseName(state.fileName)+'-reverse.pdf'); toast('Urutan halaman dibalik.', 'good'); }
   async function pdfMoveCurrentPageToFront(){ if(!ensurePdfOpen()) return; const idx=currentPdfPageIndex(); const order=getPdfPageOrderAll().filter(i=>i!==idx); order.unshift(idx); await rebuildPdfByOrder(order,state.fileName); toast('Halaman dipindah ke awal.', 'good'); }
   async function pdfMoveCurrentPageToBack(){ if(!ensurePdfOpen()) return; const idx=currentPdfPageIndex(); const order=getPdfPageOrderAll().filter(i=>i!==idx); order.push(idx); await rebuildPdfByOrder(order,state.fileName); toast('Halaman dipindah ke akhir.', 'good'); }
 
@@ -2270,7 +2966,7 @@
 
   async function pdfFindAdvanced(){
     if(!ensurePdfOpen()) return;
-    const q=prompt('Cari teks dalam semua halaman:', state.pdfSearchQuery || ''); if(!q) return; state.pdfSearchQuery=q;
+    const q=await appPrompt('Cari teks dalam semua halaman:', state.pdfSearchQuery || ''); if(!q) return; state.pdfSearchQuery=q;
     status('Mencari teks...');
     const rows=[];
     for(let i=1;i<=state.pdfDoc.numPages;i++){
@@ -2298,7 +2994,7 @@
   async function pdfFlattenAnnotations(){
     if(!ensurePdfOpen()) return;
     if(!state.pdfAnnotations.length) return toast('Tidak ada editan/anotasi untuk diflatten.', 'warn');
-    if(!confirm('Flatten akan membuat editan menjadi permanen di PDF dan mengosongkan layer editan. Lanjut?')) return;
+    if(!await appConfirm('Flatten akan membuat editan menjadi permanen di PDF dan mengosongkan layer editan. Lanjut?')) return;
     const blob=await savePdfBlob();
     await setPdfBytesAndRender(await blob.arrayBuffer(), [], baseName(state.fileName)+'-flatten.pdf', true);
     toast('Editan sudah diflatten ke PDF.', 'good');
@@ -2307,10 +3003,10 @@
   async function pdfEditMetadata(){
     if(!ensurePdfOpen()) return;
     const doc=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0));
-    const title=prompt('Title PDF:', doc.getTitle ? (doc.getTitle() || baseName(state.fileName)) : baseName(state.fileName)); if(title===null) return;
-    const author=prompt('Author:', doc.getAuthor ? (doc.getAuthor() || '') : ''); if(author===null) return;
-    const subject=prompt('Subject:', doc.getSubject ? (doc.getSubject() || '') : ''); if(subject===null) return;
-    const keywords=prompt('Keywords, pisahkan koma:', 'Destara PDF Pro'); if(keywords===null) return;
+    const title=await appPrompt('Title PDF:', doc.getTitle ? (doc.getTitle() || baseName(state.fileName)) : baseName(state.fileName)); if(title===null) return;
+    const author=await appPrompt('Author:', doc.getAuthor ? (doc.getAuthor() || '') : ''); if(author===null) return;
+    const subject=await appPrompt('Subject:', doc.getSubject ? (doc.getSubject() || '') : ''); if(subject===null) return;
+    const keywords=await appPrompt('Keywords, pisahkan koma:', 'Destara PDF Pro'); if(keywords===null) return;
     if(doc.setTitle) doc.setTitle(title); if(doc.setAuthor) doc.setAuthor(author); if(doc.setSubject) doc.setSubject(subject); if(doc.setKeywords) doc.setKeywords(keywords.split(',').map(s=>s.trim()).filter(Boolean)); if(doc.setProducer) doc.setProducer('Destara PDF Pro'); if(doc.setCreator) doc.setCreator('Destara PDF Pro'); if(doc.setModificationDate) doc.setModificationDate(new Date());
     await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), state.pdfAnnotations, state.fileName, true); toast('Metadata PDF diperbarui.', 'good');
   }
@@ -2333,12 +3029,12 @@
     lines.push('Editan per tipe: '+(Object.keys(byType).length?Object.entries(byType).map(([k,v])=>`${k}=${v}`).join(', '):'-'));
     return lines.join('\n');
   }
-  async function pdfInfoReport(){ const text=await buildPdfInfoText(); if(!text) return; alert(text); }
+  async function pdfInfoReport(){ const text=await buildPdfInfoText(); if(!text) return; await appAlert(text); }
   async function pdfExportInfoReport(){ const text=await buildPdfInfoText(); if(!text) return; downloadBlob(new Blob([text],{type:'text/plain;charset=utf-8'}), baseName(state.fileName)+'-report.txt'); toast('Report PDF diunduh.', 'good'); }
 
   async function pdfOcrAllPages(){
     if(!ensurePdfOpen()) return; if(!window.Tesseract) return toast('Tesseract.js belum termuat. Cek koneksi internet/CDN.', 'warn');
-    if(!confirm('OCR semua halaman bisa lama, terutama PDF besar. Lanjut?')) return;
+    if(!await appConfirm('OCR semua halaman bisa lama, terutama PDF besar. Lanjut?')) return;
     const parts=[];
     for(let idx=0; idx<state.pdfDoc.numPages; idx++){
       status('OCR halaman '+(idx+1)+' / '+state.pdfDoc.numPages+'...');
@@ -2350,7 +3046,7 @@
 
   async function pdfSnipCurrentPage(){
     if(!ensurePdfOpen()) return;
-    const val=prompt('Area snip dalam persen: x,y,w,h\nContoh: 10,10,80,40', '0,0,100,100'); if(val==null) return;
+    const val=await appPrompt('Area snip dalam persen: x,y,w,h\nContoh: 10,10,80,40', '0,0,100,100'); if(val==null) return;
     const nums=val.split(',').map(n=>Number(n.trim())).filter(n=>Number.isFinite(n)); if(nums.length<4) return toast('Format salah. Contoh 10,10,80,40', 'warn');
     const [x,y,w,h]=nums.map(n=>clamp(n,0,100)); if(w<=0||h<=0) return toast('Lebar/tinggi harus lebih dari 0.', 'warn');
     const idx=currentPdfPageIndex(); const page=await state.pdfDoc.getPage(idx+1); const vp=page.getViewport({scale:2}); const canvas=document.createElement('canvas'); canvas.width=Math.floor(vp.width); canvas.height=Math.floor(vp.height); await page.render({canvasContext:canvas.getContext('2d'), viewport:vp}).promise;
@@ -2360,10 +3056,10 @@
   function pickImageFiles(multiple=true){ return new Promise(resolve=>{ const i=document.createElement('input'); i.type='file'; i.accept='image/png,image/jpeg,image/jpg'; i.multiple=multiple; i.onchange=()=>resolve(Array.from(i.files||[])); i.click(); }); }
   async function imageFileToPdfPage(pdfDoc, file){ const bytes=await file.arrayBuffer(); const img=(file.type||'').includes('jpeg')||/\.jpe?g$/i.test(file.name) ? await pdfDoc.embedJpg(bytes) : await pdfDoc.embedPng(bytes); const maxW=595.28, maxH=841.89; const dims=img.scale(Math.min(maxW/img.width, maxH/img.height, 1)); const page=pdfDoc.addPage([maxW,maxH]); page.drawImage(img,{x:(maxW-dims.width)/2,y:(maxH-dims.height)/2,width:dims.width,height:dims.height}); }
   async function pdfCreateFromImages(){ const files=await pickImageFiles(true); if(!files.length) return; const doc=await PDFLib.PDFDocument.create(); for(const f of files) await imageFileToPdfPage(doc,f); await setPdfBytesAndRender(bytesToArrayBuffer(await doc.save()), [], 'images-to-pdf.pdf', true); toast('PDF baru dibuat dari gambar.', 'good'); }
-  async function pdfInsertImagePages(){ if(!ensurePdfOpen()) return; const files=await pickImageFiles(true); if(!files.length) return; const src=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const imgDoc=await PDFLib.PDFDocument.create(); for(const f of files) await imageFileToPdfPage(imgDoc,f); const insertAfter=clamp(Number(prompt('Sisipkan setelah halaman nomor:', String(currentPdfPageIndex()+1))) || currentPdfPageIndex()+1, 0, state.pdfDoc.numPages); const out=await PDFLib.PDFDocument.create(); const before=src.getPageIndices().filter(i=>i<insertAfter), after=src.getPageIndices().filter(i=>i>=insertAfter); (await out.copyPages(src,before)).forEach(p=>out.addPage(p)); (await out.copyPages(imgDoc,imgDoc.getPageIndices())).forEach(p=>out.addPage(p)); (await out.copyPages(src,after)).forEach(p=>out.addPage(p)); const anns=state.pdfAnnotations.map(a=>({...a,pageIndex:Number(a.pageIndex||0)>=insertAfter?Number(a.pageIndex||0)+files.length:Number(a.pageIndex||0)})); await setPdfBytesAndRender(bytesToArrayBuffer(await out.save()), anns, state.fileName, true); toast('Gambar disisipkan sebagai halaman PDF.', 'good'); }
+  async function pdfInsertImagePages(){ if(!ensurePdfOpen()) return; const files=await pickImageFiles(true); if(!files.length) return; const src=await PDFLib.PDFDocument.load(state.pdfBytes.slice(0)); const imgDoc=await PDFLib.PDFDocument.create(); for(const f of files) await imageFileToPdfPage(imgDoc,f); const insertAfter=clamp(Number(await appPrompt('Sisipkan setelah halaman nomor:', String(currentPdfPageIndex()+1))) || currentPdfPageIndex()+1, 0, state.pdfDoc.numPages); const out=await PDFLib.PDFDocument.create(); const before=src.getPageIndices().filter(i=>i<insertAfter), after=src.getPageIndices().filter(i=>i>=insertAfter); (await out.copyPages(src,before)).forEach(p=>out.addPage(p)); (await out.copyPages(imgDoc,imgDoc.getPageIndices())).forEach(p=>out.addPage(p)); (await out.copyPages(src,after)).forEach(p=>out.addPage(p)); const anns=state.pdfAnnotations.map(a=>({...a,pageIndex:Number(a.pageIndex||0)>=insertAfter?Number(a.pageIndex||0)+files.length:Number(a.pageIndex||0)})); await setPdfBytesAndRender(bytesToArrayBuffer(await out.save()), anns, state.fileName, true); toast('Gambar disisipkan sebagai halaman PDF.', 'good'); }
 
-  function pdfAddBatesNumbering(){ if(!ensurePdfOpen()) return; const prefix=prompt('Prefix Bates:', 'DOC-'); if(prefix===null) return; const start=Number(prompt('Mulai nomor:', '1') || 1); const pad=Number(prompt('Jumlah digit:', '5') || 5); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++){ const num=String(start+i).padStart(pad,'0'); state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.955,w:.35,h:.03,text:prefix+num,color:state.pdfTextColor,size:10}); } markDirty(); redrawPdfAnnotations(); toast('Bates numbering ditambahkan.', 'good'); }
-  function pdfAddPageRangeLabel(){ if(!ensurePdfOpen()) return; const range=promptPageRange('Halaman yang diberi label', state.pdfDoc.numPages, '1-'); if(!range||!range.length) return; const label=prompt('Teks label:', 'CONFIDENTIAL'); if(!label) return; pushPdfHistory(); range.forEach(i=>state.pdfAnnotations.push({id:uid(),type:'stamp',pageIndex:i,x:.32,y:.02,w:.36,h:.045,text:label.toUpperCase(),color:state.pdfTextColor||'#ef4444',size:16,rotation:0})); markDirty(); redrawPdfAnnotations(); toast('Label range ditambahkan.', 'good'); }
+  async function pdfAddBatesNumbering(){ if(!ensurePdfOpen()) return; const prefix=await appPrompt('Prefix Bates:', 'DOC-'); if(prefix===null) return; const start=Number(await appPrompt('Mulai nomor:', '1') || 1); const pad=Number(await appPrompt('Jumlah digit:', '5') || 5); pushPdfHistory(); const total=state.pdfDoc.numPages||1; for(let i=0;i<total;i++){ const num=String(start+i).padStart(pad,'0'); state.pdfAnnotations.push({id:uid(),type:'text',pageIndex:i,x:.06,y:.955,w:.35,h:.03,text:prefix+num,color:state.pdfTextColor,size:10}); } markDirty(); redrawPdfAnnotations(); toast('Bates numbering ditambahkan.', 'good'); }
+  async function pdfAddPageRangeLabel(){ if(!ensurePdfOpen()) return; const range=await promptPageRange('Halaman yang diberi label', state.pdfDoc.numPages, '1-'); if(!range||!range.length) return; const label=await appPrompt('Teks label:', 'CONFIDENTIAL'); if(!label) return; pushPdfHistory(); range.forEach(i=>state.pdfAnnotations.push({id:uid(),type:'stamp',pageIndex:i,x:.32,y:.02,w:.36,h:.045,text:label.toUpperCase(),color:state.pdfTextColor||'#ef4444',size:16,rotation:0})); markDirty(); redrawPdfAnnotations(); toast('Label range ditambahkan.', 'good'); }
 
   function addPdfLinkAnnotation(pdfDoc, page, x, y, w, h, url){
     try {
@@ -2544,13 +3240,13 @@
   function insertHtml(html){
     ensureDocEditReady().then(ok => { if(!ok) return; docEditor.focus(); document.execCommand('insertHTML', false, html); markDirty(); updateWordCount(); });
   }
-  function insertTable(){ const rows=Number(prompt('Jumlah baris:', '3')||3), cols=Number(prompt('Jumlah kolom:', '3')||3); let html='<table><tbody>'; for(let r=0;r<rows;r++){ html+='<tr>'; for(let c=0;c<cols;c++) html+='<td>&nbsp;</td>'; html+='</tr>'; } html+='</tbody></table><p><br></p>'; insertHtml(html); }
+  async function insertTable(){ const rows=Number(await appPrompt('Jumlah baris:', '3')||3), cols=Number(await appPrompt('Jumlah kolom:', '3')||3); let html='<table><tbody>'; for(let r=0;r<rows;r++){ html+='<tr>'; for(let c=0;c<cols;c++) html+='<td>&nbsp;</td>'; html+='</tr>'; } html+='</tbody></table><p><br></p>'; insertHtml(html); }
   function insertImageFromInput(e){ const file=e.target.files&&e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>insertHtml(`<p><img src="${reader.result}" style="max-width:100%;height:auto"></p>`); reader.readAsDataURL(file); e.target.value=''; }
-  function insertLink(){ const url=prompt('URL link:', 'https://'); if(!url) return; const text=prompt('Teks link:', url) || url; insertHtml(`<a href="${escapeAttr(url)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`); }
+  async function insertLink(){ const url=await appPrompt('URL link:', 'https://'); if(!url) return; const text=await appPrompt('Teks link:', url) || url; insertHtml(`<a href="${escapeAttr(url)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`); }
   function insertDate(){ insertHtml(new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'})); }
   function insertCheckbox(){ insertHtml('<label><input type="checkbox"> Item checklist</label>'); }
   function insertSignature(){ insertHtml('<p style="margin-top:48px">Hormat saya,</p><p style="height:60px"></p><p><strong>________________________</strong></p>'); }
-  function insertSymbol(){ const sym=prompt('Masukkan simbol:', '✓'); if(sym) insertHtml(escapeHtml(sym)); }
+  async function insertSymbol(){ const sym=await appPrompt('Masukkan simbol:', '✓'); if(sym) insertHtml(escapeHtml(sym)); }
   function insertCodeBlock(){ insertHtml('<pre style="background:#f1f5f9;padding:12px;border-radius:8px;white-space:pre-wrap"><code>Kode di sini</code></pre>'); }
   function insertPageBreak(){ insertHtml('<div class="page-break" contenteditable="false"></div><p><br></p>'); }
   function normalizeDoc(){ normalizeImagesInEditor(); docEditor.querySelectorAll('*').forEach(el => { if (el.getAttribute('style') === '') el.removeAttribute('style'); }); markDirty(); toast('HTML dokumen dirapikan.', 'good'); }
@@ -2576,10 +3272,10 @@
 
   function performUndo(){ if(state.mode==='pdf') return undoPdf(); if(state.mode==='sheet') return undoSheet(); document.execCommand('undo'); markDirty(); }
   function performRedo(){ if(state.mode==='pdf') return redoPdf(); if(state.mode==='sheet') return redoSheet(); document.execCommand('redo'); markDirty(); }
-  function clearCurrent(){
+  async function clearCurrent(){
     if(state.mode==='pdf') return clearPdfAnnotations();
-    if(state.mode==='sheet') { if(confirm('Bersihkan spreadsheet?')) { pushSheetHistory(); initSheet(); markDirty(); } return; }
-    if(state.mode==='doc') { if(confirm('Bersihkan isi dokumen?')) { docEditor.innerHTML=''; docPreview.innerHTML=''; state.docEditHtml=''; state.docMode='edit'; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); markDirty(); updateWordCount(); } return; }
+    if(state.mode==='sheet') { if(await appConfirm('Bersihkan spreadsheet?')) { pushSheetHistory(); initSheet(); markDirty(); } return; }
+    if(state.mode==='doc') { if(await appConfirm('Bersihkan isi dokumen?')) { docEditor.innerHTML=''; docPreview.innerHTML=''; state.docEditHtml=''; state.docMode='edit'; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); markDirty(); updateWordCount(); } return; }
   }
 
   async function saveCurrent(asNew){
@@ -2657,7 +3353,7 @@
       });
       if (!handle) return null;
       if (handle.name && suggestedName && handle.name !== suggestedName) {
-        const lanjut = confirm('File yang dipilih: ' + handle.name + '\nFile aktif: ' + suggestedName + '\n\nTetap timpa file yang dipilih?');
+        const lanjut = await appConfirm('File yang dipilih: ' + handle.name + '\nFile aktif: ' + suggestedName + '\n\nTetap timpa file yang dipilih?');
         if (!lanjut) return null;
       }
       return handle;
@@ -2690,13 +3386,14 @@
   async function pasteFromClipboard(){ try { const txt=await navigator.clipboard.readText(); insertHtml(escapeHtml(txt).replace(/\n/g,'<br>')); } catch { document.execCommand('paste'); } }
 
   function updateWordCount(){ const txt = state.mode==='doc' ? (docEditor.innerText || docPreview.textContent || '') : state.mode==='sheet' ? state.sheetData.flat().join(' ') : ''; const words = txt.trim() ? txt.trim().split(/\s+/).length : 0; countText.textContent = state.mode==='pdf' && state.pdfDoc ? ((state.pdfDoc.numPages||0) + ' halaman') : (words + ' kata'); }
-  function fileInfo(){ const info = [`Nama: ${state.fileName}`, `Mode: ${state.mode}`, `Ekstensi: .${state.ext}`, `Status: ${state.dirty?'belum disimpan':'tersimpan'}`, state.file ? `Ukuran: ${formatBytes(state.file.size)}` : 'Ukuran: -'].join('\n'); alert(info); }
+  async function fileInfo(){ const info = [`Nama: ${state.fileName}`, `Mode: ${state.mode}`, `Ekstensi: .${state.ext}`, `Status: ${state.dirty?'belum disimpan':'tersimpan'}`, state.file ? `Ukuran: ${formatBytes(state.file.size)}` : 'Ukuran: -'].join('\n'); await appAlert(info); }
   function newDoc(){ captureActiveDocument(); const id=uid(); state.activeDocId=id; state.documents.push({id,title:'dokumen-baru.html',file:null,fileHandle:null,fileName:'dokumen-baru.html',ext:'html',mode:'doc',docMode:'edit',dirty:true,createdAt:Date.now()}); state.file=null; state.fileHandle=null; state.fileName='dokumen-baru.html'; state.ext='html'; fileNameEl.textContent=state.fileName; setMode('doc'); state.docMode='edit'; state.docEditHtml='<h1>Dokumen Baru</h1><p></p>'; docEditor.innerHTML=state.docEditHtml; docPreview.innerHTML=''; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons(); markDirty(); updateWordCount(); captureActiveDocument(); renderDocTabs(); status('Dokumen baru dibuat'); }
   async function reloadFile(){ if(state.file) return openFile(state.file, state.fileHandle, {reuseActive:true}); toast('Tidak ada file untuk dimuat ulang.', 'warn'); }
 
   function handleKeys(e){
     if(e.key==='Escape') { hideDropOverlay(); findModal.classList.remove('show'); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='o') { e.preventDefault(); openPicker(); }
+    if(isUiLocked() && (e.ctrlKey || e.metaKey) && ['s','z','y','f'].includes(e.key.toLowerCase())) { e.preventDefault(); notifyNeedFile(); return; }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='s') { e.preventDefault(); saveCurrent(e.shiftKey); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z') { e.preventDefault(); e.shiftKey ? performRedo() : performUndo(); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='y') { e.preventDefault(); performRedo(); }
@@ -2910,7 +3607,7 @@
     const rect = summary.getBoundingClientRect();
     const viewportW = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
     const viewportH = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320);
-    const desired = body.classList.contains('pdf-style-smart') ? 520 : body.classList.contains('wide') ? (menu.classList.contains('pdf-menu-shapes') ? 620 : 680) : 380;
+    const desired = body.classList.contains('pdf-style-smart') ? 700 : body.classList.contains('wide') ? (menu.classList.contains('pdf-menu-shapes') ? 620 : 680) : 380;
     const width = Math.max(260, Math.min(desired, viewportW - 18));
     let left = rect.left;
     if (left + width > viewportW - 9) left = viewportW - width - 9;
@@ -3158,13 +3855,13 @@
     redrawPdfAnnotations(); return ret;
   };
 
-  pdfAddCustomWatermark = function(){
+  pdfAddCustomWatermark = async function(){
     if (state.mode !== 'pdf' || !state.pdfDoc) return toast('Buka PDF dulu.', 'warn');
-    const text = prompt('Teks watermark bebas:', 'CONFIDENTIAL'); if (!text) return;
-    const opacity = clamp(Number(prompt('Opacity 0.05 - 1:', '0.28') || .28), .05, 1);
-    const rotation = Number(prompt('Rotasi derajat:', '-25') || -25);
-    const size = Number(prompt('Ukuran font:', '48') || 48);
-    const pagesText = prompt('Halaman target, contoh 1-3,5 atau kosong untuk semua:', '');
+    const text = await appPrompt('Teks watermark bebas:', 'CONFIDENTIAL'); if (!text) return;
+    const opacity = clamp(Number(await appPrompt('Opacity 0.05 - 1:', '0.28') || .28), .05, 1);
+    const rotation = Number(await appPrompt('Rotasi derajat:', '-25') || -25);
+    const size = Number(await appPrompt('Ukuran font:', '48') || 48);
+    const pagesText = await appPrompt('Halaman target, contoh 1-3,5 atau kosong untuk semua:', '');
     const pages = pagesText ? parsePageRange(pagesText, state.pdfDoc.numPages) : Array.from({length:state.pdfDoc.numPages},(_,i)=>i);
     if (!pages.length) return toast('Range halaman tidak valid.', 'warn');
     pushPdfHistory();
@@ -3338,6 +4035,223 @@
     input.addEventListener('click', ev => ev.stopPropagation());
     input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(); } if (e.key === 'Escape') { done = true; input.remove(); } });
     input.addEventListener('blur', () => setTimeout(finish, 80), {once:true});
+  };
+
+
+  // FINAL FIX: popup PDF dibuat local/absolute agar jaraknya rapat di bawah tombol yang diklik.
+  positionPdfMenu = function(menu){
+    if (!menu || !menu.open) return;
+    const summary = menu.querySelector('summary');
+    const body = menu.querySelector('.pdf-menu-body');
+    if (!summary || !body) return;
+    const rect = summary.getBoundingClientRect();
+    const viewportW = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
+    const viewportH = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320);
+    const desired = body.classList.contains('pdf-style-smart') ? 700 : body.classList.contains('wide') ? (menu.classList.contains('pdf-menu-shapes') ? 620 : 680) : 380;
+    const width = Math.max(260, Math.min(desired, viewportW - 18));
+    let localLeft = 0;
+    if (rect.left + width > viewportW - 8) localLeft = viewportW - rect.left - width - 8;
+    if (rect.left + localLeft < 8) localLeft = 8 - rect.left;
+    const popupTop = rect.bottom + 4;
+    const maxHeight = Math.max(160, viewportH - popupTop - 8);
+    body.style.setProperty('--pdf-local-left', Math.round(localLeft) + 'px');
+    body.style.setProperty('--pdf-pop-width', Math.round(width) + 'px');
+    body.style.setProperty('--pdf-pop-max-height', Math.round(maxHeight) + 'px');
+    body.style.removeProperty('--pdf-pop-top');
+    body.style.removeProperty('--pdf-pop-left');
+  };
+
+  positionOpenPdfMenus = function(){
+    document.querySelectorAll('.pdf-menu[open]').forEach(positionPdfMenu);
+  };
+
+
+
+  // FINAL FIX: semua warna PDF, termasuk font/border/garis/coretan/highlight, bisa transparan.
+  function pdfReadableColorName(value){ return isTransparentColor(value) ? 'Transparan' : (value || ''); }
+  function pdfSetStrokeVisibility(opts, colorValue){
+    if (isTransparentColor(colorValue)) { opts.borderWidth = 0; opts.borderOpacity = 0; return opts; }
+    opts.borderColor = hexToPdfRgb(colorValue);
+    return opts;
+  }
+  function pdfColorVisible(value){ return !isTransparentColor(value); }
+
+  // Pastikan dropdown lama yang mungkin dirender browser mendapat opsi Transparan.
+  function ensurePdfTransparentOptions(){
+    const main = document.getElementById('pdfSmartMainPreset');
+    if (main && !Array.from(main.options).some(o => o.value === 'transparent')) main.insertAdjacentHTML('afterbegin','<option value="transparent">Transparan</option>');
+    const fill = document.getElementById('pdfSmartFillPreset');
+    if (fill && !Array.from(fill.options).some(o => o.value === 'transparent')) fill.insertAdjacentHTML('afterbegin','<option value="transparent">Transparan</option>');
+  }
+  const _tpOldUpdatePdfStyleControls = updatePdfStyleControls;
+  updatePdfStyleControls = function(){
+    ensurePdfTransparentOptions();
+    _tpOldUpdatePdfStyleControls();
+    const type = currentPdfStyleType();
+    const desc = document.getElementById('pdfStyleDesc');
+    if (desc && pdfMainColorKeyFor(type)) desc.textContent = (desc.textContent || '') + ' Semua warna bisa dibuat transparan.';
+  };
+
+  const _tpOldSetPdfSmartMainColor = setPdfSmartMainColor;
+  setPdfSmartMainColor = function(value){
+    const type = currentPdfStyleType();
+    const key = pdfMainColorKeyFor(type);
+    if (!key) return;
+    setPdfColor(key, value);
+    updatePdfStyleControls();
+  };
+
+  const _tpOldPdfPresetColor = pdfPresetColor;
+  pdfPresetColor = function(el){
+    const c = el && el.dataset ? el.dataset.color : null;
+    if (!c) return;
+    setPdfSmartMainColor(c);
+  };
+
+  const _tpOldUpdatePdfStyleHint = updatePdfStyleHint;
+  updatePdfStyleHint = function(){
+    if (pdfHint) {
+      const names = { text:'Teks', highlight:'Highlight', rect:'Kotak', ellipse:'Lingkaran', line:'Garis', arrow:'Panah', draw:'Coret', note:'Note', stamp:'Stempel', redact:'Sensor', check:'Ceklis', cross:'Silang', image:'Gambar' };
+      const active = names[state.pdfTool] || 'Pilih';
+      const t = currentPdfStyleType();
+      const colorInfo = ['rect','ellipse'].includes(t) ? `Border ${pdfReadableColorName(state.pdfRectBorderColor)}, isi ${pdfReadableColorName(state.pdfRectFillColor)}` : ['line','arrow'].includes(t) ? `Warna garis ${pdfReadableColorName(state.pdfLineColor)}` : t === 'draw' ? `Warna coretan ${pdfReadableColorName(state.pdfDrawColor)}` : t === 'highlight' ? `Warna highlight ${pdfReadableColorName(state.pdfHighlightColor)}` : ['text','note','stamp','check','cross'].includes(t) ? `Warna font ${pdfReadableColorName(state.pdfTextColor)}` : '';
+      const span = pdfHint.querySelector('span');
+      if (span && colorInfo) span.textContent = `Mode aktif: ${active}. ${colorInfo}.`;
+    }
+    updatePdfStyleControls();
+  };
+
+  // Override gambar halaman agar border/garis/text transparan benar-benar tidak kelihatan di layar.
+  const _tpOldRedrawPdfAnnotations = redrawPdfAnnotations;
+  redrawPdfAnnotations = function(){
+    _tpOldRedrawPdfAnnotations();
+    document.querySelectorAll('.pdf-annotation').forEach(el => {
+      const ann = state.pdfAnnotations.find(a => a.id === el.dataset.id);
+      if (!ann) return;
+      if (ann.type === 'text') el.style.color = ann.color || state.pdfTextColor;
+      if (ann.type === 'note') el.style.color = ann.color || state.pdfTextColor;
+      if (ann.type === 'stamp') {
+        const c = ann.color || '#ef4444';
+        el.style.color = c;
+        el.style.borderColor = c;
+      }
+      if (ann.type === 'check' || ann.type === 'cross') el.style.color = ann.color || (ann.type==='check'?'#16a34a':'#ef4444');
+      if (ann.type === 'rect' || ann.type === 'ellipse') el.style.borderColor = ann.borderColor || state.pdfRectBorderColor;
+      if (ann.type === 'highlight') el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, ann.opacity || state.pdfOpacity);
+    });
+  };
+
+  // Draw helpers yang aman untuk transparan ketika disimpan ke PDF.
+  drawPdfArrow = function(page, ann, W, H){
+    const cVal = ann.color || ann.borderColor || state.pdfLineColor;
+    if (isTransparentColor(cVal)) return;
+    const sw = ann.strokeWidth || state.pdfStrokeWidth;
+    const color = hexToPdfRgb(cVal);
+    const start = {x:ann.x1*W, y:H-ann.y1*H};
+    const end = {x:ann.x2*W, y:H-ann.y2*H};
+    page.drawLine({start, end, thickness:sw, color});
+    const angle = Math.atan2(end.y-start.y, end.x-start.x);
+    const len = Math.max(10, sw * 4.5);
+    const a1 = angle + Math.PI * 0.84;
+    const a2 = angle - Math.PI * 0.84;
+    page.drawLine({start:end, end:{x:end.x+Math.cos(a1)*len, y:end.y+Math.sin(a1)*len}, thickness:sw, color});
+    page.drawLine({start:end, end:{x:end.x+Math.cos(a2)*len, y:end.y+Math.sin(a2)*len}, thickness:sw, color});
+  };
+
+  drawPolygonShapeOnPdf = function(page, ann, W, H){
+    const sx = ann.x * W, sy = ann.y * H, sw = (ann.w||0) * W, sh = (ann.h||0)*H;
+    const shape = ann.shape || 'rect';
+    if (!shape || shape === 'rect') return false;
+    const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+    const fill = ann.fillColor ?? state.pdfRectFillColor;
+    if (shape === 'rounded') {
+      const opts = { x:sx, y:H-(sy+sh), width:sw, height:sh, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
+      pdfSetStrokeVisibility(opts, strokeVal);
+      if (!isTransparentColor(fill)) { opts.color=hexToPdfRgb(fill); opts.opacity=ann.opacity||state.pdfOpacity; }
+      page.drawRectangle(opts); return true;
+    }
+    const raw = shapeSvgPath(shape);
+    try {
+      const opts = { x:sx, y:H-(sy+sh), xScale:sw/100, yScale:sh/100, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
+      pdfSetStrokeVisibility(opts, strokeVal);
+      if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = ann.opacity || state.pdfOpacity; }
+      page.drawSvgPath(raw, opts);
+      return true;
+    } catch (err) {
+      if (isTransparentColor(strokeVal)) return true;
+      const nums = raw.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+      if (nums.length < 4) return false;
+      const color = hexToPdfRgb(strokeVal);
+      const points=[]; for(let i=0;i<nums.length;i+=2) points.push({x:sx+(nums[i]/100)*sw, y:H-(sy+(nums[i+1]/100)*sh)});
+      for(let i=0;i<points.length;i++) page.drawLine({start:points[i], end:points[(i+1)%points.length], thickness:ann.strokeWidth||state.pdfStrokeWidth, color});
+      return true;
+    }
+  };
+
+  savePdfBlob = async function(){
+    if (!state.pdfBytes) throw new Error('Tidak ada PDF yang dibuka.');
+    const { PDFDocument } = PDFLib;
+    const pdfDoc = await PDFDocument.load(state.pdfBytes.slice(0));
+    const fontCache = {};
+    const pages = pdfDoc.getPages();
+    for (const ann of state.pdfAnnotations) {
+      const page = pages[ann.pageIndex]; if (!page) continue;
+      const W = page.getWidth(), H = page.getHeight();
+      const sx = (ann.x || 0) * W, sy = (ann.y || 0) * H, sw = (ann.w || 0) * W, sh = (ann.h || 0) * H;
+      if (ann.type === 'highlight') {
+        const cVal = ann.color || state.pdfHighlightColor;
+        if (!isTransparentColor(cVal)) page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(cVal), opacity:ann.opacity||state.pdfOpacity });
+      }
+      if (ann.type === 'rect') {
+        if (ann.shape && ann.shape !== 'rect') { drawPolygonShapeOnPdf(page, ann, W, H); }
+        else {
+          const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor;
+          const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+          const opts={x:sx,y:H-(sy+sh),width:sw,height:sh,borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
+          pdfSetStrokeVisibility(opts, strokeVal);
+          if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;}
+          page.drawRectangle(opts);
+        }
+      }
+      if (ann.type === 'ellipse') {
+        const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor;
+        const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+        const opts={x:sx+sw/2,y:H-(sy+sh/2),xScale:sw/2,yScale:sh/2,borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
+        pdfSetStrokeVisibility(opts, strokeVal);
+        if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;}
+        page.drawEllipse(opts);
+      }
+      if (ann.type === 'redact') page.drawRectangle({x:sx,y:H-(sy+sh),width:sw,height:sh,color:PDFLib.rgb(0,0,0),opacity:1});
+      if (ann.type === 'text') {
+        const cVal = ann.color || state.pdfTextColor;
+        const size=ann.size||state.pdfTextSize;
+        if (!isTransparentColor(cVal)) { const font=await getFontForAnn(pdfDoc,fontCache,ann); page.drawText(ann.text||'',{x:sx,y:H-sy-size,size,font,color:hexToPdfRgb(cVal),lineHeight:size+2,rotate:PDFLib.degrees(ann.rotation||0)}); }
+        if(ann.url) addPdfLinkAnnotation(pdfDoc,page,sx,H-(sy+Math.max(sh,size+4)),Math.max(sw,120),Math.max(sh,size+8),ann.url);
+      }
+      if (ann.type === 'note') {
+        const size=ann.size||13; const font=await getFontForAnn(pdfDoc,fontCache,ann); const noteFill=ann.fillColor??state.pdfHighlightColor; const noteBox={x:sx,y:H-(sy+sh),width:sw,height:sh,borderColor:PDFLib.rgb(.65,.48,.05),borderWidth:1};
+        if(!isTransparentColor(noteFill)){noteBox.color=hexToPdfRgb(noteFill);noteBox.opacity=.9;}
+        page.drawRectangle(noteBox);
+        const cVal = ann.color || state.pdfTextColor;
+        if (!isTransparentColor(cVal)) page.drawText(ann.text||'',{x:sx+5,y:H-sy-size-5,size,font,color:hexToPdfRgb(cVal),lineHeight:size+2});
+      }
+      if (ann.type === 'stamp') {
+        const cVal = ann.color || '#ef4444';
+        if (!isTransparentColor(cVal)) {
+          const size=ann.size||22; const font=await getFontForAnn(pdfDoc,fontCache,ann);
+          page.drawRectangle({x:sx,y:H-(sy+sh),width:sw,height:sh,borderColor:hexToPdfRgb(cVal),borderWidth:ann.subtype==='watermark'?0:3,opacity:ann.subtype==='watermark'?(ann.opacity??.28):.8});
+          page.drawText((ann.text||'STAMP').slice(0,60),{x:sx+8,y:H-sy-sh/2-5,size,font,color:hexToPdfRgb(cVal),rotate:PDFLib.degrees(ann.rotation||0),opacity:ann.opacity??1});
+        }
+      }
+      if (ann.type === 'line') { const cVal=ann.color||ann.borderColor||state.pdfLineColor; if(!isTransparentColor(cVal)) page.drawLine({start:{x:ann.x1*W,y:H-ann.y1*H},end:{x:ann.x2*W,y:H-ann.y2*H},thickness:ann.strokeWidth||state.pdfStrokeWidth,color:hexToPdfRgb(cVal)}); }
+      if (ann.type === 'arrow') drawPdfArrow(page, ann, W, H);
+      if (ann.type === 'draw' && ann.points && ann.points.length>1) { const cVal=ann.color||state.pdfDrawColor; if(!isTransparentColor(cVal)) for(let i=1;i<ann.points.length;i++) page.drawLine({start:{x:ann.points[i-1].x*W,y:H-ann.points[i-1].y*H},end:{x:ann.points[i].x*W,y:H-ann.points[i].y*H},thickness:ann.strokeWidth||state.pdfStrokeWidth,color:hexToPdfRgb(cVal)}); }
+      if (ann.type === 'check') { const cVal=ann.color||'#16a34a'; if(!isTransparentColor(cVal)){ const c=hexToPdfRgb(cVal),t=Math.max(2,(ann.size||28)/8); page.drawLine({start:{x:sx,y:H-sy-sh*.55},end:{x:sx+sw*.35,y:H-sy-sh},thickness:t,color:c}); page.drawLine({start:{x:sx+sw*.35,y:H-sy-sh},end:{x:sx+sw,y:H-sy},thickness:t,color:c}); } }
+      if (ann.type === 'cross') { const cVal=ann.color||'#ef4444'; if(!isTransparentColor(cVal)){ const c=hexToPdfRgb(cVal),t=Math.max(2,(ann.size||28)/8); page.drawLine({start:{x:sx,y:H-sy},end:{x:sx+sw,y:H-sy-sh},thickness:t,color:c}); page.drawLine({start:{x:sx+sw,y:H-sy},end:{x:sx,y:H-sy-sh},thickness:t,color:c}); } }
+      if (ann.type === 'image' && ann.dataUrl) { const imgBytes=dataUrlToUint8(ann.dataUrl); const img=(ann.imageType||'').includes('jpeg')||ann.dataUrl.startsWith('data:image/jpeg')?await pdfDoc.embedJpg(imgBytes):await pdfDoc.embedPng(imgBytes); page.drawImage(img,{x:sx,y:H-(sy+sh),width:sw,height:sh,rotate:PDFLib.degrees(ann.rotation||0)}); }
+    }
+    const bytes = await pdfDoc.save();
+    return new Blob([bytes], {type:'application/pdf'});
   };
 
 
