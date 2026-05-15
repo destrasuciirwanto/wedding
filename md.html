@@ -2385,6 +2385,157 @@
       pointer-events: auto !important;
     }
 
+  
+    /* FINAL KISS ENDING */
+    .finish-kiss-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: grid;
+      place-items: center;
+      background: #000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 1.15s ease, visibility 1.15s ease;
+      overflow: hidden;
+    }
+
+    .finish-kiss-overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .kiss-ending {
+      position: relative;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: scale(.55) rotate(-10deg);
+      filter: blur(18px);
+    }
+
+    .finish-kiss-overlay.kiss-pop .kiss-ending {
+      animation: kissPop 1.35s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .kiss-mark {
+      font-size: clamp(6.4rem, 32vw, 16rem);
+      line-height: 1;
+      filter:
+        drop-shadow(0 0 18px rgba(255, 45, 135, .75))
+        drop-shadow(0 0 55px rgba(255, 122, 203, .42));
+      animation: kissPulse 1.6s ease-in-out infinite;
+    }
+
+    .kiss-text {
+      margin-top: 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: -.05em;
+      background: linear-gradient(100deg, #fff7ff, #ffd1ef, #ffe8a3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 28px rgba(255,122,203,.28);
+    }
+
+    .kiss-subtext {
+      margin-top: 14px;
+      color: rgba(255,247,255,.76);
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      line-height: 1.7;
+    }
+
+    .kiss-heart {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      font-size: var(--size);
+      color: rgba(255, 209, 239, .92);
+      text-shadow: 0 0 18px rgba(255, 122, 203, .85);
+      opacity: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    .finish-kiss-overlay.kiss-pop .kiss-heart {
+      animation: kissHeartBurst 1.8s cubic-bezier(.16, 1, .3, 1) forwards;
+      animation-delay: var(--delay);
+    }
+
+    .kiss-flash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,122,203,.38), transparent 58%);
+      opacity: 0;
+    }
+
+    .finish-kiss-overlay.kiss-pop .kiss-flash {
+      animation: kissFlash 1.15s ease forwards;
+    }
+
+    @keyframes kissPop {
+      0% {
+        opacity: 0;
+        transform: scale(.45) rotate(-12deg);
+        filter: blur(20px);
+      }
+      45% {
+        opacity: 1;
+        transform: scale(1.18) rotate(4deg);
+        filter: blur(0);
+      }
+      72% {
+        transform: scale(.96) rotate(-2deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes kissPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.045);
+      }
+    }
+
+    @keyframes kissHeartBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.25) rotate(0deg);
+      }
+      25% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform:
+          translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
+          scale(1.25)
+          rotate(var(--rot));
+      }
+    }
+
+    @keyframes kissFlash {
+      0% {
+        opacity: 0;
+      }
+      26% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -4604,6 +4755,37 @@
       return { resize, draw };
     })();
 
+
+    const finishLoveBtn = document.getElementById("finishLoveBtn");
+    const finishKissOverlay = document.getElementById("finishKissOverlay");
+
+    if (finishLoveBtn && finishKissOverlay) {
+      finishLoveBtn.addEventListener("click", () => {
+        finishKissOverlay.classList.add("show");
+        finishKissOverlay.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => {
+          finishKissOverlay.classList.add("kiss-pop");
+        }, 1050);
+      });
+    }
+
   </script>
+
+  <div class="finish-kiss-overlay" id="finishKissOverlay" aria-hidden="true">
+    <div class="kiss-flash"></div>
+    <div class="kiss-ending">
+      <div class="kiss-mark">💋</div>
+      <div class="kiss-text">Muach, sayangku.</div>
+      <div class="kiss-subtext">Selesai, tapi cinta kita tidak pernah selesai.</div>
+      <span class="kiss-heart" style="--x: -150px; --y: -120px; --rot: -28deg; --size: 28px; --delay: .1s;">♥</span>
+      <span class="kiss-heart" style="--x: 140px; --y: -130px; --rot: 30deg; --size: 34px; --delay: .18s;">♡</span>
+      <span class="kiss-heart" style="--x: -190px; --y: 40px; --rot: 18deg; --size: 24px; --delay: .22s;">✦</span>
+      <span class="kiss-heart" style="--x: 185px; --y: 55px; --rot: -18deg; --size: 26px; --delay: .26s;">♥</span>
+      <span class="kiss-heart" style="--x: -80px; --y: 165px; --rot: -35deg; --size: 30px; --delay: .3s;">♡</span>
+      <span class="kiss-heart" style="--x: 95px; --y: 160px; --rot: 32deg; --size: 28px; --delay: .34s;">♥</span>
+    </div>
+  </div>
+
 </body>
 </html>
