@@ -3,1456 +3,777 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dokumen Web</title>
-
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <title>Destara Dokumen</title>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
-  <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
   <style>
-    :root {
-      --bg: #f3f6fb;
-      --panel: rgba(255,255,255,.86);
-      --panel-solid: #ffffff;
-      --panel-soft: #f8fbff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --line: #dbe5f3;
-      --brand: #2563eb;
-      --brand-2: #1d4ed8;
-      --danger: #ef4444;
-      --ok: #16a34a;
-      --warning: #f59e0b;
-      --shadow: 0 18px 45px rgba(15,23,42,.12);
-      --radius: 18px;
-      --topbar-h: 42px;
-      --tabs-h: 32px;
-      --toolbar-h: 56px;
-      --status-h: 28px;
-      --zoom: 1;
-    }
-
-    [data-theme="dark"] {
-      --bg: #0b1220;
-      --panel: rgba(17,24,39,.88);
-      --panel-solid: #111827;
-      --panel-soft: #182235;
-      --text: #e5e7eb;
-      --muted: #a8b3c5;
-      --line: #2a3a52;
-      --brand: #60a5fa;
-      --brand-2: #3b82f6;
-      --shadow: 0 18px 45px rgba(0,0,0,.35);
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      color: var(--text);
-      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(37,99,235,.16), transparent 30%),
-        radial-gradient(circle at 80% 0%, rgba(14,165,233,.14), transparent 34%),
-        var(--bg);
-      overflow: hidden;
-    }
-
-    button, input, select, textarea { font: inherit; }
-    button { user-select: none; }
-    .app { height: 100%; display: flex; flex-direction: column; min-width: 920px; }
-
-    .topbar {
-      height: var(--topbar-h);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 10px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.78));
-      backdrop-filter: blur(16px);
-      z-index: 20;
-    }
-    [data-theme="dark"] .topbar { background: linear-gradient(180deg, rgba(17,24,39,.96), rgba(17,24,39,.82)); }
-
-    .logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 9px;
-      display: grid;
-      place-items: center;
-      color: white;
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-      box-shadow: 0 6px 16px rgba(37,99,235,.25);
-      font-weight: 900;
-      letter-spacing: -.04em;
-    }
-    .titlebox { min-width: 0; }
-    .app-title { font-weight: 800; letter-spacing: -.02em; line-height: 1; font-size: 13px; }
-    .app-subtitle { display: none; }
-    .quickbar {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: rgba(248,251,255,.88);
-      box-shadow: 0 10px 24px rgba(15,23,42,.06);
-      flex: 0 0 auto;
-    }
-    [data-theme="dark"] .quickbar { background: rgba(15,23,42,.75); }
-    .quickbar .divider { width: 1px; height: 20px; background: var(--line); margin: 0 1px; }
-    .filename {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 150px;
-      max-width: 300px;
-      padding: 5px 9px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--panel-soft);
-      color: var(--text);
-      margin-left: auto;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    .filename span { overflow: hidden; text-overflow: ellipsis; }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--panel-soft);
-      color: var(--muted);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-    .pill.ok { color: var(--ok); }
-    .pill.warn { color: var(--warning); }
-
-    .tabs {
-      height: var(--tabs-h);
-      display: flex;
-      align-items: end;
-      gap: 3px;
-      padding: 0 8px;
-      border-bottom: 1px solid var(--line);
-      background: var(--panel);
-      backdrop-filter: blur(16px);
-      z-index: 18;
-    }
-    .tab {
-      height: 27px;
-      border: 0;
-      border-radius: 9px 9px 0 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 0 12px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 12px;
-    }
-    .tab:hover { background: rgba(37,99,235,.08); color: var(--text); }
-    .tab.active { background: var(--panel-solid); color: var(--brand-2); border: 1px solid var(--line); border-bottom-color: var(--panel-solid); }
-
-    .toolbar {
-      height: var(--toolbar-h);
-      display: flex;
-      align-items: center;
-      padding: 6px 8px;
-      gap: 8px;
-      border-bottom: 1px solid var(--line);
-      background: var(--panel-solid);
-      overflow-x: auto;
-      overflow-y: hidden;
-      z-index: 17;
-    }
-    .toolbar-panel { display: none; align-items: center; gap: 8px; width: 100%; }
-    .toolbar-panel.active { display: flex; }
-    .group {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding-right: 8px;
-      border-right: 1px solid var(--line);
-      height: 42px;
-      flex: 0 0 auto;
-    }
-    .group:last-child { border-right: 0; }
-    .btn, .iconbtn {
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, var(--panel-solid), var(--panel-soft));
-      color: var(--text);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      min-height: 32px;
-      white-space: nowrap;
-    }
-    .btn { padding: 0 10px; box-sizing: border-box; flex: 0 0 auto; font-size: 12px; }
-    .iconbtn { width: 32px; min-width: 32px; flex: 0 0 32px; padding: 0; box-sizing: border-box; overflow: hidden; }
-    .btn svg, .iconbtn svg { width: 15px; height: 15px; stroke-width: 2.2; flex: 0 0 auto; }
-    .btn:hover, .iconbtn:hover { transform: translateY(-1px); border-color: rgba(37,99,235,.45); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
-    .btn.primary, .iconbtn.primary { border-color: transparent; background: linear-gradient(135deg, #2563eb, #4f46e5); color: #fff; box-shadow: 0 10px 24px rgba(37,99,235,.25); }
-    .btn.danger, .iconbtn.danger { color: var(--danger); }
-    .btn.ok, .iconbtn.ok { color: var(--ok); }
-    .btn.warn, .iconbtn.warn { color: var(--warning); }
-
-    .select, .field {
-      height: 32px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--panel-soft);
-      color: var(--text);
-      padding: 0 8px;
-      outline: none;
-    }
-    .field.small { width: 64px; }
-    .color { width: 32px; height: 32px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); }
-
-    .workspace {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      overflow: auto;
-      padding: 14px 18px;
-    }
-    .empty {
-      max-width: 900px;
-      margin: 28px auto;
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
-      box-shadow: var(--shadow);
-      padding: 34px;
-      text-align: center;
-    }
-    [data-theme="dark"] .empty { background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.72)); }
-    .empty h1 { font-size: clamp(26px, 3.4vw, 44px); line-height: 1; letter-spacing: -.05em; margin: 0 0 12px; }
-    .empty p { color: var(--muted); margin: 0 auto 18px; max-width: 620px; font-size: 14px; }
-    .quick-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-    .cards { margin-top: 18px; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; text-align: left; }
-    .card { border: 1px solid var(--line); border-radius: 18px; padding: 16px; background: var(--panel-soft); }
-    .card b { display: block; margin-bottom: 5px; }
-    .card span { color: var(--muted); font-size: 13px; }
-
-    .view { display: none; }
-    .view.active { display: block; }
-
-    .doc-shell { transform: scale(var(--zoom)); transform-origin: top center; width: fit-content; margin: 0 auto 60px; }
-    .doc-page {
-      width: 794px;
-      min-height: 1123px;
-      padding: 76px 82px;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      background: #fff;
-      color: #111827;
-      box-shadow: var(--shadow);
-      outline: none;
-      overflow-wrap: break-word;
-    }
-    .doc-page:empty::before { content: "Mulai mengetik dokumen Anda di sini..."; color: #9ca3af; }
-    .doc-page table { border-collapse: collapse; width: 100%; margin: 14px 0; }
-    .doc-page td, .doc-page th { border: 1px solid #cbd5e1; padding: 8px; min-width: 36px; }
-    .doc-page img { max-width: 100%; height: auto; }
-    .doc-page blockquote { border-left: 4px solid #2563eb; margin: 16px 0; padding: 8px 16px; background: #f1f5f9; color: #334155; }
-    .doc-page pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 12px; overflow: auto; }
-
-    .docx-toolbar {
-      width: min(100%, 980px);
-      margin: 0 auto 10px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--panel-solid);
-      box-shadow: 0 10px 28px rgba(15,23,42,.08);
-    }
-    .docx-toolbar.active { display: flex; }
-    .docx-toolbar .note { color: var(--muted); font-size: 12px; }
-    .seg { display: inline-flex; gap: 4px; border: 1px solid var(--line); border-radius: 14px; padding: 4px; background: var(--panel-soft); }
-    .seg button { border: 0; background: transparent; color: var(--muted); border-radius: 10px; padding: 6px 10px; cursor: pointer; font-weight: 700; font-size: 12px; }
-    .seg button.active { background: var(--panel-solid); color: var(--brand-2); box-shadow: 0 6px 16px rgba(15,23,42,.08); }
-    .docx-preview-wrap { display: none; margin: 0 auto 60px; width: fit-content; transform: scale(var(--zoom)); transform-origin: top center; }
-    .docx-preview-wrap.active { display: block; }
-    .docx-preview-wrap .docx-wrapper { background: transparent !important; padding: 0 !important; }
-    .docx-preview-wrap .docx { box-shadow: var(--shadow) !important; border-radius: 4px; }
-    .docx-fallback {
-      width: min(860px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 28px;
-      border-radius: 22px;
-      background: var(--panel-solid);
-      box-shadow: var(--shadow);
-      color: var(--text);
-      line-height: 1.65;
-    }
-    .docx-fallback h2 { margin: 0 0 10px; font-size: 20px; }
-    .docx-fallback p { margin: 8px 0; color: var(--muted); }
-    .docx-fallback .mini-error { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 13px; word-break: break-word; }
-
-    .sheet-wrap {
-      width: fit-content;
-      min-width: 100%;
-      margin: 0 auto 60px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      overflow: hidden;
-      background: var(--panel-solid);
-      box-shadow: var(--shadow);
-      transform: scale(var(--zoom));
-      transform-origin: top left;
-    }
-    table.sheet { border-collapse: collapse; background: #fff; color: #111827; }
-    .sheet th, .sheet td { border: 1px solid #dbe3ef; min-width: 112px; height: 32px; padding: 0; }
-    .sheet th { background: #edf4ff; color: #334155; font-weight: 800; text-align: center; position: sticky; top: 0; z-index: 2; }
-    .sheet th.corner { min-width: 46px; left: 0; z-index: 3; }
-    .sheet th.row-head { min-width: 46px; position: sticky; left: 0; z-index: 1; }
-    .sheet td { outline: none; padding: 6px 8px; background: #fff; }
-    .sheet td:focus { box-shadow: inset 0 0 0 2px #2563eb; background: #eff6ff; }
-
-    .pdf-shell { width: fit-content; max-width: 100%; margin: 0 auto 70px; transform: scale(var(--zoom)); transform-origin: top center; }
-    .pdf-continuous { display: grid; gap: 22px; justify-items: center; }
-    .pdf-stage { position: relative; background: #fff; border: 0; border-radius: 2px; box-shadow: none; overflow: hidden; }
-    .pdf-stage canvas { display: block; background: #fff; }
-    .pdf-overlay { position: absolute; inset: 0; cursor: crosshair; }
-    .pdf-anno { position: absolute; pointer-events: none; }
-    .pdf-text { color: #111827; font-weight: 700; font-size: 18px; text-shadow: 0 1px 0 rgba(255,255,255,.8); }
-    .pdf-highlight { background: rgba(250,204,21,.45); border-radius: 4px; }
-
-    .statusbar {
-      height: var(--status-h);
-      border-top: 1px solid var(--line);
-      background: var(--panel-solid);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 12px;
-      color: var(--muted);
-      font-size: 12px;
-      z-index: 20;
-    }
-    .statusbar strong { color: var(--text); }
-    .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    .zoom-float {
-      position: fixed;
-      right: 18px;
-      bottom: calc(var(--status-h) + 14px);
-      z-index: 45;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 16px 36px rgba(15,23,42,.14);
-      backdrop-filter: blur(14px);
-    }
-    [data-theme="dark"] .zoom-float { background: rgba(17,24,39,.92); }
-    .zoom-value { min-width: 54px; text-align: center; font-weight: 800; color: var(--text); font-size: 12px; }
-    @media (max-width: 920px) {
-      .app-subtitle, .pill { display: none; }
-      .filename { min-width: 130px; max-width: 210px; }
-      .quickbar { margin-left: auto; }
-    }
-    @media (max-width: 680px) {
-      .filename { display: none; }
-      .quickbar .iconbtn { width: 36px; min-width: 36px; flex-basis: 36px; }
-    }
-
-    .drag-layer {
-      position: fixed;
-      inset: 0;
-      display: none;
-      place-items: center;
-      z-index: 1000;
-      background: rgba(15,23,42,.25);
-      backdrop-filter: blur(8px);
-    }
-    .drag-layer.active { display: grid; }
-    .dropbox {
-      width: min(560px, calc(100vw - 42px));
-      min-height: 260px;
-      border: 2px dashed #2563eb;
-      border-radius: 30px;
-      background: rgba(255,255,255,.96);
-      box-shadow: 0 30px 90px rgba(15,23,42,.22);
-      color: #0f172a;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 30px;
-      position: relative;
-    }
-    .dropbox h2 { margin: 10px 0 8px; font-size: 26px; letter-spacing: -.03em; }
-    .dropbox p { margin: 0 0 18px; color: #64748b; }
-    .close-drop { position: absolute; right: 14px; top: 14px; }
-
-    .toast {
-      position: fixed;
-      right: 18px;
-      bottom: 48px;
-      z-index: 1100;
-      display: grid;
-      gap: 8px;
-      max-width: 360px;
-    }
-    .toast-item {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--panel-solid);
-      color: var(--text);
-      box-shadow: var(--shadow);
-      padding: 12px 14px;
-      animation: pop .18s ease-out;
-    }
-    @keyframes pop { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    .hidden { display: none !important; }
-    @media print {
-      body { background: #fff; overflow: visible; }
-      .topbar, .tabs, .toolbar, .statusbar, .empty, .docx-toolbar, .zoom-float { display: none !important; }
-      .workspace { padding: 0; overflow: visible; }
-      .doc-page { box-shadow: none; border: 0; width: auto; min-height: 0; padding: 0; }
-      .doc-shell, .docx-preview-wrap, .pdf-shell, .sheet-wrap { transform: none; margin: 0; }
-    }
+    :root{--bg:#eef2f7;--panel:rgba(255,255,255,.88);--panel-solid:#fff;--text:#101828;--muted:#667085;--line:#e5eaf1;--primary:#2957ff;--primary2:#6c4cff;--danger:#ef4444;--shadow:0 14px 40px rgba(16,24,40,.12);--soft:0 6px 18px rgba(16,24,40,.10);--page-width:794px;--page-min-height:1123px;--page-padding:72px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    [data-theme=dark]{--bg:#101522;--panel:rgba(23,31,48,.9);--panel-solid:#182033;--text:#eef2ff;--muted:#a9b4c6;--line:rgba(255,255,255,.12);--shadow:0 18px 50px rgba(0,0,0,.34);--soft:0 8px 24px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.pdf-hint,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft)}.sheet-wrap{width:100%;max-width:100%;overflow:auto;background:var(--panel-solid);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow)}.sheet-grid{border-collapse:collapse;min-width:980px;width:max-content;background:#fff;color:#111827}.sheet-grid th{position:sticky;top:0;z-index:4;background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;border:1px solid #dbe3ee;height:30px;min-width:74px}.sheet-grid th.row-head{left:0;z-index:5;min-width:46px}.sheet-grid td{border:1px solid #e2e8f0;min-width:110px;height:30px;padding:0}.sheet-grid input{width:100%;height:29px;border:0;padding:0 7px;outline:0;background:transparent;color:#111827}.sheet-grid input:focus{box-shadow:inset 0 0 0 2px var(--primary);background:#fff}.formula-name{width:62px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--muted);font-size:12px}.formula-input{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;outline:0}.statusbar{height:30px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}.statusbar .spacer{flex:1}.zoombar{position:fixed;right:16px;bottom:42px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.zoom-btn{width:30px;height:30px;min-height:30px;border-radius:999px}.zoom-percent{min-width:50px;text-align:center;font-size:12px;color:var(--muted)}.drop-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(15,23,42,.56);backdrop-filter:blur(10px)}.drop-overlay.show{display:flex}.drop-box{position:relative;width:min(620px,94vw);padding:38px 28px;border-radius:28px;border:2px dashed rgba(255,255,255,.55);color:#fff;background:rgba(15,23,42,.72);text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.35)}.drop-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14)}.toast-wrap{position:fixed;right:16px;top:16px;z-index:200;display:grid;gap:8px}.toast{min-width:250px;max-width:360px;padding:11px 12px;border-radius:14px;background:#101828;color:#fff;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px}.toast.good{background:#067647}.toast.warn{background:#b54708}.toast.bad{background:#b42318}.modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.48);backdrop-filter:blur(8px);padding:18px}.modal.show{display:flex}.modal-card{width:min(480px,96vw);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px}.modal-card h3{margin:0 0 12px}.modal-card label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.modal-card input{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);padding:8px;background:var(--panel);color:var(--text);outline:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.focus-mode .tabs,.focus-mode .ribbon,.focus-mode .statusbar{display:none}.focus-mode .topbar{opacity:.86}svg{width:16px;height:16px;flex:0 0 auto}@media(max-width:760px){.brand{min-width:auto}.brand-title,.qbtn span,.tool-btn span,.pdf-tool span,.sheet-btn span,.file-pill,.group-title{display:none}.ribbon{max-height:132px}.doc-page{width:min(96vw,var(--page-width));padding:36px}}@media print{body{background:white;overflow:auto}.topbar,.tabs,.ribbon,.statusbar,.zoombar,.modebar,.pdf-toolbar-local{display:none!important}.workspace{padding:0;overflow:visible;background:white}.doc-page{box-shadow:none;margin:0;width:auto;min-height:auto}}
   </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <header class="topbar">
-      <div class="logo">D</div>
-      <div class="titlebox">
-        <div class="app-title">Dokumen Web</div>
-        <div class="app-subtitle">Buka, lihat, edit ringan, dan simpan file lokal dari browser.</div>
-      </div>
-      <div class="quickbar" aria-label="Akses cepat">
-        <button class="iconbtn primary" data-action="open" title="Buka file"><i data-lucide="folder-open"></i></button>
-        <button class="iconbtn ok" data-action="save" title="Simpan"><i data-lucide="save"></i></button>
-        <button class="iconbtn" data-action="saveAs" title="Simpan sebagai"><i data-lucide="save-all"></i></button>
-        <span class="divider" aria-hidden="true"></span>
-        <button class="iconbtn" data-action="undo" title="Undo"><i data-lucide="undo-2"></i></button>
-        <button class="iconbtn" data-action="redo" title="Redo"><i data-lucide="redo-2"></i></button>
-        <span class="divider" aria-hidden="true"></span>
-        <button class="iconbtn danger" data-action="clear" title="Bersihkan area kerja"><i data-lucide="trash-2"></i></button>
-      </div>
-      <div class="filename" title="Nama file"><i data-lucide="file-text"></i><span id="fileName">Belum ada dokumen</span></div>
-      <div class="pill" id="docMode"><i data-lucide="sparkles"></i><span>Siap</span></div>
-      <div class="pill ok" id="saveState"><i data-lucide="check-circle-2"></i><span>Tersimpan</span></div>
-    </header>
+<div class="app" id="appRoot" data-theme="light">
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara Dokumen</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
+  <main class="workspace" id="workspace">
+    <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
+    <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview menjaga layout lebih rapi. Edit Cepat membuat isi bisa diketik dan diformat.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
+    <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local"><button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih</span></button><button class="pdf-tool" data-pdf-tool="text"><i data-lucide="type"></i><span>Teks</span></button><button class="pdf-tool" data-pdf-tool="highlight"><i data-lucide="highlighter"></i><span>Highlight</span></button><button class="pdf-tool" data-pdf-tool="rect"><i data-lucide="square"></i><span>Kotak</span></button><button class="pdf-tool" data-pdf-tool="line"><i data-lucide="minus"></i><span>Garis</span></button><button class="pdf-tool" data-pdf-tool="draw"><i data-lucide="pen-line"></i><span>Coret</span></button><button class="pdf-tool" data-pdf-tool="erase"><i data-lucide="trash-2"></i><span>Hapus</span></button><button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus Pilihan</span></button><div class="pdf-hint" id="pdfHint"><i data-lucide="sparkles"></i><span>Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.</span></div></div><div class="pdf-pages" id="pdfPages"></div></section>
+    <section class="workspace-pane" id="sheetPane"><div class="formula-bar"><div class="formula-name" id="cellName">A1</div><input class="formula-input" id="formulaInput" placeholder="Ketik nilai atau formula: =SUM(A1:A5)" /></div><div class="sheet-wrap"><table class="sheet-grid" id="sheetGrid"></table></div></section>
+  </main>
+  <footer class="statusbar"><span id="statusText">Siap</span><span id="modeText">Mode: kosong</span><span class="spacer"></span><span id="countText">0 kata</span><span id="saveText">Belum disimpan</span></footer>
+</div>
+<div class="zoombar"><button class="zoom-btn" data-action="zoomOut" title="Zoom out"><i data-lucide="minus"></i></button><button class="zoom-btn" data-action="zoomReset" title="Reset zoom"><i data-lucide="rotate-ccw"></i></button><div class="zoom-percent" id="zoomPercent">100%</div><button class="zoom-btn" data-action="zoomIn" title="Zoom in"><i data-lucide="plus"></i></button></div>
+<div class="drop-overlay" id="dropOverlay"><div class="drop-box" id="dropBox"><button class="drop-close" data-action="closeDrop">×</button><div class="empty-icon"><i data-lucide="download-cloud"></i></div><h2>Lepaskan file di sini</h2><p>DOCX, PDF, XLSX/XLS, CSV, TXT, MD, atau HTML akan langsung dibuka.</p><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Pilih file manual</span></button></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="modal" id="findModal"><div class="modal-card"><h3>Cari dan ganti</h3><label>Cari</label><input id="findText" /><label>Ganti dengan</label><input id="replaceText" /><div class="modal-actions"><button class="qbtn" data-action="closeFind">Batal</button><button class="qbtn" data-action="findNext">Cari</button><button class="qbtn primary" data-action="replaceAll">Ganti semua</button></div></div></div>
+<input type="file" id="fileInput" hidden accept=".docx,.pdf,.xlsx,.xls,.ods,.csv,.txt,.md,.html,.htm" /><input type="file" id="imageInput" hidden accept="image/*" />
+<script id="appScript">
 
-    <nav class="tabs" aria-label="Menu dokumen">
-      <button class="tab active" data-tab="file">File</button>
-      <button class="tab" data-tab="home">Beranda</button>
-      <button class="tab" data-tab="insert">Sisipkan</button>
-      <button class="tab" data-tab="layout">Layout</button>
-      <button class="tab" data-tab="table">Tabel</button>
-      <button class="tab" data-tab="sheet">Spreadsheet</button>
-      <button class="tab" data-tab="pdf">PDF</button>
-      <button class="tab" data-tab="view">Tampilan</button>
-    </nav>
+(function(){
+  'use strict';
 
-    <section class="toolbar">
-      <div class="toolbar-panel active" data-panel="file">
-        <div class="group">
-          <button class="btn primary" data-action="open"><i data-lucide="folder-open"></i>Buka</button>
-          <button class="btn" data-action="newDoc"><i data-lucide="file-plus-2"></i>Dokumen Baru</button>
-          <button class="btn" data-action="newSheet"><i data-lucide="sheet"></i>Sheet Baru</button>
-        </div>
-        <div class="group">
-          <button class="btn" data-action="print"><i data-lucide="printer"></i>Print/PDF</button>
-          <button class="btn" data-action="exportHtml"><i data-lucide="code-2"></i>HTML</button>
-          <button class="btn" data-action="exportDocx"><i data-lucide="file-type-2"></i>DOCX</button>
-          <button class="btn" data-action="exportXlsx"><i data-lucide="table-2"></i>XLSX</button>
-        </div>
-      </div>
+  const $ = (id) => document.getElementById(id);
+  const appRoot = $('appRoot');
+  const tabsEl = $('tabs');
+  const ribbonEl = $('ribbon');
+  const workspace = $('workspace');
+  const emptyState = $('emptyState');
+  const docPane = $('docPane');
+  const pdfPane = $('pdfPane');
+  const sheetPane = $('sheetPane');
+  const docPreview = $('docPreview');
+  const docPreviewWrap = $('docPreviewWrap');
+  const docEditWrap = $('docEditWrap');
+  const docEditor = $('docEditor');
+  const pdfPages = $('pdfPages');
+  const pdfHint = $('pdfHint');
+  const sheetGrid = $('sheetGrid');
+  const formulaInput = $('formulaInput');
+  const cellName = $('cellName');
+  const statusText = $('statusText');
+  const modeText = $('modeText');
+  const countText = $('countText');
+  const saveText = $('saveText');
+  const fileNameEl = $('fileName');
+  const zoomPercent = $('zoomPercent');
+  const dropOverlay = $('dropOverlay');
+  const fileInput = $('fileInput');
+  const imageInput = $('imageInput');
+  const findModal = $('findModal');
 
-      <div class="toolbar-panel" data-panel="home">
-        <div class="group">
-          <select class="select" id="fontName" title="Font">
-            <option value="Arial">Arial</option><option value="Calibri">Calibri</option><option value="Cambria">Cambria</option><option value="Georgia">Georgia</option><option value="Inter">Inter</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option>
-          </select>
-          <select class="select" id="fontSize" title="Ukuran">
-            <option value="1">10</option><option value="2">12</option><option value="3" selected>14</option><option value="4">16</option><option value="5">18</option><option value="6">24</option><option value="7">32</option>
-          </select>
-          <button class="iconbtn" data-cmd="bold" title="Bold"><i data-lucide="bold"></i></button>
-          <button class="iconbtn" data-cmd="italic" title="Italic"><i data-lucide="italic"></i></button>
-          <button class="iconbtn" data-cmd="underline" title="Underline"><i data-lucide="underline"></i></button>
-          <button class="iconbtn" data-cmd="strikeThrough" title="Coret"><i data-lucide="strikethrough"></i></button>
-        </div>
-        <div class="group">
-          <input class="color" type="color" id="foreColor" title="Warna teks" value="#111827">
-          <input class="color" type="color" id="backColor" title="Highlight" value="#fff59d">
-          <button class="iconbtn" data-cmd="justifyLeft" title="Rata kiri"><i data-lucide="align-left"></i></button>
-          <button class="iconbtn" data-cmd="justifyCenter" title="Rata tengah"><i data-lucide="align-center"></i></button>
-          <button class="iconbtn" data-cmd="justifyRight" title="Rata kanan"><i data-lucide="align-right"></i></button>
-          <button class="iconbtn" data-cmd="justifyFull" title="Rata kanan kiri"><i data-lucide="align-justify"></i></button>
-        </div>
-        <div class="group">
-          <button class="iconbtn" data-cmd="insertUnorderedList" title="Bullet"><i data-lucide="list"></i></button>
-          <button class="iconbtn" data-cmd="insertOrderedList" title="Nomor"><i data-lucide="list-ordered"></i></button>
-          <button class="iconbtn" data-cmd="outdent" title="Outdent"><i data-lucide="outdent"></i></button>
-          <button class="iconbtn" data-cmd="indent" title="Indent"><i data-lucide="indent"></i></button>
-          <button class="btn" data-action="findReplace"><i data-lucide="search"></i>Cari/Ganti</button>
-        </div>
-      </div>
+  const state = {
+    activeTab: 'File',
+    mode: 'empty',
+    docMode: 'preview',
+    file: null,
+    fileHandle: null,
+    fileName: 'dokumen.html',
+    ext: 'html',
+    dirty: false,
+    zoom: 1,
+    lastDocxBuffer: null,
+    docEditHtml: '',
+    pdfDoc: null,
+    pdfBytes: null,
+    pdfAnnotations: [],
+    pdfTool: 'select',
+    pdfUndo: [],
+    pdfRedo: [],
+    selectedAnnotationId: null,
+    sheetData: [],
+    sheetUndo: [],
+    sheetRedo: [],
+    activeCell: { r: 0, c: 0 },
+    renderToken: 0
+  };
 
-      <div class="toolbar-panel" data-panel="insert">
-        <div class="group">
-          <button class="btn" data-action="insertTable"><i data-lucide="table"></i>Tabel</button>
-          <button class="btn" data-action="insertImage"><i data-lucide="image"></i>Gambar</button>
-          <button class="btn" data-action="insertLink"><i data-lucide="link"></i>Link</button>
-          <button class="btn" data-action="insertLine"><i data-lucide="minus"></i>Garis</button>
-          <button class="btn" data-action="insertDate"><i data-lucide="calendar-days"></i>Tanggal</button>
-          <button class="btn" data-action="insertCheckbox"><i data-lucide="square-check"></i>Checkbox</button>
-          <button class="btn" data-action="insertSignature"><i data-lucide="pen-line"></i>Tanda Tangan</button>
-        </div>
-      </div>
+  const tabs = ['File','Edit','Format','Sisipkan','Layout','PDF','Spreadsheet','Tampilan','Alat'];
+  const ribbons = {
+    File: [
+      {title:'File', items:[btn('open','folder-open','Buka'),btn('save','save','Simpan'),btn('saveAs','save-all','Save As'),btn('print','printer','Print')]},
+      {title:'Export', items:[btn('exportHtml','file-code','HTML'),btn('exportText','file-text','TXT'),btn('exportDocx','file-type','DOCX'),btn('exportPdfPrint','file-down','PDF'),btn('exportCsv','table','CSV'),btn('exportXlsx','file-spreadsheet','XLSX')]},
+      {title:'Info', items:[btn('fileInfo','info','Info'),btn('newDoc','file-plus','Dokumen Baru')]}
+    ],
+    Edit: [
+      {title:'Cepat', items:[btn('undo','undo-2','Undo'),btn('redo','redo-2','Redo'),btn('clear','eraser','Bersihkan')]},
+      {title:'Clipboard', items:[btn('selectAll','scan','Pilih Semua'),btn('copy','copy','Copy'),btn('cut','scissors','Cut')]},
+      {title:'Cari', items:[btn('openFind','search','Cari/Ganti')]}
+    ],
+    Format: [
+      {title:'Font', items:[select('fontFamily',[['Arial','Arial'],['Calibri','Calibri'],['Times New Roman','Times'],['Georgia','Georgia'],['Courier New','Mono']]),select('fontSize',[['3','Normal'],['4','Besar'],['5','Judul'],['6','XL']]),color('foreColor','#111827'),color('hiliteColor','#fff176')]},
+      {title:'Gaya', items:[ibtn('bold','bold'),ibtn('italic','italic'),ibtn('underline','underline'),ibtn('strikeThrough','strikethrough'),btn('removeFormat','remove-formatting','Clear Format')]},
+      {title:'Paragraf', items:[ibtn('justifyLeft','align-left'),ibtn('justifyCenter','align-center'),ibtn('justifyRight','align-right'),ibtn('justifyFull','align-justify'),ibtn('insertUnorderedList','list'),ibtn('insertOrderedList','list-ordered'),ibtn('outdent','outdent'),ibtn('indent','indent')]},
+      {title:'Heading', items:[btn('h1','heading-1','H1'),btn('h2','heading-2','H2'),btn('quote','quote','Quote'),btn('codeBlock','code','Code')]}
+    ],
+    Sisipkan: [
+      {title:'Objek', items:[btn('insertTable','table','Tabel'),btn('insertImage','image','Gambar'),btn('insertLink','link','Link'),btn('insertHr','minus','Garis')]},
+      {title:'Cepat', items:[btn('insertDate','calendar','Tanggal'),btn('insertCheckbox','check-square','Checkbox'),btn('insertSignature','signature','Tanda tangan'),btn('insertSymbol','asterisk','Simbol')]}
+    ],
+    Layout: [
+      {title:'Kertas', items:[btn('pageA4','file','A4'),btn('pageLetter','file-text','Letter'),btn('marginNormal','panel-top','Margin Normal'),btn('marginNarrow','panel-top','Margin Kecil'),btn('marginWide','panel-top','Margin Lebar')]},
+      {title:'Halaman', items:[btn('insertPageBreak','separator-horizontal','Pemisah'),btn('fitWidth','maximize','Fit Width'),btn('pageWidth','minimize','Page Width')]}
+    ],
+    PDF: [
+      {title:'Mode', items:[pdfTool('select','mouse-pointer-2','Pilih'),pdfTool('text','type','Teks'),pdfTool('highlight','highlighter','Highlight'),pdfTool('rect','square','Kotak'),pdfTool('line','minus','Garis'),pdfTool('draw','pen-line','Coret'),pdfTool('erase','trash-2','Hapus')]},
+      {title:'Aksi', items:[btn('pdfDeleteSelected','delete','Hapus Pilihan'),btn('undo','undo-2','Undo'),btn('redo','redo-2','Redo'),btn('save','save','Simpan PDF'),btn('clearPdfAnnotations','eraser','Bersihkan PDF')]}
+    ],
+    Spreadsheet: [
+      {title:'Baris', items:[btn('sheetAddRow','rows-3','Tambah Baris'),btn('sheetDeleteRow','delete','Hapus Baris')]},
+      {title:'Kolom', items:[btn('sheetAddCol','columns-3','Tambah Kolom'),btn('sheetDeleteCol','delete','Hapus Kolom')]},
+      {title:'Data', items:[btn('sheetFormulaSum','sigma','SUM'),btn('sheetFormulaAvg','calculator','AVG'),btn('sheetSortAsc','arrow-up-a-z','A-Z'),btn('sheetSortDesc','arrow-down-z-a','Z-A'),btn('exportXlsx','file-spreadsheet','XLSX'),btn('exportCsv','table','CSV')]}
+    ],
+    Tampilan: [
+      {title:'Zoom', items:[btn('zoomOut','zoom-out','Kurang'),btn('zoomReset','rotate-ccw','100%'),btn('zoomIn','zoom-in','Tambah'),btn('fitWidth','maximize','Fit Width')]},
+      {title:'Mode', items:[btn('toggleTheme','moon','Tema'),btn('toggleFocus','focus','Fokus'),btn('fullscreen','maximize-2','Fullscreen')]},
+      {title:'Statistik', items:[btn('updateCount','list-checks','Hitung Kata'),btn('fileInfo','info','Info')]}
+    ],
+    Alat: [
+      {title:'Dokumen', items:[btn('docPreview','eye','Preview'),btn('docEdit','pencil','Edit Cepat'),btn('newDoc','file-plus','Baru')]},
+      {title:'Perbaikan', items:[btn('normalizeDoc','wand-sparkles','Rapikan HTML'),btn('clear','eraser','Bersihkan'),btn('reloadFile','refresh-cw','Muat Ulang')]}
+    ]
+  };
 
-      <div class="toolbar-panel" data-panel="layout">
-        <div class="group">
-          <select class="select" id="pageSize"><option value="a4">A4</option><option value="letter">Letter</option><option value="legal">Legal</option></select>
-          <select class="select" id="marginSize"><option value="normal">Margin Normal</option><option value="narrow">Sempit</option><option value="wide">Lebar</option></select>
-          <button class="btn" data-action="heading1"><i data-lucide="heading-1"></i>Judul 1</button>
-          <button class="btn" data-action="heading2"><i data-lucide="heading-2"></i>Judul 2</button>
-          <button class="btn" data-action="paragraph"><i data-lucide="pilcrow"></i>Paragraf</button>
-          <button class="btn" data-action="quote"><i data-lucide="quote"></i>Kutipan</button>
-          <button class="btn" data-action="codeBlock"><i data-lucide="braces"></i>Kode</button>
-        </div>
-      </div>
+  function btn(action, icon, label){ return {type:'button', action, icon, label}; }
+  function ibtn(command, icon){ return {type:'button', action:'cmd:'+command, icon, label:'', square:true, title:command}; }
+  function pdfTool(tool, icon, label){ return {type:'pdfTool', tool, icon, label}; }
+  function select(action, options){ return {type:'select', action, options}; }
+  function color(action, value){ return {type:'color', action, value}; }
 
-      <div class="toolbar-panel" data-panel="table">
-        <div class="group">
-          <button class="btn" data-action="insertTable"><i data-lucide="table"></i>Buat Tabel</button>
-          <button class="btn" data-action="tableRow"><i data-lucide="rows-3"></i>Tambah Baris</button>
-          <button class="btn" data-action="tableCol"><i data-lucide="columns-3"></i>Tambah Kolom</button>
-        </div>
-      </div>
-
-      <div class="toolbar-panel" data-panel="sheet">
-        <div class="group">
-          <button class="btn" data-action="newSheet"><i data-lucide="sheet"></i>Sheet Baru</button>
-          <button class="btn" data-action="addRow"><i data-lucide="rows-3"></i>Tambah Baris</button>
-          <button class="btn" data-action="addCol"><i data-lucide="columns-3"></i>Tambah Kolom</button>
-          <button class="btn danger" data-action="delRow"><i data-lucide="minus"></i>Hapus Baris</button>
-          <button class="btn danger" data-action="delCol"><i data-lucide="minus"></i>Hapus Kolom</button>
-        </div>
-        <div class="group">
-          <button class="btn" data-action="sortAsc"><i data-lucide="arrow-up-a-z"></i>A-Z</button>
-          <button class="btn" data-action="sortDesc"><i data-lucide="arrow-down-z-a"></i>Z-A</button>
-          <button class="btn" data-action="exportCsv"><i data-lucide="file-spreadsheet"></i>CSV</button>
-          <button class="btn" data-action="exportXlsx"><i data-lucide="table-2"></i>XLSX</button>
-        </div>
-      </div>
-
-      <div class="toolbar-panel" data-panel="pdf">
-        <div class="group">
-          <button class="btn" data-action="pdfText"><i data-lucide="type"></i>Tambah Teks</button>
-          <button class="btn" data-action="pdfHighlight"><i data-lucide="highlighter"></i>Highlight</button>
-          <button class="btn" data-action="save"><i data-lucide="save"></i>Simpan PDF</button>
-        </div>
-      </div>
-
-      <div class="toolbar-panel" data-panel="view">
-        <div class="group">
-          <button class="btn" data-action="docxPreview"><i data-lucide="scan-eye"></i>Preview Asli</button>
-          <button class="btn" data-action="docxEdit"><i data-lucide="edit-3"></i>Edit Cepat</button>
-          <label class="pill" for="zoomRange"><i data-lucide="zoom-in"></i>Zoom <span id="zoomText">100%</span></label>
-          <input id="zoomRange" type="range" min="50" max="220" value="100">
-          <button class="btn" data-action="focus"><i data-lucide="focus"></i>Fokus</button>
-          <button class="btn" data-action="theme"><i data-lucide="moon-star"></i>Tema</button>
-          <button class="btn" data-action="fullscreen"><i data-lucide="maximize"></i>Fullscreen</button>
-        </div>
-      </div>
-    </section>
-
-    <main class="workspace" id="workspace">
-      <section class="empty view active" id="emptyView">
-        <h1>Web dokumen yang ringan dan modern.</h1>
-        <p>Tarik file ke halaman ini atau klik Buka. Untuk DOCX, aplikasi sekarang membuka mode preview layout asli dulu supaya tidak langsung berantakan.</p>
-        <div class="quick-actions">
-          <button class="btn primary" data-action="open"><i data-lucide="folder-open"></i>Buka File</button>
-          <button class="btn" data-action="newDoc"><i data-lucide="file-plus-2"></i>Dokumen Baru</button>
-          <button class="btn" data-action="newSheet"><i data-lucide="sheet"></i>Sheet Baru</button>
-        </div>
-        <div class="cards">
-          <div class="card"><b>DOCX lebih rapi</b><span>Mode preview memakai renderer layout, bukan hanya ekstrak teks.</span></div>
-          <div class="card"><b>Save / Save As</b><span>Simpan menimpa file bila browser memberi izin, Save As membuat file baru.</span></div>
-          <div class="card"><b>Drag & Drop</b><span>Tarik file TXT, HTML, DOCX, XLSX, CSV, PDF ke halaman.</span></div>
-        </div>
-      </section>
-
-      <section class="view" id="docView">
-        <div class="docx-toolbar" id="docxToolbar">
-          <div>
-            <b>DOCX mode</b>
-            <div class="note">Preview Asli menjaga tampilan lebih rapi. Edit Cepat mengubah isi ke editor web sederhana.</div>
-          </div>
-          <div class="seg">
-            <button id="btnPreviewMode" class="active" type="button">Preview Asli</button>
-            <button id="btnEditMode" type="button">Edit Cepat</button>
-          </div>
-        </div>
-        <div class="docx-preview-wrap" id="docxPreviewWrap"></div>
-        <div class="doc-shell" id="docShell">
-          <article id="editor" class="doc-page" contenteditable="true" spellcheck="false"></article>
-        </div>
-      </section>
-
-      <section class="view" id="sheetView">
-        <div class="sheet-wrap" id="sheetWrap"><table class="sheet" id="sheetTable"></table></div>
-      </section>
-
-      <section class="view" id="pdfView">
-        <div class="pdf-shell pdf-continuous" id="pdfShell"></div>
-      </section>
-    </main>
-
-    <footer class="statusbar">
-      <span class="grow" id="statusText">Siap. Drag file ke halaman atau klik Buka.</span>
-      <span>Mode: <strong id="statusMode">Kosong</strong></span>
-      <span>Kata: <strong id="wordCount">0</strong></span>
-      <span>Sheet: <strong id="sheetSize">0 x 0</strong></span>
-    </footer>
-    <div class="zoom-float" aria-label="Kontrol zoom">
-      <button class="iconbtn" data-action="zoomOut" title="Zoom out"><i data-lucide="minus"></i></button>
-      <span class="zoom-value" id="zoomFloatText">100%</span>
-      <button class="iconbtn" data-action="zoomIn" title="Zoom in"><i data-lucide="plus"></i></button>
-      <button class="iconbtn" data-action="zoomReset" title="Reset zoom"><i data-lucide="rotate-ccw"></i></button>
-    </div>
-  </div>
-
-  <div class="drag-layer" id="dragLayer">
-    <div class="dropbox" id="dropBox">
-      <button class="iconbtn close-drop" id="closeDrop" title="Tutup"><i data-lucide="x"></i></button>
-      <div>
-        <i data-lucide="upload-cloud" style="width:54px;height:54px;color:#2563eb"></i>
-        <h2>Lepaskan file di sini</h2>
-        <p>File akan dibuka dari perangkat Anda. Tidak diupload ke server.</p>
-        <button class="btn primary" data-action="open"><i data-lucide="folder-open"></i>Pilih File Manual</button>
-      </div>
-    </div>
-  </div>
-
-  <input type="file" id="fileInput" class="hidden" accept=".txt,.md,.html,.htm,.doc,.docx,.xls,.xlsx,.ods,.csv,.pdf,application/pdf,text/*" />
-  <input type="file" id="imageInput" class="hidden" accept="image/*" />
-  <div class="toast" id="toast"></div>
-
-  <script>
-  (() => {
-    'use strict';
-
-    const $ = (sel, root = document) => root.querySelector(sel);
-    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-    const els = {
-      app: $('#app'), fileInput: $('#fileInput'), imageInput: $('#imageInput'), workspace: $('#workspace'),
-      fileName: $('#fileName'), docMode: $('#docMode span'), saveState: $('#saveState span'), statusText: $('#statusText'),
-      statusMode: $('#statusMode'), wordCount: $('#wordCount'), sheetSize: $('#sheetSize'), zoomRange: $('#zoomRange'), zoomText: $('#zoomText'), zoomFloatText: $('#zoomFloatText'),
-      emptyView: $('#emptyView'), docView: $('#docView'), sheetView: $('#sheetView'), pdfView: $('#pdfView'), editor: $('#editor'),
-      docShell: $('#docShell'), docxToolbar: $('#docxToolbar'), docxPreviewWrap: $('#docxPreviewWrap'), btnPreviewMode: $('#btnPreviewMode'), btnEditMode: $('#btnEditMode'),
-      sheetTable: $('#sheetTable'), pdfShell: $('#pdfShell'),
-      dragLayer: $('#dragLayer'), dropBox: $('#dropBox'), closeDrop: $('#closeDrop'), toast: $('#toast')
-    };
-
-    const state = {
-      fileName: 'Belum ada dokumen', ext: '', kind: 'empty', fileHandle: null, dirty: false,
-      originalBuffer: null, docxEditHtml: '', docxMode: 'preview', currentView: 'empty',
-      sheet: { data: [], rows: 0, cols: 0, selected: { r: 0, c: 0 } },
-      pdf: { bytes: null, doc: null, page: 1, total: 0, scale: 1.35, annotations: [], pending: null },
-      history: { undo: [], redo: [] },
-      dragDepth: 0
-    };
-
-    const fileTypes = [{
-      description: 'Dokumen',
-      accept: {
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-        'application/msword': ['.doc'],
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-        'application/vnd.oasis.opendocument.spreadsheet': ['.ods'],
-        'application/vnd.ms-excel': ['.xls'],
-        'application/pdf': ['.pdf'],
-        'text/plain': ['.txt', '.md', '.csv'],
-        'text/html': ['.html', '.htm']
-      }
-    }];
-
-    function init() {
-      if (window.pdfjsLib) {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-      bindUI();
-      resetSheet(24, 12);
-      updateUI();
-      refreshIcons();
-      window.addEventListener('beforeunload', e => { if (state.dirty) { e.preventDefault(); e.returnValue = ''; } });
+  function init(){
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     }
+    renderTabs();
+    renderRibbon();
+    bindEvents();
+    initSheet();
+    setMode('empty');
+    updateZoomUI();
+    refreshIcons();
+    toast('Siap dipakai. Drag file ke halaman atau klik Buka.', 'good');
+  }
 
-    function refreshIcons() { if (window.lucide) window.lucide.createIcons(); }
+  function refreshIcons(){ if (window.lucide) window.lucide.createIcons(); }
 
-    function bindUI() {
-      $$('.tab').forEach(btn => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
-      document.addEventListener('click', e => {
-        const actionBtn = e.target.closest('[data-action]');
-        if (actionBtn) { e.preventDefault(); runAction(actionBtn.dataset.action); }
-        const cmdBtn = e.target.closest('[data-cmd]');
-        if (cmdBtn) { e.preventDefault(); exec(cmdBtn.dataset.cmd); }
-      });
-      $('#fontName').addEventListener('change', e => exec('fontName', e.target.value));
-      $('#fontSize').addEventListener('change', e => exec('fontSize', e.target.value));
-      $('#foreColor').addEventListener('input', e => exec('foreColor', e.target.value));
-      $('#backColor').addEventListener('input', e => exec('hiliteColor', e.target.value));
-      $('#pageSize').addEventListener('change', applyPageLayout);
-      $('#marginSize').addEventListener('change', applyPageLayout);
-      if (els.zoomRange) els.zoomRange.addEventListener('input', e => setZoom(Number(e.target.value)));
-      els.fileInput.addEventListener('change', async e => { const file = e.target.files && e.target.files[0]; if (file) await openFile(file, null); e.target.value = ''; });
-      els.imageInput.addEventListener('change', e => insertImageFile(e.target.files && e.target.files[0]));
-      els.editor.addEventListener('input', () => { markDirty(); updateWordCount(); });
-      els.editor.addEventListener('paste', handleEditorPaste);
-      els.btnPreviewMode.addEventListener('click', () => switchDocxMode('preview'));
-      els.btnEditMode.addEventListener('click', () => switchDocxMode('edit'));
-      els.closeDrop.addEventListener('click', hideDragLayer);
-      els.dragLayer.addEventListener('click', e => { if (e.target === els.dragLayer) hideDragLayer(); });
-      els.pdfShell.addEventListener('click', handlePdfClick);
-      els.workspace.addEventListener('wheel', handleCtrlWheel, { passive: false });
-      document.addEventListener('keydown', handleKeys);
-      setupDragDrop();
+  function renderTabs(){
+    tabsEl.innerHTML = tabs.map(t => `<button class="tab-btn ${t===state.activeTab?'active':''}" data-tab="${t}">${t}</button>`).join('');
+  }
+
+  function renderRibbon(){
+    const groups = ribbons[state.activeTab] || [];
+    ribbonEl.innerHTML = groups.map(group => `<div class="group"><div class="group-title">${escapeHtml(group.title)}</div>${group.items.map(renderTool).join('')}</div>`).join('');
+    syncActivePdfTools();
+    refreshIcons();
+  }
+
+  function renderTool(item){
+    if (item.type === 'select') {
+      return `<select class="tool-select" data-action="${item.action}">${item.options.map(o=>`<option value="${escapeHtml(o[0])}">${escapeHtml(o[1])}</option>`).join('')}</select>`;
     }
-
-    function activateTab(tab) {
-      $$('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-      $$('.toolbar-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
-      refreshIcons();
+    if (item.type === 'color') {
+      return `<input class="tool-input" type="color" value="${item.value}" data-action="${item.action}" title="${item.action}">`;
     }
+    if (item.type === 'pdfTool') {
+      return `<button class="pdf-tool ${state.pdfTool===item.tool?'active':''}" data-pdf-tool="${item.tool}" title="${escapeHtml(item.label)}"><i data-lucide="${item.icon}"></i><span>${escapeHtml(item.label)}</span></button>`;
+    }
+    const cls = item.square ? 'tool-btn square' : 'tool-btn';
+    const label = item.label ? `<span>${escapeHtml(item.label)}</span>` : '';
+    return `<button class="${cls}" data-action="${item.action}" title="${escapeHtml(item.title || item.label || item.action)}"><i data-lucide="${item.icon}"></i>${label}</button>`;
+  }
 
-    async function runAction(action) {
-      const actions = {
-        open: openWithPicker, save, saveAs, undo, redo, zoomIn: () => changeZoom(10), zoomOut: () => changeZoom(-10), zoomReset: () => setZoom(100), newDoc, newSheet, print: () => window.print(), clear: clearCurrent,
-        exportHtml, exportDocx, exportXlsx, exportCsv, findReplace, insertTable, insertImage: () => els.imageInput.click(), insertLink,
-        insertLine: () => insertHtml('<hr>'), insertDate: () => insertHtml(new Date().toLocaleDateString('id-ID')),
-        insertCheckbox: () => insertHtml('<label><input type="checkbox"> item</label>'), insertSignature: insertSignature,
-        heading1: () => formatBlock('h1'), heading2: () => formatBlock('h2'), paragraph: () => formatBlock('p'), quote: () => formatBlock('blockquote'), codeBlock: () => formatBlock('pre'),
-        tableRow: addTableRow, tableCol: addTableCol, addRow: () => addSheetRow(), addCol: () => addSheetCol(), delRow: () => delSheetRow(), delCol: () => delSheetCol(),
-        sortAsc: () => sortSheet(true), sortDesc: () => sortSheet(false), pdfText: armPdfText,
-        pdfHighlight: armPdfHighlight, theme: toggleTheme, fullscreen: toggleFullscreen, focus: toggleFocus, docxPreview: () => switchDocxMode('preview'), docxEdit: () => switchDocxMode('edit')
+  function bindEvents(){
+    document.addEventListener('click', handleClick);
+    document.addEventListener('change', handleChange);
+    document.addEventListener('keydown', handleKeys);
+    fileInput.addEventListener('change', e => { const file = e.target.files && e.target.files[0]; if (file) openFile(file, null); e.target.value = ''; });
+    imageInput.addEventListener('change', insertImageFromInput);
+    docEditor.addEventListener('input', () => { markDirty(); updateWordCount(); });
+    docEditor.addEventListener('paste', () => setTimeout(() => { normalizeImagesInEditor(); markDirty(); }, 0));
+    formulaInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyFormulaBar(); });
+    formulaInput.addEventListener('blur', applyFormulaBar);
+    bindDragDrop();
+    workspace.addEventListener('wheel', handleCtrlWheel, {passive:false});
+  }
+
+  function handleClick(e){
+    const tabBtn = e.target.closest('[data-tab]');
+    if (tabBtn) { state.activeTab = tabBtn.dataset.tab; renderTabs(); renderRibbon(); return; }
+    const pdfToolBtn = e.target.closest('[data-pdf-tool]');
+    if (pdfToolBtn) { setPdfTool(pdfToolBtn.dataset.pdfTool); return; }
+    const actionEl = e.target.closest('[data-action]');
+    if (!actionEl) return;
+    const action = actionEl.dataset.action;
+    runAction(action, actionEl);
+  }
+
+  function handleChange(e){
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    if (action === 'fontFamily') execDocCommand('fontName', el.value);
+    if (action === 'fontSize') execDocCommand('fontSize', el.value);
+    if (action === 'foreColor') execDocCommand('foreColor', el.value);
+    if (action === 'hiliteColor') execDocCommand('hiliteColor', el.value);
+  }
+
+  async function runAction(action, sourceEl){
+    try {
+      if (action.startsWith('cmd:')) return execDocCommand(action.slice(4));
+      const map = {
+        open: openPicker, save: () => saveCurrent(false), saveAs: () => saveCurrent(true), print: () => window.print(),
+        closeDrop: hideDropOverlay, undo: performUndo, redo: performRedo, clear: clearCurrent,
+        exportHtml, exportText, exportDocx, exportPdfPrint, exportCsv, exportXlsx, fileInfo, newDoc,
+        selectAll: () => document.execCommand('selectAll'), copy: () => document.execCommand('copy'), cut: () => document.execCommand('cut'), paste: pasteFromClipboard,
+        openFind: () => findModal.classList.add('show'), closeFind: () => findModal.classList.remove('show'), findNext, replaceAll,
+        insertTable, insertImage: () => imageInput.click(), insertLink, insertHr: () => insertHtml('<hr>'), insertDate, insertCheckbox, insertSignature, insertSymbol,
+        h1: () => execDocCommand('formatBlock','H1'), h2: () => execDocCommand('formatBlock','H2'), quote: () => execDocCommand('formatBlock','BLOCKQUOTE'), codeBlock: insertCodeBlock,
+        removeFormat: () => execDocCommand('removeFormat'),
+        pageA4: () => setPageSize('A4'), pageLetter: () => setPageSize('Letter'), marginNormal: () => setMargin(72), marginNarrow: () => setMargin(36), marginWide: () => setMargin(96), insertPageBreak, fitWidth, pageWidth,
+        pdfDeleteSelected, clearPdfAnnotations,
+        sheetAddRow, sheetDeleteRow, sheetAddCol, sheetDeleteCol, sheetFormulaSum, sheetFormulaAvg, sheetSortAsc: () => sortSheet(true), sheetSortDesc: () => sortSheet(false),
+        zoomOut: () => changeZoom(-0.1), zoomReset: () => setZoom(1), zoomIn: () => changeZoom(0.1), toggleTheme, toggleFocus, fullscreen, updateCount: updateWordCount,
+        docPreview: showDocPreview, docEdit: enterDocEdit, normalizeDoc, reloadFile
       };
-      if (actions[action]) await actions[action]();
-      else toast('Menu belum tersedia: ' + action);
+      if (map[action]) return await map[action](sourceEl);
+      warn('Aksi belum dikenali: ' + action);
+    } catch (err) {
+      console.error(err);
+      toast('Error: ' + (err && err.message ? err.message : err), 'bad');
+      status('Terjadi error');
     }
+  }
 
-    function setupDragDrop() {
-      const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
-      ['dragenter','dragover'].forEach(type => window.addEventListener(type, e => {
-        if (!hasFiles(e)) return;
-        e.preventDefault();
-        e.stopPropagation();
-        if (type === 'dragenter') state.dragDepth += 1;
-        showDragLayer();
-      }, false));
-      window.addEventListener('dragleave', e => {
-        if (!hasFiles(e)) return;
-        e.preventDefault();
-        state.dragDepth = Math.max(0, state.dragDepth - 1);
-        if (state.dragDepth === 0) hideDragLayer();
-      }, false);
-      window.addEventListener('drop', async e => {
-        if (!hasFiles(e)) return;
-        e.preventDefault();
-        e.stopPropagation();
-        hideDragLayer();
-        const item = e.dataTransfer.items && Array.from(e.dataTransfer.items).find(i => i.kind === 'file');
-        const file = item ? item.getAsFile() : e.dataTransfer.files[0];
-        if (file) await openFile(file, null);
-      }, false);
-    }
+  function bindDragDrop(){
+    let dragDepth = 0;
+    window.addEventListener('dragenter', e => {
+      if (!hasFiles(e)) return;
+      e.preventDefault(); dragDepth++; showDropOverlay();
+    });
+    window.addEventListener('dragover', e => { if (hasFiles(e)) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
+    window.addEventListener('dragleave', e => { if (!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if (dragDepth === 0) hideDropOverlay(); });
+    window.addEventListener('drop', e => {
+      if (!hasFiles(e)) return;
+      e.preventDefault(); dragDepth = 0; hideDropOverlay();
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) openFile(file, null);
+    });
+    dropOverlay.addEventListener('click', e => { if (e.target === dropOverlay) hideDropOverlay(); });
+  }
+  function hasFiles(e){ return e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files'); }
+  function showDropOverlay(){ dropOverlay.classList.add('show'); refreshIcons(); }
+  function hideDropOverlay(){ dropOverlay.classList.remove('show'); }
 
-    function showDragLayer() { els.dragLayer.classList.add('active'); }
-    function hideDragLayer() { state.dragDepth = 0; els.dragLayer.classList.remove('active'); }
+  async function openPicker(){
+    hideDropOverlay();
+    if (window.showOpenFilePicker) {
+      const [handle] = await window.showOpenFilePicker({ multiple:false, types:[{ description:'Dokumen', accept:{
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document':['.docx'],
+        'application/pdf':['.pdf'],
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx'],
+        'application/vnd.ms-excel':['.xls'],
+        'text/csv':['.csv'], 'text/plain':['.txt','.md'], 'text/html':['.html','.htm']
+      }}]});
+      const file = await handle.getFile();
+      return openFile(file, handle);
+    }
+    fileInput.click();
+  }
 
-    function handleKeys(e) {
-      if (e.key === 'Escape') { hideDragLayer(); state.pdf.pending = null; setStatus('Aksi dibatalkan.'); }
-      if (!e.ctrlKey && !e.metaKey) return;
-      const key = e.key.toLowerCase();
-      if (key === 'o') { e.preventDefault(); openWithPicker(); }
-      if (key === 's') { e.preventDefault(); e.shiftKey ? saveAs() : save(); }
-      if (key === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
-      if (key === 'y') { e.preventDefault(); redo(); }
-      if (key === 'f') { e.preventDefault(); findReplace(); }
-      if (['b','i','u'].includes(key) && state.currentView === 'doc') { e.preventDefault(); exec(key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'underline'); }
-    }
+  async function openFile(file, handle){
+    state.file = file; state.fileHandle = handle; state.fileName = file.name || 'dokumen'; state.ext = getExt(state.fileName); state.dirty = false; saveText.textContent = 'Tersimpan';
+    fileNameEl.textContent = state.fileName;
+    status('Membuka ' + state.fileName + '...');
+    const buffer = await file.arrayBuffer();
+    if (state.ext === 'pdf') return loadPdf(buffer);
+    if (state.ext === 'docx') return loadDocx(buffer);
+    if (['xlsx','xls','ods','csv'].includes(state.ext)) return loadSheet(buffer, state.ext);
+    if (['txt','md','html','htm'].includes(state.ext)) return loadTextDoc(buffer, state.ext);
+    toast('Format belum didukung: .' + state.ext, 'warn');
+    status('Format tidak didukung');
+  }
 
-    function handleCtrlWheel(e) {
-      if (!e.ctrlKey && !e.metaKey) return;
-      e.preventDefault();
-      changeZoom(e.deltaY < 0 ? 10 : -10);
-    }
+  function setMode(mode){
+    state.mode = mode;
+    emptyState.classList.toggle('hidden', mode !== 'empty');
+    docPane.classList.toggle('active', mode === 'doc');
+    pdfPane.classList.toggle('active', mode === 'pdf');
+    sheetPane.classList.toggle('active', mode === 'sheet');
+    modeText.textContent = 'Mode: ' + (mode === 'doc' ? 'Dokumen' : mode === 'pdf' ? 'PDF' : mode === 'sheet' ? 'Spreadsheet' : 'kosong');
+    applyZoom();
+    refreshIcons();
+  }
 
-    function resetHistory() { state.history.undo = []; state.history.redo = []; }
-    function snapshotCurrent() {
-      return {
-        view: state.currentView,
-        kind: state.kind,
-        html: els.editor ? els.editor.innerHTML : '',
-        sheet: JSON.parse(JSON.stringify(state.sheet)),
-        pdfAnnotations: JSON.parse(JSON.stringify(state.pdf.annotations || []))
-      };
-    }
-    function pushHistory() {
-      state.history.undo.push(snapshotCurrent());
-      if (state.history.undo.length > 60) state.history.undo.shift();
-      state.history.redo = [];
-    }
-    function restoreSnapshot(snap) {
-      if (!snap) return;
-      if (snap.html != null) els.editor.innerHTML = snap.html;
-      if (snap.sheet) { state.sheet = JSON.parse(JSON.stringify(snap.sheet)); renderSheet(); }
-      if (snap.pdfAnnotations) { state.pdf.annotations = JSON.parse(JSON.stringify(snap.pdfAnnotations)); renderPdfAnnotationsAll(); }
-      markDirty(); updateWordCount(); updateSheetStatus();
-    }
-    function undo() {
-      if (state.history.undo.length) {
-        state.history.redo.push(snapshotCurrent());
-        restoreSnapshot(state.history.undo.pop());
-        setStatus('Undo.');
-        return;
-      }
-      if (state.currentView === 'doc') {
-        els.editor.focus();
-        document.execCommand('undo');
-        markDirty(); updateWordCount(); setStatus('Undo.');
-        return;
-      }
-      toast('Tidak ada perubahan untuk undo.');
-    }
-    function redo() {
-      if (state.history.redo.length) {
-        state.history.undo.push(snapshotCurrent());
-        restoreSnapshot(state.history.redo.pop());
-        setStatus('Redo.');
-        return;
-      }
-      if (state.currentView === 'doc') {
-        els.editor.focus();
-        document.execCommand('redo');
-        markDirty(); updateWordCount(); setStatus('Redo.');
-        return;
-      }
-      toast('Tidak ada perubahan untuk redo.');
-    }
+  async function loadTextDoc(buffer, ext){
+    const text = new TextDecoder('utf-8').decode(buffer);
+    setMode('doc');
+    state.docMode = 'edit';
+    docPreviewWrap.classList.add('hidden');
+    docEditWrap.classList.remove('hidden');
+    setDocModeButtons();
+    if (ext === 'html' || ext === 'htm') docEditor.innerHTML = text;
+    else docEditor.innerHTML = `<p>${escapeHtml(text).replace(/\n/g,'<br>')}</p>`;
+    state.docEditHtml = docEditor.innerHTML;
+    state.activeTab = 'Format'; renderTabs(); renderRibbon();
+    updateWordCount(); status('Dokumen siap diedit');
+  }
 
-    async function openWithPicker() {
-      try {
-        if (window.showOpenFilePicker) {
-          const [handle] = await window.showOpenFilePicker({ multiple: false, types: fileTypes });
-          const file = await handle.getFile();
-          await openFile(file, handle);
-        } else {
-          els.fileInput.click();
-        }
-      } catch (err) {
-        if (err && err.name !== 'AbortError') showError(err);
-      }
-    }
-
-    async function openFile(file, handle) {
-      try {
-        const ext = getExt(file.name);
-        const buffer = await file.arrayBuffer();
-        state.fileName = file.name;
-        state.ext = ext;
-        state.fileHandle = handle;
-        state.originalBuffer = buffer.slice(0);
-        state.dirty = false;
-        setStatus('Membuka ' + file.name + '...');
-        if (['txt','md'].includes(ext)) await openText(await file.text(), ext);
-        else if (['html','htm'].includes(ext)) await openHtml(await file.text());
-        else if (ext === 'docx') await openDocx(buffer);
-        else if (ext === 'doc') await openLegacyDoc();
-        else if (['xlsx','xls','ods','csv'].includes(ext)) await openSheet(buffer, ext, file);
-        else if (ext === 'pdf') await openPdf(buffer);
-        else await openText(await file.text(), ext || 'txt');
-        state.dirty = false;
-        resetHistory();
-        updateUI();
-        toast('File dibuka: ' + file.name);
-      } catch (err) { showError(err); }
-    }
-
-    async function openText(text, ext) {
-      state.kind = ext === 'md' ? 'markdown' : 'document';
-      showView('doc');
-      hideDocxTools();
-      els.docxPreviewWrap.innerHTML = '';
-      els.docShell.style.display = '';
-      els.editor.innerText = text || '';
-      setMode(ext.toUpperCase() + ' editor');
-      updateWordCount();
-    }
-
-    async function openHtml(html) {
-      state.kind = 'html';
-      showView('doc');
-      hideDocxTools();
-      els.docxPreviewWrap.innerHTML = '';
-      els.docShell.style.display = '';
-      els.editor.innerHTML = html || '';
-      setMode('HTML editor');
-      updateWordCount();
-    }
-
-    async function openDocx(buffer) {
-      state.kind = 'docx';
-      showView('doc');
-      els.docxToolbar.classList.add('active');
-      state.docxMode = 'preview';
-      els.docxPreviewWrap.innerHTML = '';
-      els.docxPreviewWrap.classList.add('active');
-      els.docShell.style.display = 'none';
-      setMode('DOCX preview asli');
-      setStatus('Membuka DOCX...');
-
-      let previewOk = false;
-      let editOk = false;
-      let previewError = null;
-      state.docxEditHtml = '';
-      els.editor.innerHTML = '<p></p>';
-
+  async function loadDocx(buffer){
+    setMode('doc');
+    state.docMode = 'preview';
+    state.lastDocxBuffer = buffer.slice(0);
+    state.docEditHtml = '';
+    docPreview.innerHTML = '<div class="doc-page"><p>Membuka preview DOCX...</p></div>';
+    docPreviewWrap.classList.remove('hidden');
+    docEditWrap.classList.add('hidden');
+    setDocModeButtons();
+    state.activeTab = 'Alat'; renderTabs(); renderRibbon();
+    let previewOk = false;
+    try {
       if (window.docx && typeof window.docx.renderAsync === 'function') {
-        try {
-          await window.docx.renderAsync(buffer.slice(0), els.docxPreviewWrap, null, {
-            className: 'docx',
-            inWrapper: true,
-            ignoreWidth: false,
-            ignoreHeight: false,
-            ignoreFonts: false,
-            breakPages: true,
-            renderHeaders: true,
-            renderFooters: true,
-            renderFootnotes: true,
-            renderEndnotes: true,
-            useBase64URL: true
-          });
-          previewOk = true;
-        } catch (err) {
-          previewError = err;
-          console.warn('DOCX preview gagal, mencoba Edit Cepat:', err);
-        }
+        docPreview.innerHTML = '';
+        await window.docx.renderAsync(buffer, docPreview, null, { className:'docx', inWrapper:true, ignoreWidth:false, ignoreHeight:false, breakPages:true, renderHeaders:true, renderFooters:true, renderFootnotes:true });
+        previewOk = true;
+      }
+    } catch (err) {
+      console.warn('DOCX preview gagal:', err);
+    }
+    try { state.docEditHtml = await docxToEditableHtml(buffer); } catch (err) { console.warn('DOCX edit HTML gagal:', err); }
+    if (!previewOk) {
+      docPreview.innerHTML = `<div class="doc-page"><h2>Preview asli tidak tersedia</h2><p>File tetap bisa dibuka lewat Edit Cepat.</p><p class="muted">${escapeHtml(state.fileName)}</p></div>`;
+    }
+    updateWordCount();
+    status(previewOk ? 'DOCX dibuka dalam Preview Asli' : 'DOCX siap dibuka di Edit Cepat');
+    toast('Klik Edit Cepat kalau ingin mengetik/mengubah isi Word.', 'good');
+  }
+
+  async function docxToEditableHtml(buffer){
+    if (window.mammoth && window.mammoth.convertToHtml) {
+      const result = await window.mammoth.convertToHtml({ arrayBuffer: buffer }, { styleMap: ["p[style-name='Title'] => h1:fresh", "p[style-name='Heading 1'] => h1:fresh", "p[style-name='Heading 2'] => h2:fresh"] });
+      if (result && result.value && result.value.trim()) return result.value;
+    }
+    if (window.JSZip) {
+      const zip = await JSZip.loadAsync(buffer);
+      const xmlFile = zip.file('word/document.xml');
+      if (xmlFile) {
+        const xmlText = await xmlFile.async('text');
+        const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
+        const paras = Array.from(xml.getElementsByTagName('w:p')).map(p => Array.from(p.getElementsByTagName('w:t')).map(t => t.textContent).join(''));
+        return paras.filter(Boolean).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      }
+    }
+    throw new Error('DOCX tidak bisa dikonversi ke editor. Pastikan koneksi CDN aktif.');
+  }
+
+  function showDocPreview(){
+    if (state.mode !== 'doc') return toast('Buka dokumen dulu.', 'warn');
+    state.docMode = 'preview'; docPreviewWrap.classList.remove('hidden'); docEditWrap.classList.add('hidden'); setDocModeButtons(); status('Mode Preview Asli');
+  }
+
+  async function enterDocEdit(){
+    if (state.mode !== 'doc') return toast('Buka dokumen dulu.', 'warn');
+    if (!state.docEditHtml && state.lastDocxBuffer) {
+      status('Menyiapkan Edit Cepat...');
+      state.docEditHtml = await docxToEditableHtml(state.lastDocxBuffer);
+    }
+    if (!docEditor.innerHTML.trim()) docEditor.innerHTML = state.docEditHtml || '<p></p>';
+    state.docMode = 'edit'; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons();
+    state.activeTab = 'Format'; renderTabs(); renderRibbon();
+    docEditor.focus(); updateWordCount(); status('Edit Cepat aktif - dokumen bisa diketik');
+  }
+
+  function setDocModeButtons(){
+    document.querySelectorAll('[data-action="docPreview"]').forEach(b => b.classList.toggle('active', state.docMode === 'preview'));
+    document.querySelectorAll('[data-action="docEdit"]').forEach(b => b.classList.toggle('active', state.docMode === 'edit'));
+  }
+
+  async function loadPdf(buffer){
+    if (!window.pdfjsLib || !window.PDFLib) throw new Error('Library PDF belum termuat. Cek koneksi internet/CDN.');
+    state.pdfBytes = buffer.slice(0);
+    state.pdfAnnotations = []; state.pdfUndo = []; state.pdfRedo = []; state.selectedAnnotationId = null;
+    setMode('pdf'); setPdfTool('select');
+    state.activeTab = 'PDF'; renderTabs(); renderRibbon();
+    status('Membuka PDF...'); pdfPages.innerHTML = '';
+    state.pdfDoc = await pdfjsLib.getDocument({ data: buffer.slice(0) }).promise;
+    await renderAllPdfPages();
+    status('PDF siap diedit. Pilih Teks, Highlight, Kotak, Garis, atau Coret.');
+  }
+
+  async function renderAllPdfPages(){
+    if (!state.pdfDoc) return;
+    const token = ++state.renderToken;
+    pdfPages.innerHTML = '';
+    const scale = Math.max(.5, Math.min(3, 1.35 * state.zoom));
+    for (let i=1; i<=state.pdfDoc.numPages; i++) {
+      if (token !== state.renderToken) return;
+      const page = await state.pdfDoc.getPage(i);
+      const viewport = page.getViewport({ scale });
+      const pageEl = document.createElement('div'); pageEl.className = 'pdf-page'; pageEl.dataset.pageIndex = String(i-1);
+      pageEl.style.width = viewport.width + 'px'; pageEl.style.height = viewport.height + 'px';
+      const canvas = document.createElement('canvas'); canvas.width = Math.floor(viewport.width); canvas.height = Math.floor(viewport.height);
+      canvas.style.width = viewport.width + 'px'; canvas.style.height = viewport.height + 'px';
+      const overlay = document.createElement('div'); overlay.className = 'pdf-layer'; overlay.dataset.pageIndex = String(i-1); overlay.style.width = viewport.width + 'px'; overlay.style.height = viewport.height + 'px';
+      pageEl.appendChild(canvas); pageEl.appendChild(overlay); pdfPages.appendChild(pageEl);
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      attachPdfOverlayEvents(overlay);
+    }
+    redrawPdfAnnotations();
+    updatePdfCursor();
+  }
+
+  function setPdfTool(tool){
+    state.pdfTool = tool; state.selectedAnnotationId = null;
+    const hints = {
+      select: 'Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.',
+      text: 'Mode aktif: Teks. Klik halaman PDF, ketik teks, lalu Enter atau klik luar.',
+      highlight: 'Mode aktif: Highlight. Drag area pada PDF untuk memberi tanda.',
+      rect: 'Mode aktif: Kotak. Drag untuk membuat kotak.',
+      line: 'Mode aktif: Garis. Drag dari titik awal ke titik akhir.',
+      draw: 'Mode aktif: Coret. Tahan mouse dan gambar di atas PDF.',
+      erase: 'Mode aktif: Hapus. Klik anotasi yang ingin dihapus.'
+    };
+    pdfHint.querySelector('span').textContent = hints[tool] || 'Mode PDF';
+    syncActivePdfTools(); updatePdfCursor(); redrawPdfAnnotations();
+  }
+  function syncActivePdfTools(){ document.querySelectorAll('[data-pdf-tool]').forEach(b => b.classList.toggle('active', b.dataset.pdfTool === state.pdfTool)); }
+  function updatePdfCursor(){
+    document.querySelectorAll('.pdf-layer').forEach(layer => {
+      layer.classList.remove('cursor-select','cursor-text','cursor-crosshair','cursor-erase');
+      const cursor = state.pdfTool === 'text' ? 'cursor-text' : state.pdfTool === 'select' ? 'cursor-select' : state.pdfTool === 'erase' ? 'cursor-erase' : 'cursor-crosshair';
+      layer.classList.add(cursor);
+    });
+  }
+
+  function attachPdfOverlayEvents(layer){
+    layer.addEventListener('mousedown', onPdfLayerMouseDown);
+    layer.addEventListener('click', e => { if (e.target === layer && state.pdfTool === 'select') { state.selectedAnnotationId = null; redrawPdfAnnotations(); } });
+  }
+
+  function onPdfLayerMouseDown(e){
+    if (e.button !== 0) return;
+    const layer = e.currentTarget;
+    if (e.target !== layer) return;
+    const pageIndex = Number(layer.dataset.pageIndex);
+    const pt = layerPoint(e, layer);
+    if (state.pdfTool === 'text') return createPdfTextInput(layer, pageIndex, pt.x, pt.y);
+    if (!['highlight','rect','line','draw'].includes(state.pdfTool)) return;
+    e.preventDefault();
+    const rect = layer.getBoundingClientRect();
+    const start = pt;
+    let preview = createPdfPreview(layer, state.pdfTool, start.x, start.y);
+    let drawPoints = [{x:start.x/rect.width, y:start.y/rect.height}];
+    const move = (ev) => {
+      const p = layerPoint(ev, layer);
+      if (state.pdfTool === 'draw') {
+        drawPoints.push({x:p.x/rect.width, y:p.y/rect.height}); updateDrawPreview(preview, drawPoints, rect.width, rect.height);
+      } else updatePdfPreview(preview, state.pdfTool, start, p);
+    };
+    const up = (ev) => {
+      document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
+      const end = layerPoint(ev, layer); preview.remove();
+      pushPdfHistory();
+      if (state.pdfTool === 'draw') {
+        if (drawPoints.length > 3) state.pdfAnnotations.push({ id: uid(), type:'draw', pageIndex, points: drawPoints });
+      } else if (state.pdfTool === 'line') {
+        if (dist(start,end) > 4) state.pdfAnnotations.push({ id: uid(), type:'line', pageIndex, x1:start.x/rect.width, y1:start.y/rect.height, x2:end.x/rect.width, y2:end.y/rect.height });
       } else {
-        previewError = new Error('Library docx-preview belum termuat.');
+        const box = normBox(start, end, rect.width, rect.height);
+        if (box.w > .005 && box.h > .005) state.pdfAnnotations.push({ id: uid(), type:state.pdfTool, pageIndex, ...box });
       }
+      markDirty(); redrawPdfAnnotations();
+    };
+    document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+  }
 
-      if (window.mammoth && typeof window.mammoth.convertToHtml === 'function') {
-        try {
-          const result = await window.mammoth.convertToHtml({ arrayBuffer: buffer.slice(0) });
-          state.docxEditHtml = result.value || '<p></p>';
-          els.editor.innerHTML = state.docxEditHtml;
-          editOk = true;
-        } catch (err) {
-          console.warn('DOCX edit cepat gagal:', err);
-        }
-      }
+  function layerPoint(e, layer){ const r = layer.getBoundingClientRect(); return { x: clamp(e.clientX-r.left,0,r.width), y: clamp(e.clientY-r.top,0,r.height) }; }
+  function normBox(a,b,w,h){ return { x: Math.min(a.x,b.x)/w, y: Math.min(a.y,b.y)/h, w: Math.abs(a.x-b.x)/w, h: Math.abs(a.y-b.y)/h }; }
+  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+  function createPdfPreview(layer, type, x, y){
+    const el = document.createElement(type==='draw' ? 'svg' : 'div');
+    el.className = 'pdf-preview ' + (type==='highlight'?'highlight':'');
+    if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML='<polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>'; }
+    else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; }
+    layer.appendChild(el); return el;
+  }
+  function updatePdfPreview(el, type, a, b){
+    if (type === 'line') { el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px'; el.style.background = 'transparent'; el.style.border = '0'; el.innerHTML = `<svg width="100%" height="100%" style="overflow:visible"><line x1="${a.x<b.x?0:Math.abs(a.x-b.x)}" y1="${a.y<b.y?0:Math.abs(a.y-b.y)}" x2="${a.x<b.x?Math.abs(a.x-b.x):0}" y2="${a.y<b.y?Math.abs(a.y-b.y):0}" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/></svg>`; return; }
+    el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px';
+  }
+  function updateDrawPreview(svg, pts, w, h){ const poly = svg.querySelector('polyline'); poly.setAttribute('points', pts.map(p=>`${p.x*w},${p.y*h}`).join(' ')); }
 
-      if (previewOk) {
-        switchDocxMode('preview', false);
-        updateWordCount();
-        setStatus('DOCX dibuka dalam mode Preview Asli. Gunakan Edit Cepat hanya kalau perlu mengubah isi.');
-        return;
-      }
+  function createPdfTextInput(layer, pageIndex, x, y){
+    const input = document.createElement('textarea'); input.className = 'pdf-text-input'; input.placeholder = 'Ketik teks...'; input.style.left = x + 'px'; input.style.top = y + 'px'; layer.appendChild(input); input.focus();
+    const finish = () => {
+      const text = input.value.trim(); input.remove();
+      if (!text) return;
+      const r = layer.getBoundingClientRect(); pushPdfHistory();
+      state.pdfAnnotations.push({ id: uid(), type:'text', pageIndex, x:x/r.width, y:y/r.height, w:Math.max(input.offsetWidth,160)/r.width, h:Math.max(input.offsetHeight,36)/r.height, text });
+      markDirty(); redrawPdfAnnotations();
+    };
+    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(); } if (e.key === 'Escape') input.remove(); });
+    input.addEventListener('blur', finish, {once:true});
+  }
 
-      if (editOk) {
-        switchDocxMode('edit', false);
-        updateWordCount();
-        setMode('DOCX edit cepat');
-        setStatus('Preview asli gagal, jadi dokumen dibuka di Edit Cepat agar tetap bisa dibaca dan diedit.');
-        toast('Preview asli DOCX gagal. Dibuka di Edit Cepat.');
-        return;
-      }
-
-      const msg = previewError && previewError.message ? previewError.message : String(previewError || 'Tidak diketahui');
-      els.docxPreviewWrap.innerHTML = '<div class="docx-fallback"><h2>DOCX belum bisa dibuka di browser ini.</h2><p>Biasanya ini terjadi karena library DOCX dari CDN belum termuat, koneksi diblokir, atau file DOCX memakai struktur yang tidak didukung browser.</p><p>Coba refresh halaman, pastikan koneksi internet aktif, lalu buka ulang file. Kalau masih gagal, pakai file DOCX lain untuk tes.</p><div class="mini-error">Detail error: ' + escapeHtml(msg) + '</div></div>';
-      els.docShell.style.display = 'none';
-      els.docxPreviewWrap.classList.add('active');
-      setMode('DOCX gagal dibuka');
-      setStatus('DOCX gagal dibuka. Detail error ditampilkan di halaman.');
-      updateWordCount();
+  function redrawPdfAnnotations(){
+    document.querySelectorAll('.pdf-layer').forEach(layer => layer.querySelectorAll('.pdf-annotation').forEach(a => a.remove()));
+    for (const ann of state.pdfAnnotations) {
+      const layer = document.querySelector(`.pdf-layer[data-page-index="${ann.pageIndex}"]`); if (!layer) continue;
+      const r = layer.getBoundingClientRect();
+      const el = document.createElement('div'); el.className = 'pdf-annotation ann-' + ann.type; el.dataset.id = ann.id;
+      if (ann.id === state.selectedAnnotationId) el.classList.add('selected');
+      if (ann.type === 'text') { el.classList.add('ann-text'); el.textContent = ann.text; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'highlight') { el.classList.add('ann-highlight'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'rect') { el.classList.add('ann-rect'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'line') { el.classList.add('ann-line'); const x=Math.min(ann.x1,ann.x2)*r.width, y=Math.min(ann.y1,ann.y2)*r.height, w=Math.abs(ann.x2-ann.x1)*r.width || 1, h=Math.abs(ann.y2-ann.y1)*r.height || 1; setBox(el,x,y,w,h); el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible"><line x1="${ann.x1<ann.x2?0:w}" y1="${ann.y1<ann.y2?0:h}" x2="${ann.x1<ann.x2?w:0}" y2="${ann.y1<ann.y2?h:0}" /></svg>`; }
+      if (ann.type === 'draw') { el.classList.add('ann-draw'); setBox(el,0,0,r.width,r.height); el.innerHTML=`<svg width="${r.width}" height="${r.height}"><polyline points="${ann.points.map(p=>`${p.x*r.width},${p.y*r.height}`).join(' ')}" /></svg>`; }
+      el.addEventListener('mousedown', startAnnotationMouseDown);
+      layer.appendChild(el);
     }
+  }
+  function setBox(el,x,y,w,h){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.width=w+'px'; el.style.height=h+'px'; }
 
-    async function openLegacyDoc() {
-      state.kind = 'doc';
-      showView('doc');
-      hideDocxTools();
-      els.docShell.style.display = '';
-      els.editor.innerHTML = '<h2>Format .DOC lama tidak bisa ditampilkan rapi oleh versi browser murni ini.</h2><p>Untuk hasil rapi, konversi file .doc ke .docx di Word/WPS, lalu buka lagi di sini.</p>';
-      setMode('DOC lama');
-      setStatus('Format .DOC lama tidak didukung penuh. Gunakan .DOCX untuk preview layout rapi.');
-      updateWordCount();
-    }
+  function startAnnotationMouseDown(e){
+    e.preventDefault(); e.stopPropagation();
+    const id = e.currentTarget.dataset.id;
+    const ann = state.pdfAnnotations.find(a => a.id === id); if (!ann) return;
+    if (state.pdfTool === 'erase') { pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== id); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); return; }
+    if (state.pdfTool !== 'select') return;
+    state.selectedAnnotationId = id; redrawPdfAnnotations();
+    const layer = e.currentTarget.parentElement; const r = layer.getBoundingClientRect(); const start = {x:e.clientX, y:e.clientY}; const original = JSON.parse(JSON.stringify(ann));
+    let moved = false;
+    const move = (ev) => {
+      moved = true; const dx=(ev.clientX-start.x)/r.width, dy=(ev.clientY-start.y)/r.height;
+      if (['text','highlight','rect'].includes(ann.type)) { ann.x=clamp(original.x+dx,0,1); ann.y=clamp(original.y+dy,0,1); }
+      if (ann.type === 'line') { ann.x1=clamp(original.x1+dx,0,1); ann.x2=clamp(original.x2+dx,0,1); ann.y1=clamp(original.y1+dy,0,1); ann.y2=clamp(original.y2+dy,0,1); }
+      if (ann.type === 'draw') { ann.points = original.points.map(p=>({x:clamp(p.x+dx,0,1), y:clamp(p.y+dy,0,1)})); }
+      redrawPdfAnnotations();
+    };
+    const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); if (moved) { state.pdfUndo.push(JSON.stringify(state.pdfAnnotations.map(a => a.id === id ? original : a))); state.pdfRedo = []; markDirty(); } };
+    document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+  }
 
-    async function openSheet(buffer, ext, file) {
-      state.kind = ext === 'csv' ? 'csv' : 'sheet';
-      showView('sheet');
-      let workbook;
-      if (!window.XLSX) throw new Error('Library XLSX belum termuat. Pastikan koneksi internet/CDN aktif.');
-      if (ext === 'csv') workbook = XLSX.read(await file.text(), { type: 'string' });
-      else workbook = XLSX.read(buffer, { type: 'array' });
-      const name = workbook.SheetNames[0];
-      const ws = workbook.Sheets[name];
-      const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      const rows = Math.max(data.length, 24);
-      const cols = Math.max(data.reduce((m, r) => Math.max(m, r.length), 0), 12);
-      state.sheet.data = normalizeGrid(data, rows, cols);
-      state.sheet.rows = rows;
-      state.sheet.cols = cols;
-      renderSheet();
-      setMode(ext.toUpperCase() + ' spreadsheet');
-      setStatus('Spreadsheet dibuka. Formula sederhana didukung: =SUM(A1:B2), =AVG(...), =MIN, =MAX, =COUNT.');
-    }
+  function pushPdfHistory(){ state.pdfUndo.push(JSON.stringify(state.pdfAnnotations)); if (state.pdfUndo.length > 60) state.pdfUndo.shift(); state.pdfRedo = []; }
+  function undoPdf(){ if (!state.pdfUndo.length) return toast('Tidak ada undo PDF.', 'warn'); state.pdfRedo.push(JSON.stringify(state.pdfAnnotations)); state.pdfAnnotations = JSON.parse(state.pdfUndo.pop()); state.selectedAnnotationId = null; redrawPdfAnnotations(); markDirty(); }
+  function redoPdf(){ if (!state.pdfRedo.length) return toast('Tidak ada redo PDF.', 'warn'); state.pdfUndo.push(JSON.stringify(state.pdfAnnotations)); state.pdfAnnotations = JSON.parse(state.pdfRedo.pop()); redrawPdfAnnotations(); markDirty(); }
+  function pdfDeleteSelected(){ if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn'); if (!state.selectedAnnotationId) return toast('Pilih anotasi dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== state.selectedAnnotationId); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); }
+  function clearPdfAnnotations(){ if (state.mode !== 'pdf') return; if (!confirm('Hapus semua anotasi PDF?')) return; pushPdfHistory(); state.pdfAnnotations = []; markDirty(); redrawPdfAnnotations(); }
 
-    async function openPdf(buffer) {
-      state.kind = 'pdf';
-      showView('pdf');
-      activateTab('pdf');
-      if (!window.pdfjsLib) throw new Error('Library PDF.js belum termuat.');
-      state.pdf.bytes = buffer.slice(0);
-      state.pdf.doc = await pdfjsLib.getDocument({ data: buffer.slice(0) }).promise;
-      state.pdf.page = 1;
-      state.pdf.total = state.pdf.doc.numPages;
-      state.pdf.annotations = [];
-      state.pdf.pending = null;
-      setMode('PDF edit');
-      await renderPdfPages();
-      setStatus('PDF langsung masuk mode edit. Scroll ke bawah untuk halaman berikutnya, tanpa tombol berikut/sebelumnya.');
-    }
-
-    function switchDocxMode(mode, mark = true) {
-      if (state.kind !== 'docx') { toast('Mode ini hanya untuk file DOCX.'); return; }
-      state.docxMode = mode;
-      els.btnPreviewMode.classList.toggle('active', mode === 'preview');
-      els.btnEditMode.classList.toggle('active', mode === 'edit');
-      els.docxPreviewWrap.classList.toggle('active', mode === 'preview');
-      els.docShell.style.display = mode === 'edit' ? '' : 'none';
-      setMode(mode === 'preview' ? 'DOCX preview asli' : 'DOCX edit cepat');
-      setStatus(mode === 'preview' ? 'Preview Asli menjaga tampilan lebih dekat dengan Word/WPS.' : 'Edit Cepat bisa mengubah isi, tetapi layout DOCX kompleks bisa berubah saat disimpan.');
-      if (mark && mode === 'edit') toast('Edit Cepat tidak 100% menjaga layout Word kompleks.');
-      refreshIcons();
-    }
-
-    function hideDocxTools() {
-      els.docxToolbar.classList.remove('active');
-      els.docxPreviewWrap.classList.remove('active');
-    }
-
-    function newDoc() {
-      state.fileName = 'Dokumen Baru.html'; state.ext = 'html'; state.kind = 'html'; state.fileHandle = null; state.originalBuffer = null;
-      showView('doc'); hideDocxTools(); els.docxPreviewWrap.innerHTML = ''; els.docShell.style.display = '';
-      els.editor.innerHTML = '<h1>Dokumen Baru</h1><p>Mulai menulis di sini...</p>';
-      resetHistory(); markDirty(); setMode('HTML editor'); updateUI(); updateWordCount();
-    }
-
-    function newSheet() {
-      state.fileName = 'Sheet Baru.xlsx'; state.ext = 'xlsx'; state.kind = 'sheet'; state.fileHandle = null; state.originalBuffer = null;
-      resetSheet(30, 14); showView('sheet'); resetHistory(); markDirty(); setMode('XLSX spreadsheet'); updateUI();
-    }
-
-    function clearCurrent() {
-      if (!confirm('Bersihkan area kerja sekarang?')) return;
-      pushHistory();
-      if (state.currentView === 'sheet') resetSheet(24, 12);
-      else if (state.currentView === 'pdf') { state.pdf.annotations = []; renderPdfAnnotationsAll(); }
-      else { els.editor.innerHTML = ''; els.docxPreviewWrap.innerHTML = ''; }
-      markDirty();
-    }
-
-    async function save() {
-      try {
-        const blob = await buildBlobForCurrentFile();
-        const name = suggestedName();
-        if (state.fileHandle && window.FileSystemFileHandle && await verifyPermission(state.fileHandle)) {
-          const writable = await state.fileHandle.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          state.dirty = false; updateUI(); toast('Disimpan menimpa file lama.'); return;
-        }
-        if (window.showSaveFilePicker) {
-          const handle = await window.showSaveFilePicker({ suggestedName: name });
-          const writable = await handle.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          state.fileHandle = handle; state.fileName = name; state.dirty = false; updateUI(); toast('Disimpan.');
-        } else {
-          downloadBlob(blob, name); state.dirty = false; updateUI(); toast('Browser tidak memberi izin menimpa file, jadi file di-download.');
-        }
-      } catch (err) { if (err && err.name !== 'AbortError') showError(err); }
-    }
-
-    async function saveAs() {
-      try {
-        const blob = await buildBlobForCurrentFile();
-        const name = suggestedName(true);
-        if (window.showSaveFilePicker) {
-          const handle = await window.showSaveFilePicker({ suggestedName: name });
-          const writable = await handle.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          state.fileHandle = handle;
-          state.fileName = name;
-          state.ext = getExt(name) || state.ext;
-          state.dirty = false; updateUI(); toast('File baru disimpan.');
-        } else {
-          downloadBlob(blob, name); toast('File baru di-download.');
-        }
-      } catch (err) { if (err && err.name !== 'AbortError') showError(err); }
-    }
-
-    async function verifyPermission(handle) {
-      const opts = { mode: 'readwrite' };
-      if (!handle.queryPermission || !handle.requestPermission) return true;
-      if (await handle.queryPermission(opts) === 'granted') return true;
-      return await handle.requestPermission(opts) === 'granted';
-    }
-
-    async function buildBlobForCurrentFile() {
-      if (state.kind === 'pdf') return await buildPdfBlob();
-      if (state.currentView === 'sheet' || ['sheet','csv'].includes(state.kind)) return buildSheetBlob(state.ext || 'xlsx');
-      if (state.kind === 'docx' && state.docxMode === 'preview' && !state.dirty && state.originalBuffer) {
-        return new Blob([state.originalBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      }
-      if (state.ext === 'txt' || state.ext === 'md') return new Blob([els.editor.innerText], { type: 'text/plain;charset=utf-8' });
-      if (state.ext === 'docx' || state.kind === 'docx') return buildDocxBlob();
-      return new Blob([fullHtmlDocument(els.editor.innerHTML)], { type: 'text/html;charset=utf-8' });
-    }
-
-    function buildDocxBlob() {
-      if (window.htmlDocx && htmlDocx.asBlob) return htmlDocx.asBlob(fullHtmlDocument(els.editor.innerHTML));
-      return new Blob([fullHtmlDocument(els.editor.innerHTML)], { type: 'text/html;charset=utf-8' });
-    }
-
-    function buildSheetBlob(ext) {
-      syncSheetFromDom();
-      if (ext === 'csv') {
-        const csv = state.sheet.data.map(row => row.map(csvEscape).join(',')).join('\n');
-        return new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      }
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(state.sheet.data);
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-      const bookType = ext === 'ods' ? 'ods' : ext === 'xls' ? 'xls' : 'xlsx';
-      const arr = XLSX.write(wb, { bookType, type: 'array' });
-      return new Blob([arr], { type: 'application/octet-stream' });
-    }
-
-    async function buildPdfBlob() {
-      if (!window.PDFLib) throw new Error('Library pdf-lib belum termuat.');
-      const pdfDoc = await PDFLib.PDFDocument.load(state.pdf.bytes.slice(0));
-      const pages = pdfDoc.getPages();
-      for (const a of state.pdf.annotations) {
-        const page = pages[a.page - 1];
-        if (!page) continue;
-        const { width, height } = page.getSize();
-        const displayWidth = a.pageWidth || width;
-        const displayHeight = a.pageHeight || height;
-        const x = (a.x / displayWidth) * width;
-        const y = height - (a.y / displayHeight) * height;
-        if (a.type === 'text') {
-          page.drawText(a.text || 'Teks', { x, y, size: 16, color: PDFLib.rgb(0.05,0.09,0.16) });
-        } else if (a.type === 'highlight') {
-          const w = ((a.w || 180) / displayWidth) * width;
-          const h = ((a.h || 26) / displayHeight) * height;
-          page.drawRectangle({ x, y: y - h, width: w, height: h, color: PDFLib.rgb(1,0.86,0.1), opacity: 0.35 });
-        }
-      }
-      const bytes = await pdfDoc.save();
-      return new Blob([bytes], { type: 'application/pdf' });
-    }
-
-    function suggestedName(asNew = false) {
-      let name = state.fileName && state.fileName !== 'Belum ada dokumen' ? state.fileName : 'dokumen.html';
-      if (state.kind === 'docx' && !name.toLowerCase().endsWith('.docx')) name = replaceExt(name, 'docx');
-      if (state.kind === 'pdf' && !name.toLowerCase().endsWith('.pdf')) name = replaceExt(name, 'pdf');
-      if (state.currentView === 'sheet' && !/\.(xlsx|xls|ods|csv)$/i.test(name)) name = replaceExt(name, 'xlsx');
-      if (asNew) {
-        const ext = getExt(name); const base = ext ? name.slice(0, -(ext.length + 1)) : name;
-        name = base + ' - salinan' + (ext ? '.' + ext : '');
-      }
-      return name;
-    }
-
-    function exportHtml() { downloadBlob(new Blob([fullHtmlDocument(els.editor.innerHTML)], { type: 'text/html;charset=utf-8' }), replaceExt(state.fileName || 'dokumen', 'html')); }
-    function exportDocx() { downloadBlob(buildDocxBlob(), replaceExt(state.fileName || 'dokumen', 'docx')); }
-    function exportCsv() { downloadBlob(buildSheetBlob('csv'), replaceExt(state.fileName || 'sheet', 'csv')); }
-    function exportXlsx() { downloadBlob(buildSheetBlob('xlsx'), replaceExt(state.fileName || 'sheet', 'xlsx')); }
-
-    function exec(cmd, val = null) {
-      showView('doc');
-      if (state.kind === 'docx') switchDocxMode('edit', false);
-      els.editor.focus();
-      document.execCommand(cmd, false, val);
-      markDirty(); updateWordCount();
-    }
-    function formatBlock(tag) { exec('formatBlock', tag); }
-    function insertHtml(html) { els.editor.focus(); document.execCommand('insertHTML', false, html); markDirty(); updateWordCount(); }
-
-    function insertTable() {
-      const rows = Math.max(1, Number(prompt('Jumlah baris?', '3')) || 3);
-      const cols = Math.max(1, Number(prompt('Jumlah kolom?', '3')) || 3);
-      let html = '<table><tbody>';
-      for (let r = 0; r < rows; r++) { html += '<tr>'; for (let c = 0; c < cols; c++) html += '<td>&nbsp;</td>'; html += '</tr>'; }
-      html += '</tbody></table><p></p>';
-      insertHtml(html);
-    }
-
-    function insertImageFile(file) {
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => insertHtml('<img src="' + reader.result + '" alt="Gambar">');
-      reader.readAsDataURL(file);
-      els.imageInput.value = '';
-    }
-
-    function insertLink() {
-      const url = prompt('Masukkan URL:', 'https://');
-      if (!url) return;
-      const text = prompt('Teks link:', url) || url;
-      insertHtml('<a href="' + escapeAttr(url) + '" target="_blank" rel="noopener">' + escapeHtml(text) + '</a>');
-    }
-
-    function insertSignature() {
-      insertHtml('<p style="margin-top:48px">Hormat saya,</p><p style="font-family: Georgia, serif; font-size: 28px; font-style: italic;">Tanda Tangan</p>');
-    }
-
-    function addTableRow() {
-      const cell = window.getSelection().anchorNode && window.getSelection().anchorNode.parentElement && window.getSelection().anchorNode.parentElement.closest('td,th');
-      const row = cell && cell.parentElement;
-      if (!row) return toast('Klik salah satu sel tabel dulu.');
-      const clone = row.cloneNode(true); clone.querySelectorAll('td,th').forEach(td => td.innerHTML = '&nbsp;'); row.after(clone); markDirty();
-    }
-
-    function addTableCol() {
-      const cell = window.getSelection().anchorNode && window.getSelection().anchorNode.parentElement && window.getSelection().anchorNode.parentElement.closest('td,th');
-      const table = cell && cell.closest('table');
-      if (!table) return toast('Klik salah satu sel tabel dulu.');
-      [...table.rows].forEach(row => { const td = row.insertCell(-1); td.innerHTML = '&nbsp;'; }); markDirty();
-    }
-
-    function findReplace() {
-      const find = prompt('Cari teks:'); if (!find) return;
-      const repl = prompt('Ganti dengan, kosongkan jika hanya mencari:', '');
-      if (repl === null || repl === '') {
-        const found = window.find && window.find(find);
-        if (!found) toast('Teks tidak ditemukan.');
-        return;
-      }
-      const walker = document.createTreeWalker(els.editor, NodeFilter.SHOW_TEXT);
-      let node, count = 0;
-      while ((node = walker.nextNode())) {
-        if (node.nodeValue.includes(find)) { node.nodeValue = node.nodeValue.split(find).join(repl); count++; }
-      }
-      if (count) markDirty(); toast(count + ' bagian diganti.'); updateWordCount();
-    }
-
-    function handleEditorPaste(e) {
-      if (state.currentView !== 'doc') return;
-      const html = e.clipboardData.getData('text/html');
-      if (html && html.includes('<table')) return;
-      const text = e.clipboardData.getData('text/plain');
-      if (text && text.includes('\t')) {
-        e.preventDefault();
-        const rows = text.trim().split(/\r?\n/).map(r => r.split('\t'));
-        let table = '<table><tbody>' + rows.map(r => '<tr>' + r.map(c => '<td>' + escapeHtml(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
-        insertHtml(table);
+  async function savePdfBlob(){
+    if (!state.pdfBytes) throw new Error('Tidak ada PDF yang dibuka.');
+    const { PDFDocument, rgb, StandardFonts } = PDFLib;
+    const pdfDoc = await PDFDocument.load(state.pdfBytes.slice(0));
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const pages = pdfDoc.getPages();
+    for (const ann of state.pdfAnnotations) {
+      const page = pages[ann.pageIndex]; if (!page) continue;
+      const W = page.getWidth(), H = page.getHeight();
+      if (ann.type === 'highlight') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, color: rgb(1,.91,.05), opacity:.35 });
+      if (ann.type === 'rect') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, borderColor: rgb(.95,.33,.08), borderWidth: 2, color: rgb(1,.68,.35), opacity:.05 });
+      if (ann.type === 'text') page.drawText(ann.text || '', { x: ann.x*W, y: H - ann.y*H - 16, size: 14, font, color: rgb(.07,.09,.15), lineHeight: 16 });
+      if (ann.type === 'line') page.drawLine({ start:{x:ann.x1*W, y:H-ann.y1*H}, end:{x:ann.x2*W, y:H-ann.y2*H}, thickness:2.5, color:rgb(.94,.27,.27) });
+      if (ann.type === 'draw' && ann.points && ann.points.length > 1) {
+        for (let i=1;i<ann.points.length;i++) page.drawLine({ start:{x:ann.points[i-1].x*W, y:H-ann.points[i-1].y*H}, end:{x:ann.points[i].x*W, y:H-ann.points[i].y*H}, thickness:2, color:rgb(.15,.38,.92) });
       }
     }
+    const bytes = await pdfDoc.save();
+    return new Blob([bytes], { type:'application/pdf' });
+  }
 
-    function applyPageLayout() {
-      const size = $('#pageSize').value;
-      const margin = $('#marginSize').value;
-      const sizes = { a4: [794,1123], letter: [816,1056], legal: [816,1344] };
-      const margins = { normal: [76,82], narrow: [36,42], wide: [96,110] };
-      const [w,h] = sizes[size] || sizes.a4;
-      const [tb,lr] = margins[margin] || margins.normal;
-      pushHistory();
-      els.editor.style.width = w + 'px'; els.editor.style.minHeight = h + 'px'; els.editor.style.padding = tb + 'px ' + lr + 'px';
-      markDirty();
-    }
-
-    function resetSheet(rows, cols) {
-      state.sheet.rows = rows; state.sheet.cols = cols; state.sheet.data = normalizeGrid([], rows, cols); renderSheet();
-    }
-    function normalizeGrid(data, rows, cols) {
-      return Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => (data[r] && data[r][c] != null) ? String(data[r][c]) : ''));
-    }
-    function colName(n) { let s = ''; n++; while (n) { let m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - m) / 26); } return s; }
-    function renderSheet() {
-      const { rows, cols, data } = state.sheet;
-      let html = '<thead><tr><th class="corner"></th>';
-      for (let c = 0; c < cols; c++) html += '<th>' + colName(c) + '</th>';
-      html += '</tr></thead><tbody>';
-      for (let r = 0; r < rows; r++) {
-        html += '<tr><th class="row-head">' + (r + 1) + '</th>';
-        for (let c = 0; c < cols; c++) html += '<td contenteditable="true" data-r="' + r + '" data-c="' + c + '">' + escapeHtml(displayCell(data[r][c], r, c)) + '</td>';
-        html += '</tr>';
+  function initSheet(){
+    state.sheetData = Array.from({length: 35}, () => Array.from({length: 14}, () => ''));
+    renderSheet();
+  }
+  function loadSheet(buffer, ext){
+    if (!window.XLSX) throw new Error('Library spreadsheet belum termuat.');
+    const wb = XLSX.read(buffer, { type:'array', cellFormula:true, cellDates:true });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, blankrows:true });
+    const maxCols = Math.max(14, ...rows.map(r => r.length));
+    state.sheetData = Array.from({length: Math.max(35, rows.length)}, (_, r) => Array.from({length:maxCols}, (_, c) => rows[r] && rows[r][c] != null ? String(rows[r][c]) : ''));
+    state.activeCell = {r:0,c:0}; setMode('sheet'); state.activeTab='Spreadsheet'; renderTabs(); renderRibbon(); renderSheet(); status('Spreadsheet siap diedit');
+  }
+  function renderSheet(){
+    const rows = state.sheetData.length, cols = Math.max(1, ...state.sheetData.map(r => r.length));
+    let html = '<thead><tr><th class="row-head"></th>';
+    for (let c=0;c<cols;c++) html += `<th>${colName(c)}</th>`;
+    html += '</tr></thead><tbody>';
+    for (let r=0;r<rows;r++) {
+      html += `<tr><th class="row-head">${r+1}</th>`;
+      for (let c=0;c<cols;c++) {
+        const raw = state.sheetData[r][c] || '';
+        html += `<td><input data-r="${r}" data-c="${c}" value="${escapeAttr(displayCell(raw))}" title="${escapeAttr(raw)}"></td>`;
       }
-      html += '</tbody>';
-      els.sheetTable.innerHTML = html;
-      els.sheetTable.querySelectorAll('td').forEach(td => {
-        td.addEventListener('focus', () => { const r = +td.dataset.r, c = +td.dataset.c; state.sheet.selected = { r, c }; td.textContent = state.sheet.data[r][c] || ''; });
-        td.addEventListener('blur', () => { const r = +td.dataset.r, c = +td.dataset.c; if (state.sheet.data[r][c] !== td.textContent) pushHistory(); state.sheet.data[r][c] = td.textContent; td.textContent = displayCell(state.sheet.data[r][c], r, c); markDirty(); });
-        td.addEventListener('keydown', handleSheetKey);
-      });
-      updateSheetStatus(); refreshIcons();
+      html += '</tr>';
     }
-    function syncSheetFromDom() { els.sheetTable.querySelectorAll('td').forEach(td => { state.sheet.data[+td.dataset.r][+td.dataset.c] = td.textContent; }); }
-    function displayCell(value) { return String(value || '').startsWith('=') ? evaluateFormula(value) : value; }
-    function evaluateFormula(value) {
-      const m = String(value).match(/^=(SUM|AVG|MIN|MAX|COUNT)\(([^)]+)\)$/i); if (!m) return value;
-      const nums = valuesFromRange(m[2]).map(Number).filter(v => !Number.isNaN(v));
-      const fn = m[1].toUpperCase(); if (fn === 'COUNT') return nums.length;
-      if (!nums.length) return 0; if (fn === 'SUM') return nums.reduce((a,b)=>a+b,0);
-      if (fn === 'AVG') return nums.reduce((a,b)=>a+b,0)/nums.length; if (fn === 'MIN') return Math.min(...nums); if (fn === 'MAX') return Math.max(...nums); return value;
-    }
-    function valuesFromRange(ref) {
-      const [a,b] = ref.split(':').map(cellRef); if (!a) return [];
-      const end = b || a; const out = [];
-      for (let r = Math.min(a.r,end.r); r <= Math.max(a.r,end.r); r++) for (let c = Math.min(a.c,end.c); c <= Math.max(a.c,end.c); c++) out.push(state.sheet.data[r] && state.sheet.data[r][c] || '');
-      return out;
-    }
-    function cellRef(ref) { const m = String(ref).trim().match(/^([A-Z]+)(\d+)$/i); if (!m) return null; let c = 0; for (const ch of m[1].toUpperCase()) c = c * 26 + (ch.charCodeAt(0) - 64); return { c: c - 1, r: Number(m[2]) - 1 }; }
-    function addSheetRow() { pushHistory(); state.sheet.data.push(Array(state.sheet.cols).fill('')); state.sheet.rows++; renderSheet(); markDirty(); }
-    function addSheetCol() { pushHistory(); state.sheet.data.forEach(r => r.push('')); state.sheet.cols++; renderSheet(); markDirty(); }
-    function delSheetRow() { if (state.sheet.rows <= 1) return; pushHistory(); state.sheet.data.splice(state.sheet.selected.r, 1); state.sheet.rows--; renderSheet(); markDirty(); }
-    function delSheetCol() { if (state.sheet.cols <= 1) return; pushHistory(); state.sheet.data.forEach(r => r.splice(state.sheet.selected.c, 1)); state.sheet.cols--; renderSheet(); markDirty(); }
-    function sortSheet(asc) { pushHistory(); syncSheetFromDom(); state.sheet.data.sort((a,b) => String(a[0]).localeCompare(String(b[0]), 'id') * (asc ? 1 : -1)); renderSheet(); markDirty(); }
-    function handleSheetKey(e) {
-      if (e.key !== 'Enter' && e.key !== 'Tab') return;
-      e.preventDefault(); const r = +e.currentTarget.dataset.r + (e.key === 'Enter' ? 1 : 0); const c = +e.currentTarget.dataset.c + (e.key === 'Tab' ? 1 : 0);
-      const next = els.sheetTable.querySelector('td[data-r="' + Math.min(r,state.sheet.rows-1) + '"][data-c="' + Math.min(c,state.sheet.cols-1) + '"]'); if (next) next.focus();
-    }
+    html += '</tbody>'; sheetGrid.innerHTML = html;
+    sheetGrid.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('focus', onCellFocus); inp.addEventListener('blur', onCellBlur); inp.addEventListener('keydown', onCellKey);
+    });
+  }
+  function onCellFocus(e){ const r=+e.target.dataset.r,c=+e.target.dataset.c; state.activeCell={r,c}; e.target.value = state.sheetData[r][c] || ''; formulaInput.value = e.target.value; cellName.textContent = colName(c)+(r+1); }
+  function onCellBlur(e){ const r=+e.target.dataset.r,c=+e.target.dataset.c; const val=e.target.value; if (state.sheetData[r][c] !== val) { pushSheetHistory(); state.sheetData[r][c]=val; markDirty(); } renderSheet(); }
+  function onCellKey(e){ if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); const next = sheetGrid.querySelector(`input[data-r="${+e.target.dataset.r+1}"][data-c="${e.target.dataset.c}"]`); if (next) next.focus(); } }
+  function applyFormulaBar(){ const {r,c}=state.activeCell; if (!state.sheetData[r]) return; if (state.sheetData[r][c] !== formulaInput.value) { pushSheetHistory(); state.sheetData[r][c]=formulaInput.value; markDirty(); renderSheet(); } }
+  function displayCell(raw){ if (typeof raw === 'string' && raw.trim().startsWith('=')) { try { return String(evalFormula(raw)); } catch { return '#ERR'; } } return raw; }
+  function evalFormula(raw){
+    const expr = raw.trim().slice(1).trim();
+    const fn = expr.match(/^(SUM|AVG|MIN|MAX|COUNT)\(([^)]+)\)$/i);
+    if (fn) { const vals = rangeValues(fn[2]).map(Number).filter(v => !Number.isNaN(v)); const name=fn[1].toUpperCase(); if (name==='SUM') return vals.reduce((a,b)=>a+b,0); if (name==='AVG') return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0; if (name==='MIN') return Math.min(...vals); if (name==='MAX') return Math.max(...vals); if (name==='COUNT') return vals.length; }
+    const replaced = expr.replace(/\b([A-Z]+)(\d+)\b/g, (_, col, row) => Number(state.sheetData[Number(row)-1]?.[colIndex(col)] || 0));
+    if (!/^[0-9+\-*/().\s]+$/.test(replaced)) throw new Error('Formula tidak aman');
+    return Function('return (' + replaced + ')')();
+  }
+  function rangeValues(ref){ const [a,b] = ref.split(':').map(s=>s.trim().toUpperCase()); if (!b) return [cellValue(a)]; const ca=parseCellRef(a), cb=parseCellRef(b); const vals=[]; for(let r=Math.min(ca.r,cb.r);r<=Math.max(ca.r,cb.r);r++) for(let c=Math.min(ca.c,cb.c);c<=Math.max(ca.c,cb.c);c++) vals.push(displayCell(state.sheetData[r]?.[c]||'')); return vals; }
+  function cellValue(ref){ const p=parseCellRef(ref); return displayCell(state.sheetData[p.r]?.[p.c]||''); }
+  function parseCellRef(ref){ const m=ref.match(/^([A-Z]+)(\d+)$/); if(!m) return {r:0,c:0}; return {c:colIndex(m[1]), r:Number(m[2])-1}; }
+  function colName(n){ let s=''; n++; while(n){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; }
+  function colIndex(name){ return name.split('').reduce((n,ch)=>n*26 + ch.charCodeAt(0)-64,0)-1; }
+  function pushSheetHistory(){ state.sheetUndo.push(JSON.stringify(state.sheetData)); if (state.sheetUndo.length>60) state.sheetUndo.shift(); state.sheetRedo=[]; }
+  function undoSheet(){ if(!state.sheetUndo.length) return toast('Tidak ada undo spreadsheet.','warn'); state.sheetRedo.push(JSON.stringify(state.sheetData)); state.sheetData=JSON.parse(state.sheetUndo.pop()); renderSheet(); markDirty(); }
+  function redoSheet(){ if(!state.sheetRedo.length) return toast('Tidak ada redo spreadsheet.','warn'); state.sheetUndo.push(JSON.stringify(state.sheetData)); state.sheetData=JSON.parse(state.sheetRedo.pop()); renderSheet(); markDirty(); }
+  function sheetAddRow(){ pushSheetHistory(); const cols=Math.max(14,...state.sheetData.map(r=>r.length)); state.sheetData.splice(state.activeCell.r+1,0,Array.from({length:cols},()=>'')); renderSheet(); markDirty(); }
+  function sheetDeleteRow(){ if(state.sheetData.length<=1) return; pushSheetHistory(); state.sheetData.splice(state.activeCell.r,1); state.activeCell.r=Math.max(0,state.activeCell.r-1); renderSheet(); markDirty(); }
+  function sheetAddCol(){ pushSheetHistory(); state.sheetData.forEach(r=>r.splice(state.activeCell.c+1,0,'')); renderSheet(); markDirty(); }
+  function sheetDeleteCol(){ if(state.sheetData[0].length<=1) return; pushSheetHistory(); state.sheetData.forEach(r=>r.splice(state.activeCell.c,1)); state.activeCell.c=Math.max(0,state.activeCell.c-1); renderSheet(); markDirty(); }
+  function sheetFormulaSum(){ insertFormula('=SUM(A1:A5)'); }
+  function sheetFormulaAvg(){ insertFormula('=AVG(A1:A5)'); }
+  function insertFormula(f){ const {r,c}=state.activeCell; pushSheetHistory(); state.sheetData[r][c]=f; renderSheet(); markDirty(); }
+  function sortSheet(asc){ pushSheetHistory(); const c=state.activeCell.c; state.sheetData.sort((a,b)=>String(a[c]||'').localeCompare(String(b[c]||''), undefined, {numeric:true})*(asc?1:-1)); renderSheet(); markDirty(); }
 
-    async function renderPdfPages() {
-      if (!state.pdf.doc) return;
-      els.pdfShell.innerHTML = '';
-      for (let pageNum = 1; pageNum <= state.pdf.total; pageNum++) {
-        const page = await state.pdf.doc.getPage(pageNum);
-        const viewport = page.getViewport({ scale: state.pdf.scale });
-        const stage = document.createElement('div');
-        stage.className = 'pdf-stage';
-        stage.dataset.page = pageNum;
-        const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const overlay = document.createElement('div');
-        overlay.className = 'pdf-overlay';
-        overlay.dataset.page = pageNum;
-        overlay.dataset.width = viewport.width;
-        overlay.dataset.height = viewport.height;
-        overlay.style.width = viewport.width + 'px';
-        overlay.style.height = viewport.height + 'px';
-        stage.appendChild(canvas);
-        stage.appendChild(overlay);
-        els.pdfShell.appendChild(stage);
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      }
-      renderPdfAnnotationsAll();
-    }
-    function renderPdfAnnotationsAll() {
-      if (!els.pdfShell) return;
-      $$('.pdf-overlay', els.pdfShell).forEach(overlay => overlay.innerHTML = '');
-      state.pdf.annotations.forEach(a => {
-        const overlay = els.pdfShell.querySelector('.pdf-overlay[data-page= + a.page + ]');
-        if (!overlay) return;
-        const div = document.createElement('div');
-        div.className = 'pdf-anno ' + (a.type === 'text' ? 'pdf-text' : 'pdf-highlight');
-        div.style.left = a.x + 'px';
-        div.style.top = a.y + 'px';
-        if (a.type === 'text') div.textContent = a.text;
-        else { div.style.width = (a.w || 180) + 'px'; div.style.height = (a.h || 26) + 'px'; }
-        overlay.appendChild(div);
-      });
-    }
-    function armPdfText() { const text = prompt('Teks yang ditempel ke PDF:', 'Catatan'); if (!text) return; state.pdf.pending = { type: 'text', text }; setStatus('Klik posisi di halaman PDF untuk menaruh teks.'); }
-    function armPdfHighlight() { state.pdf.pending = { type: 'highlight', w: 180, h: 26 }; setStatus('Klik posisi di halaman PDF untuk menaruh highlight.'); }
-    function handlePdfClick(e) {
-      if (!state.pdf.pending) return;
-      const overlay = e.target.closest('.pdf-overlay');
-      if (!overlay || !els.pdfShell.contains(overlay)) return;
-      const rect = overlay.getBoundingClientRect();
-      const scaleX = Number(overlay.dataset.width || overlay.offsetWidth) / rect.width;
-      const scaleY = Number(overlay.dataset.height || overlay.offsetHeight) / rect.height;
-      const x = (e.clientX - rect.left) * scaleX;
-      const y = (e.clientY - rect.top) * scaleY;
-      const pending = state.pdf.pending;
-      pushHistory();
-      state.pdf.annotations.push({ page: Number(overlay.dataset.page), x, y, type: pending.type, text: pending.text || '', w: pending.w || 180, h: pending.h || 26, pageWidth: Number(overlay.dataset.width), pageHeight: Number(overlay.dataset.height) });
-      state.pdf.pending = null; markDirty(); renderPdfAnnotationsAll(); setStatus('Anotasi ditambahkan.');
-    }
+  async function ensureDocEditReady(){
+    if (state.mode !== 'doc') { toast('Fitur ini untuk mode dokumen. Buka DOCX/TXT/HTML atau buat dokumen baru dulu.', 'warn'); return false; }
+    if (state.docMode !== 'edit') await enterDocEdit();
+    return true;
+  }
+  function execDocCommand(cmd, val=null){
+    ensureDocEditReady().then(ok => { if(!ok) return; docEditor.focus(); document.execCommand(cmd, false, val); markDirty(); updateWordCount(); });
+  }
+  function insertHtml(html){
+    ensureDocEditReady().then(ok => { if(!ok) return; docEditor.focus(); document.execCommand('insertHTML', false, html); markDirty(); updateWordCount(); });
+  }
+  function insertTable(){ const rows=Number(prompt('Jumlah baris:', '3')||3), cols=Number(prompt('Jumlah kolom:', '3')||3); let html='<table><tbody>'; for(let r=0;r<rows;r++){ html+='<tr>'; for(let c=0;c<cols;c++) html+='<td>&nbsp;</td>'; html+='</tr>'; } html+='</tbody></table><p><br></p>'; insertHtml(html); }
+  function insertImageFromInput(e){ const file=e.target.files&&e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>insertHtml(`<p><img src="${reader.result}" style="max-width:100%;height:auto"></p>`); reader.readAsDataURL(file); e.target.value=''; }
+  function insertLink(){ const url=prompt('URL link:', 'https://'); if(!url) return; const text=prompt('Teks link:', url) || url; insertHtml(`<a href="${escapeAttr(url)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`); }
+  function insertDate(){ insertHtml(new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'})); }
+  function insertCheckbox(){ insertHtml('<label><input type="checkbox"> Item checklist</label>'); }
+  function insertSignature(){ insertHtml('<p style="margin-top:48px">Hormat saya,</p><p style="height:60px"></p><p><strong>________________________</strong></p>'); }
+  function insertSymbol(){ const sym=prompt('Masukkan simbol:', '✓'); if(sym) insertHtml(escapeHtml(sym)); }
+  function insertCodeBlock(){ insertHtml('<pre style="background:#f1f5f9;padding:12px;border-radius:8px;white-space:pre-wrap"><code>Kode di sini</code></pre>'); }
+  function insertPageBreak(){ insertHtml('<div class="page-break" contenteditable="false"></div><p><br></p>'); }
+  function normalizeDoc(){ normalizeImagesInEditor(); docEditor.querySelectorAll('*').forEach(el => { if (el.getAttribute('style') === '') el.removeAttribute('style'); }); markDirty(); toast('HTML dokumen dirapikan.', 'good'); }
+  function normalizeImagesInEditor(){ docEditor.querySelectorAll('img').forEach(img => { img.style.maxWidth='100%'; img.style.height='auto'; }); }
+  function setPageSize(size){ if(size==='Letter'){ appRoot.style.setProperty('--page-width','816px'); appRoot.style.setProperty('--page-min-height','1056px'); } else { appRoot.style.setProperty('--page-width','794px'); appRoot.style.setProperty('--page-min-height','1123px'); } toast('Ukuran kertas: ' + size, 'good'); }
+  function setMargin(px){ appRoot.style.setProperty('--page-padding', px+'px'); toast('Margin diubah.', 'good'); }
 
-    function showView(name) {
-      state.currentView = name;
-      els.emptyView.classList.toggle('active', name === 'empty');
-      els.docView.classList.toggle('active', name === 'doc');
-      els.sheetView.classList.toggle('active', name === 'sheet');
-      els.pdfView.classList.toggle('active', name === 'pdf');
-      updateUI();
-    }
-    function setMode(mode) { els.docMode.textContent = mode; els.statusMode.textContent = mode; }
-    function setStatus(text) { els.statusText.textContent = text; }
-    function markDirty() { state.dirty = true; updateUI(); }
-    function updateUI() {
-      els.fileName.textContent = state.fileName || 'Belum ada dokumen';
-      els.saveState.textContent = state.dirty ? 'Belum disimpan' : 'Tersimpan';
-      $('#saveState').classList.toggle('warn', state.dirty); $('#saveState').classList.toggle('ok', !state.dirty);
-      updateWordCount(); updateSheetStatus();
-    }
-    function updateWordCount() { const text = els.editor.innerText || ''; const count = text.trim() ? text.trim().split(/\s+/).length : 0; els.wordCount.textContent = count; }
-    function updateSheetStatus() { els.sheetSize.textContent = (state.sheet.rows || 0) + ' x ' + (state.sheet.cols || 0); }
-    function setZoom(value) {
-      value = Math.max(50, Math.min(220, Math.round(value)));
-      document.documentElement.style.setProperty('--zoom', value / 100);
-      if (els.zoomRange) els.zoomRange.value = String(value);
-      if (els.zoomText) els.zoomText.textContent = value + '%';
-      if (els.zoomFloatText) els.zoomFloatText.textContent = value + '%';
-    }
-    function currentZoom() { return Math.round(Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom') || 1) * 100); }
-    function changeZoom(delta) { setZoom(currentZoom() + delta); }
-    function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === 'dark' ? '' : 'dark'; }
-    function toggleFullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(showError); else document.exitFullscreen(); }
-    function toggleFocus() { document.body.classList.toggle('focus-mode'); $('.tabs').classList.toggle('hidden'); $('.toolbar').classList.toggle('hidden'); }
+  function performUndo(){ if(state.mode==='pdf') return undoPdf(); if(state.mode==='sheet') return undoSheet(); document.execCommand('undo'); markDirty(); }
+  function performRedo(){ if(state.mode==='pdf') return redoPdf(); if(state.mode==='sheet') return redoSheet(); document.execCommand('redo'); markDirty(); }
+  function clearCurrent(){
+    if(state.mode==='pdf') return clearPdfAnnotations();
+    if(state.mode==='sheet') { if(confirm('Bersihkan spreadsheet?')) { pushSheetHistory(); initSheet(); markDirty(); } return; }
+    if(state.mode==='doc') { if(confirm('Bersihkan isi dokumen?')) { docEditor.innerHTML=''; docPreview.innerHTML=''; state.docEditHtml=''; state.docMode='edit'; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); markDirty(); updateWordCount(); } return; }
+  }
 
-    function fullHtmlDocument(body) {
-      return '<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;line-height:1.5}table{border-collapse:collapse;width:100%}td,th{border:1px solid #cbd5e1;padding:8px}img{max-width:100%}</style></head><body>' + body + '</body></html>';
+  async function saveCurrent(asNew){
+    let blob, name = state.fileName || 'dokumen';
+    if(state.mode==='pdf') { blob = await savePdfBlob(); if(!name.toLowerCase().endsWith('.pdf')) name = baseName(name)+'.pdf'; }
+    else if(state.mode==='sheet') { blob = makeXlsxBlob(); if(!/\.(xlsx|xls|ods|csv)$/i.test(name)) name = baseName(name)+'.xlsx'; if(state.ext==='csv') blob=makeCsvBlob(); }
+    else if(state.mode==='doc') { blob = await makeDocBlob(); if(!/\.(docx|html|txt|md)$/i.test(name)) name = baseName(name)+'.html'; }
+    else return toast('Belum ada file untuk disimpan.', 'warn');
+    await writeBlob(blob, name, asNew);
+    state.dirty=false; saveText.textContent='Tersimpan'; status('File disimpan'); toast('File berhasil disimpan.', 'good');
+  }
+  async function writeBlob(blob, suggestedName, asNew){
+    if(!asNew && state.fileHandle && state.fileHandle.createWritable) {
+      try { const w=await state.fileHandle.createWritable(); await w.write(blob); await w.close(); return; } catch(err) { console.warn('Overwrite gagal:', err); }
     }
-    function downloadBlob(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800); }
-    function getExt(name) { const m = String(name || '').toLowerCase().match(/\.([^.]+)$/); return m ? m[1] : ''; }
-    function replaceExt(name, ext) { const base = String(name || 'dokumen').replace(/\.[^.]+$/, ''); return base + '.' + ext; }
-    function escapeHtml(s) { return String(s ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
-    function escapeAttr(s) { return escapeHtml(s).replace(/'/g, '&#39;'); }
-    function csvEscape(s) { s = String(s ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
-    function toast(msg) { const div = document.createElement('div'); div.className = 'toast-item'; div.textContent = msg; els.toast.appendChild(div); setTimeout(() => div.remove(), 3800); }
-    function showError(err) { console.error(err); const msg = err && err.message ? err.message : String(err); setStatus('Error: ' + msg); toast('Error: ' + msg); }
+    if(window.showSaveFilePicker) {
+      const mime = (blob.type || 'application/octet-stream').split(';')[0] || 'application/octet-stream';
+      const handle = await window.showSaveFilePicker({ suggestedName, types:[{description:'File', accept:{[mime]:[extensionWithDot(suggestedName)]}}] });
+      const w=await handle.createWritable(); await w.write(blob); await w.close(); state.fileHandle=handle; state.fileName=suggestedName; fileNameEl.textContent=suggestedName; return;
+    }
+    downloadBlob(blob, suggestedName);
+  }
+  async function makeDocBlob(){
+    const html = fullHtmlDocument(docEditor.innerHTML || state.docEditHtml || docPreview.textContent || '');
+    if(state.ext==='docx' && window.htmlDocx) return window.htmlDocx.asBlob(html);
+    if(state.ext==='txt' || state.ext==='md') return new Blob([docEditor.innerText], {type:'text/plain'});
+    return new Blob([html], {type:'text/html'});
+  }
+  function fullHtmlDocument(body){ return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(baseName(state.fileName))}</title></head><body>${body}</body></html>`; }
+  function makeXlsxBlob(){ const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(state.sheetData); XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); const out=XLSX.write(wb,{bookType:'xlsx', type:'array'}); return new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}); }
+  function makeCsvBlob(){ return new Blob([state.sheetData.map(r=>r.map(csvCell).join(',')).join('\n')], {type:'text/csv;charset=utf-8'}); }
+  function csvCell(v){ const s=String(v ?? ''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+  function exportHtml(){ downloadBlob(new Blob([fullHtmlDocument(docEditor.innerHTML)],{type:'text/html'}), baseName(state.fileName)+'.html'); }
+  function exportText(){ downloadBlob(new Blob([state.mode==='sheet'?state.sheetData.map(r=>r.join('\t')).join('\n'):docEditor.innerText],{type:'text/plain'}), baseName(state.fileName)+'.txt'); }
+  async function exportDocx(){ const blob = window.htmlDocx ? window.htmlDocx.asBlob(fullHtmlDocument(docEditor.innerHTML)) : await makeDocBlob(); downloadBlob(blob, baseName(state.fileName)+'.docx'); }
+  function exportPdfPrint(){ window.print(); }
+  function exportCsv(){ if(state.mode!=='sheet') return toast('Buka spreadsheet dulu.', 'warn'); downloadBlob(makeCsvBlob(), baseName(state.fileName)+'.csv'); }
+  function exportXlsx(){ if(state.mode!=='sheet') return toast('Buka spreadsheet dulu.', 'warn'); downloadBlob(makeXlsxBlob(), baseName(state.fileName)+'.xlsx'); }
+  function downloadBlob(blob, name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();}, 1000); }
 
-    init();
-  })();
-  </script>
+  function openFind(){ findModal.classList.add('show'); }
+  function findNext(){ const q=$('findText').value; if(!q) return; findModal.classList.remove('show'); window.find(q); }
+  async function replaceAll(){ const q=$('findText').value, r=$('replaceText').value; if(!q) return; if(state.mode !== 'doc') return toast('Cari/ganti untuk dokumen teks.', 'warn'); await enterDocEdit(); docEditor.innerHTML = docEditor.innerHTML.split(escapeHtml(q)).join(escapeHtml(r)); findModal.classList.remove('show'); markDirty(); updateWordCount(); }
+  async function pasteFromClipboard(){ try { const txt=await navigator.clipboard.readText(); insertHtml(escapeHtml(txt).replace(/\n/g,'<br>')); } catch { document.execCommand('paste'); } }
+
+  function updateWordCount(){ const txt = state.mode==='doc' ? (docEditor.innerText || docPreview.textContent || '') : state.mode==='sheet' ? state.sheetData.flat().join(' ') : ''; const words = txt.trim() ? txt.trim().split(/\s+/).length : 0; countText.textContent = words + ' kata'; }
+  function fileInfo(){ const info = [`Nama: ${state.fileName}`, `Mode: ${state.mode}`, `Ekstensi: .${state.ext}`, `Status: ${state.dirty?'belum disimpan':'tersimpan'}`, state.file ? `Ukuran: ${formatBytes(state.file.size)}` : 'Ukuran: -'].join('\n'); alert(info); }
+  function newDoc(){ state.file=null; state.fileHandle=null; state.fileName='dokumen-baru.html'; state.ext='html'; fileNameEl.textContent=state.fileName; setMode('doc'); state.docMode='edit'; docEditor.innerHTML='<h1>Dokumen Baru</h1><p></p>'; docPreview.innerHTML=''; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons(); markDirty(); updateWordCount(); status('Dokumen baru dibuat'); }
+  async function reloadFile(){ if(state.file) return openFile(state.file, state.fileHandle); toast('Tidak ada file untuk dimuat ulang.', 'warn'); }
+
+  function handleKeys(e){
+    if(e.key==='Escape') { hideDropOverlay(); findModal.classList.remove('show'); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='o') { e.preventDefault(); openPicker(); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='s') { e.preventDefault(); saveCurrent(e.shiftKey); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z') { e.preventDefault(); e.shiftKey ? performRedo() : performUndo(); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='y') { e.preventDefault(); performRedo(); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='f') { e.preventDefault(); findModal.classList.add('show'); $('findText').focus(); }
+    if(e.key==='Delete' && state.mode==='pdf' && state.selectedAnnotationId) pdfDeleteSelected();
+  }
+  function handleCtrlWheel(e){ if(!e.ctrlKey && !e.metaKey) return; e.preventDefault(); changeZoom(e.deltaY < 0 ? .1 : -.1); }
+  function changeZoom(delta){ setZoom(state.zoom + delta); }
+  function setZoom(v){ state.zoom = clamp(Math.round(v*10)/10, .4, 2.5); updateZoomUI(); applyZoom(); }
+  function updateZoomUI(){ zoomPercent.textContent = Math.round(state.zoom*100) + '%'; }
+  function applyZoom(){
+    if(state.mode==='pdf') { clearTimeout(applyZoom.t); applyZoom.t = setTimeout(renderAllPdfPages, 80); return; }
+    docPreviewWrap.style.zoom = state.zoom;
+    docEditWrap.style.zoom = state.zoom;
+    sheetPane.style.zoom = state.zoom;
+  }
+  function fitWidth(){
+    const target = state.mode==='pdf' ? document.querySelector('.pdf-page') : docEditor;
+    if(!target) return;
+    const w = workspace.clientWidth - 52; const tw = target.getBoundingClientRect().width / state.zoom;
+    if(tw > 0) setZoom(clamp(w/tw, .4, 2.2));
+  }
+  function pageWidth(){ setZoom(1); }
+  function toggleTheme(){ appRoot.dataset.theme = appRoot.dataset.theme === 'dark' ? 'light' : 'dark'; }
+  function toggleFocus(){ document.body.classList.toggle('focus-mode'); }
+  function fullscreen(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+
+  function markDirty(){ state.dirty=true; saveText.textContent='Belum disimpan'; }
+  function status(msg){ statusText.textContent = msg; }
+  function toast(msg, type=''){ const t=document.createElement('div'); t.className='toast '+type; t.innerHTML=`<i data-lucide="${type==='bad'?'alert-triangle':type==='warn'?'info':'check-circle'}"></i><span>${escapeHtml(msg)}</span>`; $('toastWrap').appendChild(t); refreshIcons(); setTimeout(()=>{t.style.opacity='0'; t.style.transform='translateY(-8px)'; setTimeout(()=>t.remove(),220);}, 3600); }
+  function warn(msg){ toast(msg,'warn'); }
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function uid(){ return 'a' + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+  function getExt(name){ return (name.split('.').pop() || '').toLowerCase(); }
+  function baseName(name){ return (name || 'dokumen').replace(/\.[^.]+$/, '') || 'dokumen'; }
+  function extensionWithDot(name){ const ext=getExt(name); return ext ? '.'+ext : '.bin'; }
+  function escapeHtml(s){ return String(s ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+  function escapeAttr(s){ return escapeHtml(s).replace(/'/g,'&#39;'); }
+  function formatBytes(bytes){ if(!bytes && bytes!==0) return '-'; const units=['B','KB','MB','GB']; let n=bytes,i=0; while(n>=1024&&i<units.length-1){n/=1024;i++;} return `${n.toFixed(i?1:0)} ${units[i]}`; }
+
+  init();
+})();
+
+</script>
 </body>
 </html>
