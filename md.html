@@ -2887,6 +2887,7 @@
               Cintanya aku, sayangnya aku, tunanganku, istriku.
             </div>
 
+            <button class="play-btn" id="finishLoveBtn" type="button" style="margin-top: 24px; width: min(100%, 320px);">Selesai</button>
             <button class="restart-btn" id="restartGame3Btn" type="button" style="margin-top: 24px;">Main Game 3 Lagi</button>
           </div>
         </div>
@@ -4837,19 +4838,23 @@
     })();
 
 
-    const finishLoveBtn = document.getElementById("finishLoveBtn");
-    const finishKissOverlay = document.getElementById("finishKissOverlay");
 
-    if (finishLoveBtn && finishKissOverlay) {
-      finishLoveBtn.addEventListener("click", () => {
-        finishKissOverlay.classList.add("show");
-        finishKissOverlay.setAttribute("aria-hidden", "false");
 
-        setTimeout(() => {
-          finishKissOverlay.classList.add("kiss-pop");
-        }, 1050);
-      });
-    }
+    document.addEventListener("click", (event) => {
+      const finishButton = event.target.closest("#finishLoveBtn");
+      if (!finishButton) return;
+
+      event.preventDefault();
+      const finishKissOverlay = document.getElementById("finishKissOverlay");
+      if (!finishKissOverlay) return;
+
+      finishKissOverlay.classList.add("show");
+      finishKissOverlay.setAttribute("aria-hidden", "false");
+
+      setTimeout(() => {
+        finishKissOverlay.classList.add("kiss-pop");
+      }, 1050);
+    });
 
   </script>
 
