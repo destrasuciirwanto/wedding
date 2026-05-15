@@ -63,7 +63,87 @@
 .pdf-annotation.locked::after{content:'🔒';position:absolute;right:-10px;top:-12px;width:20px;height:20px;border-radius:999px;background:#f59e0b;color:#111827;font-size:12px;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.24);z-index:12}
 @media(max-width:760px){.pdf-menu-body.wide{min-width:min(92vw,420px)}.pdf-toolbar-grouped{gap:5px}.pdf-toolbar-grouped .pdf-menu summary span{display:inline!important}}
 
-</style>
+
+
+/* PDF toolbar polish - compact WPS-like grouped menus */
+.pdf-toolbar-grouped{
+  gap:8px!important;
+  padding:7px!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.86)!important;
+  box-shadow:0 10px 30px rgba(16,24,40,.10)!important;
+}
+.pdf-menu summary{
+  height:36px!important;
+  padding:0 12px!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,#fff,#f8fafc)!important;
+  border:1px solid #dce5f2!important;
+  color:#111827!important;
+  box-shadow:0 1px 1px rgba(16,24,40,.04)!important;
+}
+.pdf-menu summary:hover{background:#f8fbff!important;border-color:#b9c9ef!important;transform:translateY(-1px)}
+.pdf-menu[open] summary{color:#fff!important;background:linear-gradient(135deg,var(--primary),var(--primary2))!important;border-color:transparent!important;box-shadow:0 9px 20px rgba(41,87,255,.22)!important}
+.pdf-menu-body{
+  top:43px!important;
+  padding:12px!important;
+  border-radius:18px!important;
+  border:1px solid rgba(209,219,234,.95)!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 22px 60px rgba(16,24,40,.18)!important;
+}
+.pdf-menu-body.wide{
+  min-width:460px!important;
+  max-width:min(720px,calc(100vw - 42px))!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(126px,1fr))!important;
+  gap:8px!important;
+  overflow:visible!important;
+}
+.pdf-menu-body.wide .pdf-tool{
+  width:100%;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 11px!important;
+  border-radius:12px!important;
+  background:#f8fafc!important;
+  border-color:#dfe7f3!important;
+  color:#1f2937!important;
+}
+.pdf-menu-body.wide .pdf-tool:hover{background:#eef4ff!important;border-color:#bdd0ff!important;box-shadow:0 8px 20px rgba(41,87,255,.10)!important}
+.pdf-menu-body.wide .pdf-tool.active{color:#fff!important;background:linear-gradient(135deg,var(--primary),var(--primary2))!important;border-color:transparent!important}
+.pdf-menu-title{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:2px 2px 0;padding:7px 9px;border-radius:12px;background:#f1f5ff;color:#40506a;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.pdf-menu-title:before{content:"";width:7px;height:7px;border-radius:99px;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 0 0 4px rgba(41,87,255,.10)}
+.pdf-style-smart{
+  min-width:420px!important;
+  max-width:min(560px,calc(100vw - 42px))!important;
+  padding:14px!important;
+  border-radius:18px!important;
+  gap:10px!important;
+}
+.smart-head{border-radius:14px;background:#f7faff;padding:10px 11px!important;border:1px solid #e1e9f8}
+.smart-head strong{font-size:13px!important}.smart-head span{font-size:11.5px!important}
+.smart-row{display:grid!important;grid-template-columns:88px 30px minmax(128px,1fr) 38px;gap:8px!important;align-items:center!important;background:#f8fafc!important;border-color:#dfe7f3!important;border-radius:13px!important;padding:8px!important}
+.smart-row label{min-width:0!important}.smart-row select{width:100%!important;min-width:0!important;height:32px!important}.smart-row input[type=color]{width:34px!important;height:30px!important;border-radius:10px!important}
+.swatch-preview{width:30px!important;height:30px!important;border-radius:10px!important;box-shadow:inset 0 0 0 1px rgba(15,23,42,.10)}
+.palette-row{display:grid!important;grid-template-columns:repeat(8,30px) 1fr;align-items:center;gap:7px!important;padding:7px!important;border-radius:14px;background:#f8fafc;border:1px solid #dfe7f3}
+.palette-row button:not(.pdf-tool){width:30px!important;height:30px!important;border-radius:10px!important;box-shadow:inset 0 0 0 1px rgba(15,23,42,.10)}
+.palette-row .pdf-tool{height:32px!important;min-height:32px!important;border-radius:10px!important;justify-content:center!important;background:#fff!important}
+/* Do not let old CSS hard-code SVG stroke colors. Colors are controlled by annotation data. */
+.ann-line line,.ann-draw polyline{stroke:inherit}
+[data-theme=dark] .pdf-toolbar-grouped{background:rgba(22,31,49,.86)!important;border-color:rgba(148,163,184,.20)!important;box-shadow:0 18px 45px rgba(0,0,0,.30)!important}
+[data-theme=dark] .pdf-menu summary{background:linear-gradient(180deg,#243047,#1d2638)!important;border-color:rgba(148,163,184,.22)!important;color:#e5ecff!important}
+[data-theme=dark] .pdf-menu summary:hover{background:#27344d!important;border-color:rgba(129,151,255,.45)!important}
+[data-theme=dark] .pdf-menu-body{background:rgba(21,29,45,.98)!important;border-color:rgba(148,163,184,.18)!important;box-shadow:0 24px 70px rgba(0,0,0,.45)!important}
+[data-theme=dark] .pdf-menu-body.wide .pdf-tool{background:#202a3e!important;border-color:rgba(148,163,184,.18)!important;color:#e8eefc!important}
+[data-theme=dark] .pdf-menu-body.wide .pdf-tool:hover{background:#2a3650!important;border-color:rgba(129,151,255,.48)!important}
+[data-theme=dark] .pdf-menu-title{background:#202a3e;color:#b8c4d8}
+[data-theme=dark] .smart-head,[data-theme=dark] .smart-row,[data-theme=dark] .palette-row{background:#202a3e!important;border-color:rgba(148,163,184,.18)!important}
+@media(max-width:760px){.pdf-menu-body.wide{min-width:min(94vw,440px)!important;grid-template-columns:repeat(2,minmax(120px,1fr))!important}.pdf-style-smart{min-width:min(94vw,420px)!important}.smart-row{grid-template-columns:78px 28px 1fr 34px!important}.palette-row{grid-template-columns:repeat(4,30px) 1fr!important}}
+
+  </style>
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
@@ -73,12 +153,14 @@
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><select class="mode-select" data-action="pageSizeSelect" id="paperSizeSelect" title="Ukuran kertas"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option></select><select class="mode-select" data-action="pageOrientationSelect" id="paperOrientationSelect" title="Orientasi"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select><select class="mode-select" data-action="marginSelect" id="marginSelect" title="Margin"><option value="72">Margin normal</option><option value="36">Margin kecil</option><option value="96">Margin lebar</option></select><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview Word menjaga pemisah halaman. Edit Cepat untuk mengetik.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
-  <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Pilih & Tulis</div>
     <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih/Geser</span></button>
     <button class="pdf-tool" data-pdf-tool="text"><i data-lucide="type"></i><span>Teks</span></button>
+    <div class="pdf-menu-title">Markup & Bentuk</div>
     <button class="pdf-tool" data-pdf-tool="highlight"><i data-lucide="highlighter"></i><span>Highlight</span></button>
     <button class="pdf-tool" data-pdf-tool="rect"><i data-lucide="square"></i><span>Kotak</span></button>
     <button class="pdf-tool" data-pdf-tool="ellipse"><i data-lucide="circle"></i><span>Oval</span></button>
+    <div class="pdf-menu-title">Garis & Coretan</div>
     <button class="pdf-tool" data-pdf-tool="line"><i data-lucide="minus"></i><span>Garis</span></button>
     <button class="pdf-tool" data-pdf-tool="arrow"><i data-lucide="move-up-right"></i><span>Panah</span></button>
     <button class="pdf-tool" data-pdf-tool="draw"><i data-lucide="pen-line"></i><span>Coret</span></button>
@@ -94,65 +176,73 @@
     <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><select data-action="pdfSmartOpacity" id="pdfSmartOpacity"><option value="0.12">Sangat tipis</option><option value="0.18">Tipis</option><option value="0.38">Normal</option><option value="0.60">Tebal</option><option value="0.85">Solid</option></select></div>
     <div class="palette-row"><button style="--sw:#111827" data-action="pdfPresetColor" data-color="#111827" title="Hitam"></button><button style="--sw:#ef4444" data-action="pdfPresetColor" data-color="#ef4444" title="Merah"></button><button style="--sw:#f97316" data-action="pdfPresetColor" data-color="#f97316" title="Oranye"></button><button style="--sw:#facc15" data-action="pdfPresetColor" data-color="#facc15" title="Kuning"></button><button style="--sw:#22c55e" data-action="pdfPresetColor" data-color="#22c55e" title="Hijau"></button><button style="--sw:#2563eb" data-action="pdfPresetColor" data-color="#2563eb" title="Biru"></button><button style="--sw:#9333ea" data-action="pdfPresetColor" data-color="#9333ea" title="Ungu"></button><button style="--sw:#ffffff" data-action="pdfPresetColor" data-color="#ffffff" title="Putih"></button><button class="pdf-tool" data-action="pdfSetFillTransparent"><i data-lucide="droplets"></i><span>Isi Transparan</span></button></div>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Catatan & Stempel</div>
     <button class="pdf-tool" data-pdf-tool="note"><i data-lucide="sticky-note"></i><span>Note</span></button>
     <button class="pdf-tool" data-pdf-tool="stamp"><i data-lucide="badge-check"></i><span>Stempel bebas</span></button>
     <button class="pdf-tool" data-action="pdfAddApprovedStamp"><i data-lucide="badge-check"></i><span>APPROVED</span></button>
     <button class="pdf-tool" data-action="pdfAddDraftStamp"><i data-lucide="badge"></i><span>DRAFT</span></button>
     <button class="pdf-tool" data-action="pdfAddRejectedStamp"><i data-lucide="badge-x"></i><span>REJECTED</span></button>
     <button class="pdf-tool" data-action="pdfAddDateStamp"><i data-lucide="calendar-plus"></i><span>Tanggal</span></button>
+    <div class="pdf-menu-title">Otomatis</div>
     <button class="pdf-tool" data-action="pdfAddWatermarkDraft"><i data-lucide="stamp"></i><span>Watermark</span></button>
     <button class="pdf-tool" data-action="pdfAddPageNumbers"><i data-lucide="list-ordered"></i><span>Nomor Halaman</span></button>
+    <div class="pdf-menu-title">Tanda</div>
     <button class="pdf-tool" data-pdf-tool="check"><i data-lucide="check"></i><span>Ceklis</span></button>
     <button class="pdf-tool" data-pdf-tool="cross"><i data-lucide="x"></i><span>Silang</span></button>
     <button class="pdf-tool" data-action="pdfImageStamp"><i data-lucide="image-plus"></i><span>Gambar/TTD</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="move-3d"></i><span>Objek</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="move-3d"></i><span>Objek</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Edit Objek</div>
     <button class="pdf-tool" data-action="pdfEditSelectedText"><i data-lucide="pencil"></i><span>Edit Teks</span></button>
     <button class="pdf-tool" data-action="pdfDuplicateSelected"><i data-lucide="copy-plus"></i><span>Duplikat</span></button>
     <button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus</span></button>
     <button class="pdf-tool" data-action="pdfCopySelected"><i data-lucide="copy"></i><span>Copy</span></button>
     <button class="pdf-tool" data-action="pdfPasteObject"><i data-lucide="clipboard-paste"></i><span>Paste</span></button>
+    <div class="pdf-menu-title">Layer & Kunci</div>
     <button class="pdf-tool" data-action="pdfLockSelected"><i data-lucide="lock"></i><span>Kunci</span></button>
     <button class="pdf-tool" data-action="pdfUnlockSelected"><i data-lucide="unlock"></i><span>Buka Kunci</span></button>
     <button class="pdf-tool" data-action="pdfBringFront"><i data-lucide="bring-to-front"></i><span>Depan</span></button>
     <button class="pdf-tool" data-action="pdfSendBack"><i data-lucide="send-to-back"></i><span>Belakang</span></button>
     <button class="pdf-tool" data-action="pdfResetSelectedRotation"><i data-lucide="rotate-3d"></i><span>Reset Putar</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="align-center"></i><span>Rapi</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="align-center"></i><span>Rapi</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Rata Posisi</div>
     <button class="pdf-tool" data-action="pdfAlignLeft"><i data-lucide="align-start-vertical"></i><span>Kiri</span></button>
     <button class="pdf-tool" data-action="pdfAlignCenter"><i data-lucide="align-center-vertical"></i><span>Tengah X</span></button>
     <button class="pdf-tool" data-action="pdfAlignRight"><i data-lucide="align-end-vertical"></i><span>Kanan</span></button>
     <button class="pdf-tool" data-action="pdfAlignTop"><i data-lucide="align-start-horizontal"></i><span>Atas</span></button>
     <button class="pdf-tool" data-action="pdfAlignMiddle"><i data-lucide="align-center-horizontal"></i><span>Tengah Y</span></button>
     <button class="pdf-tool" data-action="pdfAlignBottom"><i data-lucide="align-end-horizontal"></i><span>Bawah</span></button>
+    <div class="pdf-menu-title">Geser Manual</div>
     <button class="pdf-tool" data-action="pdfNudgeLeft"><i data-lucide="arrow-left"></i><span>Geser kiri</span></button>
     <button class="pdf-tool" data-action="pdfNudgeRight"><i data-lucide="arrow-right"></i><span>Geser kanan</span></button>
     <button class="pdf-tool" data-action="pdfNudgeUp"><i data-lucide="arrow-up"></i><span>Geser atas</span></button>
     <button class="pdf-tool" data-action="pdfNudgeDown"><i data-lucide="arrow-down"></i><span>Geser bawah</span></button>
+    <div class="pdf-menu-title">Ukuran & Putar</div>
     <button class="pdf-tool" data-action="pdfGrowSelected"><i data-lucide="maximize"></i><span>Perbesar</span></button>
     <button class="pdf-tool" data-action="pdfShrinkSelected"><i data-lucide="minimize"></i><span>Perkecil</span></button>
     <button class="pdf-tool" data-action="pdfRotateSelectedLeft"><i data-lucide="rotate-ccw"></i><span>Putar -15°</span></button>
     <button class="pdf-tool" data-action="pdfRotateSelectedRight"><i data-lucide="rotate-cw"></i><span>Putar +15°</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="file-stack"></i><span>Halaman</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="file-stack"></i><span>Halaman</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Navigasi & Zoom</div>
     <button class="pdf-tool" data-action="pdfSearchText"><i data-lucide="search"></i><span>Cari teks</span></button>
     <button class="pdf-tool" data-action="pdfRotateView"><i data-lucide="rotate-cw"></i><span>Putar View</span></button>
     <button class="pdf-tool" data-action="fitWidth"><i data-lucide="maximize"></i><span>Fit Width</span></button>
     <button class="pdf-tool" data-action="zoomOut"><i data-lucide="zoom-out"></i><span>Zoom -</span></button>
     <button class="pdf-tool" data-action="zoomReset"><i data-lucide="rotate-ccw"></i><span>100%</span></button>
     <button class="pdf-tool" data-action="zoomIn"><i data-lucide="zoom-in"></i><span>Zoom +</span></button>
+    <div class="pdf-menu-title">Bersihkan</div>
     <button class="pdf-tool" data-action="pdfClearCurrentPageAnnotations"><i data-lucide="eraser"></i><span>Bersihkan Halaman</span></button>
     <button class="pdf-tool" data-action="clearPdfAnnotations"><i data-lucide="trash-2"></i><span>Bersihkan Semua Editan</span></button>
   </div></details>
-  <details class="pdf-menu"><summary><i data-lucide="settings-2"></i><span>Aksi</span></summary><div class="pdf-menu-body wide">
+  <details class="pdf-menu"><summary><i data-lucide="settings-2"></i><span>Aksi</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Simpan & Riwayat</div>
     <button class="pdf-tool" data-action="save"><i data-lucide="save"></i><span>Simpan PDF</span></button>
     <button class="pdf-tool" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button>
     <button class="pdf-tool" data-action="undo"><i data-lucide="undo-2"></i><span>Undo</span></button>
     <button class="pdf-tool" data-action="redo"><i data-lucide="redo-2"></i><span>Redo</span></button>
+    <div class="pdf-menu-title">File PDF</div>
     <button class="pdf-tool" data-action="replacePdf"><i data-lucide="folder-open"></i><span>Ganti PDF</span></button>
     <button class="pdf-tool" data-action="newBlankPdf"><i data-lucide="file-plus"></i><span>PDF Kosong</span></button>
     <button class="pdf-tool warn" data-action="closePdf"><i data-lucide="x-circle"></i><span>Tutup PDF</span></button>
+    <div class="pdf-menu-title">Import / Export</div>
     <button class="pdf-tool" data-action="pdfExportAnnotations"><i data-lucide="download"></i><span>Export Editan</span></button>
     <button class="pdf-tool" data-action="pdfImportAnnotations"><i data-lucide="upload"></i><span>Import Editan</span></button>
     <button class="pdf-tool" data-action="print"><i data-lucide="printer"></i><span>Print</span></button>
@@ -1016,6 +1106,7 @@
     const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
     if (!ann) return;
     let changed = false;
+    const before = JSON.stringify(ann);
     if (action === 'pdfTextColor' && ['text','note','stamp','check','cross'].includes(ann.type)) { ann.color = value; changed = true; }
     if (action === 'pdfHighlightColor' && ann.type === 'highlight') { ann.color = value; changed = true; }
     if (action === 'pdfHighlightColor' && ann.type === 'note') { ann.fillColor = value; changed = true; }
@@ -1024,7 +1115,7 @@
     if (action === 'pdfRectFillColor' && ['rect','ellipse'].includes(ann.type)) { ann.fillColor = value; changed = true; }
     if (action === 'pdfLineColor' && ['line','arrow'].includes(ann.type)) { ann.color = value; ann.borderColor = value; changed = true; }
     if (action === 'pdfDrawColor' && ann.type === 'draw') { ann.color = value; changed = true; }
-    if (changed) { pushPdfHistory(); markDirty(); redrawPdfAnnotations(); updatePdfStyleControls(); }
+    if (changed && before !== JSON.stringify(ann)) { state.pdfUndo.push(JSON.stringify(state.pdfAnnotations.map(a => a.id === ann.id ? JSON.parse(before) : a))); if (state.pdfUndo.length > 60) state.pdfUndo.shift(); state.pdfRedo = []; markDirty(); redrawPdfAnnotations(); updatePdfStyleControls(); }
   }
 
   function updatePdfStyleHint(){
@@ -1141,12 +1232,12 @@
   function createPdfPreview(layer, type, x, y){
     const el = document.createElement(type==='draw' ? 'svg' : 'div');
     el.className = 'pdf-preview ' + (type==='highlight'?'highlight':'');
-    if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML=`<polyline fill="none" stroke="${state.pdfDrawColor}" stroke-width="${state.pdfStrokeWidth}" stroke-linecap="round" stroke-linejoin="round"></polyline>`; }
+    if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML=`<polyline fill="none" style="stroke:${state.pdfDrawColor};stroke-width:${state.pdfStrokeWidth};stroke-linecap:round;stroke-linejoin:round"></polyline>`; }
     else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; if (type === 'highlight') { el.style.background = colorWithAlpha(state.pdfHighlightColor, .38); el.style.borderColor = state.pdfHighlightColor; } if (type === 'rect' || type === 'ellipse') { el.style.background = colorWithAlpha(state.pdfRectFillColor, state.pdfOpacity); el.style.borderColor = state.pdfRectBorderColor; if(type==='ellipse') el.style.borderRadius='999px'; } if (type === 'redact') { el.style.background = '#000'; el.style.borderColor = '#000'; } }
     layer.appendChild(el); return el;
   }
   function updatePdfPreview(el, type, a, b){
-    if (type === 'line' || type === 'arrow') { el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px'; el.style.background = 'transparent'; el.style.border = '0'; el.innerHTML = `<svg width="100%" height="100%" style="overflow:visible"><line x1="${a.x<b.x?0:Math.abs(a.x-b.x)}" y1="${a.y<b.y?0:Math.abs(a.y-b.y)}" x2="${a.x<b.x?Math.abs(a.x-b.x):0}" y2="${a.y<b.y?Math.abs(a.y-b.y):0}" stroke="${state.pdfLineColor}" stroke-width="${state.pdfStrokeWidth}" stroke-linecap="round"/></svg>`; return; }
+    if (type === 'line' || type === 'arrow') { el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px'; el.style.background = 'transparent'; el.style.border = '0'; el.innerHTML = `<svg width="100%" height="100%" style="overflow:visible"><line x1="${a.x<b.x?0:Math.abs(a.x-b.x)}" y1="${a.y<b.y?0:Math.abs(a.y-b.y)}" x2="${a.x<b.x?Math.abs(a.x-b.x):0}" y2="${a.y<b.y?Math.abs(a.y-b.y):0}" style="stroke:${state.pdfLineColor};stroke-width:${state.pdfStrokeWidth};stroke-linecap:round"/></svg>`; return; }
     el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px';
   }
   function updateDrawPreview(svg, pts, w, h){ const poly = svg.querySelector('polyline'); poly.setAttribute('points', pts.map(p=>`${p.x*w},${p.y*h}`).join(' ')); }
@@ -1308,7 +1399,7 @@
         const x1 = ax - x, y1 = ay - y, x2 = bx - x, y2 = by - y;
         const marker = ann.type === 'arrow' ? `<defs><marker id="arrow-${ann.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="${lineColor}"></path></marker></defs>` : '';
         const arrowAttr = ann.type === 'arrow' ? ` marker-end="url(#arrow-${ann.id})"` : '';
-        el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible">${marker}<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lineColor}" stroke-width="${ann.strokeWidth || state.pdfStrokeWidth}" stroke-linecap="round"${arrowAttr} /></svg>`;
+        el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible">${marker}<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${lineColor};stroke-width:${ann.strokeWidth || state.pdfStrokeWidth};stroke-linecap:round"${arrowAttr} /></svg>`;
       }
       if (ann.type === 'draw') {
         el.classList.add('ann-draw');
@@ -1319,7 +1410,7 @@
         const w = Math.max(20, maxX - minX), h = Math.max(20, maxY - minY);
         setBox(el,minX,minY,w,h);
         const drawColor = ann.color || state.pdfDrawColor;
-        el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible"><polyline points="${ann.points.map(p=>`${p.x*r.width-minX},${p.y*r.height-minY}`).join(' ')}" stroke="${drawColor}" stroke-width="${ann.strokeWidth || state.pdfStrokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none" /></svg>`;
+        el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible"><polyline points="${ann.points.map(p=>`${p.x*r.width-minX},${p.y*r.height-minY}`).join(' ')}" style="stroke:${drawColor};stroke-width:${ann.strokeWidth || state.pdfStrokeWidth};stroke-linecap:round;stroke-linejoin:round;fill:none" /></svg>`;
       }
       if (ann.type === 'note') { el.classList.add('ann-note'); el.textContent = ann.text || 'Catatan'; el.style.background = colorWithAlpha(ann.fillColor ?? state.pdfHighlightColor, .9); el.style.color = ann.color || state.pdfTextColor; el.style.fontSize=(ann.size||13)+'px'; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
       if (ann.type === 'stamp') { el.classList.add('ann-stamp'); el.textContent = ann.text || 'STAMP'; el.style.color = ann.color || '#ef4444'; el.style.borderColor = ann.color || '#ef4444'; el.style.fontSize=(ann.size||22)+'px'; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
