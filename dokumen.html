@@ -555,11 +555,20 @@
     });
     window.addEventListener('dragover', e => { if (hasFiles(e)) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
     window.addEventListener('dragleave', e => { if (!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if (dragDepth === 0) hideDropOverlay(); });
-    window.addEventListener('drop', e => {
+    window.addEventListener('drop', async e => {
       if (!hasFiles(e)) return;
       e.preventDefault(); dragDepth = 0; hideDropOverlay();
-      const file = e.dataTransfer.files && e.dataTransfer.files[0];
-      if (file) openFile(file, null);
+      const item = e.dataTransfer.items && e.dataTransfer.items[0];
+      let handle = null;
+      let file = null;
+      try {
+        if (item && item.getAsFileSystemHandle) {
+          const h = await item.getAsFileSystemHandle();
+          if (h && h.kind === 'file') { handle = h; file = await h.getFile(); }
+        }
+      } catch (err) { console.warn('Handle drag-drop tidak tersedia:', err); }
+      if (!file) file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) openFile(file, handle);
     });
     dropOverlay.addEventListener('click', e => { if (e.target === dropOverlay) hideDropOverlay(); });
   }
@@ -1972,15 +1981,79 @@
     state.dirty=false; saveText.textContent='Tersimpan'; captureActiveDocument(); renderDocTabs(); status('File disimpan'); toast('File berhasil disimpan.', 'good');
   }
   async function writeBlob(blob, suggestedName, asNew){
+    // Simpan biasa harus menimpa file aktif jika browser sudah memberi file handle.
     if(!asNew && state.fileHandle && state.fileHandle.createWritable) {
-      try { const w=await state.fileHandle.createWritable(); await w.write(blob); await w.close(); return; } catch(err) { console.warn('Overwrite gagal:', err); }
+      const ok = await ensureWritePermission(state.fileHandle);
+      if (ok) {
+        try {
+          const w = await state.fileHandle.createWritable();
+          await w.write(blob);
+          await w.close();
+          if (state.fileHandle.name) { state.fileName = state.fileHandle.name; fileNameEl.textContent = state.fileName; }
+          return;
+        } catch(err) { console.warn('Overwrite gagal:', err); }
+      }
     }
+
+    // Khusus PDF: jika file dibuka dari drag-drop/input biasa dan belum punya izin handle,
+    // tombol Simpan tetap diarahkan untuk memilih PDF lama yang akan DITIMPA, bukan download file baru diam-diam.
+    if(!asNew && state.mode === 'pdf' && window.showOpenFilePicker) {
+      const picked = await pickPdfHandleForOverwrite(suggestedName);
+      if (picked) {
+        state.fileHandle = picked;
+        const ok = await ensureWritePermission(picked);
+        if (ok) {
+          const w = await picked.createWritable();
+          await w.write(blob);
+          await w.close();
+          state.fileName = picked.name || suggestedName;
+          fileNameEl.textContent = state.fileName;
+          toast('PDF lama berhasil ditimpa.', 'good');
+          return;
+        }
+      }
+    }
+
     if(window.showSaveFilePicker) {
       const mime = (blob.type || 'application/octet-stream').split(';')[0] || 'application/octet-stream';
       const handle = await window.showSaveFilePicker({ suggestedName, types:[{description:'File', accept:{[mime]:[extensionWithDot(suggestedName)]}}] });
-      const w=await handle.createWritable(); await w.write(blob); await w.close(); state.fileHandle=handle; state.fileName=suggestedName; fileNameEl.textContent=suggestedName; return;
+      const w=await handle.createWritable(); await w.write(blob); await w.close(); state.fileHandle=handle; state.fileName=handle.name || suggestedName; fileNameEl.textContent=state.fileName; return;
     }
+    toast('Browser ini tidak mendukung timpa file langsung. File akan diunduh sebagai salinan.', 'warn');
     downloadBlob(blob, suggestedName);
+  }
+
+  async function ensureWritePermission(handle){
+    if (!handle || !handle.queryPermission || !handle.requestPermission) return true;
+    try {
+      const opts = { mode: 'readwrite' };
+      if (await handle.queryPermission(opts) === 'granted') return true;
+      return await handle.requestPermission(opts) === 'granted';
+    } catch (err) {
+      console.warn('Cek izin tulis gagal:', err);
+      return true;
+    }
+  }
+
+  async function pickPdfHandleForOverwrite(suggestedName){
+    const msg = 'Agar Simpan bisa menimpa PDF lama, pilih file PDF lama yang sama. File yang dipilih akan ditimpa.';
+    toast(msg, 'warn');
+    status(msg);
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        multiple:false,
+        types:[{description:'PDF', accept:{'application/pdf':['.pdf']}}]
+      });
+      if (!handle) return null;
+      if (handle.name && suggestedName && handle.name !== suggestedName) {
+        const lanjut = confirm('File yang dipilih: ' + handle.name + '\nFile aktif: ' + suggestedName + '\n\nTetap timpa file yang dipilih?');
+        if (!lanjut) return null;
+      }
+      return handle;
+    } catch (err) {
+      console.warn('Pilih PDF untuk overwrite dibatalkan/gagal:', err);
+      return null;
+    }
   }
   async function makeDocBlob(){
     const html = fullHtmlDocument(docEditor.innerHTML || state.docEditHtml || docPreview.textContent || '');
