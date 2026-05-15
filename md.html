@@ -2643,7 +2643,7 @@
         <div class="onet-toast" id="onetToast">Pasangan cinta tersambung.</div>
 
         <div class="onet-note" id="onetNote">
-          Cocokkan dua gambar yang sama. Di HP, cukup tap gambar pertama lalu tap gambar kembarannya.
+          Cocokkan dua gambar yang sama. Pilih dua gambar yang sama, tapi hanya bisa tersambung kalau jalurnya tidak terhalang.
         </div>
 
         <div class="game-center-message" id="game3StartModal">
@@ -2655,7 +2655,7 @@
             </p>
             <div class="game-rules">
               <div class="rule-card"><span class="rule-icon">💞</span>Pilih dua gambar yang sama.</div>
-              <div class="rule-card"><span class="rule-icon">〰️</span>Tap gambar yang sama.</div>
+              <div class="rule-card"><span class="rule-icon">〰️</span>Jalur tidak boleh terhalang.</div>
               <div class="rule-card"><span class="rule-icon">∞</span>Selesaikan semua pasangan cinta.</div>
             </div>
             <button class="play-btn" id="startGame3Btn" type="button">Mulai Game 3</button>
@@ -3448,6 +3448,7 @@
       let chapter = 1;
       let t = 0;
       let lastTime = 0;
+      let lastTapTime = 0;
       let nodes = [];
       let lines = [];
       let particles = [];
@@ -3562,7 +3563,7 @@
         updateHud();
         finalWinModal.classList.remove("show");
         finalWinModal.classList.add("hidden");
-        note.textContent = "Sentuh bintang yang menyala, lalu sambungkan berurutan sampai rasi cintanya lengkap.";
+        note.textContent = "Tap satu bintang saja setiap langkah. Jangan ditahan atau digeser.";
       }
 
       function start() {
@@ -3664,8 +3665,12 @@
       function pointer(clientX, clientY) {
         if (!running || won) return;
 
+        const now = performance.now();
+        if (now - lastTapTime < 360) return;
+        lastTapTime = now;
+
         const point = toCanvasPoint(clientX, clientY);
-        const touchRadius = width < 680 ? 42 : 30;
+        const touchRadius = width < 680 ? 34 : 26;
 
         let nearestIndex = -1;
         let nearestDistance = Infinity;
@@ -3679,15 +3684,6 @@
           }
         }
 
-        const activeNode = nodes[nextIndex];
-        if (activeNode) {
-          const activeDistance = Math.hypot(point.x - activeNode.x, point.y - activeNode.y);
-          if (activeDistance < activeNode.r + touchRadius + 18) {
-            selectNode(nextIndex);
-            return;
-          }
-        }
-
         if (nearestIndex >= 0 && nearestDistance < nodes[nearestIndex].r + touchRadius) {
           selectNode(nearestIndex);
         }
@@ -3698,24 +3694,14 @@
         pointer(event.clientX, event.clientY);
       });
 
-      canvas.addEventListener("click", (event) => {
-        event.preventDefault();
-        pointer(event.clientX, event.clientY);
-      });
-
-      canvas.addEventListener("touchstart", (event) => {
-        if (event.touches[0]) {
-          event.preventDefault();
-          pointer(event.touches[0].clientX, event.touches[0].clientY);
-        }
-      }, { passive: false });
-
-      canvas.addEventListener("touchmove", (event) => {
-        if (event.touches[0]) {
-          event.preventDefault();
-          pointer(event.touches[0].clientX, event.touches[0].clientY);
-        }
-      }, { passive: false });
+      if (!window.PointerEvent) {
+        canvas.addEventListener("touchstart", (event) => {
+          if (event.touches[0]) {
+            event.preventDefault();
+            pointer(event.touches[0].clientX, event.touches[0].clientY);
+          }
+        }, { passive: false });
+      }
 
       function win() {
         won = true;
@@ -3960,6 +3946,7 @@
       let running = false;
       let won = false;
       let lastTime = 0;
+      let lastTapTime = 0;
       let t = 0;
 
       const compactOnet = window.innerWidth < 430;
@@ -4058,7 +4045,7 @@
         particles = [];
         createCards();
         updateHud();
-        note.textContent = "Cocokkan dua gambar yang sama. Di HP, cukup tap gambar pertama lalu tap gambar kembarannya.";
+        note.textContent = "Cocokkan dua gambar yang sama. Pilih dua gambar yang sama, tapi hanya bisa tersambung kalau jalurnya tidak terhalang.";
         winModal.classList.remove("show");
         winModal.classList.add("hidden");
         draw();
@@ -4307,31 +4294,34 @@
           return;
         }
 
-        const strictPath = findPath(selected, card);
-        const selectedCenter = cardCenter(selected);
-        const cardCenterPoint = cardCenter(card);
-
-        let connectionPoints;
-        if (strictPath) {
-          const simple = simplifyPath(strictPath);
-          connectionPoints = simple.map(gridPointToCanvas);
-          connectionPoints[0] = selectedCenter;
-          connectionPoints[connectionPoints.length - 1] = cardCenterPoint;
-        } else {
-          // Fallback khusus supaya playable di HP: kalau gambar sama, tetap sambungkan dengan garis cinta cinematic.
-          const midY = Math.min(selectedCenter.y, cardCenterPoint.y) - Math.max(26, cell * .35);
-          connectionPoints = [
-            selectedCenter,
-            { x: selectedCenter.x, y: midY },
-            { x: cardCenterPoint.x, y: midY },
-            cardCenterPoint
-          ];
+        const path = findPath(selected, card);
+        if (!path) {
+          selected.wrong = true;
+          card.wrong = true;
+          combo = 1;
+          showFlash();
+          showToast("Jalur cintanya masih terhalang. Cari pasangan lain dulu.");
+          note.textContent = "Pasangan sama belum tentu bisa tersambung kalau jalurnya terhalang.";
+          setTimeout(() => {
+            selected && (selected.selected = false);
+            cards.forEach(item => item.wrong = false);
+            selected = null;
+            draw();
+          }, 620);
+          updateHud();
+          draw();
+          return;
         }
 
+        const simple = simplifyPath(path);
+        const selectedCenter = cardCenter(selected);
+        const cardCenterPoint = cardCenter(card);
         connection = {
-          points: connectionPoints,
+          points: simple.map(gridPointToCanvas),
           life: 1.05
         };
+        connection.points[0] = selectedCenter;
+        connection.points[connection.points.length - 1] = cardCenterPoint;
 
         selected.matched = true;
         card.matched = true;
@@ -4375,6 +4365,11 @@
 
       function pointer(clientX, clientY) {
         if (!running || won) return;
+
+        const now = performance.now();
+        if (now - lastTapTime < 260) return;
+        lastTapTime = now;
+
         const point = toCanvasPoint(clientX, clientY);
         const card = cardAt(point.x, point.y);
         if (card) choose(card);
@@ -4385,17 +4380,14 @@
         pointer(event.clientX, event.clientY);
       });
 
-      canvas.addEventListener("click", event => {
-        event.preventDefault();
-        pointer(event.clientX, event.clientY);
-      });
-
-      canvas.addEventListener("touchstart", event => {
-        if (event.touches[0]) {
-          event.preventDefault();
-          pointer(event.touches[0].clientX, event.touches[0].clientY);
-        }
-      }, { passive: false });
+      if (!window.PointerEvent) {
+        canvas.addEventListener("touchstart", event => {
+          if (event.touches[0]) {
+            event.preventDefault();
+            pointer(event.touches[0].clientX, event.touches[0].clientY);
+          }
+        }, { passive: false });
+      }
 
       function win() {
         won = true;
