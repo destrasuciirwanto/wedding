@@ -2536,6 +2536,61 @@
       }
     }
 
+  
+    .onet-shuffle-btn {
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.10);
+      border-radius: 999px;
+      padding: 10px 12px;
+      color: rgba(255,247,255,.92);
+      font-size: .85rem;
+      white-space: nowrap;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 0 18px rgba(255,122,203,.12);
+      transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+    }
+
+    .onet-shuffle-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.15);
+      box-shadow: 0 0 28px rgba(255,122,203,.22);
+    }
+
+    .onet-shuffle-btn:active {
+      transform: scale(.97);
+    }
+
+    .onet-shuffle-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .game3-card.playing .onet-shuffle-btn {
+      pointer-events: auto !important;
+    }
+
+    @media (max-width: 680px) {
+      .onet-shuffle-btn {
+        padding: 8px 10px;
+        font-size: .74rem;
+      }
+    }
+
+  
+    .game3-card.playing .game-hud {
+      pointer-events: none !important;
+    }
+
+    .game3-card.playing .onet-shuffle-btn {
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 20;
+    }
+
   </style>
 </head>
 <body>
@@ -2787,7 +2842,7 @@
           <div class="hud-stats">
             <div class="stat-pill">Pasangan: <span id="onetPairText">0/18</span></div>
             <div class="stat-pill">Combo: <span id="onetComboText">x1</span></div>
-            <div class="stat-pill">Level: <span id="onetLevelText">3</span></div>
+            <button class="onet-shuffle-btn" id="onetShuffleBtn" type="button">Kocok Ulang</button>
           </div>
         </div>
 
@@ -2802,7 +2857,7 @@
             <h2 class="gradient-text">Onet Cinta</h2>
             <p>
               Game ketiga: cari dua gambar cinta yang sama, lalu sambungkan seperti game Onet.
-              Level ini dibuat lebih panjang, jadi harus lebih sabar dan teliti mencari pasangan yang sama.
+              Level ini dibuat lebih panjang. Kalau sudah terlalu sulit, tekan Kocok Ulang untuk mengacak sisa gambar tanpa mengulang dari awal.
             </p>
             <div class="game-rules">
               <div class="rule-card"><span class="rule-icon">💞</span>Pilih dua gambar yang sama.</div>
@@ -4087,6 +4142,7 @@
       const pairText = document.getElementById("onetPairText");
       const comboText = document.getElementById("onetComboText");
       const levelText = document.getElementById("onetLevelText");
+      const shuffleBtn = document.getElementById("onetShuffleBtn");
       const toast = document.getElementById("onetToast");
       const note = document.getElementById("onetNote");
       const flash = document.getElementById("onetFlash");
@@ -4222,7 +4278,7 @@
         percentText.textContent = pct + "%";
         pairText.textContent = `${matchedPairs}/${totalPairs}`;
         comboText.textContent = "x" + combo;
-        levelText.textContent = "3";
+        if (levelText) levelText.textContent = "3";
       }
 
       function showToast(text) {
@@ -4388,6 +4444,24 @@
           showToast("Papan diacak karena jalur cinta sedang buntu.");
           note.textContent = "Papan berubah. Cari pasangan baru yang jalurnya tidak terhalang.";
         }
+      }
+
+      function manualShuffleRemaining() {
+        if (!running || won) return;
+
+        const alive = cards.filter(card => !card.matched);
+        if (alive.length <= 2) {
+          showToast("Pasangannya tinggal sedikit, lanjutkan saja.");
+          return;
+        }
+
+        combo = 1;
+        reshuffleRemaining(false);
+        showFlash();
+        showToast("Kocok ulang berhasil. Progress tetap aman.");
+        note.textContent = "Gambar yang belum cocok sudah dikocok ulang. Pasangan yang sudah berhasil tetap tersimpan.";
+        updateHud();
+        draw();
       }
 
       function addParticles(x, y, amount, color = "rgba(255,122,203,.95)", power = 1) {
@@ -4747,6 +4821,13 @@
 
       startBtn.addEventListener("click", start);
       restartBtn.addEventListener("click", restart);
+      if (shuffleBtn) {
+        shuffleBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          manualShuffleRemaining();
+        });
+      }
       window.addEventListener("resize", resize);
 
       resize();
