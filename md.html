@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Selamat Hari Jadi Kita - Destra & Mutiara</title>
+  <title>Selamat Hari Jadi Kita — Destra & Mutiara</title>
   <style>
     :root {
       --bg-1: #05010b;
@@ -1880,6 +1880,242 @@
         filter: none !important;
       }
     }
+  
+    /* PATCH ANTI-FLICKER MOBILE
+       Mengurangi efek berat yang sering bikin kedip di HP:
+       filter blur, backdrop-filter besar, mix-blend-mode, dan layer fixed animasi. */
+    @media (max-width: 820px), (pointer: coarse) {
+      html,
+      body,
+      .stage,
+      .screen,
+      .hero-card,
+      .loading-card,
+      .letter-card,
+      .game-card,
+      .game-modal {
+        backface-visibility: hidden !important;
+        -webkit-backface-visibility: hidden !important;
+        transform-style: preserve-3d;
+      }
+
+      body::after {
+        animation: none !important;
+        opacity: .36 !important;
+        filter: blur(28px) !important;
+      }
+
+      .film-grain,
+      .chromatic,
+      .anamorphic {
+        display: none !important;
+      }
+
+      .light-leaks,
+      .lens-flare {
+        animation: none !important;
+        mix-blend-mode: normal !important;
+        opacity: .22 !important;
+        filter: blur(10px) !important;
+      }
+
+      .bokeh-layer {
+        opacity: .45 !important;
+      }
+
+      .shooting-stars {
+        opacity: .55 !important;
+      }
+
+      .petal-layer {
+        opacity: .62 !important;
+      }
+
+      .screen {
+        filter: none !important;
+        transform: translate3d(0, 18px, 0) scale(1.018) !important;
+        will-change: opacity, transform;
+        transition:
+          opacity 1450ms var(--ease-cinema),
+          transform 1550ms var(--ease-cinema),
+          visibility 1550ms var(--ease-cinema) !important;
+      }
+
+      .screen.active {
+        filter: none !important;
+        transform: translate3d(0, 0, 0) scale(1) !important;
+      }
+
+      .screen.exit {
+        filter: none !important;
+        transform: translate3d(0, -14px, 0) scale(.982) !important;
+      }
+
+      .cinematic-in,
+      .loading-title,
+      .loading-caption,
+      .loading-small-note,
+      .letter-body p,
+      .signature,
+      .game-button-wrap {
+        filter: none !important;
+        transform: translate3d(0, 22px, 0) scale(.992) !important;
+        will-change: opacity, transform;
+      }
+
+      .active .cinematic-in {
+        animation-name: mobileCinematicIn !important;
+      }
+
+      .active .loading-title,
+      .active .loading-caption,
+      .active .loading-small-note {
+        animation-name: mobileTextIn !important;
+      }
+
+      .final-screen.active .letter-body p,
+      .final-screen.active .signature,
+      .final-screen.active .game-button-wrap {
+        animation-name: mobileParagraphIn !important;
+      }
+
+      .hero-card,
+      .loading-card,
+      .letter-card,
+      .game-card,
+      .game-modal,
+      .hud-panel,
+      .stat-pill,
+      .constellation-note,
+      .onet-note,
+      .game2-toast,
+      .onet-toast {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      .hero-card,
+      .loading-card,
+      .letter-card,
+      .game-modal {
+        background:
+          linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.075)),
+          radial-gradient(circle at top left, rgba(255,122,203,.23), transparent 42%),
+          radial-gradient(circle at bottom right, rgba(255,232,163,.14), transparent 38%),
+          rgba(15, 5, 28, .82) !important;
+      }
+
+      .hero-card::before,
+      .loading-card::before,
+      .letter-card::before,
+      .game-card::before,
+      .game-modal::before {
+        animation: none !important;
+        opacity: .22 !important;
+      }
+
+      .reveal-flash.play {
+        animation-name: mobileRevealFlash !important;
+      }
+
+      .aurora-line.play {
+        animation-name: mobileAuroraWipe !important;
+      }
+
+      .curtain.play {
+        animation-name: mobileCurtainBloom !important;
+      }
+
+      .top-loader,
+      .top-loader.show,
+      .top-loader.hide {
+        will-change: opacity, transform;
+        filter: none !important;
+      }
+
+      canvas {
+        transform: translateZ(0);
+      }
+    }
+
+    @keyframes mobileCinematicIn {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 24px, 0) scale(.992);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes mobileTextIn {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 24px, 0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes mobileParagraphIn {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 26px, 0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes mobileRevealFlash {
+      0% {
+        opacity: 0;
+        transform: scale(.92);
+      }
+      35% {
+        opacity: .42;
+        transform: scale(1.02);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.12);
+      }
+    }
+
+    @keyframes mobileAuroraWipe {
+      0% {
+        opacity: 0;
+        transform: translateY(-50%) rotate(-4deg) scaleX(0);
+      }
+      45% {
+        opacity: .65;
+        transform: translateY(-50%) rotate(-4deg) scaleX(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-50%) rotate(-4deg) scaleX(1.05) translateX(14%);
+      }
+    }
+
+    @keyframes mobileCurtainBloom {
+      0% {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      45% {
+        opacity: .42;
+        transform: scaleX(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scaleX(1.08);
+      }
+    }
+
   </style>
 </head>
 <body>
