@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dokumen Web - Editor Lokal</title>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -404,50 +405,6 @@
       max-height: calc(100vh - var(--ribbon-h) - var(--status-h) - 88px);
     }
     #pdfCanvas { display: block; background: white; }
-    .drop-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(37, 99, 235, .16);
-      z-index: 20;
-      backdrop-filter: blur(4px);
-      place-items: center;
-      padding: 22px;
-    }
-    .drop-overlay.active { display: grid; }
-    .drop-box {
-      position: relative;
-      width: min(560px, calc(100vw - 44px));
-      border: 3px dashed var(--brand);
-      background: var(--panel);
-      color: var(--text);
-      border-radius: 28px;
-      padding: 48px 42px 38px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-    .drop-box h2 { margin-bottom: 8px; }
-    .drop-box p { color: var(--muted); }
-    .drop-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--panel-2);
-      color: var(--text);
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-    }
-    .drop-close:hover { filter: brightness(.96); }
-    .drop-hint {
-      margin-top: 12px;
-      font-size: 12px;
-      color: var(--muted);
-    }
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -527,6 +484,281 @@
       .app, .main, .workspace { display: block; height: auto; overflow: visible; padding: 0; }
       .page { box-shadow: none; border: 0; width: auto; margin: 0; min-height: auto; transform: none !important; }
     }
+  
+
+    /* V2: ribbon dibuat lebih rapi dan drag-drop dibuat aman untuk semua area layar. */
+    :root { --ribbon-h: 158px; }
+    .top {
+      grid-template-rows: 46px 38px 74px;
+      position: relative;
+    }
+    .ribbon {
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,248,255,.98));
+      border-top: 1px solid rgba(220, 227, 240, .7);
+      padding: 7px 12px 8px;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+    }
+    [data-theme="dark"] .ribbon { background: linear-gradient(180deg, rgba(17,24,39,.98), rgba(15,23,42,.98)); }
+    .group {
+      min-height: 54px;
+      padding: 5px 10px 5px 0;
+      gap: 5px;
+      flex: 0 0 auto;
+    }
+    .group button, .group select, .group input[type="text"], .group input[type="number"] {
+      min-height: 30px;
+      border-radius: 8px;
+      font-size: 13px;
+      padding: 5px 8px;
+    }
+    .tab { font-size: 13px; padding-left: 13px; padding-right: 13px; }
+    .workspace { background: radial-gradient(circle at top, rgba(37,99,235,.06), transparent 34%), var(--bg); }
+    .editor-wrap.active, .sheet-wrap.active, .pdf-wrap.active { animation: none; }
+    .page {
+      box-shadow: 0 18px 42px rgba(15, 23, 42, .13);
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    .drop-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, .20);
+      backdrop-filter: blur(2px);
+      pointer-events: none;
+    }
+    .drop-overlay.active {
+      display: grid;
+      pointer-events: auto;
+    }
+    .drop-box {
+      width: min(520px, 92vw);
+      min-height: 230px;
+      border: 2px dashed var(--brand);
+      border-radius: 26px;
+      background: var(--panel);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .22);
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 12px;
+      text-align: center;
+      position: relative;
+      padding: 34px;
+    }
+    .drop-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--panel-2);
+      color: var(--brand);
+      font-weight: 900;
+      font-size: 22px;
+    }
+    .drop-box h2 { margin: 0; font-size: 22px; }
+    .drop-box p { margin: 0; max-width: 390px; color: var(--muted); line-height: 1.45; }
+    .drop-hint { margin-top: 2px; font-size: 12px; color: var(--muted); }
+    .drop-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      border-radius: 50%;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      line-height: 1;
+      background: var(--panel-2);
+    }
+    @media (max-width: 920px) {
+      :root { --sidebar-w: 0px; --ribbon-h: 158px; }
+      .main { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .titlebar { gap: 8px; }
+      #fileName { max-width: 210px; }
+      .cards { grid-template-columns: 1fr; }
+      .workspace { padding: 12px; }
+      .page { width: min(100%, 794px); min-height: 70vh; padding: 48px 36px; }
+    }
+
+
+    /* V3 clean office layout: sidebar dihapus, area kerja lebih lebar, tombol memakai ikon inline. */
+    :root {
+      --sidebar-w: 0px;
+      --ribbon-h: 152px;
+      --bg: #f3f6fc;
+      --panel-2: #f2f6ff;
+      --line: #d8e1f2;
+      --radius: 18px;
+    }
+    body { -webkit-font-smoothing: antialiased; }
+    .app { grid-template-rows: var(--ribbon-h) 1fr var(--status-h); }
+    .top {
+      grid-template-rows: 48px 39px 65px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(15,23,42,.08);
+    }
+    [data-theme="dark"] .top { background: rgba(17,24,39,.94); }
+    .titlebar { padding: 8px 14px; }
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #06b6d4 100%);
+      box-shadow: 0 10px 22px rgba(37,99,235,.28);
+    }
+    .tabs { padding: 0 12px; gap: 6px; }
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 9px 13px;
+      border-radius: 12px 12px 0 0;
+      font-weight: 650;
+    }
+    .tab.active {
+      color: var(--brand);
+      background: linear-gradient(180deg, rgba(37,99,235,.10), rgba(37,99,235,.03));
+    }
+    .tab svg, button.with-icon svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    .ribbon {
+      min-height: 65px;
+      padding: 8px 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(243,247,255,.95));
+      border-top: 1px solid rgba(216,225,242,.75);
+    }
+    [data-theme="dark"] .ribbon { background: linear-gradient(180deg, rgba(17,24,39,.96), rgba(15,23,42,.96)); }
+    .panel { gap: 9px; }
+    .group {
+      min-height: 48px;
+      gap: 7px;
+      padding: 5px 11px 5px 0;
+      border-right: 1px solid rgba(216,225,242,.9);
+    }
+    button, select, input[type="text"], input[type="number"], input[type="color"] {
+      border-radius: 12px;
+      border-color: #d9e2f3;
+      box-shadow: 0 1px 0 rgba(15,23,42,.03);
+    }
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: linear-gradient(180deg, #ffffff, #f7faff);
+      color: #18233a;
+      min-height: 34px;
+      padding: 7px 11px;
+      white-space: nowrap;
+    }
+    [data-theme="dark"] button { background: linear-gradient(180deg, #172033, #111827); color: var(--text); }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(37,99,235,.14);
+      border-color: rgba(37,99,235,.45);
+    }
+    button:active { transform: translateY(0); }
+    button.primary {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-color: transparent;
+      box-shadow: 0 10px 22px rgba(37,99,235,.25);
+    }
+    button.primary:hover { background: linear-gradient(135deg, #1d4ed8, #4338ca); }
+    button.danger {
+      background: linear-gradient(180deg, #fff7f7, #fff1f1);
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+    [data-theme="dark"] button.danger { background: rgba(127,29,29,.24); border-color: rgba(248,113,113,.35); color: #fca5a5; }
+    button.icon {
+      width: 36px;
+      min-width: 36px;
+      padding: 6px;
+      font-weight: 800;
+    }
+    .main { grid-template-columns: 1fr !important; min-width: 0; }
+    .sidebar { display: none !important; }
+    .workspace {
+      padding: 24px clamp(14px, 3vw, 44px);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(37,99,235,.10), transparent 26%),
+        radial-gradient(circle at 86% 8%, rgba(124,58,237,.08), transparent 24%),
+        var(--bg);
+    }
+    .welcome {
+      max-width: 1080px;
+      border-radius: 28px;
+      padding: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+    .welcome::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -110px auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(37,99,235,.13), transparent 68%);
+      pointer-events: none;
+    }
+    .action-card {
+      transition: .18s ease;
+      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(239,246,255,.9));
+    }
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(15,23,42,.10);
+    }
+    .page {
+      width: min(100%, 900px);
+      min-height: 1123px;
+      border-radius: 12px;
+      box-shadow: 0 22px 55px rgba(15,23,42,.14);
+    }
+    .sheet-shell { min-width: min(100%, 1040px); }
+    .sheet-scroll { max-height: calc(100vh - var(--ribbon-h) - var(--status-h) - 86px); }
+    .pdf-canvas-wrap {
+      max-width: calc(100vw - 96px);
+      max-height: calc(100vh - var(--ribbon-h) - var(--status-h) - 86px);
+    }
+    .drop-box {
+      border: 2px dashed rgba(37,99,235,.75);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(16px);
+    }
+    [data-theme="dark"] .drop-box { background: rgba(17,24,39,.96); }
+    .statusbar { backdrop-filter: blur(12px); }
+    @media (max-width: 920px) {
+      :root { --ribbon-h: 170px; }
+      .top { grid-template-rows: 48px 39px 83px; }
+      .titlebar { flex-wrap: wrap; min-height: 48px; }
+      .brand span { display: none; }
+      .ribbon { align-items: start; }
+      .page { padding: 44px 30px; }
+      .pdf-canvas-wrap { max-width: calc(100vw - 28px); }
+    }
+
   </style>
 </head>
 <body>
@@ -685,7 +917,6 @@
         </div>
         <div class="panel" data-panel="view">
           <div class="group">
-            <button id="toggleSidebarBtn">Sidebar</button>
             <button id="focusBtn">Mode Fokus</button>
             <button id="readBtn">Mode Baca</button>
             <button id="spellBtn">Spellcheck</button>
@@ -713,29 +944,6 @@
     </header>
 
     <main class="main">
-      <aside class="sidebar" id="sidebar">
-        <div class="side-card">
-          <h3>Drag & Drop</h3>
-          <p>Tarik file ke area editor untuk membuka TXT, HTML, DOCX, XLSX, CSV, atau PDF.</p>
-        </div>
-        <div class="side-card">
-          <h3>File Terakhir</h3>
-          <div id="recentList"></div>
-        </div>
-        <div class="side-card">
-          <h3>Shortcut</h3>
-          <ul>
-            <li>Ctrl+O buka file</li>
-            <li>Ctrl+S simpan</li>
-            <li>Ctrl+B/I/U format teks</li>
-            <li>Ctrl+F cari/ganti</li>
-          </ul>
-        </div>
-        <div class="side-card">
-          <h3>Status</h3>
-          <p id="sideStatus">Belum ada dokumen aktif.</p>
-        </div>
-      </aside>
       <section class="workspace" id="workspace">
         <div class="welcome" id="welcome">
           <h1>Satu web untuk dokumen lokal.</h1>
@@ -778,11 +986,13 @@
   <input id="imageInput" type="file" class="hidden" accept="image/*" />
 
   <div class="drop-overlay" id="dropOverlay" aria-hidden="true">
-    <div class="drop-box" role="dialog" aria-label="Area unggah dokumen">
+    <div class="drop-box" id="dropBox" role="dialog" aria-label="Area unggah dokumen">
       <button class="drop-close" id="dropCloseBtn" type="button" title="Tutup" aria-label="Tutup drag and drop">&times;</button>
+      <div class="drop-icon">⬇</div>
       <h2>Lepaskan file di sini</h2>
-      <p>Dokumen Web akan membuka file lokal Anda.</p>
-      <div class="drop-hint">Tekan Esc atau klik tombol × untuk batal.</div>
+      <p>DOCX, XLSX, CSV, PDF, TXT, HTML bisa dibuka dari perangkat Anda.</p>
+      <button class="primary" id="dropSelectBtn" type="button">Pilih file manual</button>
+      <div class="drop-hint">Esc untuk batal. Klik luar kotak untuk menutup.</div>
     </div>
   </div>
   <div class="toast" id="toast">Siap</div>
@@ -819,6 +1029,7 @@
       kind: "none",
       fileName: "Belum ada file",
       fileHandle: null,
+      fileAccess: "none",
       dirty: false,
       zoom: 1,
       sideVisible: true,
@@ -869,12 +1080,10 @@
       const list = JSON.parse(localStorage.getItem("dokumenRecent") || "[]").filter(x => x !== name);
       list.unshift(name);
       localStorage.setItem("dokumenRecent", JSON.stringify(list.slice(0, 8)));
-      renderRecent();
     }
 
     function renderRecent() {
-      const list = JSON.parse(localStorage.getItem("dokumenRecent") || "[]");
-      $("recentList").innerHTML = list.length ? list.map(x => `<div class="recent-item"><span>${escapeHtml(x)}</span></div>`).join("") : "<p>Belum ada.</p>";
+      // Sidebar dihapus supaya area kerja lebih lebar. Riwayat tetap disimpan di localStorage untuk versi berikutnya.
     }
 
     function escapeHtml(s) {
@@ -896,22 +1105,56 @@
       URL.revokeObjectURL(url);
     }
 
-    async function writeBlobToHandle(blob, suggestedName) {
-      if (state.fileHandle && window.showSaveFilePicker) {
+    async function requestWritePermission(handle) {
+      if (!handle) return false;
+      try {
+        const options = { mode: "readwrite" };
+        if (typeof handle.queryPermission === "function" && await handle.queryPermission(options) === "granted") return true;
+        if (typeof handle.requestPermission === "function" && await handle.requestPermission(options) === "granted") return true;
+        return typeof handle.createWritable === "function";
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+
+    function setFileHandle(handle) {
+      state.fileHandle = handle || null;
+      state.fileAccess = handle && typeof handle.createWritable === "function" ? "writable" : "readonly";
+    }
+
+    function saveAcceptForName(name) {
+      const ext = extOf(name || "");
+      if (["txt", "md"].includes(ext)) return { "text/plain": ["." + ext] };
+      if (["html", "htm"].includes(ext)) return { "text/html": ["." + ext] };
+      if (ext === "doc") return { "application/msword": [".doc"] };
+      if (ext === "docx") return { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] };
+      if (ext === "pdf") return { "application/pdf": [".pdf"] };
+      if (ext === "csv") return { "text/csv": [".csv"] };
+      if (ext === "xls") return { "application/vnd.ms-excel": [".xls"] };
+      if (ext === "ods") return { "application/vnd.oasis.opendocument.spreadsheet": [".ods"] };
+      if (ext === "xlsx") return { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] };
+      return undefined;
+    }
+
+    async function writeBlobToHandle(blob, suggestedName, accept) {
+      if (state.fileHandle && typeof state.fileHandle.createWritable === "function") {
         try {
+          const allowed = await requestWritePermission(state.fileHandle);
+          if (!allowed) throw new Error("Izin tulis file ditolak browser");
           const writable = await state.fileHandle.createWritable();
           await writable.write(blob);
           await writable.close();
           setDirty(false);
-          toast("File disimpan ke lokal");
+          $("statusText").textContent = "Tersimpan menimpa file asli: " + (state.fileHandle.name || suggestedName || state.fileName);
+          toast("File asli ditimpa");
           return true;
         } catch (err) {
           console.warn(err);
+          toast("Tidak bisa menimpa file asli. Pilih lokasi simpan.");
         }
       }
-      blobDownload(blob, suggestedName || state.fileName || "dokumen.bin");
-      setDirty(false);
-      toast("File diunduh");
+      await saveAsBlob(blob, suggestedName || state.fileName || "dokumen.bin", accept || saveAcceptForName(suggestedName || state.fileName));
       return true;
     }
 
@@ -922,10 +1165,11 @@
           const writable = await handle.createWritable();
           await writable.write(blob);
           await writable.close();
-          state.fileHandle = handle;
+          setFileHandle(handle);
           setFileName(handle.name || suggestedName);
           setDirty(false);
-          toast("File disimpan");
+          $("statusText").textContent = "Tersimpan sebagai file baru: " + (handle.name || suggestedName);
+          toast("File baru disimpan");
           return;
         } catch (err) {
           if (err.name === "AbortError") return;
@@ -933,7 +1177,9 @@
         }
       }
       blobDownload(blob, suggestedName);
+      setFileHandle(null);
       setDirty(false);
+      $("statusText").textContent = "File diunduh: " + suggestedName;
     }
 
     async function openNative() {
@@ -962,7 +1208,7 @@
     }
 
     async function loadFile(file, handle = null) {
-      state.fileHandle = handle;
+      setFileHandle(handle);
       const ext = extOf(file.name);
       setFileName(file.name);
       $("statusText").textContent = "Membuka " + file.name;
@@ -993,7 +1239,7 @@
         }
         setDirty(false);
         updateStats();
-        $("statusText").textContent = "Berhasil membuka file";
+        $("statusText").textContent = handle ? "Berhasil membuka file. Tombol Simpan akan menimpa file asli." : "Berhasil membuka file. Tombol Simpan akan meminta lokasi simpan baru.";
       } catch (err) {
         console.error(err);
         toast("Gagal membuka file: " + err.message);
@@ -1002,7 +1248,7 @@
     }
 
     function newDoc() {
-      state.fileHandle = null;
+      setFileHandle(null);
       setFileName("dokumen-baru.html");
       docEditor.innerHTML = "<h1>Judul Dokumen</h1><p>Tulis isi dokumen Anda di sini.</p>";
       setMode("doc");
@@ -1011,7 +1257,7 @@
     }
 
     function newSheet() {
-      state.fileHandle = null;
+      setFileHandle(null);
       setFileName("spreadsheet-baru.xlsx");
       state.sheet = { rows: 50, cols: 26, data: [] };
       state.selectedCell = { r: 0, c: 0 };
@@ -1028,16 +1274,20 @@
       if (state.kind === "doc") {
         const ext = extOf(state.fileName);
         if (["txt", "md"].includes(ext)) {
-          await writeBlobToHandle(new Blob([docEditor.innerText], { type: "text/plain;charset=utf-8" }), state.fileName);
+          await writeBlobToHandle(new Blob([docEditor.innerText], { type: "text/plain;charset=utf-8" }), state.fileName, saveAcceptForName(state.fileName));
         } else if (["html", "htm"].includes(ext)) {
-          await writeBlobToHandle(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), state.fileName);
+          await writeBlobToHandle(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), state.fileName, saveAcceptForName(state.fileName));
         } else if (ext === "doc") {
-          await writeBlobToHandle(new Blob([wordCompatibleHtml()], { type: "application/msword" }), state.fileName);
+          await writeBlobToHandle(new Blob([wordCompatibleHtml()], { type: "application/msword" }), state.fileName, saveAcceptForName(state.fileName));
+        } else if (ext === "docx") {
+          const blob = docxBlobFromEditor();
+          if (blob) await writeBlobToHandle(blob, state.fileName, saveAcceptForName(state.fileName));
+          else await saveAsBlob(new Blob([wordCompatibleHtml()], { type: "application/msword" }), cleanBase(state.fileName) + ".doc", { "application/msword": [".doc"] });
         } else {
-          await saveAsBlob(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
+          await writeBlobToHandle(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
         }
       } else if (state.kind === "sheet") {
-        await exportXlsx(false);
+        await exportSheetWorkbook(false, extOf(state.fileName));
       } else if (state.kind === "pdf") {
         await exportAnnotatedPdf(false);
       } else {
@@ -1047,9 +1297,18 @@
 
     async function saveAsCurrent() {
       if (state.kind === "doc") {
-        await saveAsBlob(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
+        const ext = extOf(state.fileName);
+        if (["txt", "md"].includes(ext)) {
+          await saveAsBlob(new Blob([docEditor.innerText], { type: "text/plain;charset=utf-8" }), state.fileName || "dokumen.txt", saveAcceptForName(state.fileName));
+        } else if (ext === "docx" && docxBlobFromEditor()) {
+          await saveAsBlob(docxBlobFromEditor(), cleanBase(state.fileName) + ".docx", saveAcceptForName("file.docx"));
+        } else if (ext === "doc") {
+          await saveAsBlob(new Blob([wordCompatibleHtml()], { type: "application/msword" }), cleanBase(state.fileName) + ".doc", { "application/msword": [".doc"] });
+        } else {
+          await saveAsBlob(new Blob([fullHtml()], { type: "text/html;charset=utf-8" }), cleanBase(state.fileName) + ".html", { "text/html": [".html"] });
+        }
       } else if (state.kind === "sheet") {
-        await exportXlsx(true);
+        await exportSheetWorkbook(true, extOf(state.fileName));
       } else if (state.kind === "pdf") {
         await exportAnnotatedPdf(true);
       } else toast("Belum ada file aktif");
@@ -1061,6 +1320,33 @@
 
     function wordCompatibleHtml() {
       return `<!doctype html><html><head><meta charset="utf-8"></head><body>${docEditor.innerHTML}</body></html>`;
+    }
+
+    function docxBlobFromEditor() {
+      if (window.htmlDocx && typeof window.htmlDocx.asBlob === "function") {
+        return window.htmlDocx.asBlob(fullHtml());
+      }
+      return null;
+    }
+
+    function sheetDataMatrix() {
+      const data = [];
+      for (let r = 0; r < state.sheet.rows; r++) {
+        const row = [];
+        for (let c = 0; c < state.sheet.cols; c++) row.push(rawCell(r, c));
+        data.push(row);
+      }
+      return data;
+    }
+
+    function csvBlobFromSheet() {
+      const lines = [];
+      for (let r = 0; r < state.sheet.rows; r++) {
+        const row = [];
+        for (let c = 0; c < state.sheet.cols; c++) row.push('"' + rawCell(r, c).replace(/"/g, '""') + '"');
+        lines.push(row.join(","));
+      }
+      return new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
     }
 
     function exportHtml() {
@@ -1088,15 +1374,11 @@
         const words = text ? text.split(/\s+/).length : 0;
         const chars = text.length;
         stats = `${words} kata / ${chars} karakter`;
-        $("sideStatus").textContent = `Dokumen aktif. ${stats}.`;
       } else if (state.kind === "sheet") {
         stats = `${state.sheet.rows} baris x ${state.sheet.cols} kolom`;
-        $("sideStatus").textContent = `Spreadsheet aktif. ${stats}.`;
       } else if (state.kind === "pdf") {
         stats = `PDF ${state.pdfPage}/${state.pdfPages}, ${state.pdfAnnotations.length} anotasi`;
-        $("sideStatus").textContent = stats;
       } else {
-        $("sideStatus").textContent = "Belum ada dokumen aktif.";
       }
       $("docStats").textContent = stats;
       $("zoomStatus").textContent = Math.round(state.zoom * 100) + "%";
@@ -1287,33 +1569,37 @@
       setDirty(true);
     }
 
-    async function exportXlsx(forceSaveAs = false) {
+    async function exportSheetWorkbook(forceSaveAs = false, preferredType = "xlsx") {
       if (state.kind !== "sheet") return toast("Mode spreadsheet belum aktif");
-      const data = [];
-      for (let r = 0; r < state.sheet.rows; r++) {
-        const row = [];
-        for (let c = 0; c < state.sheet.cols; c++) row.push(rawCell(r, c));
-        data.push(row);
+      let ext = (preferredType || "xlsx").toLowerCase();
+      if (!["xlsx", "xls", "ods", "csv"].includes(ext)) ext = "xlsx";
+      if (ext === "csv") {
+        const blob = csvBlobFromSheet();
+        const name = state.fileName && extOf(state.fileName) === "csv" ? state.fileName : cleanBase(state.fileName) + ".csv";
+        if (forceSaveAs) await saveAsBlob(blob, name, { "text/csv": [".csv"] });
+        else await writeBlobToHandle(blob, name, { "text/csv": [".csv"] });
+        return;
       }
+      const data = sheetDataMatrix();
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-      const out = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([out], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-      const name = cleanBase(state.fileName) + ".xlsx";
-      if (forceSaveAs) await saveAsBlob(blob, name, { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] });
-      else await writeBlobToHandle(blob, name);
+      const bookType = ext === "xls" ? "xls" : ext === "ods" ? "ods" : "xlsx";
+      const out = XLSX.write(wb, { bookType, type: "array" });
+      const mime = bookType === "xls" ? "application/vnd.ms-excel" : bookType === "ods" ? "application/vnd.oasis.opendocument.spreadsheet" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const blob = new Blob([out], { type: mime });
+      const name = state.fileName && extOf(state.fileName) === ext ? state.fileName : cleanBase(state.fileName) + "." + ext;
+      if (forceSaveAs) await saveAsBlob(blob, name, saveAcceptForName(name));
+      else await writeBlobToHandle(blob, name, saveAcceptForName(name));
+    }
+
+    async function exportXlsx(forceSaveAs = false) {
+      await exportSheetWorkbook(forceSaveAs, "xlsx");
     }
 
     function exportCsv() {
       if (state.kind !== "sheet") return toast("Mode spreadsheet belum aktif");
-      const lines = [];
-      for (let r = 0; r < state.sheet.rows; r++) {
-        const row = [];
-        for (let c = 0; c < state.sheet.cols; c++) row.push('"' + rawCell(r, c).replace(/"/g, '""') + '"');
-        lines.push(row.join(","));
-      }
-      blobDownload(new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" }), cleanBase(state.fileName) + ".csv");
+      blobDownload(csvBlobFromSheet(), cleanBase(state.fileName) + ".csv");
     }
 
     function sheetFunction(fn) {
@@ -1394,9 +1680,9 @@
       }
       const bytes = await doc.save();
       const blob = new Blob([bytes], { type: "application/pdf" });
-      const name = cleanBase(state.fileName) + "-edit.pdf";
+      const name = forceSaveAs ? cleanBase(state.fileName) + "-edit.pdf" : (extOf(state.fileName) === "pdf" ? state.fileName : cleanBase(state.fileName) + "-edit.pdf");
       if (forceSaveAs) await saveAsBlob(blob, name, { "application/pdf": [".pdf"] });
-      else await writeBlobToHandle(blob, name);
+      else await writeBlobToHandle(blob, name, { "application/pdf": [".pdf"] });
     }
 
     function openFindModal() { $("findModal").classList.add("active"); $("findText").focus(); }
@@ -1462,7 +1748,7 @@
     $("downloadHtmlBtn").onclick = exportHtml;
     $("downloadDocBtn").onclick = exportWordDoc;
     $("downloadXlsxBtn").onclick = () => exportXlsx(true);
-    $("clearBtn").onclick = () => { if (confirm("Bersihkan workspace?")) { docEditor.innerHTML = ""; state.sheet = { rows: 50, cols: 26, data: [] }; state.pdfDoc = null; state.pdfBytes = null; setMode("none"); setFileName("Belum ada file"); setDirty(false); } };
+    $("clearBtn").onclick = () => { if (confirm("Bersihkan workspace?")) { docEditor.innerHTML = ""; state.sheet = { rows: 50, cols: 26, data: [] }; state.pdfDoc = null; state.pdfBytes = null; setFileHandle(null); setMode("none"); setFileName("Belum ada file"); setDirty(false); } };
 
     $("insertTableBtn").onclick = insertTable;
     $("insertImageBtn").onclick = () => imageInput.click();
@@ -1482,8 +1768,7 @@
 
     $("themeBtn").onclick = () => { document.body.dataset.theme = document.body.dataset.theme === "dark" ? "" : "dark"; };
     $("fullscreenBtn").onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-    $("toggleSidebarBtn").onclick = () => { state.sideVisible = !state.sideVisible; $("sidebar").style.display = state.sideVisible ? "block" : "none"; document.documentElement.style.setProperty("--sidebar-w", state.sideVisible ? "250px" : "0px"); };
-    $("focusBtn").onclick = () => { state.focus = !state.focus; $("sidebar").style.display = state.focus ? "none" : (state.sideVisible ? "block" : "none"); document.documentElement.style.setProperty("--ribbon-h", state.focus ? "44px" : "146px"); document.querySelector(".tabs").style.display = state.focus ? "none" : "flex"; document.querySelector(".ribbon").style.display = state.focus ? "none" : "flex"; };
+        $("focusBtn").onclick = () => { state.focus = !state.focus; document.documentElement.style.setProperty("--ribbon-h", state.focus ? "46px" : "152px"); document.querySelector(".tabs").style.display = state.focus ? "none" : "flex"; document.querySelector(".ribbon").style.display = state.focus ? "none" : "flex"; toast(state.focus ? "Mode fokus aktif" : "Mode fokus mati"); };
     $("readBtn").onclick = () => { docEditor.contentEditable = docEditor.contentEditable === "false" ? "true" : "false"; toast(docEditor.contentEditable === "false" ? "Mode baca aktif" : "Mode edit aktif"); };
     $("spellBtn").onclick = () => { docEditor.spellcheck = !docEditor.spellcheck; toast("Spellcheck: " + (docEditor.spellcheck ? "aktif" : "mati")); };
     $("zoomMinusBtn").onclick = () => setZoom(state.zoom - .1);
@@ -1590,71 +1875,86 @@
       await renderPdfPage();
     });
 
-    let dragDepth = 0;
-    let dragLastSeen = 0;
-    let dragWatchTimer = null;
     const dropOverlay = $("dropOverlay");
+    const dropBox = $("dropBox");
+    let dragDepth = 0;
+    let dropHideTimer = null;
 
     function dragHasFiles(e) {
       const types = Array.from(e.dataTransfer?.types || []);
-      return types.includes("Files");
+      return types.includes("Files") || Array.from(e.dataTransfer?.items || []).some(item => item.kind === "file");
     }
 
     function showDropOverlay() {
-      dragLastSeen = Date.now();
+      clearTimeout(dropHideTimer);
       dropOverlay.classList.add("active");
       dropOverlay.setAttribute("aria-hidden", "false");
-      clearInterval(dragWatchTimer);
-      dragWatchTimer = setInterval(() => {
-        if (Date.now() - dragLastSeen > 900) hideDropOverlay();
-      }, 300);
     }
 
     function hideDropOverlay() {
       dragDepth = 0;
-      clearInterval(dragWatchTimer);
-      dragWatchTimer = null;
+      clearTimeout(dropHideTimer);
       dropOverlay.classList.remove("active");
       dropOverlay.setAttribute("aria-hidden", "true");
     }
 
-    ["dragenter", "dragover", "dragleave", "drop"].forEach(type => {
-      window.addEventListener(type, e => {
-        if (!dragHasFiles(e)) return;
-        e.preventDefault();
-        e.stopPropagation();
-      }, true);
-    });
-
-    window.addEventListener("dragenter", e => {
+    document.addEventListener("dragenter", e => {
       if (!dragHasFiles(e)) return;
+      e.preventDefault();
       dragDepth += 1;
       showDropOverlay();
     });
 
-    window.addEventListener("dragover", e => {
+    document.addEventListener("dragover", e => {
       if (!dragHasFiles(e)) return;
-      dragLastSeen = Date.now();
+      e.preventDefault();
+      e.stopPropagation();
       if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
-      if (!dropOverlay.classList.contains("active")) showDropOverlay();
+      showDropOverlay();
     });
 
-    window.addEventListener("dragleave", e => {
+    document.addEventListener("dragleave", e => {
       if (!dragHasFiles(e)) return;
       dragDepth = Math.max(0, dragDepth - 1);
-      if (dragDepth === 0 || e.clientX <= 0 || e.clientY <= 0 || e.clientX >= innerWidth || e.clientY >= innerHeight) hideDropOverlay();
+      if (dragDepth === 0) {
+        clearTimeout(dropHideTimer);
+        dropHideTimer = setTimeout(hideDropOverlay, 120);
+      }
     });
 
-    window.addEventListener("drop", e => {
+    async function getDroppedFileAndHandle(dataTransfer) {
+      const items = Array.from(dataTransfer?.items || []);
+      for (const item of items) {
+        if (item.kind !== "file") continue;
+        if (typeof item.getAsFileSystemHandle === "function") {
+          try {
+            const handle = await item.getAsFileSystemHandle();
+            if (handle && handle.kind === "file") return { file: await handle.getFile(), handle };
+          } catch (err) {
+            console.warn(err);
+          }
+        }
+        const file = item.getAsFile && item.getAsFile();
+        if (file) return { file, handle: null };
+      }
+      const files = Array.from(dataTransfer?.files || []);
+      return files.length ? { file: files[0], handle: null } : { file: null, handle: null };
+    }
+
+    document.addEventListener("drop", async e => {
       if (!dragHasFiles(e)) return;
-      const file = e.dataTransfer?.files?.[0];
+      e.preventDefault();
+      e.stopPropagation();
       hideDropOverlay();
-      if (file) loadFile(file, null);
+      const { file, handle } = await getDroppedFileAndHandle(e.dataTransfer);
+      if (file) await loadFile(file, handle);
     });
 
+    ["dragend", "blur", "mouseleave"].forEach(type => window.addEventListener(type, hideDropOverlay));
     $("dropCloseBtn").addEventListener("click", hideDropOverlay);
+    $("dropSelectBtn").addEventListener("click", () => { hideDropOverlay(); openNative(); });
     dropOverlay.addEventListener("click", e => { if (e.target === dropOverlay) hideDropOverlay(); });
-    window.addEventListener("blur", hideDropOverlay);
+    dropBox.addEventListener("click", e => e.stopPropagation());
 
     window.addEventListener("keydown", e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); saveCurrent(); }
@@ -1669,6 +1969,82 @@
       e.returnValue = "";
     });
 
+
+
+    function iconSvg(name) {
+      const paths = {
+        file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+        open: '<path d="M3 7h6l2 2h10v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h4"/>',
+        save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
+        download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>',
+        print: '<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',
+        plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+        doc: '<path d="M8 4h8"/><path d="M8 8h8"/><path d="M8 12h6"/><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/>',
+        sheet: '<path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/>',
+        html: '<path d="M10 8l-4 4 4 4"/><path d="M14 8l4 4-4 4"/><path d="M13 4l-2 16"/>',
+        trash: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+        palette: '<path d="M12 22a10 10 0 1 1 10-10 3 3 0 0 1-3 3h-2a2 2 0 0 0-2 2c0 1.7-1.3 5-3 5z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7" r="1"/><circle cx="16.5" cy="10.5" r="1"/>',
+        max: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+        home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
+        insert: '<path d="M12 5v14"/><path d="M5 12h14"/><path d="M4 4h16v16H4z"/>',
+        layout: '<path d="M4 4h16v16H4z"/><path d="M4 9h16"/><path d="M9 9v11"/>',
+        pdf: '<path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/><path d="M8 17h1.5a1.5 1.5 0 0 0 0-3H8v5"/><path d="M13 14v5h1a2 2 0 0 0 0-4h-1"/>',
+        eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+        tools: '<path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5z"/><path d="M15 5l4 4"/>',
+        image: '<path d="M4 5h16v14H4z"/><circle cx="9" cy="10" r="2"/><path d="M4 16l4-4 3 3 2-2 7 7"/>',
+        link: '<path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/>',
+        search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+        undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6l-3 2"/>',
+        redo: '<path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6l3 2"/>',
+        align: '<path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h16"/>',
+        table: '<path d="M3 5h18v14H3z"/><path d="M3 10h18"/><path d="M9 5v14"/><path d="M15 5v14"/>',
+        moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+        focus: '<path d="M4 8V4h4"/><path d="M20 8V4h-4"/><path d="M4 16v4h4"/><path d="M20 16v4h-4"/>',
+        text: '<path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/>',
+        highlighter: '<path d="M4 20h16"/><path d="M7 16l8-8 3 3-8 8H7z"/><path d="M14 5l5 5"/>',
+        arrowLeft: '<path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>',
+        arrowRight: '<path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>',
+        zoomIn: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/>',
+        zoomOut: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8 11h6"/>'
+      };
+      return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.file}</svg>`;
+    }
+
+    function setIconButton(id, iconName, label) {
+      const el = $(id);
+      if (!el) return;
+      const text = label || el.textContent.trim();
+      el.classList.add("with-icon");
+      el.innerHTML = `${iconSvg(iconName)}<span>${escapeHtml(text)}</span>`;
+      el.title = text;
+    }
+
+    function setupModernIcons() {
+      const buttonIcons = {
+        themeBtn: ["moon", "Tema"], fullscreenBtn: ["max", "Layar Penuh"], openBtn: ["open", "Buka"], saveBtn: ["save", "Simpan"], saveAsBtn: ["download", "Simpan Sebagai"], printBtn: ["print", "Print/PDF"],
+        newDocBtn: ["doc", "Dokumen Baru"], newSheetBtn: ["sheet", "Sheet Baru"], downloadHtmlBtn: ["html", "Export HTML"], downloadDocBtn: ["doc", "Export Word .doc"], downloadXlsxBtn: ["sheet", "Export XLSX"], clearBtn: ["trash", "Bersihkan"],
+        insertTableBtn: ["table", "Tabel"], insertImageBtn: ["image", "Gambar"], insertLinkBtn: ["link", "Link"], insertHrBtn: ["align", "Garis"], insertPageBreakBtn: ["file", "Page Break"], insertDateBtn: ["file", "Tanggal"], insertCheckboxBtn: ["plus", "Checkbox"], insertSignatureBtn: ["text", "Tanda Tangan"], insertCodeBtn: ["html", "Blok Kode"],
+        lineHeightBtn: ["align", "Line Height"], clearDocStyleBtn: ["trash", "Reset Style"], focusBtn: ["focus", "Mode Fokus"], readBtn: ["eye", "Mode Baca"], spellBtn: ["text", "Spellcheck"], zoomMinusBtn: ["zoomOut", "Zoom -"], zoomPlusBtn: ["zoomIn", "Zoom +"], fitBtn: ["max", "Fit Width"],
+        findBtn: ["search", "Cari/Ganti"], upperBtn: ["text", "UPPERCASE"], lowerBtn: ["text", "lowercase"], titleBtn: ["text", "Title Case"], wordStatsBtn: ["file", "Statistik"], cleanSpacesBtn: ["align", "Rapikan Spasi"], copyAllBtn: ["file", "Copy Semua"],
+        sheetAddRowBtn: ["plus", "Tambah Baris"], sheetAddColBtn: ["plus", "Tambah Kolom"], sheetDelRowBtn: ["trash", "Hapus Baris"], sheetDelColBtn: ["trash", "Hapus Kolom"], sumBtn: ["plus", "SUM"], avgBtn: ["plus", "AVG"], minBtn: ["plus", "MIN"], maxBtn: ["plus", "MAX"], countBtn: ["plus", "COUNT"], sortAscBtn: ["arrowRight", "Sort A-Z"], sortDescBtn: ["arrowLeft", "Sort Z-A"], clearCellBtn: ["trash", "Clear Cell"], csvBtn: ["sheet", "Export CSV"],
+        pdfPrevBtn: ["arrowLeft", "Sebelumnya"], pdfNextBtn: ["arrowRight", "Berikutnya"], pdfTextBtn: ["text", "Teks"], pdfHighlightBtn: ["highlighter", "Highlight"], pdfLastDelBtn: ["trash", "Hapus Anotasi"], pdfExportBtn: ["download", "Simpan PDF"], formulaApplyBtn: ["plus", "Apply"], dropSelectBtn: ["open", "Pilih file manual"]
+      };
+      Object.entries(buttonIcons).forEach(([id, value]) => setIconButton(id, value[0], value[1]));
+      const tabIcons = { file: "file", home: "home", insert: "insert", layout: "layout", sheet: "sheet", pdf: "pdf", view: "eye", tools: "tools" };
+      document.querySelectorAll(".tab").forEach(tab => {
+        const label = tab.textContent.trim();
+        tab.innerHTML = `${iconSvg(tabIcons[tab.dataset.tab] || "file")}<span>${escapeHtml(label)}</span>`;
+      });
+      document.querySelectorAll('[data-cmd="justifyLeft"], [data-cmd="justifyCenter"], [data-cmd="justifyRight"], [data-cmd="justifyFull"], [data-cmd="undo"], [data-cmd="redo"], [data-cmd="removeFormat"], [data-cmd="insertUnorderedList"], [data-cmd="insertOrderedList"], [data-cmd="outdent"], [data-cmd="indent"]').forEach(btn => {
+        const label = btn.textContent.trim();
+        const map = { justifyLeft: "align", justifyCenter: "align", justifyRight: "align", justifyFull: "align", undo: "undo", redo: "redo", removeFormat: "trash", insertUnorderedList: "align", insertOrderedList: "align", outdent: "arrowLeft", indent: "arrowRight" };
+        btn.classList.add("with-icon");
+        btn.innerHTML = `${iconSvg(map[btn.dataset.cmd] || "file")}<span>${escapeHtml(label)}</span>`;
+        btn.title = label;
+      });
+    }
+
+    setupModernIcons();
     renderRecent();
     renderSheet();
     updateStats();
