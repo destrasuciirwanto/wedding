@@ -604,6 +604,21 @@
 }
 </style>
 
+
+<style id="destara-transparency-slider-fix-v1">
+#pdfOpacityRow{grid-template-columns:minmax(118px,160px) minmax(0,1fr)!important;align-items:start!important}
+#pdfOpacityRow .opacity-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;align-items:center;width:100%;min-width:0}
+#pdfOpacityRow input[type="range"]{width:100%;min-width:0;grid-column:1/2}
+#pdfTransparencyValue{min-width:52px;text-align:right;font-weight:900;color:var(--text)}
+#pdfOpacityRow .opacity-help{grid-column:1/-1;font-size:11.5px;line-height:1.35;color:var(--muted)}
+#pdfOpacityRow .opacity-presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+#pdfOpacityRow .opacity-presets button{min-height:28px;border-radius:999px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;font-size:11.5px;font-weight:800}
+#pdfOpacityRow .opacity-presets button:hover{transform:translateY(-1px);box-shadow:var(--soft)}
+@media(max-width:760px){
+  #pdfOpacityRow .opacity-control{grid-template-columns:minmax(0,1fr) 48px}
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
@@ -634,7 +649,7 @@
     <div class="smart-row hidden color-smart-row" id="pdfFillColorRow"><label id="pdfFillColorLabel">Isi</label><span class="swatch-preview transparent" id="pdfFillSwatch"></span><select data-action="pdfSmartFillPreset" id="pdfSmartFillPreset" title="Pilih warna"><option value="transparent">Transparan</option><option value="#ffffff">Putih</option><option value="#111827">Hitam</option><option value="#ef4444">Merah</option><option value="#f97316">Oranye</option><option value="#facc15">Kuning</option><option value="#22c55e">Hijau</option><option value="#2563eb">Biru</option><option value="#9333ea">Ungu</option><option value="__custom">Custom</option></select><span class="picker-label">Picker</span><input type="color" value="#ffffff" data-action="pdfSmartFillColor" id="pdfSmartFillColor" title="Picker color"></div>
     <div class="smart-row hidden" id="pdfTextSizeRow"><label>Ukuran teks</label><select data-action="pdfSmartTextSize" id="pdfSmartTextSize"><option value="8">8</option><option value="10">10</option><option value="12">12</option><option value="14">14</option><option value="16">16</option><option value="20">20</option><option value="24">24</option><option value="32">32</option><option value="48">48</option><option value="64">64</option></select></div>
     <div class="smart-row hidden" id="pdfStrokeRow"><label>Ketebalan</label><select data-action="pdfSmartStrokeWidth" id="pdfSmartStrokeWidth"><option value="1">1px</option><option value="2">2px</option><option value="3">3px</option><option value="5">5px</option><option value="8">8px</option><option value="12">12px</option><option value="18">18px</option></select></div>
-    <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><select data-action="pdfSmartOpacity" id="pdfSmartOpacity"><option value="0.12">Sangat tipis</option><option value="0.18">Tipis</option><option value="0.38">Normal</option><option value="0.60">Tebal</option><option value="0.85">Solid</option></select></div>
+    <div class="smart-row hidden" id="pdfOpacityRow"><label>Transparansi</label><div class="opacity-control"><input type="range" min="0" max="100" step="1" value="62" data-action="pdfSmartTransparencyPct" id="pdfSmartTransparencyPct" aria-label="Transparansi 0 sampai 100 persen"><output id="pdfTransparencyValue">62%</output><div class="opacity-presets"><button type="button" data-transparency-preset="0">Tidak transparan</button><button type="button" data-transparency-preset="50">50%</button><button type="button" data-transparency-preset="100">100%</button></div></div></div>
     <div class="palette-row"><button style="--sw:#111827" data-action="pdfPresetColor" data-color="#111827" title="Hitam"></button><button style="--sw:#ef4444" data-action="pdfPresetColor" data-color="#ef4444" title="Merah"></button><button style="--sw:#f97316" data-action="pdfPresetColor" data-color="#f97316" title="Oranye"></button><button style="--sw:#facc15" data-action="pdfPresetColor" data-color="#facc15" title="Kuning"></button><button style="--sw:#22c55e" data-action="pdfPresetColor" data-color="#22c55e" title="Hijau"></button><button style="--sw:#2563eb" data-action="pdfPresetColor" data-color="#2563eb" title="Biru"></button><button style="--sw:#9333ea" data-action="pdfPresetColor" data-color="#9333ea" title="Ungu"></button><button style="--sw:#ffffff" data-action="pdfPresetColor" data-color="#ffffff" title="Putih"></button><button class="pdf-tool transparent-tool" data-action="pdfPresetColor" data-color="transparent" title="Warna aktif transparan"><i data-lucide="droplets"></i><span>Warna Transparan</span></button><button class="pdf-tool" data-action="pdfSetFillTransparent"><i data-lucide="droplets"></i><span>Isi Transparan</span></button></div>
   </div></details>
   <details class="pdf-menu"><summary><i data-lucide="badge-check"></i><span>Status</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Catatan & Stempel</div>
@@ -1972,7 +1987,7 @@
     swatch(fillSw, fillVal);
     if (textSize) textSize.value = String((selected && selected.size) || state.pdfTextSize);
     if (stroke) stroke.value = String((selected && selected.strokeWidth) || state.pdfStrokeWidth);
-    if (opacity) opacity.value = String((selected && selected.opacity) || state.pdfOpacity);
+    if (opacity) opacity.value = String(((selected && selected.opacity) ?? state.pdfOpacity));
     if (desc) {
       if (['rect','ellipse'].includes(type)) desc.textContent = 'Kotak/oval memakai dua warna: border dan isi. Isi bisa dibuat transparan.';
       else if (mainKey) desc.textContent = 'Warna di sini otomatis mengikuti alat atau objek yang dipilih.';
@@ -2135,7 +2150,7 @@
     const el = document.createElement(type==='draw' ? 'svg' : 'div');
     el.className = 'pdf-preview ' + (type==='highlight'?'highlight':'');
     if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML=`<polyline fill="none" style="stroke:${state.pdfDrawColor};stroke-width:${state.pdfStrokeWidth};stroke-linecap:round;stroke-linejoin:round"></polyline>`; }
-    else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; if (type === 'highlight') { el.style.background = colorWithAlpha(state.pdfHighlightColor, .38); el.style.borderColor = state.pdfHighlightColor; } if (type === 'rect' || type === 'ellipse') { el.style.background = colorWithAlpha(state.pdfRectFillColor, state.pdfOpacity); el.style.borderColor = state.pdfRectBorderColor; if(type==='ellipse') el.style.borderRadius='999px'; } if (type === 'redact') { el.style.background = '#000'; el.style.borderColor = '#000'; } }
+    else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; if (type === 'highlight') { el.style.background = colorWithAlpha(state.pdfHighlightColor, state.pdfOpacity); el.style.borderColor = state.pdfHighlightColor; } if (type === 'rect' || type === 'ellipse') { el.style.background = colorWithAlpha(state.pdfRectFillColor, state.pdfOpacity); el.style.borderColor = state.pdfRectBorderColor; if(type==='ellipse') el.style.borderRadius='999px'; } if (type === 'redact') { el.style.background = '#000'; el.style.borderColor = '#000'; } }
     layer.appendChild(el); return el;
   }
   function updatePdfPreview(el, type, a, b){
@@ -2285,9 +2300,9 @@
       const el = document.createElement('div'); el.className = 'pdf-annotation ann-' + ann.type; el.dataset.id = ann.id;
       if (ann.id === state.selectedAnnotationId) el.classList.add('selected');
       if (ann.type === 'text') { el.classList.add('ann-text'); el.textContent = ann.text; el.style.color = ann.color || state.pdfTextColor; el.style.fontSize=(ann.size||state.pdfTextSize)+'px'; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'highlight') { el.classList.add('ann-highlight'); el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, ann.opacity || state.pdfOpacity); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'rect') { el.classList.add('ann-rect'); el.style.borderColor = ann.borderColor || state.pdfRectBorderColor; el.style.borderWidth=(ann.strokeWidth||state.pdfStrokeWidth)+'px'; el.style.background = colorWithAlpha(getAnnFillColor(ann), ann.opacity || state.pdfOpacity); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'ellipse') { el.classList.add('ann-ellipse'); el.style.borderColor = ann.borderColor || state.pdfRectBorderColor; el.style.borderWidth=(ann.strokeWidth||state.pdfStrokeWidth)+'px'; el.style.background = colorWithAlpha(getAnnFillColor(ann), ann.opacity || state.pdfOpacity); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'highlight') { el.classList.add('ann-highlight'); el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, (ann.opacity ?? state.pdfOpacity)); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'rect') { el.classList.add('ann-rect'); el.style.borderColor = ann.borderColor || state.pdfRectBorderColor; el.style.borderWidth=(ann.strokeWidth||state.pdfStrokeWidth)+'px'; el.style.background = colorWithAlpha(getAnnFillColor(ann), (ann.opacity ?? state.pdfOpacity)); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'ellipse') { el.classList.add('ann-ellipse'); el.style.borderColor = ann.borderColor || state.pdfRectBorderColor; el.style.borderWidth=(ann.strokeWidth||state.pdfStrokeWidth)+'px'; el.style.background = colorWithAlpha(getAnnFillColor(ann), (ann.opacity ?? state.pdfOpacity)); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
       if (ann.type === 'redact') { el.classList.add('ann-redact'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
       if (ann.type === 'line' || ann.type === 'arrow') {
         el.classList.add('ann-line');
@@ -3086,18 +3101,18 @@
       const W = page.getWidth(), H = page.getHeight();
       const sx = ann.x * W, sy = ann.y * H, sw = (ann.w || 0) * W, sh = (ann.h || 0) * H;
       if (ann.type === 'highlight') {
-        page.drawRectangle({ x: sx, y: H - (sy + sh), width: sw, height: sh, color: hexToPdfRgb(ann.color || state.pdfHighlightColor), opacity: ann.opacity || state.pdfOpacity });
+        page.drawRectangle({ x: sx, y: H - (sy + sh), width: sw, height: sh, color: hexToPdfRgb(ann.color || state.pdfHighlightColor), opacity: (ann.opacity ?? state.pdfOpacity) });
       }
       if (ann.type === 'rect') {
         const fill = Object.prototype.hasOwnProperty.call(ann, 'fillColor') ? ann.fillColor : state.pdfRectFillColor;
         const opts = { x: sx, y: H - (sy + sh), width: sw, height: sh, borderColor: hexToPdfRgb(ann.borderColor || state.pdfRectBorderColor), borderWidth: ann.strokeWidth || state.pdfStrokeWidth };
-        if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = ann.opacity || state.pdfOpacity; }
+        if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = (ann.opacity ?? state.pdfOpacity); }
         page.drawRectangle(opts);
       }
       if (ann.type === 'ellipse') {
         const fill = Object.prototype.hasOwnProperty.call(ann, 'fillColor') ? ann.fillColor : state.pdfRectFillColor;
         const opts = { x: sx + sw/2, y: H - (sy + sh/2), xScale: sw/2, yScale: sh/2, borderColor: hexToPdfRgb(ann.borderColor || state.pdfRectBorderColor), borderWidth: ann.strokeWidth || state.pdfStrokeWidth };
-        if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = ann.opacity || state.pdfOpacity; }
+        if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = (ann.opacity ?? state.pdfOpacity); }
         page.drawEllipse(opts);
       }
       if (ann.type === 'redact') {
@@ -3669,7 +3684,7 @@
     const stroke = ann.borderColor || state.pdfRectBorderColor || '#f97316';
     const fill = ann.fillColor ?? state.pdfRectFillColor;
     const fillAttr = isTransparentColor(fill) ? 'none' : fill;
-    const opacity = ann.opacity || state.pdfOpacity || .38;
+    const opacity = (ann.opacity ?? state.pdfOpacity ?? .38);
     const sw = Math.max(1, ann.strokeWidth || state.pdfStrokeWidth || 2);
     if (shape === 'rounded') return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><rect x="4" y="4" width="92" height="92" rx="14" ry="14" fill="${fillAttr}" fill-opacity="${isTransparentColor(fill)?0:opacity}" stroke="${stroke}" stroke-width="${sw*1.8}" vector-effect="non-scaling-stroke"/></svg>`;
     return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${shapeSvgPath(shape)}" fill="${fillAttr}" fill-opacity="${isTransparentColor(fill)?0:opacity}" stroke="${stroke}" stroke-width="${sw*1.8}" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
@@ -3919,7 +3934,7 @@
     if (shape === 'rounded') {
       const fill = ann.fillColor ?? state.pdfRectFillColor;
       const opts = { x:sx, y:H-(sy+sh), width:sw, height:sh, borderColor:hexToPdfRgb(ann.borderColor||state.pdfRectBorderColor), borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
-      if (!isTransparentColor(fill)) { opts.color=hexToPdfRgb(fill); opts.opacity=ann.opacity||state.pdfOpacity; }
+      if (!isTransparentColor(fill)) { opts.color=hexToPdfRgb(fill); opts.opacity=(ann.opacity ?? state.pdfOpacity); }
       page.drawRectangle(opts); return true;
     }
     const raw = shapeSvgPath(shape);
@@ -3927,7 +3942,7 @@
     const fill = ann.fillColor ?? state.pdfRectFillColor;
     try {
       const opts = { x:sx, y:H-(sy+sh), xScale:sw/100, yScale:sh/100, borderColor:color, borderWidth:ann.strokeWidth||state.pdfStrokeWidth, borderOpacity:1 };
-      if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = ann.opacity || state.pdfOpacity; }
+      if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = (ann.opacity ?? state.pdfOpacity); }
       page.drawSvgPath(raw, opts);
       return true;
     } catch (err) {
@@ -3949,12 +3964,12 @@
       const page = pages[ann.pageIndex]; if (!page) continue;
       const W = page.getWidth(), H = page.getHeight();
       const sx = (ann.x || 0) * W, sy = (ann.y || 0) * H, sw = (ann.w || 0) * W, sh = (ann.h || 0) * H;
-      if (ann.type === 'highlight') page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(ann.color||state.pdfHighlightColor), opacity:ann.opacity||state.pdfOpacity });
+      if (ann.type === 'highlight') page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(ann.color||state.pdfHighlightColor), opacity:(ann.opacity ?? state.pdfOpacity) });
       if (ann.type === 'rect') {
         if (ann.shape && ann.shape !== 'rect') { drawPolygonShapeOnPdf(page, ann, W, H); }
-        else { const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor; const opts={x:sx,y:H-(sy+sh),width:sw,height:sh,borderColor:hexToPdfRgb(ann.borderColor||state.pdfRectBorderColor),borderWidth:ann.strokeWidth||state.pdfStrokeWidth}; if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;} page.drawRectangle(opts); }
+        else { const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor; const opts={x:sx,y:H-(sy+sh),width:sw,height:sh,borderColor:hexToPdfRgb(ann.borderColor||state.pdfRectBorderColor),borderWidth:ann.strokeWidth||state.pdfStrokeWidth}; if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=(ann.opacity ?? state.pdfOpacity);} page.drawRectangle(opts); }
       }
-      if (ann.type === 'ellipse') { const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor; const opts={x:sx+sw/2,y:H-(sy+sh/2),xScale:sw/2,yScale:sh/2,borderColor:hexToPdfRgb(ann.borderColor||state.pdfRectBorderColor),borderWidth:ann.strokeWidth||state.pdfStrokeWidth}; if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;} page.drawEllipse(opts); }
+      if (ann.type === 'ellipse') { const fill=Object.prototype.hasOwnProperty.call(ann,'fillColor')?ann.fillColor:state.pdfRectFillColor; const opts={x:sx+sw/2,y:H-(sy+sh/2),xScale:sw/2,yScale:sh/2,borderColor:hexToPdfRgb(ann.borderColor||state.pdfRectBorderColor),borderWidth:ann.strokeWidth||state.pdfStrokeWidth}; if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=(ann.opacity ?? state.pdfOpacity);} page.drawEllipse(opts); }
       if (ann.type === 'redact') page.drawRectangle({x:sx,y:H-(sy+sh),width:sw,height:sh,color:PDFLib.rgb(0,0,0),opacity:1});
       if (ann.type === 'text') { const size=ann.size||state.pdfTextSize; const font=await getFontForAnn(pdfDoc,fontCache,ann); page.drawText(ann.text||'',{x:sx,y:H-sy-size,size,font,color:hexToPdfRgb(ann.color||state.pdfTextColor),lineHeight:size+2,rotate:PDFLib.degrees(ann.rotation||0)}); if(ann.url) addPdfLinkAnnotation(pdfDoc,page,sx,H-(sy+Math.max(sh,size+4)),Math.max(sw,120),Math.max(sh,size+8),ann.url); }
       if (ann.type === 'note') { const size=ann.size||13; const font=await getFontForAnn(pdfDoc,fontCache,ann); const noteFill=ann.fillColor??state.pdfHighlightColor; const noteBox={x:sx,y:H-(sy+sh),width:sw,height:sh,borderColor:PDFLib.rgb(.65,.48,.05),borderWidth:1}; if(!isTransparentColor(noteFill)){noteBox.color=hexToPdfRgb(noteFill);noteBox.opacity=.9;} page.drawRectangle(noteBox); page.drawText(ann.text||'',{x:sx+5,y:H-sy-size-5,size,font,color:hexToPdfRgb(ann.color||state.pdfTextColor),lineHeight:size+2}); }
@@ -4137,7 +4152,7 @@
       }
       if (ann.type === 'check' || ann.type === 'cross') el.style.color = ann.color || (ann.type==='check'?'#16a34a':'#ef4444');
       if (ann.type === 'rect' || ann.type === 'ellipse') el.style.borderColor = ann.borderColor || state.pdfRectBorderColor;
-      if (ann.type === 'highlight') el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, ann.opacity || state.pdfOpacity);
+      if (ann.type === 'highlight') el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, (ann.opacity ?? state.pdfOpacity));
     });
   };
 
@@ -4167,14 +4182,14 @@
     if (shape === 'rounded') {
       const opts = { x:sx, y:H-(sy+sh), width:sw, height:sh, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
       pdfSetStrokeVisibility(opts, strokeVal);
-      if (!isTransparentColor(fill)) { opts.color=hexToPdfRgb(fill); opts.opacity=ann.opacity||state.pdfOpacity; }
+      if (!isTransparentColor(fill)) { opts.color=hexToPdfRgb(fill); opts.opacity=(ann.opacity ?? state.pdfOpacity); }
       page.drawRectangle(opts); return true;
     }
     const raw = shapeSvgPath(shape);
     try {
       const opts = { x:sx, y:H-(sy+sh), xScale:sw/100, yScale:sh/100, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
       pdfSetStrokeVisibility(opts, strokeVal);
-      if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = ann.opacity || state.pdfOpacity; }
+      if (!isTransparentColor(fill)) { opts.color = hexToPdfRgb(fill); opts.opacity = (ann.opacity ?? state.pdfOpacity); }
       page.drawSvgPath(raw, opts);
       return true;
     } catch (err) {
@@ -4200,7 +4215,7 @@
       const sx = (ann.x || 0) * W, sy = (ann.y || 0) * H, sw = (ann.w || 0) * W, sh = (ann.h || 0) * H;
       if (ann.type === 'highlight') {
         const cVal = ann.color || state.pdfHighlightColor;
-        if (!isTransparentColor(cVal)) page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(cVal), opacity:ann.opacity||state.pdfOpacity });
+        if (!isTransparentColor(cVal)) page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(cVal), opacity:(ann.opacity ?? state.pdfOpacity) });
       }
       if (ann.type === 'rect') {
         if (ann.shape && ann.shape !== 'rect') { drawPolygonShapeOnPdf(page, ann, W, H); }
@@ -4209,7 +4224,7 @@
           const strokeVal = ann.borderColor || state.pdfRectBorderColor;
           const opts={x:sx,y:H-(sy+sh),width:sw,height:sh,borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
           pdfSetStrokeVisibility(opts, strokeVal);
-          if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;}
+          if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=(ann.opacity ?? state.pdfOpacity);}
           page.drawRectangle(opts);
         }
       }
@@ -4218,7 +4233,7 @@
         const strokeVal = ann.borderColor || state.pdfRectBorderColor;
         const opts={x:sx+sw/2,y:H-(sy+sh/2),xScale:sw/2,yScale:sh/2,borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
         pdfSetStrokeVisibility(opts, strokeVal);
-        if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=ann.opacity||state.pdfOpacity;}
+        if(!isTransparentColor(fill)){opts.color=hexToPdfRgb(fill);opts.opacity=(ann.opacity ?? state.pdfOpacity);}
         page.drawEllipse(opts);
       }
       if (ann.type === 'redact') page.drawRectangle({x:sx,y:H-(sy+sh),width:sw,height:sh,color:PDFLib.rgb(0,0,0),opacity:1});
@@ -4252,6 +4267,104 @@
     }
     const bytes = await pdfDoc.save();
     return new Blob([bytes], {type:'application/pdf'});
+  };
+
+
+
+  // FIX FINAL: Highlight memakai warna isi yang jelas, dan transparansi memakai slider 0-100%.
+  function clampPercent(value){
+    const n = Number(value);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  }
+  function alphaFromTransparencyPercent(value){
+    return Math.max(0, Math.min(1, 1 - clampPercent(value) / 100));
+  }
+  function transparencyPercentFromAlpha(alpha){
+    const a = Number(alpha);
+    const safe = Number.isFinite(a) ? Math.max(0, Math.min(1, a)) : Math.max(0, Math.min(1, Number(state.pdfOpacity ?? .38)));
+    return Math.round((1 - safe) * 100);
+  }
+  function selectedOrToolOpacity(){
+    const ann = selectedPdfAnnotation ? selectedPdfAnnotation() : null;
+    return ann && ann.opacity != null ? ann.opacity : (state.pdfOpacity ?? .38);
+  }
+  function updatePdfTransparencySlider(){
+    const pct = transparencyPercentFromAlpha(selectedOrToolOpacity());
+    const slider = document.getElementById('pdfSmartTransparencyPct');
+    const output = document.getElementById('pdfTransparencyValue');
+    if (slider && String(slider.value) !== String(pct)) slider.value = String(pct);
+    if (output) output.textContent = pct + '%';
+  }
+  function setPdfTransparencyPercent(value){
+    const pct = clampPercent(value);
+    const alpha = alphaFromTransparencyPercent(pct);
+    setPdfSetting('pdfOpacity', alpha);
+    updatePdfTransparencySlider();
+    updatePdfStyleHint();
+  }
+
+  const _destaraTransparencyOldUpdateControls = updatePdfStyleControls;
+  updatePdfStyleControls = function(){
+    _destaraTransparencyOldUpdateControls();
+    const type = currentPdfStyleType();
+    const mainLabel = document.getElementById('pdfMainColorLabel');
+    const desc = document.getElementById('pdfStyleDesc');
+    if (type === 'highlight') {
+      if (mainLabel) mainLabel.textContent = 'Isi Highlight';
+      if (desc) desc.textContent = 'Warna ini mengubah isi highlight. Transparansi di bawah memakai persentase: 0% solid, 100% transparan penuh.';
+    }
+    updatePdfTransparencySlider();
+  };
+
+  document.addEventListener('input', function(e){
+    const slider = e.target.closest && e.target.closest('[data-action="pdfSmartTransparencyPct"]');
+    if (!slider) return;
+    setPdfTransparencyPercent(slider.value);
+  }, true);
+
+  document.addEventListener('change', function(e){
+    const slider = e.target.closest && e.target.closest('[data-action="pdfSmartTransparencyPct"]');
+    if (!slider) return;
+    setPdfTransparencyPercent(slider.value);
+  }, true);
+
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest && e.target.closest('[data-transparency-preset]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setPdfTransparencyPercent(btn.dataset.transparencyPreset);
+  }, true);
+
+  const _destaraTransparencyOldSetFillTransparent = pdfSetFillTransparent;
+  pdfSetFillTransparent = function(){
+    const type = currentPdfStyleType();
+    if (type === 'highlight') {
+      setPdfSmartMainColor('transparent');
+      return;
+    }
+    return _destaraTransparencyOldSetFillTransparent();
+  };
+
+  const _destaraTransparencyOldRedraw = redrawPdfAnnotations;
+  redrawPdfAnnotations = function(){
+    _destaraTransparencyOldRedraw();
+    document.querySelectorAll('.pdf-annotation').forEach(el => {
+      const ann = state.pdfAnnotations.find(a => a.id === el.dataset.id);
+      if (!ann) return;
+      const alpha = ann.opacity ?? state.pdfOpacity ?? .38;
+      if (ann.type === 'highlight') {
+        el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, alpha);
+      }
+      if (ann.type === 'rect' || ann.type === 'ellipse') {
+        el.style.background = colorWithAlpha(getAnnFillColor(ann), alpha);
+      }
+      if (ann.type === 'rect' && ann.shape && ann.shape !== 'rect') {
+        el.querySelectorAll('path,rect').forEach(shapeEl => shapeEl.setAttribute('fill-opacity', isTransparentColor(ann.fillColor ?? state.pdfRectFillColor) ? '0' : String(alpha)));
+      }
+    });
+    updatePdfTransparencySlider();
   };
 
 
