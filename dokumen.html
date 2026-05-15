@@ -6,6 +6,7 @@
   <title>Dokumen Web</title>
 
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
   <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
@@ -293,6 +294,19 @@
     .docx-preview-wrap.active { display: block; }
     .docx-preview-wrap .docx-wrapper { background: transparent !important; padding: 0 !important; }
     .docx-preview-wrap .docx { box-shadow: var(--shadow) !important; border-radius: 4px; }
+    .docx-fallback {
+      width: min(860px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px;
+      border-radius: 22px;
+      background: var(--panel-solid);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .docx-fallback h2 { margin: 0 0 10px; font-size: 20px; }
+    .docx-fallback p { margin: 8px 0; color: var(--muted); }
+    .docx-fallback .mini-error { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 13px; word-break: break-word; }
 
     .sheet-wrap {
       width: fit-content;
@@ -915,29 +929,72 @@
       els.docxPreviewWrap.classList.add('active');
       els.docShell.style.display = 'none';
       setMode('DOCX preview asli');
-      setStatus('Render DOCX dengan layout preview...');
-      if (!window.docx || !window.docx.renderAsync) {
-        throw new Error('Library docx-preview belum termuat. Pastikan koneksi internet/CDN aktif.');
-      }
-      await window.docx.renderAsync(buffer.slice(0), els.docxPreviewWrap, null, {
-        className: 'docx', inWrapper: true, ignoreWidth: false, ignoreHeight: false,
-        ignoreFonts: false, breakPages: true, renderHeaders: true, renderFooters: true,
-        renderFootnotes: true, renderEndnotes: true, useBase64URL: true
-      });
+      setStatus('Membuka DOCX...');
+
+      let previewOk = false;
+      let editOk = false;
+      let previewError = null;
       state.docxEditHtml = '';
-      if (window.mammoth) {
+      els.editor.innerHTML = '<p></p>';
+
+      if (window.docx && typeof window.docx.renderAsync === 'function') {
+        try {
+          await window.docx.renderAsync(buffer.slice(0), els.docxPreviewWrap, null, {
+            className: 'docx',
+            inWrapper: true,
+            ignoreWidth: false,
+            ignoreHeight: false,
+            ignoreFonts: false,
+            breakPages: true,
+            renderHeaders: true,
+            renderFooters: true,
+            renderFootnotes: true,
+            renderEndnotes: true,
+            useBase64URL: true
+          });
+          previewOk = true;
+        } catch (err) {
+          previewError = err;
+          console.warn('DOCX preview gagal, mencoba Edit Cepat:', err);
+        }
+      } else {
+        previewError = new Error('Library docx-preview belum termuat.');
+      }
+
+      if (window.mammoth && typeof window.mammoth.convertToHtml === 'function') {
         try {
           const result = await window.mammoth.convertToHtml({ arrayBuffer: buffer.slice(0) });
-          state.docxEditHtml = result.value || '';
-          els.editor.innerHTML = state.docxEditHtml || '<p></p>';
+          state.docxEditHtml = result.value || '<p></p>';
+          els.editor.innerHTML = state.docxEditHtml;
+          editOk = true;
         } catch (err) {
-          state.docxEditHtml = '';
-          els.editor.innerHTML = '<p>DOCX berhasil dipreview, tetapi gagal dibuat versi edit cepat.</p>';
+          console.warn('DOCX edit cepat gagal:', err);
         }
       }
-      switchDocxMode('preview', false);
+
+      if (previewOk) {
+        switchDocxMode('preview', false);
+        updateWordCount();
+        setStatus('DOCX dibuka dalam mode Preview Asli. Gunakan Edit Cepat hanya kalau perlu mengubah isi.');
+        return;
+      }
+
+      if (editOk) {
+        switchDocxMode('edit', false);
+        updateWordCount();
+        setMode('DOCX edit cepat');
+        setStatus('Preview asli gagal, jadi dokumen dibuka di Edit Cepat agar tetap bisa dibaca dan diedit.');
+        toast('Preview asli DOCX gagal. Dibuka di Edit Cepat.');
+        return;
+      }
+
+      const msg = previewError && previewError.message ? previewError.message : String(previewError || 'Tidak diketahui');
+      els.docxPreviewWrap.innerHTML = '<div class="docx-fallback"><h2>DOCX belum bisa dibuka di browser ini.</h2><p>Biasanya ini terjadi karena library DOCX dari CDN belum termuat, koneksi diblokir, atau file DOCX memakai struktur yang tidak didukung browser.</p><p>Coba refresh halaman, pastikan koneksi internet aktif, lalu buka ulang file. Kalau masih gagal, pakai file DOCX lain untuk tes.</p><div class="mini-error">Detail error: ' + escapeHtml(msg) + '</div></div>';
+      els.docShell.style.display = 'none';
+      els.docxPreviewWrap.classList.add('active');
+      setMode('DOCX gagal dibuka');
+      setStatus('DOCX gagal dibuka. Detail error ditampilkan di halaman.');
       updateWordCount();
-      setStatus('DOCX dibuka dalam mode Preview Asli. Gunakan Edit Cepat hanya kalau perlu mengubah isi.');
     }
 
     async function openLegacyDoc() {
