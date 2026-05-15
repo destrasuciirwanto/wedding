@@ -15,7 +15,7 @@
   <style>
     :root{--bg:#eef2f7;--panel:rgba(255,255,255,.88);--panel-solid:#fff;--text:#101828;--muted:#667085;--line:#e5eaf1;--primary:#2957ff;--primary2:#6c4cff;--danger:#ef4444;--shadow:0 14px 40px rgba(16,24,40,.12);--soft:0 6px 18px rgba(16,24,40,.10);--page-width:794px;--page-min-height:1123px;--page-padding:72px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     [data-theme=dark]{--bg:#101522;--panel:rgba(23,31,48,.9);--panel-solid:#182033;--text:#eef2ff;--muted:#a9b4c6;--line:rgba(255,255,255,.12);--shadow:0 18px 50px rgba(0,0,0,.34);--soft:0 8px 24px rgba(0,0,0,.28)}
-    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.pdf-hint,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left;pointer-events:auto;cursor:move}.pdf-annotation *{pointer-events:none}.pdf-annotation .ann-handle,.pdf-annotation .ann-rotate{pointer-events:auto}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft);pointer-events:auto}.pdf-stylebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.48)}.pdf-stylebar label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}.pdf-stylebar input[type=color]{width:28px;height:24px;border:0;border-radius:7px;background:transparent;padding:0;cursor:pointer}.ann-ellipse{border:2px solid #f97316;background:rgba(249,115,22,.05);border-radius:999px}.ann-redact{background:#000}.ann-note{background:#fff3a3;border:1px solid #d4a017;border-radius:6px;padding:6px;color:#3b2f00;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.18);white-space:pre-wrap;overflow:hidden}.ann-stamp{border:3px solid #ef4444;color:#ef4444;background:rgba(255,255,255,.6);font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);font-size:22px}.ann-mark{color:#16a34a;font-weight:900;font-size:28px;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}.ann-ellipse.selected,.ann-redact.selected,.ann-note.selected,.ann-stamp.selected,.ann-mark.selected,.ann-image.selected{outline:2px solid var(--primary);outline-offset:2px}.pdf-layer.cursor-image{cursor:copy}.pdf-mini-input{height:28px;border-radius:8px;border:1px solid var(--line);padding:0 6px;background:var(--panel-solid);color:var(--text);font-size:12px;min-width:62px}.pdf-tool.danger{background:rgba(239,68,68,.12);color:#b42318;border-color:rgba(239,68,68,.22)}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.pdf-hint{display:none!important}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left;pointer-events:auto;cursor:move}.pdf-annotation *{pointer-events:none}.pdf-annotation .ann-handle,.pdf-annotation .ann-rotate{pointer-events:auto}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft);pointer-events:auto}.pdf-stylebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.48)}.pdf-stylebar label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}.pdf-stylebar input[type=color]{width:28px;height:24px;border:0;border-radius:7px;background:transparent;padding:0;cursor:pointer}.ann-ellipse{border:2px solid #f97316;background:rgba(249,115,22,.05);border-radius:999px}.ann-redact{background:#000}.ann-note{background:#fff3a3;border:1px solid #d4a017;border-radius:6px;padding:6px;color:#3b2f00;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.18);white-space:pre-wrap;overflow:hidden}.ann-stamp{border:3px solid #ef4444;color:#ef4444;background:rgba(255,255,255,.6);font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);font-size:22px}.ann-mark{color:#16a34a;font-weight:900;font-size:28px;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}.ann-ellipse.selected,.ann-redact.selected,.ann-note.selected,.ann-stamp.selected,.ann-mark.selected,.ann-image.selected{outline:2px solid var(--primary);outline-offset:2px}.pdf-layer.cursor-image{cursor:copy}.pdf-mini-input{height:28px;border-radius:8px;border:1px solid var(--line);padding:0 6px;background:var(--panel-solid);color:var(--text);font-size:12px;min-width:62px}.pdf-tool.danger{background:rgba(239,68,68,.12);color:#b42318;border-color:rgba(239,68,68,.22)}
 .pdf-toolbar-grouped{position:sticky;top:0;z-index:25;max-width:1280px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px;box-shadow:var(--soft);backdrop-filter:blur(12px)}
 .pdf-menu{position:relative}.pdf-menu summary{height:32px;display:flex;align-items:center;gap:6px;list-style:none;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.68);padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}.pdf-menu summary::-webkit-details-marker{display:none}.pdf-menu[open] summary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.pdf-menu-body{position:absolute;top:38px;left:0;z-index:60;min-width:230px;max-width:min(520px,90vw);display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--panel-solid);box-shadow:var(--shadow)}.pdf-menu:not([open]) .pdf-menu-body{display:none}.pdf-style-grid{min-width:360px}.style-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:5px 6px;background:rgba(255,255,255,.58);font-size:11px;color:var(--muted);font-weight:800}.style-chip input[type=color]{width:30px;height:26px;padding:0;border:0;background:transparent}.palette-row{display:flex;gap:5px;width:100%;padding-top:3px}.palette-row button{width:26px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--sw)}
 .pdf-style-smart{min-width:330px;display:grid!important;grid-template-columns:1fr;gap:8px}.smart-head{display:grid;gap:2px;width:100%;padding:2px 2px 4px}.smart-head strong{font-size:12px;color:var(--text)}.smart-head span{font-size:11px;color:var(--muted);line-height:1.35}.smart-row{display:flex;align-items:center;gap:7px;width:100%;padding:6px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.58)}.smart-row.hidden{display:none!important}.smart-row label{min-width:74px;font-size:11px;color:var(--muted);font-weight:900}.smart-row select{height:28px;min-width:110px;border-radius:9px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);font-size:12px;padding:0 7px;outline:0}.smart-row input[type=color]{width:32px;height:28px;border:0;border-radius:8px;background:transparent;padding:0;cursor:pointer}.swatch-preview{width:28px;height:28px;border-radius:9px;border:1px solid var(--line);background:var(--sw,#000)}.swatch-preview.transparent{background:linear-gradient(45deg,#ddd 25%,transparent 25%),linear-gradient(-45deg,#ddd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ddd 75%),linear-gradient(-45deg,transparent 75%,#ddd 75%);background-size:10px 10px;background-position:0 0,0 5px,5px -5px,-5px 0}.pdf-tool.warn{background:rgba(245,158,11,.14);color:#92400e;border-color:rgba(245,158,11,.28)}
@@ -77,9 +77,13 @@
     <button class="pdf-tool" data-action="newBlankPdf"><i data-lucide="file-plus"></i><span>PDF Kosong</span></button>
     <button class="pdf-tool warn" data-action="closePdf"><i data-lucide="x-circle"></i><span>Tutup PDF</span></button>
     <button class="pdf-tool" data-action="clearPdfAnnotations"><i data-lucide="eraser"></i><span>Bersihkan Anotasi</span></button>
+    <button class="pdf-tool" data-action="pdfCopySelected"><i data-lucide="copy"></i><span>Copy Objek</span></button>
+    <button class="pdf-tool" data-action="pdfPasteObject"><i data-lucide="clipboard-paste"></i><span>Paste Objek</span></button>
+    <button class="pdf-tool" data-action="pdfResetSelectedRotation"><i data-lucide="rotate-3d"></i><span>Reset Putar</span></button>
+    <button class="pdf-tool" data-action="pdfExportAnnotations"><i data-lucide="download"></i><span>Export Editan</span></button>
+    <button class="pdf-tool" data-action="pdfImportAnnotations"><i data-lucide="upload"></i><span>Import Editan</span></button>
     <button class="pdf-tool" data-action="save"><i data-lucide="save"></i><span>Simpan PDF</span></button>
   </div></details>
-  <div class="pdf-hint" id="pdfHint"><i data-lucide="sparkles"></i><span>Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.</span></div>
 </div><div class="pdf-pages" id="pdfPages"></div></section>
     <section class="workspace-pane" id="sheetPane"><div class="formula-bar"><div class="formula-name" id="cellName">A1</div><input class="formula-input" id="formulaInput" placeholder="Ketik nilai atau formula: =SUM(A1:A5)" /></div><div class="sheet-wrap"><table class="sheet-grid" id="sheetGrid"></table></div></section>
   </main>
@@ -155,6 +159,7 @@
     pdfRotation: 0,
     pdfUndo: [],
     pdfRedo: [],
+    pdfClipboard: null,
     selectedAnnotationId: null,
     sheetData: [],
     sheetUndo: [],
@@ -320,7 +325,7 @@
         h1: () => execDocCommand('formatBlock','H1'), h2: () => execDocCommand('formatBlock','H2'), quote: () => execDocCommand('formatBlock','BLOCKQUOTE'), codeBlock: insertCodeBlock,
         removeFormat: () => execDocCommand('removeFormat'),
         pageA4: () => setPageSize('A4'), pageLetter: () => setPageSize('Letter'), marginNormal: () => setMargin(72), marginNarrow: () => setMargin(36), marginWide: () => setMargin(96), insertPageBreak, fitWidth, pageWidth,
-        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, replacePdf, newBlankPdf, closePdf, focusPdfStyle,
+        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle,
         sheetAddRow, sheetDeleteRow, sheetAddCol, sheetDeleteCol, sheetFormulaSum, sheetFormulaAvg, sheetSortAsc: () => sortSheet(true), sheetSortDesc: () => sortSheet(false),
         zoomOut: () => changeZoom(-0.1), zoomReset: () => setZoom(1), zoomIn: () => changeZoom(0.1), toggleTheme, toggleFocus, fullscreen, updateCount: updateWordCount,
         docPreview: showDocPreview, docEdit: enterDocEdit, normalizeDoc, reloadFile
@@ -728,7 +733,7 @@
       image: 'Mode aktif: Gambar. Klik PDF untuk menaruh gambar yang dipilih.',
       erase: 'Mode aktif: Hapus. Klik anotasi yang ingin dihapus.'
     };
-    pdfHint.querySelector('span').textContent = hints[tool] || 'Mode PDF';
+    if (pdfHint && pdfHint.querySelector('span')) pdfHint.querySelector('span').textContent = hints[tool] || 'Mode PDF';
     syncActivePdfTools(); updatePdfCursor(); updatePdfStyleHint(); redrawPdfAnnotations();
   }
   function syncActivePdfTools(){ document.querySelectorAll('[data-pdf-tool]').forEach(b => b.classList.toggle('active', b.dataset.pdfTool === state.pdfTool)); }
@@ -1031,7 +1036,7 @@
       state.pdfTool = 'select';
       syncActivePdfTools();
       updatePdfCursor();
-      if (pdfHint) pdfHint.querySelector('span').textContent = 'Mode aktif: Pilih. Objek siap digeser.';
+      if (pdfHint && pdfHint.querySelector('span')) pdfHint.querySelector('span').textContent = 'Mode aktif: Pilih. Objek siap digeser.';
     }
 
     state.selectedAnnotationId = id;
@@ -1080,6 +1085,95 @@
   function pushPdfHistory(){ state.pdfUndo.push(JSON.stringify(state.pdfAnnotations)); if (state.pdfUndo.length > 60) state.pdfUndo.shift(); state.pdfRedo = []; }
   function undoPdf(){ if (!state.pdfUndo.length) return toast('Tidak ada undo PDF.', 'warn'); state.pdfRedo.push(JSON.stringify(state.pdfAnnotations)); state.pdfAnnotations = JSON.parse(state.pdfUndo.pop()); state.selectedAnnotationId = null; redrawPdfAnnotations(); markDirty(); }
   function redoPdf(){ if (!state.pdfRedo.length) return toast('Tidak ada redo PDF.', 'warn'); state.pdfUndo.push(JSON.stringify(state.pdfAnnotations)); state.pdfAnnotations = JSON.parse(state.pdfRedo.pop()); redrawPdfAnnotations(); markDirty(); }
+
+
+  function clonePdfAnnotationForPaste(ann){
+    const copy = JSON.parse(JSON.stringify(ann));
+    copy.id = uid();
+    if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(copy.type)) {
+      copy.x = clamp((copy.x || 0) + 0.025, 0, Math.max(0, 1 - (copy.w || 0.05)));
+      copy.y = clamp((copy.y || 0) + 0.025, 0, Math.max(0, 1 - (copy.h || 0.05)));
+    } else if (copy.type === 'line' || copy.type === 'arrow') {
+      copy.x1 = clamp((copy.x1 || 0) + 0.025, 0, 1);
+      copy.x2 = clamp((copy.x2 || 0) + 0.025, 0, 1);
+      copy.y1 = clamp((copy.y1 || 0) + 0.025, 0, 1);
+      copy.y2 = clamp((copy.y2 || 0) + 0.025, 0, 1);
+    } else if (copy.type === 'draw' && copy.points) {
+      copy.points = copy.points.map(p => ({ x: clamp(p.x + 0.025, 0, 1), y: clamp(p.y + 0.025, 0, 1) }));
+    }
+    return copy;
+  }
+  function pdfCopySelected(){
+    const ann = getSelectedPdfAnnotation();
+    if (!ann) return;
+    state.pdfClipboard = JSON.parse(JSON.stringify(ann));
+    toast('Objek PDF disalin.', 'good');
+  }
+  function pdfPasteObject(){
+    if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
+    if (!state.pdfClipboard) return toast('Belum ada objek yang disalin.', 'warn');
+    pushPdfHistory();
+    const copy = clonePdfAnnotationForPaste(state.pdfClipboard);
+    state.pdfAnnotations.push(copy);
+    state.selectedAnnotationId = copy.id;
+    markDirty();
+    redrawPdfAnnotations();
+    updatePdfStyleControls();
+    toast('Objek ditempel.', 'good');
+  }
+  function pdfResetSelectedRotation(){
+    const ann = getSelectedPdfAnnotation();
+    if (!ann) return;
+    pushPdfHistory();
+    ann.rotation = 0;
+    markDirty();
+    redrawPdfAnnotations();
+  }
+  function nudgeSelectedPdf(dx, dy){
+    const ann = state.selectedAnnotationId ? state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId) : null;
+    if (!ann) return false;
+    pushPdfHistory();
+    if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) {
+      ann.x = clamp((ann.x || 0) + dx, 0, Math.max(0, 1 - (ann.w || 0.05)));
+      ann.y = clamp((ann.y || 0) + dy, 0, Math.max(0, 1 - (ann.h || 0.05)));
+    } else if (ann.type === 'line' || ann.type === 'arrow') {
+      ann.x1 = clamp((ann.x1 || 0) + dx, 0, 1); ann.x2 = clamp((ann.x2 || 0) + dx, 0, 1);
+      ann.y1 = clamp((ann.y1 || 0) + dy, 0, 1); ann.y2 = clamp((ann.y2 || 0) + dy, 0, 1);
+    } else if (ann.type === 'draw' && ann.points) {
+      ann.points = ann.points.map(p => ({ x: clamp(p.x + dx, 0, 1), y: clamp(p.y + dy, 0, 1) }));
+    }
+    markDirty();
+    redrawPdfAnnotations();
+    return true;
+  }
+  function pdfExportAnnotations(){
+    if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
+    const payload = { app:'Destara Dokumen PDF Editan', version:1, fileName:state.fileName, exportedAt:new Date().toISOString(), annotations:state.pdfAnnotations };
+    downloadBlob(new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'}), (state.fileName || 'pdf').replace(/\.pdf$/i,'') + '-editan.json');
+  }
+  function pdfImportAnnotations(){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        const anns = Array.isArray(data) ? data : data.annotations;
+        if (!Array.isArray(anns)) throw new Error('Format editan tidak valid.');
+        pushPdfHistory();
+        state.pdfAnnotations = anns.map(a => ({...a, id: a.id || uid()}));
+        state.selectedAnnotationId = null;
+        markDirty();
+        redrawPdfAnnotations();
+        toast('Editan PDF berhasil diimpor.', 'good');
+      } catch (err) {
+        toast('Import gagal: ' + (err.message || err), 'bad');
+      }
+    };
+    input.click();
+  }
 
   function getSelectedPdfAnnotation(){
     if (!state.selectedAnnotationId) { toast('Pilih objek PDF dulu.', 'warn'); return null; }
@@ -1390,6 +1484,15 @@
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z') { e.preventDefault(); e.shiftKey ? performRedo() : performUndo(); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='y') { e.preventDefault(); performRedo(); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='f') { e.preventDefault(); findModal.classList.add('show'); $('findText').focus(); }
+    if(state.mode==='pdf' && state.selectedAnnotationId && (e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='c') { e.preventDefault(); pdfCopySelected(); }
+    if(state.mode==='pdf' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='v') { e.preventDefault(); pdfPasteObject(); }
+    if(state.mode==='pdf' && state.selectedAnnotationId && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+      const step = e.shiftKey ? 0.02 : 0.005;
+      const dx = e.key==='ArrowLeft' ? -step : e.key==='ArrowRight' ? step : 0;
+      const dy = e.key==='ArrowUp' ? -step : e.key==='ArrowDown' ? step : 0;
+      nudgeSelectedPdf(dx, dy);
+    }
     if(e.key==='Delete' && state.mode==='pdf' && state.selectedAnnotationId) pdfDeleteSelected();
   }
   function handleCtrlWheel(e){ if(!e.ctrlKey && !e.metaKey) return; e.preventDefault(); changeZoom(e.deltaY < 0 ? .1 : -.1); }
