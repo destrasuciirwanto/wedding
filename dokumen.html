@@ -147,7 +147,7 @@
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
-  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara Dokumen</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara Dokumen</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
   <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
@@ -445,6 +445,7 @@
     document.addEventListener('change', handleChange);
     document.addEventListener('input', handleInput);
     document.addEventListener('toggle', handlePdfMenuToggle, true);
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
     document.addEventListener('keydown', handleKeys);
     fileInput.addEventListener('change', e => { const file = e.target.files && e.target.files[0]; if (file) openFile(file, null); e.target.value = ''; });
     imageInput.addEventListener('change', insertImageFromInput);
@@ -2050,7 +2051,30 @@
     refreshIcons();
   }
   function toggleFocus(){ document.body.classList.toggle('focus-mode'); }
-  function fullscreen(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+  function updateFullscreenButton(){
+    const isFull = !!document.fullscreenElement;
+    document.querySelectorAll('[data-action="fullscreen"]').forEach(btn => {
+      btn.title = isFull ? 'Kembali normal' : 'Fullscreen';
+      const icon = btn.querySelector('i');
+      if (icon) icon.setAttribute('data-lucide', isFull ? 'minimize-2' : 'maximize-2');
+      const label = btn.querySelector('span');
+      if (label) label.textContent = isFull ? 'Normal' : 'Fullscreen';
+    });
+    refreshIcons();
+  }
+  async function fullscreen(){
+    try {
+      if (!document.fullscreenElement) {
+        if (!document.documentElement.requestFullscreen) return toast('Fullscreen tidak didukung browser ini.', 'warn');
+        await document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) await document.exitFullscreen();
+      }
+    } catch (err) {
+      toast('Fullscreen tidak bisa diaktifkan dari browser ini.', 'warn');
+    }
+    updateFullscreenButton();
+  }
 
   function markDirty(){ state.dirty=true; saveText.textContent='Belum disimpan'; const d=state.documents.find(x=>x.id===state.activeDocId); if(d){ d.dirty=true; d.title=state.fileName || d.title; } renderDocTabs(); }
   function status(msg){ statusText.textContent = msg; }
