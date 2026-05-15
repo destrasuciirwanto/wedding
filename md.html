@@ -1,0 +1,3979 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Selamat Hari Jadi Kita — Destra & Mutiara</title>
+  <style>
+    :root {
+      --bg-1: #05010b;
+      --bg-2: #13061f;
+      --bg-3: #2d0c3f;
+      --rose: #ff7acb;
+      --rose-2: #ff4fac;
+      --rose-soft: #ffd1ef;
+      --gold: #ffe8a3;
+      --violet: #9b5cff;
+      --cyan: #8df7ff;
+      --white: #fff7ff;
+      --muted: rgba(255, 247, 255, .76);
+      --glass-line: rgba(255, 255, 255, .18);
+      --ease-cinema: cubic-bezier(.16, 1, .3, 1);
+      --ease-dream: cubic-bezier(.19, 1, .22, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-1);
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow: hidden;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 122, 203, .36), transparent 31%),
+        radial-gradient(circle at 89% 18%, rgba(141, 247, 255, .19), transparent 27%),
+        radial-gradient(circle at 50% 92%, rgba(155, 92, 255, .38), transparent 37%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 45%, #04010a);
+      isolation: isolate;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -24%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, .72) 0 1px, transparent 1.8px) 10px 10px / 74px 74px,
+        radial-gradient(circle, rgba(255, 122, 203, .43) 0 1px, transparent 2px) 38px 46px / 118px 118px,
+        radial-gradient(circle, rgba(255, 232, 163, .42) 0 1px, transparent 2px) 80px 24px / 154px 154px;
+      opacity: .58;
+      animation: starDrift 58s linear infinite;
+    }
+
+    body::after {
+      background:
+        conic-gradient(from 120deg at 50% 50%, transparent, rgba(255, 122, 203, .17), transparent, rgba(155, 92, 255, .17), transparent);
+      filter: blur(54px);
+      animation: auraSpin 48s linear infinite;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .noise,
+    .film-grain,
+    .light-leaks,
+    .cinema-vignette,
+    .letterbox,
+    .chromatic,
+    .lens-flare,
+    .anamorphic,
+    .bokeh-layer,
+    .shooting-stars,
+    .petal-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .noise {
+      z-index: 1;
+      opacity: .115;
+      background-image:
+        linear-gradient(rgba(255,255,255,.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(circle at center, black, transparent 76%);
+    }
+
+    .film-grain {
+      z-index: 10;
+      opacity: .16;
+      mix-blend-mode: overlay;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.18) 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 60%, rgba(255,255,255,.12) 0 1px, transparent 1px),
+        radial-gradient(circle at 30% 80%, rgba(0,0,0,.3) 0 1px, transparent 1px);
+      background-size: 4px 4px, 5px 5px, 6px 6px;
+      animation: grainMove .6s steps(4) infinite;
+    }
+
+    .light-leaks {
+      z-index: 2;
+      opacity: .65;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(circle at 8% 30%, rgba(255, 122, 203, .18), transparent 20%),
+        radial-gradient(circle at 92% 12%, rgba(255, 232, 163, .13), transparent 18%),
+        radial-gradient(circle at 50% 105%, rgba(155, 92, 255, .18), transparent 28%);
+      filter: blur(18px);
+      animation: leakPulse 13s ease-in-out infinite alternate;
+    }
+
+    .lens-flare {
+      z-index: 2;
+      opacity: .35;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(circle at 70% 18%, rgba(255,255,255,.40), rgba(255,232,163,.14) 9%, transparent 20%),
+        radial-gradient(circle at 58% 29%, rgba(255,122,203,.12), transparent 8%),
+        radial-gradient(circle at 42% 41%, rgba(141,247,255,.10), transparent 6%);
+      animation: lensDrift 18s ease-in-out infinite alternate;
+    }
+
+    .anamorphic {
+      z-index: 2;
+      top: 32%;
+      bottom: auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(141,247,255,.18), rgba(255,122,203,.30), rgba(255,232,163,.22), transparent);
+      box-shadow: 0 0 34px rgba(255,122,203,.32);
+      opacity: .55;
+      transform: rotate(-3deg);
+      animation: anamorphicFloat 12s ease-in-out infinite;
+    }
+
+    .cinema-vignette {
+      z-index: 11;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.48), transparent 15%, transparent 82%, rgba(0,0,0,.54)),
+        radial-gradient(circle at center, transparent 38%, rgba(0,0,0,.38));
+      opacity: .86;
+    }
+
+    .letterbox {
+      z-index: 12;
+    }
+
+    .letterbox::before,
+    .letterbox::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: clamp(14px, 3.5vh, 34px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.82), rgba(0,0,0,.35));
+    }
+
+    .letterbox::before {
+      top: 0;
+    }
+
+    .letterbox::after {
+      bottom: 0;
+      transform: rotate(180deg);
+    }
+
+    .chromatic {
+      z-index: 13;
+      opacity: .16;
+      mix-blend-mode: screen;
+      background:
+        linear-gradient(90deg, rgba(255,0,100,.07), transparent 18%, transparent 82%, rgba(0,200,255,.07));
+      animation: chromaBreath 7s ease-in-out infinite;
+    }
+
+    .bokeh-layer,
+    .shooting-stars,
+    .petal-layer {
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .bokeh-layer span {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      left: var(--left);
+      top: var(--top);
+      background: radial-gradient(circle, rgba(255,255,255,.5), rgba(255,122,203,.12), transparent 68%);
+      filter: blur(1px);
+      opacity: 0;
+      animation: bokehFloat var(--dur) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .shooting-stars span {
+      position: absolute;
+      width: 132px;
+      height: 1px;
+      top: var(--top);
+      left: var(--left);
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.96), rgba(255,122,203,.46), rgba(255,255,255,0));
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.8));
+      opacity: 0;
+      transform: rotate(-28deg) translateX(0);
+      animation: shooting var(--dur) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .petal-layer span {
+      position: absolute;
+      top: -12vh;
+      left: var(--left);
+      width: var(--size);
+      height: calc(var(--size) * 1.35);
+      border-radius: 100% 0 100% 0;
+      background: linear-gradient(135deg, rgba(255,209,239,.73), rgba(255,122,203,.18));
+      box-shadow: 0 0 18px rgba(255,122,203,.28);
+      opacity: .58;
+      transform: rotate(20deg);
+      animation: petalFall var(--dur) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .soft-orb {
+      position: fixed;
+      width: 27vmax;
+      height: 27vmax;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,122,203,.17), transparent 68%);
+      filter: blur(14px);
+      animation: orbFloat 24s ease-in-out infinite alternate;
+    }
+
+    .orb-one {
+      left: -9vmax;
+      top: 12vmax;
+    }
+
+    .orb-two {
+      right: -12vmax;
+      bottom: 6vmax;
+      background: radial-gradient(circle, rgba(155,92,255,.22), transparent 68%);
+      animation-delay: -8s;
+    }
+
+    .orb-three {
+      left: 28vw;
+      bottom: -17vmax;
+      width: 20vmax;
+      height: 20vmax;
+      background: radial-gradient(circle, rgba(255,232,163,.14), transparent 70%);
+      animation-delay: -13s;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 4;
+      width: 100vw;
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: clamp(14px, 3.8vw, 28px);
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.055) translateY(24px);
+      filter: blur(18px) saturate(1.1);
+      transition:
+        opacity 2300ms var(--ease-cinema),
+        transform 2500ms var(--ease-cinema),
+        filter 2300ms var(--ease-cinema),
+        visibility 2500ms var(--ease-cinema);
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      filter: blur(0) saturate(1.08);
+    }
+
+    .screen.exit {
+      opacity: 0;
+      transform: scale(.94) translateY(-34px);
+      filter: blur(24px) saturate(1.28);
+    }
+
+    .hero-card,
+    .loading-card,
+    .letter-card,
+    .game-card {
+      position: relative;
+      width: min(960px, 100%);
+      border: 1px solid var(--glass-line);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.138), rgba(255,255,255,.047)),
+        radial-gradient(circle at top left, rgba(255,122,203,.26), transparent 42%),
+        radial-gradient(circle at bottom right, rgba(255,232,163,.15), transparent 38%);
+      box-shadow:
+        0 36px 135px rgba(0, 0, 0, .55),
+        0 0 110px rgba(255, 122, 203, .10),
+        inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: clamp(24px, 5vw, 38px);
+      overflow: hidden;
+    }
+
+    .hero-card {
+      min-height: min(710px, calc(100svh - 32px));
+      display: grid;
+      place-items: center;
+      padding: clamp(28px, 6vw, 78px);
+      text-align: center;
+    }
+
+    .hero-card::before,
+    .loading-card::before,
+    .letter-card::before,
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 0 38%, rgba(255,255,255,.21) 46%, transparent 56% 100%);
+      transform: translateX(-125%);
+      animation: glassSweep 14s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .hero-card::after,
+    .loading-card::after,
+    .letter-card::after,
+    .game-card::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,232,163,.16), transparent),
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.12), transparent 34%);
+      opacity: .7;
+      mask-image: linear-gradient(to bottom, black, transparent 56%);
+    }
+
+    .hero-inner,
+    .loading-inner,
+    .letter-inner,
+    .game-inner {
+      position: relative;
+      z-index: 4;
+    }
+
+    .cinematic-in {
+      opacity: 0;
+      transform: translateY(34px) scale(.98);
+      filter: blur(14px);
+    }
+
+    .active .cinematic-in {
+      animation: cinematicIn 2.9s var(--ease-dream) forwards;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: clamp(18px, 4vw, 26px);
+      padding: 10px 16px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 999px;
+      color: var(--gold);
+      font-size: clamp(.72rem, 2.6vw, .95rem);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.075);
+      box-shadow: 0 0 35px rgba(255, 122, 203, .16);
+    }
+
+    .spark {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: var(--rose);
+      box-shadow: 0 0 18px var(--rose), 0 0 38px var(--gold);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    h1 {
+      max-width: 920px;
+      margin: 0 auto;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.65rem, 13vw, 7.6rem);
+      line-height: .9;
+      letter-spacing: -.06em;
+      text-wrap: balance;
+      text-shadow:
+        0 0 24px rgba(255, 122, 203, .39),
+        0 0 68px rgba(155, 92, 255, .35);
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #fff7ff 0%, #ffd6f0 30%, #ffe8a3 58%, #bca0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 180% auto;
+      animation: textGlowMove 7s ease-in-out infinite alternate;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: clamp(20px, 4vw, 28px) auto 0;
+      color: var(--muted);
+      font-size: clamp(.98rem, 3.8vw, 1.22rem);
+      line-height: 1.84;
+      text-wrap: pretty;
+    }
+
+    .name-line {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: clamp(24px, 5vw, 34px) 0 0;
+      color: var(--white);
+      font-size: clamp(.98rem, 3.8vw, 1.3rem);
+      font-weight: 750;
+    }
+
+    .heart-chip {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--rose-soft);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 0 32px rgba(255,122,203,.28);
+      animation: heartBeat 1.9s ease-in-out infinite;
+    }
+
+    .continue-btn,
+    .love-game-btn,
+    .play-btn,
+    .restart-btn {
+      position: relative;
+      border: 0;
+      color: #210018;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 18px 31px;
+      min-height: 56px;
+      border-radius: 999px;
+      cursor: pointer;
+      background: linear-gradient(100deg, var(--gold), var(--rose-soft), #dabdff);
+      box-shadow:
+        0 18px 46px rgba(255, 122, 203, .32),
+        0 0 0 1px rgba(255,255,255,.42) inset;
+      overflow: hidden;
+      transition: transform .52s ease, box-shadow .52s ease, opacity .4s ease;
+    }
+
+    .continue-btn {
+      margin-top: clamp(34px, 7vw, 48px);
+    }
+
+    .love-game-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: clamp(28px, 7vw, 48px);
+      width: min(100%, 360px);
+    }
+
+    .continue-btn:hover,
+    .love-game-btn:hover,
+    .play-btn:hover,
+    .restart-btn:hover {
+      transform: translateY(-4px) scale(1.025);
+      box-shadow:
+        0 26px 64px rgba(255, 122, 203, .45),
+        0 0 48px rgba(255, 232, 163, .24),
+        0 0 0 1px rgba(255,255,255,.52) inset;
+    }
+
+    .continue-btn:active,
+    .love-game-btn:active,
+    .play-btn:active,
+    .restart-btn:active {
+      transform: translateY(-1px) scale(.99);
+    }
+
+    .continue-btn::before,
+    .love-game-btn::before,
+    .play-btn::before,
+    .restart-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent);
+      transform: translateX(-115%);
+      animation: btnShine 4.4s ease-in-out infinite;
+    }
+
+    .floating {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating span {
+      position: absolute;
+      display: block;
+      color: rgba(255, 199, 234, .72);
+      text-shadow: 0 0 18px rgba(255,122,203,.7);
+      animation: floatHeart var(--dur) linear infinite;
+      font-size: var(--size);
+      left: var(--left);
+      bottom: -40px;
+      opacity: 0;
+    }
+
+    .loading-card {
+      width: min(800px, 100%);
+      padding: clamp(34px, 7vw, 78px);
+      text-align: center;
+      display: grid;
+      place-items: center;
+      min-height: min(640px, calc(100svh - 32px));
+    }
+
+    .loading-inner {
+      width: 100%;
+    }
+
+    .infinity-wrap {
+      position: relative;
+      width: clamp(176px, 47vw, 250px);
+      height: clamp(100px, 27vw, 142px);
+      margin: 0 auto 0;
+      filter: drop-shadow(0 0 24px rgba(255, 122, 203, .58));
+      opacity: 0;
+      transform: scale(.78) translateY(28px);
+    }
+
+    .active .infinity-wrap {
+      animation:
+        loaderReveal 2.7s var(--ease-dream) forwards .55s,
+        loaderLift 2.6s var(--ease-dream) forwards 5.35s,
+        loaderBreath 3.2s ease-in-out infinite 8s;
+    }
+
+    .loader-halo {
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255,122,203,.20), transparent 60%),
+        conic-gradient(from 0deg, rgba(255,122,203,.0), rgba(255,232,163,.26), rgba(141,247,255,.18), rgba(255,122,203,.0));
+      filter: blur(12px);
+      animation: haloSpin 7s linear infinite;
+    }
+
+    .infinity-svg {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .infinity-base {
+      fill: none;
+      stroke: rgba(255, 255, 255, .13);
+      stroke-width: 15;
+      stroke-linecap: round;
+    }
+
+    .infinity-glow {
+      fill: none;
+      stroke: url(#loveGradient);
+      stroke-width: 15;
+      stroke-linecap: round;
+      stroke-dasharray: 80 360;
+      animation: infiniteStroke 2.5s linear infinite;
+    }
+
+    .loading-title,
+    .loading-caption,
+    .loading-small-note {
+      opacity: 0;
+      transform: translateY(32px);
+      filter: blur(14px);
+    }
+
+    .active .loading-title {
+      animation: loadingTextIn 3s var(--ease-dream) forwards 5.95s;
+    }
+
+    .active .loading-caption {
+      animation: loadingTextIn 3.1s var(--ease-dream) forwards 6.85s;
+    }
+
+    .active .loading-small-note {
+      animation: loadingTextIn 3.1s var(--ease-dream) forwards 8.05s;
+    }
+
+    .loading-title {
+      margin-top: -2px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.1rem, 10vw, 5.4rem);
+      line-height: 1;
+      letter-spacing: -.05em;
+      text-wrap: balance;
+    }
+
+    .loading-caption {
+      max-width: 650px;
+      margin: clamp(20px, 5vw, 28px) auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 3.9vw, 1.24rem);
+      line-height: 1.86;
+      text-wrap: pretty;
+    }
+
+    .loading-small-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 26px;
+      padding: 10px 15px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px;
+      color: rgba(255,232,163,.9);
+      background: rgba(255,255,255,.06);
+      font-size: clamp(.82rem, 3.3vw, .98rem);
+      letter-spacing: .06em;
+    }
+
+    .loading-small-note::before {
+      content: "♥";
+      color: var(--rose-soft);
+      text-shadow: 0 0 15px var(--rose);
+      animation: heartBeat 1.8s ease-in-out infinite;
+    }
+
+    .dots::after {
+      content: "";
+      animation: dots 1.55s steps(4, end) infinite;
+    }
+
+    .top-loader {
+      position: fixed;
+      z-index: 8;
+      top: max(10px, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-98px) scale(.45);
+      width: 172px;
+      height: 96px;
+      opacity: 0;
+      transition: transform 1800ms var(--ease-dream), opacity 1550ms ease;
+      pointer-events: none;
+    }
+
+    .top-loader.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(.45);
+    }
+
+    .top-loader.hide {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-98px) scale(.45);
+    }
+
+    .top-loader-label {
+      position: absolute;
+      left: 50%;
+      top: 74px;
+      transform: translateX(-50%);
+      font-size: 15px;
+      white-space: nowrap;
+      color: rgba(255, 247, 255, .75);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .final-screen {
+      place-items: start center;
+      height: 100vh;
+      height: 100svh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: calc(112px + env(safe-area-inset-top)) clamp(14px, 4vw, 24px) calc(56px + env(safe-area-inset-bottom));
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    .final-screen::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .final-screen::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.06);
+    }
+
+    .final-screen::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--rose), var(--violet));
+      border-radius: 999px;
+    }
+
+    .letter-card {
+      width: min(960px, 100%);
+      padding: clamp(28px, 6vw, 68px);
+      overflow: visible;
+      margin-bottom: 20px;
+    }
+
+    .letter-card::before {
+      animation-duration: 16s;
+    }
+
+    .letter-card > .floating {
+      border-radius: inherit;
+    }
+
+    .edge-glow {
+      position: absolute;
+      inset: -1px;
+      border-radius: clamp(24px, 5vw, 38px);
+      pointer-events: none;
+      background: linear-gradient(130deg, rgba(255,122,203,.58), transparent 25%, transparent 65%, rgba(255,232,163,.44));
+      opacity: .38;
+      filter: blur(18px);
+      z-index: -1;
+    }
+
+    .letter-header {
+      text-align: center;
+      margin-bottom: clamp(30px, 6vw, 42px);
+    }
+
+    .letter-kicker {
+      color: var(--gold);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: clamp(.72rem, 2.9vw, .84rem);
+      margin-bottom: 14px;
+    }
+
+    .letter-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 10vw, 5rem);
+      line-height: .98;
+      letter-spacing: -.05em;
+      text-wrap: balance;
+      text-shadow: 0 0 42px rgba(255,122,203,.32);
+    }
+
+    .letter-for {
+      margin: 18px auto 0;
+      max-width: 680px;
+      color: rgba(255, 247, 255, .78);
+      line-height: 1.8;
+      font-size: clamp(.96rem, 3.7vw, 1.12rem);
+      text-wrap: pretty;
+    }
+
+    .letter-body {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(1.02rem, 4vw, 1.22rem);
+      line-height: 2.08;
+      color: rgba(255, 247, 255, .91);
+    }
+
+    .letter-body p,
+    .signature,
+    .game-button-wrap {
+      opacity: 0;
+      transform: translateY(38px);
+      filter: blur(14px);
+    }
+
+    .final-screen.active .letter-body p,
+    .final-screen.active .signature,
+    .final-screen.active .game-button-wrap {
+      animation: paragraphIn 2.65s var(--ease-dream) forwards;
+      animation-delay: var(--pdelay, 0s);
+    }
+
+    .letter-body p {
+      margin-bottom: clamp(22px, 5vw, 30px);
+      text-wrap: pretty;
+      position: relative;
+    }
+
+    .letter-body p::first-letter {
+      color: var(--rose-soft);
+      text-shadow: 0 0 16px rgba(255,122,203,.45);
+    }
+
+    .signature {
+      margin-top: clamp(34px, 7vw, 44px);
+      text-align: right;
+      color: var(--rose-soft);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.45rem, 6vw, 2.35rem);
+    }
+
+    .game-button-wrap {
+      text-align: center;
+    }
+
+    .game-hint {
+      margin-top: 14px;
+      color: rgba(255,247,255,.65);
+      font-size: .98rem;
+      line-height: 1.6;
+    }
+
+    .shine-ring {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 232, 163, .16);
+      box-shadow: 0 0 60px rgba(255, 232, 163, .1), inset 0 0 50px rgba(255, 122, 203, .09);
+      animation: ringFloat 12s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .ring-a {
+      left: -110px;
+      top: 12%;
+    }
+
+    .ring-b {
+      right: -130px;
+      bottom: 8%;
+      width: 320px;
+      height: 320px;
+      animation-delay: -4s;
+    }
+
+    .reveal-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 7;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(circle at center, rgba(255,247,255,.96), rgba(255,122,203,.34) 30%, transparent 64%);
+      transform: scale(.32);
+    }
+
+    .reveal-flash.play {
+      animation: revealFlash 2.4s var(--ease-dream) forwards;
+    }
+
+    .aurora-line {
+      position: fixed;
+      left: -24%;
+      right: -24%;
+      height: 1px;
+      top: 50%;
+      z-index: 4;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,232,163,.96), rgba(255,122,203,.92), rgba(141,247,255,.72), transparent);
+      box-shadow: 0 0 46px rgba(255,122,203,.78);
+      transform: translateY(-50%) rotate(-4deg) scaleX(0);
+      opacity: 0;
+    }
+
+    .aurora-line.play {
+      animation: auroraWipe 2.65s var(--ease-dream) forwards;
+    }
+
+    .curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(90deg, rgba(6,2,13,0), rgba(255,122,203,.17), rgba(6,2,13,0)),
+        radial-gradient(circle at center, rgba(255,232,163,.19), transparent 55%);
+      transform: scaleX(0);
+      transform-origin: center;
+    }
+
+    .curtain.play {
+      animation: curtainBloom 2.8s var(--ease-dream) forwards;
+    }
+
+    /* GAME */
+    .game-screen {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .game-card {
+      width: 100vw;
+      height: 100vh;
+      height: 100svh;
+      border-radius: 0;
+      border: 0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,122,203,.16), transparent 35%),
+        radial-gradient(circle at 70% 80%, rgba(141,247,255,.12), transparent 30%),
+        linear-gradient(160deg, #04010b, #13051e 45%, #080214);
+      box-shadow: none;
+    }
+
+    .game-card::before,
+    .game-card::after {
+      display: none;
+    }
+
+    #loveCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .game-hud {
+      position: absolute;
+      z-index: 6;
+      top: calc(18px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(930px, calc(100% - 26px));
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      pointer-events: none;
+    }
+
+    .hud-panel {
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 16px 48px rgba(0,0,0,.28);
+      border-radius: 22px;
+      padding: 13px 14px;
+    }
+
+    .hud-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(255,247,255,.86);
+      font-size: .86rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .meter {
+      height: 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.1);
+    }
+
+    .meter-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--rose), var(--gold), var(--cyan));
+      box-shadow: 0 0 24px rgba(255,122,203,.5);
+      transition: width .35s ease;
+    }
+
+    .hud-stats {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      border-radius: 999px;
+      padding: 10px 12px;
+      color: rgba(255,247,255,.9);
+      font-size: .85rem;
+      white-space: nowrap;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .game-center-message {
+      position: absolute;
+      z-index: 7;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      pointer-events: auto;
+      transition: opacity .8s ease, transform .8s var(--ease-dream);
+    }
+
+    .game-center-message.hidden {
+      opacity: 0;
+      transform: scale(.95);
+      pointer-events: none;
+    }
+
+    .game-modal {
+      width: min(680px, 100%);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.052)),
+        radial-gradient(circle at 20% 0%, rgba(255,122,203,.26), transparent 40%),
+        radial-gradient(circle at 80% 100%, rgba(255,232,163,.15), transparent 40%);
+      box-shadow:
+        0 35px 120px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: clamp(28px, 6vw, 58px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-modal::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent, rgba(255,255,255,.16), transparent);
+      transform: translateX(-120%);
+      animation: glassSweep 9s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .game-modal h2 {
+      position: relative;
+      z-index: 2;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.4rem, 9vw, 5.2rem);
+      line-height: .94;
+      letter-spacing: -.055em;
+      margin-bottom: 18px;
+    }
+
+    .game-modal p {
+      position: relative;
+      z-index: 2;
+      color: rgba(255,247,255,.78);
+      line-height: 1.8;
+      font-size: clamp(1rem, 3.8vw, 1.2rem);
+      margin-bottom: 26px;
+    }
+
+    .game-rules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+      margin: 24px 0 28px;
+    }
+
+    .rule-card {
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      border-radius: 18px;
+      padding: 13px 10px;
+      color: rgba(255,247,255,.84);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .rule-icon {
+      display: block;
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      text-shadow: 0 0 14px rgba(255,122,203,.75);
+    }
+
+    .game-pop {
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      top: 28%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      color: var(--gold);
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 22px rgba(255,122,203,.65);
+      opacity: 0;
+      font-size: clamp(1rem, 4vw, 1.45rem);
+    }
+
+    .game-pop.show {
+      animation: popCombo 1s var(--ease-dream) forwards;
+    }
+
+    .win-message {
+      display: none;
+    }
+
+    .win-message.show {
+      display: grid;
+    }
+
+    .game-screen.shake .game-card {
+      animation: screenShake .28s linear;
+    }
+
+    @keyframes cinematicIn {
+      0% {
+        opacity: 0;
+        transform: translateY(38px) scale(.98);
+        filter: blur(16px);
+      }
+      55% { opacity: .65; }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes loaderReveal {
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes loaderLift {
+      from {
+        margin-bottom: 0;
+        transform: scale(1) translateY(0);
+      }
+      to {
+        margin-bottom: clamp(22px, 5vw, 34px);
+        transform: scale(.92) translateY(-22px);
+      }
+    }
+
+    @keyframes loaderBreath {
+      0%, 100% { filter: drop-shadow(0 0 22px rgba(255, 122, 203, .52)); }
+      50% { filter: drop-shadow(0 0 36px rgba(255, 232, 163, .48)); }
+    }
+
+    @keyframes loadingTextIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes textGlowMove {
+      from { background-position: 0% center; }
+      to { background-position: 100% center; }
+    }
+
+    @keyframes starDrift {
+      from { transform: translate3d(0,0,0) rotate(0deg); }
+      to { transform: translate3d(-96px, -96px, 0) rotate(2deg); }
+    }
+
+    @keyframes auraSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes grainMove {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-1px,1px); }
+      50% { transform: translate(1px,-1px); }
+      75% { transform: translate(1px,1px); }
+      100% { transform: translate(0,0); }
+    }
+
+    @keyframes leakPulse {
+      from { transform: translate3d(-2vw, -1vh, 0) scale(1); opacity: .48; }
+      to { transform: translate3d(2vw, 1vh, 0) scale(1.08); opacity: .78; }
+    }
+
+    @keyframes lensDrift {
+      from { transform: translate3d(-2vw, 0, 0); }
+      to { transform: translate3d(3vw, 2vh, 0); }
+    }
+
+    @keyframes anamorphicFloat {
+      0%, 100% { transform: rotate(-3deg) translateY(0) scaleX(.92); opacity: .34; }
+      50% { transform: rotate(-3deg) translateY(18vh) scaleX(1); opacity: .75; }
+    }
+
+    @keyframes chromaBreath {
+      0%, 100% { opacity: .09; transform: translateX(0); }
+      50% { opacity: .2; transform: translateX(2px); }
+    }
+
+    @keyframes bokehFloat {
+      0%, 100% { opacity: 0; transform: translateY(18px) scale(.85); }
+      30%, 70% { opacity: .55; }
+      50% { transform: translateY(-26px) scale(1.16); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(.9); opacity: .72; }
+      50% { transform: scale(1.45); opacity: 1; }
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      18% { transform: scale(1.15); }
+      32% { transform: scale(.98); }
+      48% { transform: scale(1.1); }
+    }
+
+    @keyframes glassSweep {
+      0%, 45% { transform: translateX(-128%); }
+      65%, 100% { transform: translateX(128%); }
+    }
+
+    @keyframes btnShine {
+      0%, 58% { transform: translateX(-120%); }
+      84%, 100% { transform: translateX(120%); }
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(.72);
+        opacity: 0;
+      }
+      12% { opacity: .72; }
+      80% { opacity: .36; }
+      100% {
+        transform: translate3d(var(--drift), -118vh, 0) rotate(360deg) scale(1.18);
+        opacity: 0;
+      }
+    }
+
+    @keyframes shooting {
+      0%, 65% {
+        opacity: 0;
+        transform: rotate(-28deg) translateX(0);
+      }
+      72% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: rotate(-28deg) translateX(-560px);
+      }
+    }
+
+    @keyframes petalFall {
+      0% {
+        transform: translate3d(0, -10vh, 0) rotate(0deg);
+        opacity: 0;
+      }
+      12% { opacity: .58; }
+      100% {
+        transform: translate3d(var(--drift), 112vh, 0) rotate(420deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes infiniteStroke {
+      to { stroke-dashoffset: -440; }
+    }
+
+    @keyframes haloSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes dots {
+      0% { content: ""; }
+      25% { content: "."; }
+      50% { content: ".."; }
+      75%, 100% { content: "..."; }
+    }
+
+    @keyframes revealFlash {
+      0% { opacity: 0; transform: scale(.28); filter: blur(14px); }
+      38% { opacity: .88; transform: scale(1); filter: blur(0); }
+      100% { opacity: 0; transform: scale(1.9); filter: blur(26px); }
+    }
+
+    @keyframes auroraWipe {
+      0% { opacity: 0; transform: translateY(-50%) rotate(-4deg) scaleX(0); }
+      38% { opacity: 1; transform: translateY(-50%) rotate(-4deg) scaleX(1); }
+      100% { opacity: 0; transform: translateY(-50%) rotate(-4deg) scaleX(1.1) translateX(24%); }
+    }
+
+    @keyframes curtainBloom {
+      0% { opacity: 0; transform: scaleX(0); filter: blur(18px); }
+      40% { opacity: .9; transform: scaleX(1); filter: blur(0); }
+      100% { opacity: 0; transform: scaleX(1.15); filter: blur(28px); }
+    }
+
+    @keyframes paragraphIn {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+        filter: blur(16px);
+      }
+      55% { opacity: .72; }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes ringFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); opacity: .62; }
+      50% { transform: translateY(-26px) rotate(12deg); opacity: .95; }
+    }
+
+    @keyframes orbFloat {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(9vw, -5vh, 0) scale(1.14); }
+    }
+
+    @keyframes popCombo {
+      0% { opacity: 0; transform: translateX(-50%) translateY(16px) scale(.88); filter: blur(8px); }
+      30% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.06); filter: blur(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-28px) scale(1); filter: blur(5px); }
+    }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+
+    /* GAME 2: RASI CINTA */
+    .game2-card {
+      background:
+        radial-gradient(circle at 48% 18%, rgba(255,232,163,.13), transparent 28%),
+        radial-gradient(circle at 18% 78%, rgba(255,122,203,.14), transparent 30%),
+        radial-gradient(circle at 85% 70%, rgba(141,247,255,.12), transparent 30%),
+        linear-gradient(160deg, #03010a, #14051f 48%, #05010d);
+    }
+
+    #promiseCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .constellation-note {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(720px, calc(100% - 26px));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      padding: 13px 15px;
+      color: rgba(255,247,255,.78);
+      background: rgba(255,255,255,.075);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      text-align: center;
+      line-height: 1.55;
+      box-shadow: 0 18px 48px rgba(0,0,0,.26);
+      pointer-events: none;
+    }
+
+    .game2-toast {
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      top: 28%;
+      transform: translateX(-50%);
+      width: min(620px, calc(100% - 34px));
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 24px;
+      padding: 16px 18px;
+      text-align: center;
+      color: rgba(255,247,255,.94);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.055)),
+        radial-gradient(circle at 50% 0%, rgba(255,232,163,.16), transparent 55%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.35), 0 0 42px rgba(255,122,203,.16);
+      opacity: 0;
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    .game2-toast.show {
+      animation: toastReveal 2.2s var(--ease-dream) forwards;
+    }
+
+    .final-love-message {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.065);
+      color: rgba(255,247,255,.84);
+      line-height: 1.75;
+    }
+
+    @keyframes toastReveal {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(18px) scale(.94);
+        filter: blur(12px);
+      }
+      20%, 78% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px) scale(.98);
+        filter: blur(8px);
+      }
+    }
+
+
+
+    .ultimate-final-title {
+      margin: 20px auto 0;
+      max-width: 780px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.15rem, 8vw, 5.2rem);
+      line-height: 1.02;
+      letter-spacing: -.055em;
+      text-align: center;
+      text-wrap: balance;
+      background: linear-gradient(100deg, #fff7ff 0%, #ffd1ef 28%, #ffe8a3 58%, #bca0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 30px rgba(255,122,203,.36),
+        0 0 70px rgba(255,232,163,.18);
+      animation: finalTitlePulse 3.6s ease-in-out infinite;
+    }
+
+    .ultimate-final-subtitle {
+      margin-top: 16px;
+      color: rgba(255,247,255,.78);
+      font-size: clamp(1rem, 3.8vw, 1.28rem);
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    @keyframes finalTitlePulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 12px rgba(255,122,203,.28));
+        transform: scale(1);
+      }
+      50% {
+        filter: drop-shadow(0 0 26px rgba(255,232,163,.34));
+        transform: scale(1.018);
+      }
+    }
+
+    /* GAME 3: ONET CINTA */
+    .game3-card {
+      background:
+        radial-gradient(circle at 45% 16%, rgba(255,232,163,.13), transparent 28%),
+        radial-gradient(circle at 16% 70%, rgba(255,122,203,.17), transparent 31%),
+        radial-gradient(circle at 88% 72%, rgba(141,247,255,.13), transparent 29%),
+        linear-gradient(160deg, #020109, #17051f 50%, #05010e);
+    }
+
+    #onetCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .onet-note {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(760px, calc(100% - 26px));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      padding: 13px 15px;
+      color: rgba(255,247,255,.80);
+      background: rgba(255,255,255,.075);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      text-align: center;
+      line-height: 1.55;
+      box-shadow: 0 18px 48px rgba(0,0,0,.26);
+      pointer-events: none;
+    }
+
+    .onet-toast {
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      top: 27%;
+      transform: translateX(-50%);
+      width: min(620px, calc(100% - 34px));
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 24px;
+      padding: 16px 18px;
+      text-align: center;
+      color: rgba(255,247,255,.94);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.055)),
+        radial-gradient(circle at 50% 0%, rgba(255,232,163,.17), transparent 55%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.35), 0 0 42px rgba(255,122,203,.16);
+      opacity: 0;
+      pointer-events: none;
+      filter: blur(10px);
+    }
+
+    .onet-toast.show {
+      animation: toastReveal 2.2s var(--ease-dream) forwards;
+    }
+
+    .onet-screen-flash {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(255,122,203,.20), transparent 58%);
+      opacity: 0;
+    }
+
+    .onet-screen-flash.show {
+      animation: onetFlash .72s ease forwards;
+    }
+
+    @keyframes onetFlash {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+
+    /* MOBILE SAFETY: supaya modal, HUD, dan game tidak kepotong di HP */
+    .game-modal {
+      max-height: calc(100svh - 44px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    @media (max-width: 680px) {
+      .game-center-message {
+        padding: 14px;
+        align-items: center;
+      }
+
+      .game-modal {
+        width: min(100%, 520px);
+        max-height: calc(100svh - 28px);
+        padding: 24px 18px;
+        border-radius: 26px;
+      }
+
+      .game-modal h2 {
+        font-size: clamp(2rem, 10vw, 3.2rem);
+        margin-bottom: 12px;
+      }
+
+      .game-modal p {
+        font-size: .94rem;
+        line-height: 1.65;
+        margin-bottom: 18px;
+      }
+
+      .game-rules {
+        gap: 8px;
+        margin: 16px 0 20px;
+      }
+
+      .rule-card {
+        padding: 10px 9px;
+        font-size: .82rem;
+        line-height: 1.35;
+      }
+
+      .rule-icon {
+        font-size: 1.35rem;
+        margin-bottom: 4px;
+      }
+
+      .hud-title {
+        font-size: .72rem;
+      }
+
+      .meter {
+        height: 11px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .onet-note {
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        font-size: .86rem;
+        padding: 11px 12px;
+      }
+    }
+
+
+    /* MOBILE SAFETY: supaya modal, HUD, dan game tidak kepotong di HP */
+    .game-modal {
+      max-height: calc(100svh - 44px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    @media (max-width: 680px) {
+      .game-center-message {
+        padding: 14px;
+        align-items: center;
+      }
+
+      .game-modal {
+        width: min(100%, 520px);
+        max-height: calc(100svh - 28px);
+        padding: 24px 18px;
+        border-radius: 26px;
+      }
+
+      .game-modal h2 {
+        font-size: clamp(2rem, 10vw, 3.2rem);
+        margin-bottom: 12px;
+      }
+
+      .game-modal p {
+        font-size: .94rem;
+        line-height: 1.65;
+        margin-bottom: 18px;
+      }
+
+      .game-rules {
+        gap: 8px;
+        margin: 16px 0 20px;
+      }
+
+      .rule-card {
+        padding: 10px 9px;
+        font-size: .82rem;
+        line-height: 1.35;
+      }
+
+      .rule-icon {
+        font-size: 1.35rem;
+        margin-bottom: 4px;
+      }
+
+      .hud-title {
+        font-size: .72rem;
+      }
+
+      .meter {
+        height: 11px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .screen {
+        padding: 13px;
+      }
+
+      .hero-card {
+        min-height: calc(100svh - 26px);
+        padding: 30px 19px;
+      }
+
+      .eyebrow {
+        max-width: 100%;
+        letter-spacing: .12em;
+      }
+
+      .subtitle {
+        line-height: 1.72;
+      }
+
+      .name-line {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .heart-chip {
+        width: 38px;
+        height: 38px;
+      }
+
+      .continue-btn,
+      .love-game-btn,
+      .play-btn,
+      .restart-btn {
+        width: min(100%, 290px);
+        padding-inline: 18px;
+      }
+
+      .loading-card {
+        min-height: calc(100svh - 26px);
+        padding: 34px 20px;
+      }
+
+      .loading-caption {
+        line-height: 1.74;
+      }
+
+      .loading-small-note {
+        width: fit-content;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .final-screen {
+        padding-top: calc(96px + env(safe-area-inset-top));
+      }
+
+      .letter-card {
+        padding: 30px 20px 34px;
+      }
+
+      .letter-body {
+        line-height: 1.9;
+      }
+
+      .signature {
+        text-align: left;
+      }
+
+      .top-loader {
+        top: max(5px, env(safe-area-inset-top));
+        transform: translateX(-50%) translateY(-98px) scale(.34);
+      }
+
+      .top-loader.show {
+        transform: translateX(-50%) translateY(0) scale(.34);
+      }
+
+      .top-loader-label {
+        font-size: 13px;
+      }
+
+      .shine-ring {
+        opacity: .55;
+      }
+
+      .ring-a {
+        left: -170px;
+      }
+
+      .ring-b {
+        right: -220px;
+      }
+
+      .shooting-stars span {
+        width: 100px;
+      }
+
+      .game-hud {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        top: calc(12px + env(safe-area-inset-top));
+      }
+
+      .hud-panel {
+        padding: 11px 12px;
+        border-radius: 18px;
+      }
+
+      .hud-stats {
+        justify-content: center;
+      }
+
+      .stat-pill {
+        padding: 8px 10px;
+        font-size: .78rem;
+      }
+
+      .game-rules {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 380px) {
+      h1 {
+        font-size: clamp(2.35rem, 12.8vw, 3.2rem);
+      }
+
+      .letter-title {
+        font-size: clamp(2rem, 9vw, 2.8rem);
+      }
+
+      .letter-body {
+        font-size: .99rem;
+      }
+
+      .loading-small-note {
+        font-size: .78rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .cinematic-in,
+      .letter-body p,
+      .signature,
+      .game-button-wrap,
+      .infinity-wrap,
+      .loading-title,
+      .loading-caption,
+      .loading-small-note {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="film-grain"></div>
+  <div class="light-leaks"></div>
+  <div class="lens-flare"></div>
+  <div class="anamorphic"></div>
+  <div class="chromatic"></div>
+  <div class="soft-orb orb-one"></div>
+  <div class="soft-orb orb-two"></div>
+  <div class="soft-orb orb-three"></div>
+  <div class="bokeh-layer" id="bokehLayer" aria-hidden="true"></div>
+  <div class="shooting-stars" id="shootingStars" aria-hidden="true"></div>
+  <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+
+  <div class="reveal-flash" id="revealFlash"></div>
+  <div class="aurora-line" id="auroraLine"></div>
+  <div class="curtain" id="curtain"></div>
+
+  <div class="top-loader" id="topLoader" aria-hidden="true">
+    <svg class="infinity-svg" viewBox="0 0 220 120">
+      <defs>
+        <linearGradient id="loveGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ff7acb" />
+          <stop offset="45%" stop-color="#ffe8a3" />
+          <stop offset="100%" stop-color="#8df7ff" />
+        </linearGradient>
+      </defs>
+      <path class="infinity-base" d="M30 60 C30 25, 80 25, 110 60 C140 95, 190 95, 190 60 C190 25, 140 25, 110 60 C80 95, 30 95, 30 60" />
+      <path class="infinity-glow" stroke="url(#loveGradientTop)" d="M30 60 C30 25, 80 25, 110 60 C140 95, 190 95, 190 60 C190 25, 140 25, 110 60 C80 95, 30 95, 30 60" />
+    </svg>
+    <div class="top-loader-label">Forever loading</div>
+  </div>
+
+  <main class="stage">
+    <section class="screen active" id="screenIntro">
+      <div class="hero-card">
+        <div class="floating" aria-hidden="true" id="floatingIntro"></div>
+        <div class="hero-inner">
+          <div class="eyebrow cinematic-in" style="--delay: .35s;"><span class="spark"></span> Kisah yang tidak pernah selesai</div>
+          <h1 class="cinematic-in" style="--delay: 1.15s;"><span class="gradient-text">Selamat Hari Jadi Kita</span></h1>
+          <p class="subtitle cinematic-in" style="--delay: 2.15s;">
+            Sebuah halaman kecil dari Destra Suci Irwanto untuk Mutiara Devira Kirany,
+            tempat cinta dibuat terus menyala tanpa akhir.
+          </p>
+          <div class="name-line cinematic-in" style="--delay: 3.15s;">
+            <span>Destra Suci Irwanto</span>
+            <span class="heart-chip">♥</span>
+            <span>Mutiara Devira Kirany</span>
+          </div>
+          <button class="continue-btn cinematic-in" style="--delay: 4.15s;" id="continueBtn" type="button">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screenLoading">
+      <div class="loading-card">
+        <div class="shine-ring ring-a"></div>
+        <div class="shine-ring ring-b"></div>
+
+        <div class="loading-inner">
+          <div class="infinity-wrap" aria-hidden="true">
+            <div class="loader-halo"></div>
+            <svg class="infinity-svg" viewBox="0 0 220 120">
+              <defs>
+                <linearGradient id="loveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff7acb" />
+                  <stop offset="45%" stop-color="#ffe8a3" />
+                  <stop offset="100%" stop-color="#8df7ff" />
+                </linearGradient>
+              </defs>
+              <path class="infinity-base" d="M30 60 C30 25, 80 25, 110 60 C140 95, 190 95, 190 60 C190 25, 140 25, 110 60 C80 95, 30 95, 30 60" />
+              <path class="infinity-glow" d="M30 60 C30 25, 80 25, 110 60 C140 95, 190 95, 190 60 C190 25, 140 25, 110 60 C80 95, 30 95, 30 60" />
+            </svg>
+          </div>
+
+          <h2 class="loading-title gradient-text">Loading cinta<span class="dots"></span></h2>
+          <p class="loading-caption">
+            Loading ini tidak akan kelar, sama seperti cinta dan sayang aku sama kamu
+            yang tidak akan pernah putus.
+          </p>
+          <div class="loading-small-note">Tunggu sebentar, cintanya selalu abadi</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen final-screen" id="screenFinal">
+      <article class="letter-card">
+        <div class="edge-glow"></div>
+        <div class="floating" aria-hidden="true" id="floatingFinal"></div>
+
+        <div class="letter-inner">
+          <header class="letter-header">
+            <div class="letter-kicker cinematic-in" style="--delay: .55s;">Untuk Mutiara Devira Kirany</div>
+            <h2 class="letter-title gradient-text cinematic-in" style="--delay: 1.45s;">Selamat Hari Jadi Kita</h2>
+            <p class="letter-for cinematic-in" style="--delay: 2.35s;">Dari Destra Suci Irwanto, untuk calon istri yang paling aku cintai.</p>
+          </header>
+
+          <div class="letter-body">
+            <p style="--pdelay: 3.7s;">Selamat hari jadi kita, sayangku.</p>
+
+            <p style="--pdelay: 5.2s;">Terima kasih sudah hadir di hidup aku dan menjadi wanita yang selama ini aku impikan. Dari sekian banyak hal yang pernah aku minta dalam doa, ternyata semuanya ada di kamu. Aku benar-benar bersyukur bisa memiliki kamu, mencintai kamu, dan dicintai oleh kamu.</p>
+
+            <p style="--pdelay: 6.9s;">Sayang, mungkin kata-kata aku tidak pernah cukup untuk menjelaskan betapa berartinya kamu buat aku. Tapi satu hal yang harus kamu tahu, kamu adalah rumah ternyaman yang pernah aku temukan. Di kamu, aku merasa tenang. Di kamu, aku merasa cukup. Di kamu, aku menemukan alasan untuk terus menjadi lebih baik.</p>
+
+            <p style="--pdelay: 8.6s;">Aku berharap cinta kita tidak pernah pudar. Semoga kita semakin sayang, semakin kuat, dan semakin cinta setiap harinya. Semoga semua rencana indah kita dilancarkan, sampai nanti tanggal 04.04.2027 kita benar-benar berdiri bersama, mengikat janji suci, dan memulai hidup baru sebagai suami istri.</p>
+
+            <p style="--pdelay: 10.3s;">Maaf kalau aku belum selalu sempurna. Maaf kalau kadang aku masih kurang dalam banyak hal. Tapi percayalah, hati aku selalu memilih kamu. Dari dulu, sekarang, sampai nanti, aku ingin tetap mencintai kamu dengan cara terbaik yang aku bisa.</p>
+
+            <p style="--pdelay: 12s;">Sekali lagi, selamat hari jadi kita, sayangku yang paling aku cintai. Terima kasih sudah menjadi bagian paling indah dalam hidup aku. Semoga kita selalu bersama, sampai tua, sampai rambut memutih, sampai dunia tidak lagi mampu memisahkan kita.</p>
+
+            <p style="--pdelay: 13.7s;">Aku sayang kamu, lebih dari yang bisa aku tulis, lebih dari yang bisa aku ucapkan.</p>
+          </div>
+
+          <div class="signature" style="--pdelay: 15.5s;">— Destra</div>
+
+          <div class="game-button-wrap" style="--pdelay: 17s;">
+            <button class="love-game-btn" id="goGameBtn" type="button">♥ Lanjut Game Cinta</button>
+            <div class="game-hint">Setelah ini ada game kecil yang bisa dimainkan pakai jari di HP.</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen game-screen" id="screenGame">
+      <div class="game-card">
+        <canvas id="loveCanvas"></canvas>
+
+        <div class="game-hud">
+          <div class="hud-panel">
+            <div class="hud-title">
+              <span>Cinta Abadi</span>
+              <span id="meterText">0%</span>
+            </div>
+            <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+          </div>
+          <div class="hud-stats">
+            <div class="stat-pill">Skor: <span id="scoreText">0</span></div>
+            <div class="stat-pill">Combo: <span id="comboText">x1</span></div>
+            <div class="stat-pill">Level: <span id="levelText">1</span></div>
+          </div>
+        </div>
+
+        <div class="game-pop" id="gamePop">Perfect Love!</div>
+
+        <div class="game-center-message" id="gameStartModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Game Cinta</h2>
+            <p>
+              Gerakkan hati Destra pakai jari atau mouse. Tangkap hati, cincin, bunga, dan infinity.
+              Hindari awan gelap. Isi meter cinta sampai 100% untuk membuka ending romantis.
+            </p>
+            <div class="game-rules">
+              <div class="rule-card"><span class="rule-icon">♥</span>Tangkap hati untuk menambah cinta.</div>
+              <div class="rule-card"><span class="rule-icon">∞</span>Infinity memberi bonus besar.</div>
+              <div class="rule-card"><span class="rule-icon">☁</span>Hindari awan gelap biar combo aman.</div>
+            </div>
+            <button class="play-btn" id="startGameBtn" type="button">Mulai Game</button>
+          </div>
+        </div>
+
+        <div class="game-center-message win-message" id="winModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Cinta Kita Abadi</h2>
+            <p>
+              Kamu berhasil mengumpulkan cinta sampai penuh. Tapi ini belum selesai,
+              karena cinta kita masih punya perjalanan berikutnya.
+            </p>
+            <button class="play-btn" id="goGame2Btn" type="button">Lanjut Game Kedua</button>
+            <button class="restart-btn" id="restartGameBtn" type="button" style="margin-top: 12px;">Main Lagi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen game-screen" id="screenGame2">
+      <div class="game-card game2-card">
+        <canvas id="promiseCanvas"></canvas>
+
+        <div class="game-hud">
+          <div class="hud-panel">
+            <div class="hud-title">
+              <span>Rasi Cinta Kita</span>
+              <span id="promiseText">0%</span>
+            </div>
+            <div class="meter"><div class="meter-fill" id="promiseFill"></div></div>
+          </div>
+          <div class="hud-stats">
+            <div class="stat-pill">Bintang: <span id="starText">0/12</span></div>
+            <div class="stat-pill">Babak: <span id="chapterText">1</span></div>
+          </div>
+        </div>
+
+        <div class="game2-toast" id="game2Toast">Bagus. Satu bintang cinta tersambung.</div>
+
+        <div class="constellation-note" id="constellationNote">
+          Sentuh bintang yang menyala, lalu sambungkan berurutan sampai rasi cintanya lengkap.
+        </div>
+
+        <div class="game-center-message" id="game2StartModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Rasi Cinta</h2>
+            <p>
+              Game kedua berbeda: sambungkan bintang-bintang cinta sesuai urutan cahaya.
+              Setiap bintang menyimpan satu janji kecil, sampai akhirnya membentuk rasi cinta Destra dan Mutiara.
+            </p>
+            <div class="game-rules">
+              <div class="rule-card"><span class="rule-icon">✦</span>Tap bintang yang sedang menyala.</div>
+              <div class="rule-card"><span class="rule-icon">♡</span>Sambungkan semua titik cinta.</div>
+              <div class="rule-card"><span class="rule-icon">∞</span>Buka ending terakhir setelah rasi lengkap.</div>
+            </div>
+            <button class="play-btn" id="startGame2Btn" type="button">Mulai Game 2</button>
+          </div>
+        </div>
+
+        <div class="game-center-message win-message" id="finalWinModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Ending Terakhir</h2>
+            <p>
+              Rasi cinta kita sudah lengkap. Semua bintang sudah tersambung,
+              seperti doa, harapan, dan janji kita yang pelan-pelan menuju 04.04.2027.
+            </p>
+            <div class="final-love-message">
+              Mutiara Devira Kirany, aku tidak cuma ingin mencintai kamu di hari jadi ini.
+              Aku ingin terus memilih kamu di setiap hari setelahnya, dan selama-lamanya.
+            </div>
+            <button class="play-btn" id="goGame3Btn" type="button" style="margin-top: 18px;">Lanjut Game Ketiga</button>
+            <button class="restart-btn" id="restartGame2Btn" type="button" style="margin-top: 12px;">Main Game 2 Lagi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="screen game-screen" id="screenGame3">
+      <div class="game-card game3-card">
+        <canvas id="onetCanvas"></canvas>
+        <div class="onet-screen-flash" id="onetFlash"></div>
+
+        <div class="game-hud">
+          <div class="hud-panel">
+            <div class="hud-title">
+              <span>Onet Cinta Abadi</span>
+              <span id="onetPercentText">0%</span>
+            </div>
+            <div class="meter"><div class="meter-fill" id="onetFill"></div></div>
+          </div>
+          <div class="hud-stats">
+            <div class="stat-pill">Pasangan: <span id="onetPairText">0/18</span></div>
+            <div class="stat-pill">Combo: <span id="onetComboText">x1</span></div>
+            <div class="stat-pill">Level: <span id="onetLevelText">3</span></div>
+          </div>
+        </div>
+
+        <div class="onet-toast" id="onetToast">Pasangan cinta tersambung.</div>
+
+        <div class="onet-note" id="onetNote">
+          Cocokkan dua gambar yang sama. Papan lebih besar, dan garis cinta hanya bisa tersambung kalau jalurnya tidak terhalang.
+        </div>
+
+        <div class="game-center-message" id="game3StartModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Onet Cinta</h2>
+            <p>
+              Game ketiga: cari dua gambar cinta yang sama, lalu sambungkan seperti game Onet.
+              Level ini dibuat jauh lebih sulit dengan papan lebih besar, jadi harus lebih sabar dan teliti.
+            </p>
+            <div class="game-rules">
+              <div class="rule-card"><span class="rule-icon">💞</span>Pilih dua gambar yang sama.</div>
+              <div class="rule-card"><span class="rule-icon">〰️</span>Jalur tidak boleh terhalang.</div>
+              <div class="rule-card"><span class="rule-icon">∞</span>Selesaikan semua pasangan cinta.</div>
+            </div>
+            <button class="play-btn" id="startGame3Btn" type="button">Mulai Game 3</button>
+          </div>
+        </div>
+
+        <div class="game-center-message win-message" id="game3WinModal">
+          <div class="game-modal">
+            <h2 class="gradient-text">Semua Cinta Tersambung</h2>
+            <p>
+              Semua gambar cinta berhasil dipasangkan. Tidak ada yang terputus,
+              tidak ada yang tertinggal, semuanya tersambung seperti hati Destra dan Mutiara.
+            </p>
+            <div class="final-love-message">
+              Dari game pertama, kedua, sampai ketiga, semuanya tetap punya arti yang sama:
+              cinta ini selalu abadi, hari ini, besok, setelahnya, dan selama-lamanya.
+            </div>
+
+            <div class="ultimate-final-title">
+              Sekali lagi, selamat hari jadi kita.
+            </div>
+            <div class="ultimate-final-subtitle">
+              Cintanya aku, sayangnya aku, tunanganku, istriku.
+            </div>
+
+            <button class="restart-btn" id="restartGame3Btn" type="button" style="margin-top: 24px;">Main Game 3 Lagi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="cinema-vignette"></div>
+  <div class="letterbox"></div>
+
+  <script>
+    const intro = document.getElementById("screenIntro");
+    const loading = document.getElementById("screenLoading");
+    const finalScreen = document.getElementById("screenFinal");
+    const gameScreen = document.getElementById("screenGame");
+    const game2Screen = document.getElementById("screenGame2");
+    const game3Screen = document.getElementById("screenGame3");
+    const continueBtn = document.getElementById("continueBtn");
+    const goGameBtn = document.getElementById("goGameBtn");
+    const revealFlash = document.getElementById("revealFlash");
+    const auroraLine = document.getElementById("auroraLine");
+    const curtain = document.getElementById("curtain");
+    const topLoader = document.getElementById("topLoader");
+
+    let alreadyStarted = false;
+
+    function createFloating(containerId, amount) {
+      const container = document.getElementById(containerId);
+      const symbols = ["♥", "✦", "♡", "✧", "✵"];
+      for (let i = 0; i < amount; i++) {
+        const span = document.createElement("span");
+        span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        span.style.setProperty("--left", `${Math.random() * 100}%`);
+        span.style.setProperty("--size", `${12 + Math.random() * 28}px`);
+        span.style.setProperty("--dur", `${11 + Math.random() * 14}s`);
+        span.style.setProperty("--drift", `${-90 + Math.random() * 180}px`);
+        span.style.animationDelay = `${Math.random() * 13}s`;
+        container.appendChild(span);
+      }
+    }
+
+    function createShootingStars() {
+      const container = document.getElementById("shootingStars");
+      const amount = window.innerWidth < 680 ? 8 : 14;
+      for (let i = 0; i < amount; i++) {
+        const span = document.createElement("span");
+        span.style.setProperty("--top", `${Math.random() * 58}%`);
+        span.style.setProperty("--left", `${45 + Math.random() * 60}%`);
+        span.style.setProperty("--dur", `${7 + Math.random() * 8}s`);
+        span.style.setProperty("--delay", `${Math.random() * 13}s`);
+        container.appendChild(span);
+      }
+    }
+
+    function createPetals() {
+      const container = document.getElementById("petalLayer");
+      const amount = window.innerWidth < 680 ? 16 : 28;
+      for (let i = 0; i < amount; i++) {
+        const span = document.createElement("span");
+        span.style.setProperty("--left", `${Math.random() * 100}%`);
+        span.style.setProperty("--size", `${7 + Math.random() * 13}px`);
+        span.style.setProperty("--dur", `${12 + Math.random() * 18}s`);
+        span.style.setProperty("--delay", `${Math.random() * 15}s`);
+        span.style.setProperty("--drift", `${-120 + Math.random() * 240}px`);
+        container.appendChild(span);
+      }
+    }
+
+    function createBokeh() {
+      const container = document.getElementById("bokehLayer");
+      const amount = window.innerWidth < 680 ? 18 : 34;
+      for (let i = 0; i < amount; i++) {
+        const span = document.createElement("span");
+        span.style.setProperty("--left", `${Math.random() * 100}%`);
+        span.style.setProperty("--top", `${Math.random() * 100}%`);
+        span.style.setProperty("--size", `${18 + Math.random() * 70}px`);
+        span.style.setProperty("--dur", `${8 + Math.random() * 14}s`);
+        span.style.setProperty("--delay", `${Math.random() * 12}s`);
+        container.appendChild(span);
+      }
+    }
+
+    function switchScreen(from, to) {
+      from.classList.add("exit");
+
+      setTimeout(() => {
+        from.classList.remove("active", "exit");
+        to.classList.add("active");
+
+        if (to === finalScreen) finalScreen.scrollTop = 0;
+        if (to === gameScreen) {
+          document.body.style.overflow = "hidden";
+          loveGame.resize();
+        }
+        if (to === game2Screen) {
+          document.body.style.overflow = "hidden";
+          promiseGame.resize();
+        }
+        if (to === game3Screen) {
+          document.body.style.overflow = "hidden";
+          onetGame.resize();
+        }
+      }, 1550);
+    }
+
+    function playFinalTransition() {
+      revealFlash.classList.remove("play");
+      auroraLine.classList.remove("play");
+      curtain.classList.remove("play");
+
+      void revealFlash.offsetWidth;
+      void auroraLine.offsetWidth;
+      void curtain.offsetWidth;
+
+      revealFlash.classList.add("play");
+      auroraLine.classList.add("play");
+      curtain.classList.add("play");
+    }
+
+    continueBtn.addEventListener("click", () => {
+      if (alreadyStarted) return;
+      alreadyStarted = true;
+
+      continueBtn.disabled = true;
+      switchScreen(intro, loading);
+
+      setTimeout(() => {
+        playFinalTransition();
+      }, 13900);
+
+      setTimeout(() => {
+        switchScreen(loading, finalScreen);
+        topLoader.classList.add("show");
+      }, 15350);
+    });
+
+    goGameBtn.addEventListener("click", () => {
+      playFinalTransition();
+      topLoader.classList.add("hide");
+      setTimeout(() => {
+        switchScreen(finalScreen, gameScreen);
+      }, 650);
+    });
+
+    createFloating("floatingIntro", window.innerWidth < 680 ? 24 : 38);
+    createFloating("floatingFinal", window.innerWidth < 680 ? 34 : 56);
+    createShootingStars();
+    createPetals();
+    createBokeh();
+
+    const loveGame = (() => {
+      const canvas = document.getElementById("loveCanvas");
+      const ctx = canvas.getContext("2d");
+      const startModal = document.getElementById("gameStartModal");
+      const winModal = document.getElementById("winModal");
+      const startBtn = document.getElementById("startGameBtn");
+      const restartBtn = document.getElementById("restartGameBtn");
+      const goGame2Btn = document.getElementById("goGame2Btn");
+      const meterFill = document.getElementById("meterFill");
+      const meterText = document.getElementById("meterText");
+      const scoreText = document.getElementById("scoreText");
+      const comboText = document.getElementById("comboText");
+      const levelText = document.getElementById("levelText");
+      const gamePop = document.getElementById("gamePop");
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let running = false;
+      let won = false;
+      let lastTime = 0;
+      let spawnTimer = 0;
+      let sparkTimer = 0;
+      let score = 0;
+      let meter = 0;
+      let combo = 1;
+      let level = 1;
+      let shakeTimer = 0;
+
+      const player = {
+        x: 0,
+        y: 0,
+        targetX: 0,
+        targetY: 0,
+        radius: 22
+      };
+
+      const items = [];
+      const particles = [];
+      const stars = [];
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        player.x = player.x || width / 2;
+        player.y = player.y || height * .78;
+        player.targetX = player.targetX || player.x;
+        player.targetY = player.targetY || player.y;
+
+        stars.length = 0;
+        const count = width < 680 ? 70 : 120;
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 1.6 + .4,
+            a: Math.random() * .8 + .2,
+            v: Math.random() * .12 + .04
+          });
+        }
+      }
+
+      function resetGame() {
+        running = false;
+        won = false;
+        lastTime = 0;
+        spawnTimer = 0;
+        sparkTimer = 0;
+        score = 0;
+        meter = 0;
+        combo = 1;
+        level = 1;
+        shakeTimer = 0;
+        items.length = 0;
+        particles.length = 0;
+        player.x = width / 2;
+        player.y = height * .78;
+        player.targetX = player.x;
+        player.targetY = player.y;
+        updateHud();
+        winModal.classList.remove("show");
+        winModal.classList.add("hidden");
+      }
+
+      function startGame() {
+        resetGame();
+        startModal.classList.add("hidden");
+        running = true;
+        requestAnimationFrame(loop);
+      }
+
+      function restartGame() {
+        winModal.classList.remove("show");
+        winModal.classList.add("hidden");
+        startGame();
+      }
+
+      function updateHud() {
+        const percent = Math.min(100, Math.round(meter));
+        meterFill.style.width = percent + "%";
+        meterText.textContent = percent + "%";
+        scoreText.textContent = score;
+        comboText.textContent = "x" + combo;
+        levelText.textContent = level;
+      }
+
+      function pointerMove(clientX, clientY) {
+        player.targetX = Math.max(36, Math.min(width - 36, clientX));
+        player.targetY = Math.max(height * .42, Math.min(height - 44, clientY));
+      }
+
+      canvas.addEventListener("pointermove", (event) => pointerMove(event.clientX, event.clientY));
+      canvas.addEventListener("pointerdown", (event) => pointerMove(event.clientX, event.clientY));
+      canvas.addEventListener("touchmove", (event) => {
+        if (event.touches[0]) {
+          event.preventDefault();
+          pointerMove(event.touches[0].clientX, event.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      function spawnItem() {
+        const roll = Math.random();
+        let type = "heart";
+        if (roll < .26 + level * .018) type = "cloud";
+        else if (roll > .94) type = "infinity";
+        else if (roll > .82) type = "ring";
+        else if (roll > .64) type = "rose";
+
+        const baseSpeed = 90 + level * 24;
+        items.push({
+          type,
+          x: 36 + Math.random() * (width - 72),
+          y: -40,
+          vx: (Math.random() - .5) * 28,
+          vy: baseSpeed + Math.random() * 58,
+          r: type === "cloud" ? 25 : type === "infinity" ? 24 : 21,
+          rot: Math.random() * Math.PI,
+          spin: (Math.random() - .5) * 1.8,
+          pulse: Math.random() * 10
+        });
+      }
+
+      function addParticles(x, y, color, amount, power = 1) {
+        for (let i = 0; i < amount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = (50 + Math.random() * 170) * power;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: .7 + Math.random() * .8,
+            maxLife: 1.2,
+            r: 2 + Math.random() * 4,
+            color
+          });
+        }
+      }
+
+      function showPop(text) {
+        gamePop.textContent = text;
+        gamePop.classList.remove("show");
+        void gamePop.offsetWidth;
+        gamePop.classList.add("show");
+      }
+
+      function collect(item) {
+        if (item.type === "cloud") {
+          combo = 1;
+          meter = Math.max(0, meter - 7);
+          shakeTimer = .28;
+          gameScreen.classList.remove("shake");
+          void gameScreen.offsetWidth;
+          gameScreen.classList.add("shake");
+          addParticles(item.x, item.y, "rgba(141,247,255,.72)", 18, .8);
+          showPop("Combo aman, cinta tetap kuat!");
+          updateHud();
+          return;
+        }
+
+        const values = {
+          heart: { score: 12, meter: 1.35, color: "rgba(255,122,203,.95)", text: "Sweet!" },
+          rose: { score: 18, meter: 1.85, color: "rgba(255,209,239,.95)", text: "Romantis!" },
+          ring: { score: 32, meter: 3.15, color: "rgba(255,232,163,.95)", text: "Janji Suci!" },
+          infinity: { score: 45, meter: 4.8, color: "rgba(141,247,255,.95)", text: "Infinity Love!" }
+        }[item.type];
+
+        score += values.score * combo;
+        meter = Math.min(100, meter + values.meter + combo * .12);
+        combo = Math.min(9, combo + 1);
+        level = Math.min(7, 1 + Math.floor(score / 350));
+
+        addParticles(item.x, item.y, values.color, item.type === "infinity" ? 36 : 24, item.type === "ring" ? 1.35 : 1);
+        if (combo >= 5 || item.type === "infinity" || item.type === "ring") showPop(values.text + " x" + combo);
+
+        updateHud();
+
+        if (meter >= 100 && !won) {
+          win();
+        }
+      }
+
+      function win() {
+        won = true;
+        running = false;
+        for (let i = 0; i < 9; i++) {
+          setTimeout(() => {
+            addParticles(
+              width * (.15 + Math.random() * .7),
+              height * (.22 + Math.random() * .45),
+              i % 3 === 0 ? "rgba(255,122,203,.95)" : i % 3 === 1 ? "rgba(255,232,163,.95)" : "rgba(141,247,255,.95)",
+              44,
+              1.55
+            );
+          }, i * 150);
+        }
+        setTimeout(() => {
+          winModal.classList.remove("hidden");
+          winModal.classList.add("show");
+          draw();
+        }, 900);
+      }
+
+      function drawHeart(x, y, size, color, glow = true) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(size / 32, size / 32);
+        ctx.beginPath();
+        ctx.moveTo(0, 10);
+        ctx.bezierCurveTo(-30, -12, -20, -36, 0, -20);
+        ctx.bezierCurveTo(20, -36, 30, -12, 0, 10);
+        ctx.closePath();
+        if (glow) {
+          ctx.shadowBlur = 22;
+          ctx.shadowColor = color;
+        }
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawInfinity(x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(size / 90, size / 90);
+        ctx.lineWidth = 9;
+        ctx.lineCap = "round";
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "rgba(141,247,255,.9)";
+        const grad = ctx.createLinearGradient(-48, 0, 48, 0);
+        grad.addColorStop(0, "#ff7acb");
+        grad.addColorStop(.5, "#ffe8a3");
+        grad.addColorStop(1, "#8df7ff");
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(-42, 0);
+        ctx.bezierCurveTo(-42, -24, -10, -24, 0, 0);
+        ctx.bezierCurveTo(10, 24, 42, 24, 42, 0);
+        ctx.bezierCurveTo(42, -24, 10, -24, 0, 0);
+        ctx.bezierCurveTo(-10, 24, -42, 24, -42, 0);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawRose(x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(-.6);
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = "rgba(255,122,203,.85)";
+        ctx.fillStyle = "#ff7acb";
+        for (let i = 0; i < 6; i++) {
+          ctx.rotate(Math.PI / 3);
+          ctx.beginPath();
+          ctx.ellipse(0, -size * .19, size * .16, size * .34, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = "#ffe8a3";
+        ctx.beginPath();
+        ctx.arc(0, 0, size * .13, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawRing(x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.lineWidth = size * .12;
+        ctx.shadowBlur = 22;
+        ctx.shadowColor = "rgba(255,232,163,.9)";
+        ctx.strokeStyle = "#ffe8a3";
+        ctx.beginPath();
+        ctx.arc(0, 5, size * .34, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "#fff7ff";
+        ctx.beginPath();
+        ctx.moveTo(0, -size * .48);
+        ctx.lineTo(size * .18, -size * .2);
+        ctx.lineTo(0, -size * .05);
+        ctx.lineTo(-size * .18, -size * .2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawCloud(x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.shadowBlur = 22;
+        ctx.shadowColor = "rgba(110,80,160,.8)";
+        ctx.fillStyle = "rgba(35, 22, 58, .86)";
+        ctx.beginPath();
+        ctx.arc(-size * .3, size * .05, size * .24, 0, Math.PI * 2);
+        ctx.arc(-size * .05, -size * .1, size * .32, 0, Math.PI * 2);
+        ctx.arc(size * .28, size * .04, size * .25, 0, Math.PI * 2);
+        ctx.rect(-size * .48, size * .02, size, size * .26);
+        ctx.fill();
+        ctx.fillStyle = "rgba(141,247,255,.8)";
+        ctx.font = `${size * .34}px serif`;
+        ctx.textAlign = "center";
+        ctx.fillText("?", 0, size * .18);
+        ctx.restore();
+      }
+
+      function drawItem(item, dt) {
+        item.pulse += dt * 4;
+        const size = item.r * (1 + Math.sin(item.pulse) * .06);
+        ctx.save();
+        ctx.translate(item.x, item.y);
+        ctx.rotate(item.rot);
+        ctx.translate(-item.x, -item.y);
+        if (item.type === "heart") drawHeart(item.x, item.y, size * 1.35, "rgba(255,122,203,.95)");
+        if (item.type === "rose") drawRose(item.x, item.y, size * 1.7);
+        if (item.type === "ring") drawRing(item.x, item.y, size * 1.85);
+        if (item.type === "infinity") drawInfinity(item.x, item.y, size * 2.35);
+        if (item.type === "cloud") drawCloud(item.x, item.y, size * 1.7);
+        ctx.restore();
+      }
+
+      function drawPlayer() {
+        player.x += (player.targetX - player.x) * .18;
+        player.y += (player.targetY - player.y) * .18;
+
+        ctx.save();
+        ctx.beginPath();
+        const aura = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 76);
+        aura.addColorStop(0, "rgba(255,122,203,.42)");
+        aura.addColorStop(.55, "rgba(255,232,163,.14)");
+        aura.addColorStop(1, "rgba(255,122,203,0)");
+        ctx.fillStyle = aura;
+        ctx.arc(player.x, player.y, 78, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        drawHeart(player.x, player.y, player.radius * 1.75, "rgba(255,122,203,.98)");
+
+        ctx.save();
+        ctx.font = "bold 13px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(255,247,255,.9)";
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "rgba(255,122,203,.9)";
+        ctx.fillText("Destra", player.x, player.y + 44);
+        ctx.restore();
+      }
+
+      function drawBackground(dt) {
+        const bg = ctx.createLinearGradient(0, 0, width, height);
+        bg.addColorStop(0, "#04010b");
+        bg.addColorStop(.45, "#160620");
+        bg.addColorStop(1, "#090215");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        for (const s of stars) {
+          s.y += s.v * dt * 60;
+          if (s.y > height) s.y = 0;
+          ctx.globalAlpha = s.a * (.55 + Math.sin(Date.now() * .001 + s.x) * .35);
+          ctx.fillStyle = "#fff7ff";
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        const time = Date.now() * .001;
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        for (let i = 0; i < 3; i++) {
+          const x = width * (.22 + i * .26) + Math.sin(time * .45 + i) * 45;
+          const y = height * (.25 + i * .15) + Math.cos(time * .38 + i) * 35;
+          const grd = ctx.createRadialGradient(x, y, 0, x, y, Math.min(width, height) * .32);
+          grd.addColorStop(0, i === 1 ? "rgba(255,122,203,.12)" : "rgba(141,247,255,.08)");
+          grd.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(x, y, Math.min(width, height) * .32, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawParticles(dt) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life -= dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vy += 45 * dt;
+          p.vx *= .99;
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function update(dt) {
+        if (!running) return;
+
+        spawnTimer -= dt;
+        sparkTimer -= dt;
+
+        const interval = Math.max(.30, .70 - level * .048);
+        if (spawnTimer <= 0) {
+          spawnItem();
+          spawnTimer = interval;
+        }
+
+        if (sparkTimer <= 0) {
+          addParticles(player.x, player.y + 8, "rgba(255,122,203,.42)", 2, .4);
+          sparkTimer = .08;
+        }
+
+        for (let i = items.length - 1; i >= 0; i--) {
+          const item = items[i];
+          item.x += item.vx * dt;
+          item.y += item.vy * dt;
+          item.rot += item.spin * dt;
+
+          const dx = item.x - player.x;
+          const dy = item.y - player.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < item.r + player.radius + 6) {
+            collect(item);
+            items.splice(i, 1);
+            continue;
+          }
+
+          if (item.y > height + 70) {
+            if (item.type !== "cloud") {
+              combo = 1;
+              meter = Math.max(0, meter - 3);
+              updateHud();
+            }
+            items.splice(i, 1);
+          }
+        }
+
+        if (shakeTimer > 0) shakeTimer -= dt;
+      }
+
+      function draw(dt = 0) {
+        drawBackground(dt);
+        for (const item of items) drawItem(item, dt);
+        drawParticles(dt);
+        drawPlayer();
+
+        if (won) {
+          ctx.save();
+          ctx.globalCompositeOperation = "screen";
+          const grd = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * .65);
+          grd.addColorStop(0, "rgba(255,232,163,.16)");
+          grd.addColorStop(.45, "rgba(255,122,203,.12)");
+          grd.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = grd;
+          ctx.fillRect(0, 0, width, height);
+          ctx.restore();
+        }
+      }
+
+      function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min(.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+
+        update(dt);
+        draw(dt);
+
+        if (running || particles.length) requestAnimationFrame(loop);
+      }
+
+      startBtn.addEventListener("click", startGame);
+      restartBtn.addEventListener("click", restartGame);
+      goGame2Btn.addEventListener("click", () => {
+        running = false;
+        playFinalTransition();
+        setTimeout(() => {
+          switchScreen(gameScreen, game2Screen);
+        }, 650);
+      });
+      window.addEventListener("resize", resize);
+
+      resize();
+      draw();
+
+      return { resize, draw };
+    })();
+
+    const promiseGame = (() => {
+      const canvas = document.getElementById("promiseCanvas");
+      const ctx = canvas.getContext("2d");
+      const startModal = document.getElementById("game2StartModal");
+      const finalWinModal = document.getElementById("finalWinModal");
+      const startBtn = document.getElementById("startGame2Btn");
+      const restartBtn = document.getElementById("restartGame2Btn");
+      const goGame3Btn = document.getElementById("goGame3Btn");
+      const promiseFill = document.getElementById("promiseFill");
+      const promiseText = document.getElementById("promiseText");
+      const starText = document.getElementById("starText");
+      const chapterText = document.getElementById("chapterText");
+      const toast = document.getElementById("game2Toast");
+      const note = document.getElementById("constellationNote");
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let running = false;
+      let won = false;
+      let nextIndex = 0;
+      let progress = 0;
+      let chapter = 1;
+      let t = 0;
+      let lastTime = 0;
+      let nodes = [];
+      let lines = [];
+      let particles = [];
+      let bgStars = [];
+
+      const messages = [
+        "Aku memilih kamu.",
+        "Kamu rumah ternyaman.",
+        "Cinta kita harus dijaga pelan-pelan.",
+        "Jangan salah pilih bintangnya.",
+        "Aku ingin terus jadi lebih baik.",
+        "Semoga doa kita selalu dijaga.",
+        "Semoga semua rencana kita dilancarkan.",
+        "Menuju 04.04.2027 bersama.",
+        "Aku tetap memilih kamu.",
+        "Di hari baik maupun sulit.",
+        "Sampai tua nanti.",
+        "Sampai rambut memutih.",
+        "Sampai dunia tidak mampu memisahkan.",
+        "Cinta ini tidak putus.",
+        "Kamu bagian paling indah.",
+        "Aku pulang ke kamu.",
+        "Aku percaya sama kita.",
+        "Aku ingin menggenggam kamu lebih lama.",
+        "Setiap bintang adalah janji.",
+        "Setiap janji menuju kamu.",
+        "Setiap langkah tetap memilih kamu.",
+        "Destra dan Mutiara.",
+        "Setelahnya, dan selama-lamanya.",
+        "Destra dan Mutiara, selamanya."
+      ];
+
+      function layoutNodes() {
+        const cx = width / 2;
+        const cy = height * (width < 680 ? .50 : .52);
+        const scale = Math.min(width, height) * (width < 680 ? .30 : .33);
+
+        const raw = [
+          [-0.55, -0.55],
+          [-0.78, -0.38],
+          [-0.92, -0.08],
+          [-0.86,  0.22],
+          [-0.65,  0.48],
+          [-0.35,  0.70],
+          [ 0.00,  0.88],
+          [ 0.35,  0.70],
+          [ 0.65,  0.48],
+          [ 0.86,  0.22],
+          [ 0.92, -0.08],
+          [ 0.78, -0.38],
+          [ 0.55, -0.55],
+          [ 0.30, -0.42],
+          [ 0.14, -0.24],
+          [ 0.00, -0.04],
+          [-0.14, -0.24],
+          [-0.30, -0.42],
+          [-0.46, -0.22],
+          [-0.32,  0.08],
+          [-0.12,  0.30],
+          [ 0.12,  0.30],
+          [ 0.32,  0.08],
+          [ 0.46, -0.22]
+        ];
+
+        nodes = raw.map((p, i) => ({
+          x: cx + p[0] * scale,
+          y: cy + p[1] * scale,
+          r: width < 680 ? 12 : 15,
+          index: i,
+          active: i === 0,
+          done: false,
+          pulse: Math.random() * 10
+        }));
+
+        lines = [];
+        nextIndex = 0;
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        bgStars = Array.from({ length: width < 680 ? 90 : 150 }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 1.7 + .35,
+          a: Math.random() * .75 + .2,
+          v: Math.random() * .1 + .03
+        }));
+
+        layoutNodes();
+        draw();
+      }
+
+      function reset() {
+        running = false;
+        won = false;
+        nextIndex = 0;
+        progress = 0;
+        chapter = 1;
+        t = 0;
+        lastTime = 0;
+        particles = [];
+        layoutNodes();
+        updateHud();
+        finalWinModal.classList.remove("show");
+        finalWinModal.classList.add("hidden");
+        note.textContent = "Sentuh bintang yang menyala, lalu sambungkan berurutan sampai rasi cintanya lengkap.";
+      }
+
+      function start() {
+        reset();
+        running = true;
+        startModal.classList.add("hidden");
+        requestAnimationFrame(loop);
+      }
+
+      function restart() {
+        finalWinModal.classList.remove("show");
+        finalWinModal.classList.add("hidden");
+        start();
+      }
+
+      function updateHud() {
+        const pct = Math.min(100, Math.round(progress));
+        promiseFill.style.width = pct + "%";
+        promiseText.textContent = pct + "%";
+        starText.textContent = `${Math.min(nextIndex, nodes.length)}/${nodes.length}`;
+        chapterText.textContent = chapter;
+      }
+
+      function showToast(text) {
+        toast.textContent = text;
+        toast.classList.remove("show");
+        void toast.offsetWidth;
+        toast.classList.add("show");
+      }
+
+      function addParticles(x, y, amount, color = "rgba(255,232,163,.95)", power = 1) {
+        for (let i = 0; i < amount; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const s = (40 + Math.random() * 170) * power;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(a) * s,
+            vy: Math.sin(a) * s,
+            life: .8 + Math.random() * .9,
+            max: 1.3,
+            r: 2 + Math.random() * 4,
+            color
+          });
+        }
+      }
+
+      function selectNode(i) {
+        if (!running || won) return;
+
+        const node = nodes[i];
+        if (i !== nextIndex) {
+          progress = Math.max(0, progress - 5);
+          addParticles(node.x, node.y, 18, "rgba(141,247,255,.75)", .75);
+          showToast("Salah bintang. Progress cinta mundur sedikit.");
+          note.textContent = "Lebih teliti. Pilih bintang yang benar-benar paling menyala.";
+          updateHud();
+          return;
+        }
+
+        node.done = true;
+        node.active = false;
+        addParticles(node.x, node.y, i === nodes.length - 1 ? 44 : 26, i % 3 === 0 ? "rgba(255,122,203,.95)" : i % 3 === 1 ? "rgba(255,232,163,.95)" : "rgba(141,247,255,.95)", 1.15);
+
+        if (nextIndex > 0) {
+          lines.push({ from: nextIndex - 1, to: nextIndex, life: 0 });
+        }
+
+        progress = Math.min(100, progress + 100 / nodes.length);
+        nextIndex += 1;
+        chapter = Math.min(6, 1 + Math.floor(nextIndex / 4));
+
+        if (nextIndex < nodes.length) {
+          nodes[nextIndex].active = true;
+          showToast(messages[nextIndex - 1]);
+          note.textContent = messages[nextIndex - 1];
+        } else {
+          showToast(messages[messages.length - 1]);
+          note.textContent = "Rasi cinta lengkap. Semua titik sudah menyala.";
+          win();
+        }
+
+        updateHud();
+      }
+
+      function pointer(clientX, clientY) {
+        const x = clientX;
+        const y = clientY;
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          const d = Math.hypot(x - n.x, y - n.y);
+          if (d < n.r + 24) {
+            selectNode(i);
+            break;
+          }
+        }
+      }
+
+      canvas.addEventListener("pointerdown", (event) => pointer(event.clientX, event.clientY));
+      canvas.addEventListener("pointermove", (event) => {
+        if (event.buttons) pointer(event.clientX, event.clientY);
+      });
+      canvas.addEventListener("touchstart", (event) => {
+        if (event.touches[0]) {
+          event.preventDefault();
+          pointer(event.touches[0].clientX, event.touches[0].clientY);
+        }
+      }, { passive: false });
+      canvas.addEventListener("touchmove", (event) => {
+        if (event.touches[0]) {
+          event.preventDefault();
+          pointer(event.touches[0].clientX, event.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      function win() {
+        won = true;
+        running = false;
+        progress = 100;
+        updateHud();
+
+        for (let k = 0; k < 12; k++) {
+          setTimeout(() => {
+            const n = nodes[k % nodes.length];
+            addParticles(n.x, n.y, 38, k % 3 === 0 ? "rgba(255,122,203,.95)" : k % 3 === 1 ? "rgba(255,232,163,.95)" : "rgba(141,247,255,.95)", 1.45);
+          }, k * 130);
+        }
+
+        setTimeout(() => {
+          finalWinModal.classList.remove("hidden");
+          finalWinModal.classList.add("show");
+          draw();
+        }, 1500);
+      }
+
+      function drawHeartStar(x, y, size, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(size / 32, size / 32);
+        ctx.beginPath();
+        ctx.moveTo(0, 10);
+        ctx.bezierCurveTo(-30, -12, -20, -36, 0, -20);
+        ctx.bezierCurveTo(20, -36, 30, -12, 0, 10);
+        ctx.closePath();
+        ctx.shadowBlur = 24;
+        ctx.shadowColor = color;
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawBackground(dt) {
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, "#03010a");
+        grad.addColorStop(.48, "#16051f");
+        grad.addColorStop(1, "#05010d");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        for (const s of bgStars) {
+          s.y += s.v * dt * 60;
+          if (s.y > height) s.y = 0;
+          ctx.globalAlpha = s.a * (.55 + Math.sin(t * 2 + s.x) * .28);
+          ctx.fillStyle = "#fff7ff";
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        const halo = ctx.createRadialGradient(width / 2, height * .52, 0, width / 2, height * .52, Math.min(width, height) * .62);
+        halo.addColorStop(0, "rgba(255,122,203,.12)");
+        halo.addColorStop(.45, "rgba(255,232,163,.07)");
+        halo.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = halo;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+
+      function drawConstellation() {
+        ctx.save();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        for (const line of lines) {
+          line.life = Math.min(1, line.life + .025);
+          const a = nodes[line.from];
+          const b = nodes[line.to];
+          const grd = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          grd.addColorStop(0, "#ff7acb");
+          grd.addColorStop(.55, "#ffe8a3");
+          grd.addColorStop(1, "#8df7ff");
+          ctx.globalAlpha = .92 * line.life;
+          ctx.strokeStyle = grd;
+          ctx.lineWidth = 4;
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = "rgba(255,122,203,.75)";
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(a.x + (b.x - a.x) * line.life, a.y + (b.y - a.y) * line.life);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+
+        for (const n of nodes) {
+          n.pulse += .04;
+          const glow = n.active ? 1 + Math.sin(n.pulse * 2) * .18 : n.done ? .84 : .38;
+          const radius = n.r * (n.active ? 1.15 + Math.sin(n.pulse) * .12 : 1);
+          const color = n.done ? "rgba(255,232,163,.95)" : n.active ? "rgba(255,122,203,.98)" : "rgba(255,247,255,.48)";
+
+          ctx.save();
+          ctx.globalCompositeOperation = "screen";
+          const aura = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, radius * 4.2);
+          aura.addColorStop(0, n.active ? "rgba(255,122,203,.35)" : "rgba(255,255,255,.12)");
+          aura.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = aura;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, radius * 4.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          drawHeartStar(n.x, n.y, radius * 1.15, color);
+
+          ctx.save();
+          ctx.globalAlpha = glow;
+          ctx.fillStyle = "rgba(255,247,255,.9)";
+          ctx.font = `bold ${width < 680 ? 11 : 12}px system-ui, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = "rgba(255,122,203,.9)";
+          ctx.fillText(n.done ? "♥" : "✦", n.x, n.y + 1);
+          ctx.restore();
+        }
+      }
+
+      function drawParticles(dt) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life -= dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vy += 35 * dt;
+          p.vx *= .992;
+
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life / p.max);
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function drawInfinitySeal() {
+        if (!won) return;
+        const cx = width / 2;
+        const cy = height * .51;
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        ctx.lineWidth = 10;
+        ctx.lineCap = "round";
+        ctx.shadowBlur = 28;
+        ctx.shadowColor = "rgba(141,247,255,.9)";
+        const grd = ctx.createLinearGradient(cx - 110, cy, cx + 110, cy);
+        grd.addColorStop(0, "#ff7acb");
+        grd.addColorStop(.5, "#ffe8a3");
+        grd.addColorStop(1, "#8df7ff");
+        ctx.strokeStyle = grd;
+        ctx.beginPath();
+        ctx.moveTo(cx - 100, cy);
+        ctx.bezierCurveTo(cx - 100, cy - 54, cx - 22, cy - 54, cx, cy);
+        ctx.bezierCurveTo(cx + 22, cy + 54, cx + 100, cy + 54, cx + 100, cy);
+        ctx.bezierCurveTo(cx + 100, cy - 54, cx + 22, cy - 54, cx, cy);
+        ctx.bezierCurveTo(cx - 22, cy + 54, cx - 100, cy + 54, cx - 100, cy);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function update(dt) {
+        t += dt;
+        if (running && Math.random() < .16) {
+          const n = nodes[nextIndex] || nodes[Math.floor(Math.random() * nodes.length)];
+          if (n) addParticles(n.x, n.y, 1, "rgba(255,232,163,.35)", .35);
+        }
+      }
+
+      function draw(dt = 0) {
+        drawBackground(dt);
+        drawConstellation();
+        drawParticles(dt);
+        drawInfinitySeal();
+      }
+
+      function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min(.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+        update(dt);
+        draw(dt);
+        if (running || particles.length || won) requestAnimationFrame(loop);
+      }
+
+      startBtn.addEventListener("click", start);
+      restartBtn.addEventListener("click", restart);
+      goGame3Btn.addEventListener("click", () => {
+        running = false;
+        playFinalTransition();
+        setTimeout(() => {
+          switchScreen(game2Screen, game3Screen);
+        }, 650);
+      });
+      window.addEventListener("resize", resize);
+
+      resize();
+      reset();
+      draw();
+
+      return { resize, draw };
+    })();
+
+
+    const onetGame = (() => {
+      const canvas = document.getElementById("onetCanvas");
+      const ctx = canvas.getContext("2d");
+      const startModal = document.getElementById("game3StartModal");
+      const winModal = document.getElementById("game3WinModal");
+      const startBtn = document.getElementById("startGame3Btn");
+      const restartBtn = document.getElementById("restartGame3Btn");
+      const fill = document.getElementById("onetFill");
+      const percentText = document.getElementById("onetPercentText");
+      const pairText = document.getElementById("onetPairText");
+      const comboText = document.getElementById("onetComboText");
+      const levelText = document.getElementById("onetLevelText");
+      const toast = document.getElementById("onetToast");
+      const note = document.getElementById("onetNote");
+      const flash = document.getElementById("onetFlash");
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let running = false;
+      let won = false;
+      let lastTime = 0;
+      let t = 0;
+
+      const rows = 8;
+      const cols = 8;
+      const totalPairs = rows * cols / 2;
+      const icons = ["♥", "∞", "💍", "🌹", "💌", "✨", "🌙", "💎", "🎀", "🌸", "👑", "🕊️", "🔥", "🍀", "⭐", "♡", "✦", "💞"];
+
+      let cards = [];
+      let selected = null;
+      let matchedPairs = 0;
+      let combo = 1;
+      let gridX = 0;
+      let gridY = 0;
+      let cell = 0;
+      let gap = 0;
+      let cardW = 0;
+      let cardH = 0;
+      let connection = null;
+      let particles = [];
+      let bgStars = [];
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const topSafe = width < 680 ? 142 : 124;
+        const bottomSafe = width < 680 ? 96 : 90;
+        const availableW = Math.min(width - 28, 760);
+        const availableH = Math.max(320, height - topSafe - bottomSafe);
+        gap = width < 680 ? 7 : 10;
+        cell = Math.min((availableW - gap * (cols - 1)) / cols, (availableH - gap * (rows - 1)) / rows);
+        cardW = cell;
+        cardH = cell;
+        gridX = (width - (cols * cell + (cols - 1) * gap)) / 2;
+        gridY = topSafe + (availableH - (rows * cell + (rows - 1) * gap)) / 2;
+
+        bgStars = Array.from({ length: width < 680 ? 80 : 140 }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 1.6 + .35,
+          a: Math.random() * .75 + .2,
+          v: Math.random() * .1 + .03
+        }));
+
+        draw();
+      }
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function createCards() {
+        const pairIcons = [];
+        for (let i = 0; i < totalPairs; i++) {
+          pairIcons.push(icons[i % icons.length]);
+        }
+        const deck = shuffle([...pairIcons, ...pairIcons]);
+        cards = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            cards.push({
+              r,
+              c,
+              icon: deck[r * cols + c],
+              matched: false,
+              selected: false,
+              wrong: false,
+              pop: 0,
+              born: Math.random() * .5
+            });
+          }
+        }
+      }
+
+      function reset() {
+        running = false;
+        won = false;
+        lastTime = 0;
+        t = 0;
+        selected = null;
+        matchedPairs = 0;
+        combo = 1;
+        connection = null;
+        particles = [];
+        createCards();
+        updateHud();
+        note.textContent = "Cocokkan dua gambar yang sama. Garis cinta hanya bisa tersambung kalau jalurnya tidak terhalang.";
+        winModal.classList.remove("show");
+        winModal.classList.add("hidden");
+        draw();
+      }
+
+      function start() {
+        reset();
+        running = true;
+        startModal.classList.add("hidden");
+        requestAnimationFrame(loop);
+      }
+
+      function restart() {
+        winModal.classList.remove("show");
+        winModal.classList.add("hidden");
+        start();
+      }
+
+      function updateHud() {
+        const pct = Math.round((matchedPairs / totalPairs) * 100);
+        fill.style.width = pct + "%";
+        percentText.textContent = pct + "%";
+        pairText.textContent = `${matchedPairs}/${totalPairs}`;
+        comboText.textContent = "x" + combo;
+        levelText.textContent = "3";
+      }
+
+      function showToast(text) {
+        toast.textContent = text;
+        toast.classList.remove("show");
+        void toast.offsetWidth;
+        toast.classList.add("show");
+      }
+
+      function showFlash() {
+        flash.classList.remove("show");
+        void flash.offsetWidth;
+        flash.classList.add("show");
+      }
+
+      function cardCenter(card) {
+        return {
+          x: gridX + card.c * (cell + gap) + cell / 2,
+          y: gridY + card.r * (cell + gap) + cell / 2
+        };
+      }
+
+      function gridPointToCanvas(p) {
+        return {
+          x: gridX + (p.c - 1) * (cell + gap) + cell / 2,
+          y: gridY + (p.r - 1) * (cell + gap) + cell / 2
+        };
+      }
+
+      function cardAt(x, y) {
+        for (const card of cards) {
+          if (card.matched) continue;
+          const left = gridX + card.c * (cell + gap);
+          const top = gridY + card.r * (cell + gap);
+          if (x >= left && x <= left + cell && y >= top && y <= top + cell) return card;
+        }
+        return null;
+      }
+
+      function occupiedAt(rr, cc, a, b) {
+        const r = rr - 1;
+        const c = cc - 1;
+        if (r < 0 || r >= rows || c < 0 || c >= cols) return false;
+        const card = cards.find(item => item.r === r && item.c === c);
+        if (!card || card.matched) return false;
+        if (card === a || card === b) return false;
+        return true;
+      }
+
+      function findPath(a, b) {
+        const start = { r: a.r + 1, c: a.c + 1 };
+        const target = { r: b.r + 1, c: b.c + 1 };
+        const maxR = rows + 1;
+        const maxC = cols + 1;
+        const dirs = [
+          { dr: -1, dc: 0 },
+          { dr: 0, dc: 1 },
+          { dr: 1, dc: 0 },
+          { dr: 0, dc: -1 }
+        ];
+
+        const queue = [];
+        const seen = new Map();
+        const prev = new Map();
+
+        function key(r, c, d) {
+          return `${r},${c},${d}`;
+        }
+
+        for (let d = 0; d < 4; d++) {
+          const nr = start.r + dirs[d].dr;
+          const nc = start.c + dirs[d].dc;
+          if (nr < 0 || nr > maxR || nc < 0 || nc > maxC) continue;
+          if (occupiedAt(nr, nc, a, b)) continue;
+          const k = key(nr, nc, d);
+          seen.set(k, 0);
+          prev.set(k, { r: start.r, c: start.c, d: -1 });
+          queue.push({ r: nr, c: nc, d, turns: 0 });
+        }
+
+        while (queue.length) {
+          const cur = queue.shift();
+
+          if (cur.r === target.r && cur.c === target.c) {
+            const path = [{ r: cur.r, c: cur.c }];
+            let pk = key(cur.r, cur.c, cur.d);
+            while (prev.has(pk)) {
+              const p = prev.get(pk);
+              path.push({ r: p.r, c: p.c });
+              if (p.d === -1) break;
+              pk = key(p.r, p.c, p.d);
+            }
+            return path.reverse();
+          }
+
+          for (let nd = 0; nd < 4; nd++) {
+            const nt = cur.turns + (nd === cur.d ? 0 : 1);
+            if (nt > 2) continue;
+
+            const nr = cur.r + dirs[nd].dr;
+            const nc = cur.c + dirs[nd].dc;
+            if (nr < 0 || nr > maxR || nc < 0 || nc > maxC) continue;
+            if (occupiedAt(nr, nc, a, b)) continue;
+
+            const k = key(nr, nc, nd);
+            if (seen.has(k) && seen.get(k) <= nt) continue;
+            seen.set(k, nt);
+            prev.set(k, { r: cur.r, c: cur.c, d: cur.d });
+            queue.push({ r: nr, c: nc, d: nd, turns: nt });
+          }
+        }
+
+        return null;
+      }
+
+      function simplifyPath(points) {
+        if (points.length <= 2) return points;
+        const simple = [points[0]];
+        for (let i = 1; i < points.length - 1; i++) {
+          const a = points[i - 1];
+          const b = points[i];
+          const c = points[i + 1];
+          const sameLine = (a.r === b.r && b.r === c.r) || (a.c === b.c && b.c === c.c);
+          if (!sameLine) simple.push(b);
+        }
+        simple.push(points[points.length - 1]);
+        return simple;
+      }
+
+      function hasAnyMove() {
+        const alive = cards.filter(card => !card.matched);
+        for (let i = 0; i < alive.length; i++) {
+          for (let j = i + 1; j < alive.length; j++) {
+            if (alive[i].icon === alive[j].icon && findPath(alive[i], alive[j])) {
+              return true;
+            }
+          }
+        }
+        return alive.length === 0;
+      }
+
+      function reshuffleRemaining(showMessage = true) {
+        const alive = cards.filter(card => !card.matched);
+        const remainingIcons = shuffle(alive.map(card => card.icon));
+        alive.forEach((card, index) => {
+          card.icon = remainingIcons[index];
+          card.selected = false;
+          card.wrong = false;
+          card.pop = 1;
+        });
+        selected = null;
+
+        let guard = 0;
+        while (!hasAnyMove() && guard < 30) {
+          const reshuffled = shuffle(alive.map(card => card.icon));
+          alive.forEach((card, index) => {
+            card.icon = reshuffled[index];
+          });
+          guard += 1;
+        }
+
+        if (showMessage && alive.length > 0) {
+          showToast("Papan diacak karena jalur cinta sedang buntu.");
+          note.textContent = "Papan berubah. Cari pasangan baru yang jalurnya tidak terhalang.";
+        }
+      }
+
+      function addParticles(x, y, amount, color = "rgba(255,122,203,.95)", power = 1) {
+        for (let i = 0; i < amount; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const s = (45 + Math.random() * 170) * power;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(a) * s,
+            vy: Math.sin(a) * s,
+            life: .7 + Math.random() * .9,
+            max: 1.25,
+            r: 2 + Math.random() * 4,
+            color
+          });
+        }
+      }
+
+      function choose(card) {
+        if (!running || won || card.matched) return;
+
+        if (!selected) {
+          selected = card;
+          card.selected = true;
+          card.pop = 1;
+          note.textContent = "Sekarang cari gambar yang sama dan pastikan jalurnya kosong.";
+          draw();
+          return;
+        }
+
+        if (card === selected) {
+          card.selected = false;
+          selected = null;
+          draw();
+          return;
+        }
+
+        if (card.icon !== selected.icon) {
+          selected.wrong = true;
+          card.wrong = true;
+          combo = 1;
+          showFlash();
+          showToast("Belum sama. Cari gambar kembarannya dulu.");
+          setTimeout(() => {
+            selected && (selected.selected = false);
+            cards.forEach(item => item.wrong = false);
+            selected = null;
+            draw();
+          }, 520);
+          updateHud();
+          draw();
+          return;
+        }
+
+        const path = findPath(selected, card);
+        if (!path) {
+          selected.wrong = true;
+          card.wrong = true;
+          combo = 1;
+          showFlash();
+          showToast("Jalur cintanya masih terhalang. Cari pasangan lain dulu.");
+          setTimeout(() => {
+            selected && (selected.selected = false);
+            cards.forEach(item => item.wrong = false);
+            selected = null;
+            draw();
+          }, 620);
+          updateHud();
+          draw();
+          return;
+        }
+
+        const simple = simplifyPath(path);
+        const selectedCenter = cardCenter(selected);
+        const cardCenterPoint = cardCenter(card);
+        connection = {
+          points: simple.map(gridPointToCanvas),
+          life: .95
+        };
+        connection.points[0] = selectedCenter;
+        connection.points[connection.points.length - 1] = cardCenterPoint;
+
+        selected.matched = true;
+        card.matched = true;
+        selected.selected = false;
+        card.selected = false;
+        selected.pop = 1;
+        card.pop = 1;
+
+        matchedPairs += 1;
+        combo = Math.min(9, combo + 1);
+        addParticles(selectedCenter.x, selectedCenter.y, 24, "rgba(255,122,203,.95)", 1.05);
+        addParticles(cardCenterPoint.x, cardCenterPoint.y, 24, "rgba(255,232,163,.95)", 1.05);
+        showToast(combo >= 5 ? `Combo cinta x${combo}!` : "Pasangan cinta tersambung.");
+        note.textContent = "Bagus. Pelan-pelan semua pasangan cinta akan tersambung.";
+        selected = null;
+        updateHud();
+
+        if (matchedPairs >= totalPairs) {
+          win();
+        } else {
+          setTimeout(() => {
+            if (!hasAnyMove()) {
+              reshuffleRemaining(true);
+              draw();
+            }
+          }, 380);
+        }
+
+        draw();
+      }
+
+      function pointer(x, y) {
+        const card = cardAt(x, y);
+        if (card) choose(card);
+      }
+
+      canvas.addEventListener("pointerdown", event => pointer(event.clientX, event.clientY));
+      canvas.addEventListener("touchstart", event => {
+        if (event.touches[0]) {
+          event.preventDefault();
+          pointer(event.touches[0].clientX, event.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      function win() {
+        won = true;
+        running = false;
+        note.textContent = "Semua pasangan cinta sudah tersambung.";
+        for (let i = 0; i < 12; i++) {
+          setTimeout(() => {
+            addParticles(
+              width * (.15 + Math.random() * .7),
+              height * (.23 + Math.random() * .48),
+              42,
+              i % 3 === 0 ? "rgba(255,122,203,.95)" : i % 3 === 1 ? "rgba(255,232,163,.95)" : "rgba(141,247,255,.95)",
+              1.55
+            );
+          }, i * 120);
+        }
+        setTimeout(() => {
+          winModal.classList.remove("hidden");
+          winModal.classList.add("show");
+          draw();
+        }, 1400);
+      }
+
+      function roundRect(x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+      }
+
+      function drawBackground(dt) {
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, "#020109");
+        grad.addColorStop(.52, "#17051f");
+        grad.addColorStop(1, "#05010e");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        for (const s of bgStars) {
+          s.y += s.v * dt * 60;
+          if (s.y > height) s.y = 0;
+          ctx.globalAlpha = s.a * (.55 + Math.sin(t * 2 + s.x) * .28);
+          ctx.fillStyle = "#fff7ff";
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        const aura = ctx.createRadialGradient(width / 2, height * .55, 0, width / 2, height * .55, Math.min(width, height) * .66);
+        aura.addColorStop(0, "rgba(255,122,203,.11)");
+        aura.addColorStop(.5, "rgba(255,232,163,.07)");
+        aura.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = aura;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+
+      function drawCard(card) {
+        if (card.matched) return;
+
+        const x = gridX + card.c * (cell + gap);
+        const y = gridY + card.r * (cell + gap);
+        const pulse = card.selected ? Math.sin(t * 8) * 2.5 : 0;
+        const wrong = card.wrong ? Math.sin(t * 36) * 3 : 0;
+        const scale = 1 + card.pop * .05;
+
+        ctx.save();
+        ctx.translate(x + cell / 2 + wrong, y + cell / 2);
+        ctx.scale(scale, scale);
+        ctx.translate(-(x + cell / 2), -(y + cell / 2));
+
+        const grad = ctx.createLinearGradient(x, y, x + cell, y + cell);
+        grad.addColorStop(0, card.selected ? "rgba(255,122,203,.28)" : "rgba(255,255,255,.13)");
+        grad.addColorStop(.55, "rgba(255,255,255,.06)");
+        grad.addColorStop(1, card.wrong ? "rgba(141,247,255,.22)" : "rgba(255,232,163,.10)");
+
+        ctx.shadowBlur = card.selected ? 28 : 14;
+        ctx.shadowColor = card.wrong ? "rgba(141,247,255,.75)" : card.selected ? "rgba(255,122,203,.85)" : "rgba(255,122,203,.18)";
+        roundRect(x, y, cardW, cardH, Math.max(14, cell * .18));
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.lineWidth = card.selected ? 2.5 : 1;
+        ctx.strokeStyle = card.wrong ? "rgba(141,247,255,.85)" : card.selected ? "rgba(255,232,163,.86)" : "rgba(255,255,255,.16)";
+        ctx.stroke();
+
+        ctx.globalCompositeOperation = "screen";
+        ctx.fillStyle = "rgba(255,255,255,.08)";
+        roundRect(x + 5, y + 5, cardW - 10, cardH * .38 + pulse, Math.max(10, cell * .14));
+        ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
+
+        ctx.font = `${Math.floor(cell * .38)}px "Segoe UI Emoji", "Apple Color Emoji", system-ui`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = "rgba(255,122,203,.65)";
+        ctx.fillStyle = "#fff7ff";
+        ctx.fillText(card.icon, x + cell / 2, y + cell / 2 + 1);
+
+        ctx.restore();
+
+        card.pop *= .88;
+      }
+
+      function drawConnection(dt) {
+        if (!connection) return;
+        connection.life -= dt;
+        if (connection.life <= 0) {
+          connection = null;
+          return;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, connection.life * 2.2);
+        ctx.lineWidth = width < 680 ? 5 : 6;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.shadowBlur = 24;
+        ctx.shadowColor = "rgba(255,232,163,.9)";
+        const first = connection.points[0];
+        const last = connection.points[connection.points.length - 1];
+        const grad = ctx.createLinearGradient(first.x, first.y, last.x, last.y);
+        grad.addColorStop(0, "#ff7acb");
+        grad.addColorStop(.5, "#ffe8a3");
+        grad.addColorStop(1, "#8df7ff");
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(first.x, first.y);
+        for (let i = 1; i < connection.points.length; i++) {
+          ctx.lineTo(connection.points[i].x, connection.points[i].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawParticles(dt) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life -= dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vy += 35 * dt;
+          p.vx *= .992;
+
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life / p.max);
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function update(dt) {
+        t += dt;
+      }
+
+      function draw(dt = 0) {
+        drawBackground(dt);
+        for (const card of cards) drawCard(card);
+        drawConnection(dt);
+        drawParticles(dt);
+
+        if (won) {
+          ctx.save();
+          ctx.globalCompositeOperation = "screen";
+          const glow = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * .62);
+          glow.addColorStop(0, "rgba(255,232,163,.16)");
+          glow.addColorStop(.48, "rgba(255,122,203,.12)");
+          glow.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, width, height);
+          ctx.restore();
+        }
+      }
+
+      function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min(.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+
+        update(dt);
+        draw(dt);
+
+        if (running || particles.length || connection || won) requestAnimationFrame(loop);
+      }
+
+      startBtn.addEventListener("click", start);
+      restartBtn.addEventListener("click", restart);
+      window.addEventListener("resize", resize);
+
+      resize();
+      reset();
+
+      return { resize, draw };
+    })();
+
+  </script>
+</body>
+</html>
