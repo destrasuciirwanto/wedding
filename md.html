@@ -2362,6 +2362,29 @@
       pointer-events: auto !important;
     }
 
+  
+    /* PATCH GAME 2 HP: touch bintang lebih akurat */
+    #promiseCanvas {
+      z-index: 4;
+      pointer-events: auto !important;
+    }
+
+    .game2-card .game-hud,
+    .game2-card .constellation-note,
+    .game2-card .game2-toast,
+    .game2-card .game-center-message {
+      z-index: 8;
+    }
+
+    .game2-card.playing .game-hud,
+    .game2-card.playing .constellation-note {
+      pointer-events: none !important;
+    }
+
+    .game2-card.playing #promiseCanvas {
+      pointer-events: auto !important;
+    }
+
   </style>
 </head>
 <body>
@@ -2539,7 +2562,7 @@
     </section>
 
     <section class="screen game-screen" id="screenGame2">
-      <div class="game-card game2-card">
+      <div class="game-card game2-card" id="game2Card">
         <canvas id="promiseCanvas"></canvas>
 
         <div class="game-hud">
@@ -3402,6 +3425,7 @@
     const promiseGame = (() => {
       const canvas = document.getElementById("promiseCanvas");
       const ctx = canvas.getContext("2d");
+      const game2Card = document.getElementById("game2Card");
       const startModal = document.getElementById("game2StartModal");
       const finalWinModal = document.getElementById("finalWinModal");
       const startBtn = document.getElementById("startGame2Btn");
@@ -3491,7 +3515,7 @@
         nodes = raw.map((p, i) => ({
           x: cx + p[0] * scale,
           y: cy + p[1] * scale,
-          r: width < 680 ? 12 : 15,
+          r: width < 680 ? 14 : 15,
           index: i,
           active: i === 0,
           done: false,
@@ -3525,6 +3549,7 @@
       }
 
       function reset() {
+        game2Card && game2Card.classList.remove("playing");
         running = false;
         won = false;
         nextIndex = 0;
@@ -3543,6 +3568,7 @@
       function start() {
         reset();
         running = true;
+        game2Card && game2Card.classList.add("playing");
         startModal.classList.add("hidden");
         requestAnimationFrame(loop);
       }
@@ -3625,29 +3651,65 @@
         updateHud();
       }
 
+      function toCanvasPoint(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = width / rect.width;
+        const scaleY = height / rect.height;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
       function pointer(clientX, clientY) {
-        const x = clientX;
-        const y = clientY;
+        if (!running || won) return;
+
+        const point = toCanvasPoint(clientX, clientY);
+        const touchRadius = width < 680 ? 42 : 30;
+
+        let nearestIndex = -1;
+        let nearestDistance = Infinity;
+
         for (let i = 0; i < nodes.length; i++) {
           const n = nodes[i];
-          const d = Math.hypot(x - n.x, y - n.y);
-          if (d < n.r + 24) {
-            selectNode(i);
-            break;
+          const d = Math.hypot(point.x - n.x, point.y - n.y);
+          if (d < nearestDistance) {
+            nearestDistance = d;
+            nearestIndex = i;
           }
+        }
+
+        const activeNode = nodes[nextIndex];
+        if (activeNode) {
+          const activeDistance = Math.hypot(point.x - activeNode.x, point.y - activeNode.y);
+          if (activeDistance < activeNode.r + touchRadius + 18) {
+            selectNode(nextIndex);
+            return;
+          }
+        }
+
+        if (nearestIndex >= 0 && nearestDistance < nodes[nearestIndex].r + touchRadius) {
+          selectNode(nearestIndex);
         }
       }
 
-      canvas.addEventListener("pointerdown", (event) => pointer(event.clientX, event.clientY));
-      canvas.addEventListener("pointermove", (event) => {
-        if (event.buttons) pointer(event.clientX, event.clientY);
+      canvas.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        pointer(event.clientX, event.clientY);
       });
+
+      canvas.addEventListener("click", (event) => {
+        event.preventDefault();
+        pointer(event.clientX, event.clientY);
+      });
+
       canvas.addEventListener("touchstart", (event) => {
         if (event.touches[0]) {
           event.preventDefault();
           pointer(event.touches[0].clientX, event.touches[0].clientY);
         }
       }, { passive: false });
+
       canvas.addEventListener("touchmove", (event) => {
         if (event.touches[0]) {
           event.preventDefault();
@@ -3658,6 +3720,7 @@
       function win() {
         won = true;
         running = false;
+        game2Card && game2Card.classList.remove("playing");
         progress = 100;
         updateHud();
 
