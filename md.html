@@ -2339,6 +2339,29 @@
       }
     }
 
+  
+    /* PATCH GAME 3 HP: tap lebih akurat dan Onet lebih playable */
+    #onetCanvas {
+      z-index: 4;
+      pointer-events: auto !important;
+    }
+
+    .game3-card .game-hud,
+    .game3-card .onet-note,
+    .game3-card .onet-toast,
+    .game3-card .game-center-message {
+      z-index: 8;
+    }
+
+    .game3-card.playing .game-hud,
+    .game3-card.playing .onet-note {
+      pointer-events: none !important;
+    }
+
+    .game3-card.playing #onetCanvas {
+      pointer-events: auto !important;
+    }
+
   </style>
 </head>
 <body>
@@ -2575,7 +2598,7 @@
 
 
     <section class="screen game-screen" id="screenGame3">
-      <div class="game-card game3-card">
+      <div class="game-card game3-card" id="game3Card">
         <canvas id="onetCanvas"></canvas>
         <div class="onet-screen-flash" id="onetFlash"></div>
 
@@ -2597,7 +2620,7 @@
         <div class="onet-toast" id="onetToast">Pasangan cinta tersambung.</div>
 
         <div class="onet-note" id="onetNote">
-          Cocokkan dua gambar yang sama. Papan lebih besar, dan garis cinta hanya bisa tersambung kalau jalurnya tidak terhalang.
+          Cocokkan dua gambar yang sama. Di HP, cukup tap gambar pertama lalu tap gambar kembarannya.
         </div>
 
         <div class="game-center-message" id="game3StartModal">
@@ -2605,11 +2628,11 @@
             <h2 class="gradient-text">Onet Cinta</h2>
             <p>
               Game ketiga: cari dua gambar cinta yang sama, lalu sambungkan seperti game Onet.
-              Level ini dibuat jauh lebih sulit dengan papan lebih besar, jadi harus lebih sabar dan teliti.
+              Level ini dibuat lebih panjang, jadi harus lebih sabar dan teliti mencari pasangan yang sama.
             </p>
             <div class="game-rules">
               <div class="rule-card"><span class="rule-icon">💞</span>Pilih dua gambar yang sama.</div>
-              <div class="rule-card"><span class="rule-icon">〰️</span>Jalur tidak boleh terhalang.</div>
+              <div class="rule-card"><span class="rule-icon">〰️</span>Tap gambar yang sama.</div>
               <div class="rule-card"><span class="rule-icon">∞</span>Selesaikan semua pasangan cinta.</div>
             </div>
             <button class="play-btn" id="startGame3Btn" type="button">Mulai Game 3</button>
@@ -3854,6 +3877,7 @@
     const onetGame = (() => {
       const canvas = document.getElementById("onetCanvas");
       const ctx = canvas.getContext("2d");
+      const game3Card = document.getElementById("game3Card");
       const startModal = document.getElementById("game3StartModal");
       const winModal = document.getElementById("game3WinModal");
       const startBtn = document.getElementById("startGame3Btn");
@@ -3959,6 +3983,7 @@
       }
 
       function reset() {
+        game3Card && game3Card.classList.remove("playing");
         running = false;
         won = false;
         lastTime = 0;
@@ -3970,7 +3995,7 @@
         particles = [];
         createCards();
         updateHud();
-        note.textContent = "Cocokkan dua gambar yang sama. Garis cinta hanya bisa tersambung kalau jalurnya tidak terhalang.";
+        note.textContent = "Cocokkan dua gambar yang sama. Di HP, cukup tap gambar pertama lalu tap gambar kembarannya.";
         winModal.classList.remove("show");
         winModal.classList.add("hidden");
         draw();
@@ -3979,6 +4004,7 @@
       function start() {
         reset();
         running = true;
+        game3Card && game3Card.classList.add("playing");
         startModal.classList.add("hidden");
         requestAnimationFrame(loop);
       }
@@ -4218,33 +4244,31 @@
           return;
         }
 
-        const path = findPath(selected, card);
-        if (!path) {
-          selected.wrong = true;
-          card.wrong = true;
-          combo = 1;
-          showFlash();
-          showToast("Jalur cintanya masih terhalang. Cari pasangan lain dulu.");
-          setTimeout(() => {
-            selected && (selected.selected = false);
-            cards.forEach(item => item.wrong = false);
-            selected = null;
-            draw();
-          }, 620);
-          updateHud();
-          draw();
-          return;
-        }
-
-        const simple = simplifyPath(path);
+        const strictPath = findPath(selected, card);
         const selectedCenter = cardCenter(selected);
         const cardCenterPoint = cardCenter(card);
+
+        let connectionPoints;
+        if (strictPath) {
+          const simple = simplifyPath(strictPath);
+          connectionPoints = simple.map(gridPointToCanvas);
+          connectionPoints[0] = selectedCenter;
+          connectionPoints[connectionPoints.length - 1] = cardCenterPoint;
+        } else {
+          // Fallback khusus supaya playable di HP: kalau gambar sama, tetap sambungkan dengan garis cinta cinematic.
+          const midY = Math.min(selectedCenter.y, cardCenterPoint.y) - Math.max(26, cell * .35);
+          connectionPoints = [
+            selectedCenter,
+            { x: selectedCenter.x, y: midY },
+            { x: cardCenterPoint.x, y: midY },
+            cardCenterPoint
+          ];
+        }
+
         connection = {
-          points: simple.map(gridPointToCanvas),
-          life: .95
+          points: connectionPoints,
+          life: 1.05
         };
-        connection.points[0] = selectedCenter;
-        connection.points[connection.points.length - 1] = cardCenterPoint;
 
         selected.matched = true;
         card.matched = true;
@@ -4276,12 +4300,33 @@
         draw();
       }
 
-      function pointer(x, y) {
-        const card = cardAt(x, y);
+      function toCanvasPoint(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = width / rect.width;
+        const scaleY = height / rect.height;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
+      function pointer(clientX, clientY) {
+        if (!running || won) return;
+        const point = toCanvasPoint(clientX, clientY);
+        const card = cardAt(point.x, point.y);
         if (card) choose(card);
       }
 
-      canvas.addEventListener("pointerdown", event => pointer(event.clientX, event.clientY));
+      canvas.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        pointer(event.clientX, event.clientY);
+      });
+
+      canvas.addEventListener("click", event => {
+        event.preventDefault();
+        pointer(event.clientX, event.clientY);
+      });
+
       canvas.addEventListener("touchstart", event => {
         if (event.touches[0]) {
           event.preventDefault();
@@ -4292,6 +4337,7 @@
       function win() {
         won = true;
         running = false;
+        game3Card && game3Card.classList.remove("playing");
         note.textContent = "Semua pasangan cinta sudah tersambung.";
         for (let i = 0; i < 12; i++) {
           setTimeout(() => {
