@@ -15,7 +15,7 @@
   <style>
     :root{--bg:#eef2f7;--panel:rgba(255,255,255,.88);--panel-solid:#fff;--text:#101828;--muted:#667085;--line:#e5eaf1;--primary:#2957ff;--primary2:#6c4cff;--danger:#ef4444;--shadow:0 14px 40px rgba(16,24,40,.12);--soft:0 6px 18px rgba(16,24,40,.10);--page-width:794px;--page-min-height:1123px;--page-padding:72px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     [data-theme=dark]{--bg:#101522;--panel:rgba(23,31,48,.9);--panel-solid:#182033;--text:#eef2ff;--muted:#a9b4c6;--line:rgba(255,255,255,.12);--shadow:0 18px 50px rgba(0,0,0,.34);--soft:0 8px 24px rgba(0,0,0,.28)}
-    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.pdf-hint,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft)}.sheet-wrap{width:100%;max-width:100%;overflow:auto;background:var(--panel-solid);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow)}.sheet-grid{border-collapse:collapse;min-width:980px;width:max-content;background:#fff;color:#111827}.sheet-grid th{position:sticky;top:0;z-index:4;background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;border:1px solid #dbe3ee;height:30px;min-width:74px}.sheet-grid th.row-head{left:0;z-index:5;min-width:46px}.sheet-grid td{border:1px solid #e2e8f0;min-width:110px;height:30px;padding:0}.sheet-grid input{width:100%;height:29px;border:0;padding:0 7px;outline:0;background:transparent;color:#111827}.sheet-grid input:focus{box-shadow:inset 0 0 0 2px var(--primary);background:#fff}.formula-name{width:62px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--muted);font-size:12px}.formula-input{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;outline:0}.statusbar{height:30px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}.statusbar .spacer{flex:1}.zoombar{position:fixed;right:16px;bottom:42px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.zoom-btn{width:30px;height:30px;min-height:30px;border-radius:999px}.zoom-percent{min-width:50px;text-align:center;font-size:12px;color:var(--muted)}.drop-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(15,23,42,.56);backdrop-filter:blur(10px)}.drop-overlay.show{display:flex}.drop-box{position:relative;width:min(620px,94vw);padding:38px 28px;border-radius:28px;border:2px dashed rgba(255,255,255,.55);color:#fff;background:rgba(15,23,42,.72);text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.35)}.drop-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14)}.toast-wrap{position:fixed;right:16px;top:16px;z-index:200;display:grid;gap:8px}.toast{min-width:250px;max-width:360px;padding:11px 12px;border-radius:14px;background:#101828;color:#fff;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px}.toast.good{background:#067647}.toast.warn{background:#b54708}.toast.bad{background:#b42318}.modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.48);backdrop-filter:blur(8px);padding:18px}.modal.show{display:flex}.modal-card{width:min(480px,96vw);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px}.modal-card h3{margin:0 0 12px}.modal-card label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.modal-card input{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);padding:8px;background:var(--panel);color:var(--text);outline:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.focus-mode .tabs,.focus-mode .ribbon,.focus-mode .statusbar{display:none}.focus-mode .topbar{opacity:.86}svg{width:16px;height:16px;flex:0 0 auto}@media(max-width:760px){.brand{min-width:auto}.brand-title,.qbtn span,.tool-btn span,.pdf-tool span,.sheet-btn span,.file-pill,.group-title{display:none}.ribbon{max-height:132px}.doc-page{width:min(96vw,var(--page-width));padding:36px}}@media print{body{background:white;overflow:auto}.topbar,.tabs,.ribbon,.statusbar,.zoombar,.modebar,.pdf-toolbar-local{display:none!important}.workspace{padding:0;overflow:visible;background:white}.doc-page{box-shadow:none;margin:0;width:auto;min-height:auto}}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.hidden{display:none!important}.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto}.topbar{height:42px;padding:5px 10px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:8px;min-width:185px}.brand-logo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 6px 18px rgba(41,87,255,.28)}.brand-title{font-weight:800;font-size:13.5px;white-space:nowrap}.quickbar{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}.qbtn,.tool-btn,.tab-btn,.mode-btn,.zoom-btn,.sheet-btn,.pdf-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.66);border:1px solid var(--line);transition:.14s ease;user-select:none}.qbtn{height:30px;padding:0 9px;font-size:12px}.qbtn.icon-only{width:34px;padding:0}.qbtn.primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent}.qbtn.danger{color:#fff;background:linear-gradient(135deg,#ef4444,#f97316);border-color:transparent}.qbtn:hover,.tool-btn:hover,.tab-btn:hover,.mode-btn:hover,.zoom-btn:hover,.sheet-btn:hover,.pdf-tool:hover{transform:translateY(-1px);box-shadow:var(--soft)}.file-pill{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:120px;max-width:280px;height:30px;padding:0 10px;color:var(--muted);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.48);font-size:12px;overflow:hidden}.file-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{height:32px;padding:3px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);overflow:hidden}.tab-btn{height:25px;min-height:25px;padding:0 11px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 22px rgba(41,87,255,.22)}.ribbon{min-height:56px;max-height:104px;padding:6px 10px;display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start;overflow:auto;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);scrollbar-width:thin}.group{display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.44);min-height:42px}.group-title{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap}.tool-btn,.pdf-tool,.sheet-btn{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}.tool-btn.square,.pdf-tool.square,.sheet-btn.square{width:34px;padding:0}.tool-btn.active,.pdf-tool.active,.sheet-btn.active,.mode-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 8px 20px rgba(41,87,255,.22)}.tool-select,.tool-input{height:32px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 8px;font-size:12px;min-width:84px;outline:0}.tool-input[type=color]{width:36px;min-width:36px;padding:2px}.workspace{min-height:0;position:relative;overflow:auto;padding:18px 18px 60px;background:radial-gradient(circle at 20% 10%,rgba(41,87,255,.10),transparent 24%),radial-gradient(circle at 88% 0%,rgba(108,76,255,.10),transparent 22%),var(--bg)}.workspace-pane{display:none;min-height:100%}.workspace-pane.active{display:block}.empty-state{min-height:calc(100vh - 210px);display:grid;place-items:center}.empty-card{width:min(780px,94vw);padding:36px;border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;backdrop-filter:blur(16px)}.empty-icon{width:78px;height:78px;display:grid;place-items:center;margin:0 auto 16px;border-radius:26px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 18px 38px rgba(41,87,255,.26)}.empty-card h1{margin:0 0 9px;letter-spacing:-.04em;font-size:clamp(28px,4vw,46px)}.empty-card p{margin:0 auto 18px;max-width:600px;color:var(--muted);line-height:1.6}.file-types{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px}.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.52)}.modebar,.pdf-toolbar-local,.formula-bar{max-width:1100px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mode-btn{height:34px;padding:0 12px;font-size:12px}.doc-note,.pdf-hint,.sheet-hint{flex:1;min-width:220px;min-height:34px;display:flex;align-items:center;gap:8px;color:var(--muted);border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.56);padding:7px 11px;font-size:12px}.page-stack{width:max-content;max-width:100%;margin:0 auto;transform-origin:top center}.doc-preview-inner{width:max-content;margin:0 auto}.doc-preview-inner .docx-wrapper{background:transparent!important;padding:0!important;box-shadow:none!important}.doc-preview-inner .docx{margin:0 auto 24px!important;box-shadow:var(--shadow)!important;border-radius:2px}.doc-page{width:var(--page-width);min-height:var(--page-min-height);margin:0 auto 28px;padding:var(--page-padding);background:#fff;color:#111827;box-shadow:var(--shadow);outline:0;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}.doc-page:empty:before{content:"Mulai mengetik dokumen di sini...";color:#98a2b3}.doc-page table{border-collapse:collapse;width:100%;margin:12px 0}.doc-page td,.doc-page th{border:1px solid #cbd5e1;padding:8px;min-width:40px}.page-break{display:block;height:28px;margin:26px -72px;background:var(--bg);border:0;position:relative}.page-break:after{content:"Halaman baru";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px}.pdf-pages{width:max-content;max-width:100%;margin:0 auto}.pdf-page{position:relative;margin:0 auto 30px;background:#fff;box-shadow:var(--shadow);border:0}.pdf-page canvas{display:block;border:0}.pdf-layer{position:absolute;inset:0;overflow:hidden;touch-action:none}.pdf-layer.cursor-select{cursor:default}.pdf-layer.cursor-text{cursor:text}.pdf-layer.cursor-crosshair{cursor:crosshair}.pdf-layer.cursor-erase{cursor:not-allowed}.pdf-annotation{position:absolute;user-select:none;transform-origin:top left}.pdf-annotation.selected{outline:2px solid var(--primary);outline-offset:2px}.ann-text{color:#111827;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px;white-space:pre-wrap;font-size:16px;min-width:20px;min-height:18px}.ann-highlight{background:rgba(255,230,0,.38);border-radius:2px}.ann-rect{border:2px solid #f97316;background:rgba(249,115,22,.05)}.ann-line svg,.ann-draw svg{overflow:visible}.ann-line line{stroke:#ef4444;stroke-width:3;stroke-linecap:round}.ann-draw polyline{stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}.pdf-preview{position:absolute;pointer-events:none;border:2px dashed var(--primary);background:rgba(41,87,255,.10);z-index:20}.pdf-preview.highlight{background:rgba(255,230,0,.35);border:1px dashed #d97706}.pdf-text-input{position:absolute;z-index:30;min-width:160px;min-height:36px;resize:both;border:2px solid var(--primary);border-radius:7px;padding:6px;outline:0;background:#fff;color:#111827;box-shadow:var(--soft);pointer-events:auto}.pdf-stylebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.48)}.pdf-stylebar label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}.pdf-stylebar input[type=color]{width:28px;height:24px;border:0;border-radius:7px;background:transparent;padding:0;cursor:pointer}.sheet-wrap{width:100%;max-width:100%;overflow:auto;background:var(--panel-solid);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow)}.sheet-grid{border-collapse:collapse;min-width:980px;width:max-content;background:#fff;color:#111827}.sheet-grid th{position:sticky;top:0;z-index:4;background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;border:1px solid #dbe3ee;height:30px;min-width:74px}.sheet-grid th.row-head{left:0;z-index:5;min-width:46px}.sheet-grid td{border:1px solid #e2e8f0;min-width:110px;height:30px;padding:0}.sheet-grid input{width:100%;height:29px;border:0;padding:0 7px;outline:0;background:transparent;color:#111827}.sheet-grid input:focus{box-shadow:inset 0 0 0 2px var(--primary);background:#fff}.formula-name{width:62px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--muted);font-size:12px}.formula-input{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;outline:0}.statusbar{height:30px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px)}.statusbar .spacer{flex:1}.zoombar{position:fixed;right:16px;bottom:42px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.zoom-btn{width:30px;height:30px;min-height:30px;border-radius:999px}.zoom-percent{min-width:50px;text-align:center;font-size:12px;color:var(--muted)}.drop-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(15,23,42,.56);backdrop-filter:blur(10px)}.drop-overlay.show{display:flex}.drop-box{position:relative;width:min(620px,94vw);padding:38px 28px;border-radius:28px;border:2px dashed rgba(255,255,255,.55);color:#fff;background:rgba(15,23,42,.72);text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.35)}.drop-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14)}.toast-wrap{position:fixed;right:16px;top:16px;z-index:200;display:grid;gap:8px}.toast{min-width:250px;max-width:360px;padding:11px 12px;border-radius:14px;background:#101828;color:#fff;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px}.toast.good{background:#067647}.toast.warn{background:#b54708}.toast.bad{background:#b42318}.modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.48);backdrop-filter:blur(8px);padding:18px}.modal.show{display:flex}.modal-card{width:min(480px,96vw);background:var(--panel-solid);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px}.modal-card h3{margin:0 0 12px}.modal-card label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.modal-card input{width:100%;min-height:36px;border-radius:10px;border:1px solid var(--line);padding:8px;background:var(--panel);color:var(--text);outline:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.focus-mode .tabs,.focus-mode .ribbon,.focus-mode .statusbar{display:none}.focus-mode .topbar{opacity:.86}svg{width:16px;height:16px;flex:0 0 auto}@media(max-width:760px){.brand{min-width:auto}.brand-title,.qbtn span,.tool-btn span,.pdf-tool span,.sheet-btn span,.file-pill,.group-title{display:none}.ribbon{max-height:132px}.doc-page{width:min(96vw,var(--page-width));padding:36px}}@media print{body{background:white;overflow:auto}.topbar,.tabs,.ribbon,.statusbar,.zoombar,.modebar,.pdf-toolbar-local{display:none!important}.workspace{padding:0;overflow:visible;background:white}.doc-page{box-shadow:none;margin:0;width:auto;min-height:auto}}
   </style>
 </head>
 <body>
@@ -25,7 +25,7 @@
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor dokumen web</h1><p>Tarik file ke sini atau klik Buka. Mendukung DOCX, PDF, XLSX/XLS, CSV, TXT, MD, dan HTML dengan mode dokumen, spreadsheet, dan anotasi PDF.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih dokumen</span></button><div class="file-types"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">XLSX/XLS</span><span class="chip">CSV</span><span class="chip">TXT/MD/HTML</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview menjaga layout lebih rapi. Edit Cepat membuat isi bisa diketik dan diformat.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
-    <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local"><button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih</span></button><button class="pdf-tool" data-pdf-tool="text"><i data-lucide="type"></i><span>Teks</span></button><button class="pdf-tool" data-pdf-tool="highlight"><i data-lucide="highlighter"></i><span>Highlight</span></button><button class="pdf-tool" data-pdf-tool="rect"><i data-lucide="square"></i><span>Kotak</span></button><button class="pdf-tool" data-pdf-tool="line"><i data-lucide="minus"></i><span>Garis</span></button><button class="pdf-tool" data-pdf-tool="draw"><i data-lucide="pen-line"></i><span>Coret</span></button><button class="pdf-tool" data-pdf-tool="erase"><i data-lucide="trash-2"></i><span>Hapus</span></button><button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus Pilihan</span></button><div class="pdf-hint" id="pdfHint"><i data-lucide="sparkles"></i><span>Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.</span></div></div><div class="pdf-pages" id="pdfPages"></div></section>
+    <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local"><button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih</span></button><button class="pdf-tool" data-pdf-tool="text"><i data-lucide="type"></i><span>Teks</span></button><button class="pdf-tool" data-pdf-tool="highlight"><i data-lucide="highlighter"></i><span>Highlight</span></button><button class="pdf-tool" data-pdf-tool="rect"><i data-lucide="square"></i><span>Kotak</span></button><button class="pdf-tool" data-pdf-tool="line"><i data-lucide="minus"></i><span>Garis</span></button><button class="pdf-tool" data-pdf-tool="draw"><i data-lucide="pen-line"></i><span>Coret</span></button><button class="pdf-tool" data-pdf-tool="erase"><i data-lucide="trash-2"></i><span>Hapus</span></button><button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus Pilihan</span></button><div class="pdf-stylebar"><label title="Warna teks PDF">Teks <input type="color" value="#111827" data-action="pdfTextColor"></label><label title="Warna highlight">Highlight <input type="color" value="#fff176" data-action="pdfHighlightColor"></label><label title="Warna garis/border kotak">Border <input type="color" value="#f97316" data-action="pdfRectBorderColor"></label><label title="Warna isi kotak">Isi <input type="color" value="#ffffff" data-action="pdfRectFillColor"></label></div><div class="pdf-hint" id="pdfHint"><i data-lucide="sparkles"></i><span>Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.</span></div></div><div class="pdf-pages" id="pdfPages"></div></section>
     <section class="workspace-pane" id="sheetPane"><div class="formula-bar"><div class="formula-name" id="cellName">A1</div><input class="formula-input" id="formulaInput" placeholder="Ketik nilai atau formula: =SUM(A1:A5)" /></div><div class="sheet-wrap"><table class="sheet-grid" id="sheetGrid"></table></div></section>
   </main>
   <footer class="statusbar"><span id="statusText">Siap</span><span id="modeText">Mode: kosong</span><span class="spacer"></span><span id="countText">0 kata</span><span id="saveText">Belum disimpan</span></footer>
@@ -85,6 +85,12 @@
     pdfBytes: null,
     pdfAnnotations: [],
     pdfTool: 'select',
+    pdfTextColor: '#111827',
+    pdfHighlightColor: '#fff176',
+    pdfRectBorderColor: '#f97316',
+    pdfRectFillColor: '#ffffff',
+    pdfLineColor: '#ef4444',
+    pdfDrawColor: '#2563eb',
     pdfUndo: [],
     pdfRedo: [],
     selectedAnnotationId: null,
@@ -123,6 +129,7 @@
     ],
     PDF: [
       {title:'Mode', items:[pdfTool('select','mouse-pointer-2','Pilih'),pdfTool('text','type','Teks'),pdfTool('highlight','highlighter','Highlight'),pdfTool('rect','square','Kotak'),pdfTool('line','minus','Garis'),pdfTool('draw','pen-line','Coret'),pdfTool('erase','trash-2','Hapus')]},
+      {title:'Warna PDF', items:[color('pdfTextColor','#111827'),color('pdfHighlightColor','#fff176'),color('pdfRectBorderColor','#f97316'),color('pdfRectFillColor','#ffffff'),color('pdfLineColor','#ef4444'),color('pdfDrawColor','#2563eb')]},
       {title:'Aksi', items:[btn('pdfDeleteSelected','delete','Hapus Pilihan'),btn('undo','undo-2','Undo'),btn('redo','redo-2','Redo'),btn('save','save','Simpan PDF'),btn('clearPdfAnnotations','eraser','Bersihkan PDF')]}
     ],
     Spreadsheet: [
@@ -179,7 +186,8 @@
       return `<select class="tool-select" data-action="${item.action}">${item.options.map(o=>`<option value="${escapeHtml(o[0])}">${escapeHtml(o[1])}</option>`).join('')}</select>`;
     }
     if (item.type === 'color') {
-      return `<input class="tool-input" type="color" value="${item.value}" data-action="${item.action}" title="${item.action}">`;
+      const current = state[item.action] || item.value;
+      return `<input class="tool-input" type="color" value="${current}" data-action="${item.action}" title="${item.action}">`;
     }
     if (item.type === 'pdfTool') {
       return `<button class="pdf-tool ${state.pdfTool===item.tool?'active':''}" data-pdf-tool="${item.tool}" title="${escapeHtml(item.label)}"><i data-lucide="${item.icon}"></i><span>${escapeHtml(item.label)}</span></button>`;
@@ -222,6 +230,7 @@
     if (action === 'fontSize') execDocCommand('fontSize', el.value);
     if (action === 'foreColor') execDocCommand('foreColor', el.value);
     if (action === 'hiliteColor') execDocCommand('hiliteColor', el.value);
+    if (['pdfTextColor','pdfHighlightColor','pdfRectBorderColor','pdfRectFillColor','pdfLineColor','pdfDrawColor'].includes(action)) setPdfColor(action, el.value);
   }
 
   async function runAction(action, sourceEl){
@@ -428,6 +437,51 @@
     updatePdfCursor();
   }
 
+  function setPdfColor(action, value){
+    state[action] = value;
+    document.querySelectorAll(`[data-action="${action}"]`).forEach(input => { if (input.value !== value) input.value = value; });
+    applyPdfColorToSelected(action, value);
+    updatePdfStyleHint();
+  }
+
+  function applyPdfColorToSelected(action, value){
+    if (state.mode !== 'pdf' || !state.selectedAnnotationId) return;
+    const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
+    if (!ann) return;
+    let changed = false;
+    if (action === 'pdfTextColor' && ann.type === 'text') { pushPdfHistory(); ann.color = value; changed = true; }
+    if (action === 'pdfHighlightColor' && ann.type === 'highlight') { pushPdfHistory(); ann.color = value; changed = true; }
+    if (action === 'pdfRectBorderColor' && ['rect','line'].includes(ann.type)) { pushPdfHistory(); ann.borderColor = value; ann.color = value; changed = true; }
+    if (action === 'pdfRectFillColor' && ann.type === 'rect') { pushPdfHistory(); ann.fillColor = value; changed = true; }
+    if (action === 'pdfLineColor' && ann.type === 'line') { pushPdfHistory(); ann.color = value; ann.borderColor = value; changed = true; }
+    if (action === 'pdfDrawColor' && ann.type === 'draw') { pushPdfHistory(); ann.color = value; changed = true; }
+    if (changed) { markDirty(); redrawPdfAnnotations(); }
+  }
+
+  function updatePdfStyleHint(){
+    if (!pdfHint) return;
+    const names = { text:'Teks', highlight:'Highlight', rect:'Kotak', line:'Garis', draw:'Coret' };
+    const active = names[state.pdfTool] || 'Pilih';
+    const colorInfo = state.pdfTool === 'text' ? `Warna teks ${state.pdfTextColor}` : state.pdfTool === 'highlight' ? `Warna highlight ${state.pdfHighlightColor}` : state.pdfTool === 'rect' ? `Border ${state.pdfRectBorderColor}, isi ${state.pdfRectFillColor}` : state.pdfTool === 'line' ? `Warna garis ${state.pdfLineColor}` : state.pdfTool === 'draw' ? `Warna coretan ${state.pdfDrawColor}` : '';
+    const span = pdfHint.querySelector('span');
+    if (span && colorInfo) span.textContent = `Mode aktif: ${active}. ${colorInfo}.`;
+  }
+
+  function colorWithAlpha(hex, alpha){
+    const rgb = hexToRgbObj(hex || '#000000');
+    return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+  }
+  function hexToRgbObj(hex){
+    let h = String(hex || '#000000').replace('#','').trim();
+    if (h.length === 3) h = h.split('').map(ch => ch + ch).join('');
+    const n = parseInt(h || '0', 16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+  function hexToPdfRgb(hex){
+    const c = hexToRgbObj(hex);
+    return PDFLib.rgb(c.r/255, c.g/255, c.b/255);
+  }
+
   function setPdfTool(tool){
     state.pdfTool = tool; state.selectedAnnotationId = null;
     const hints = {
@@ -440,7 +494,7 @@
       erase: 'Mode aktif: Hapus. Klik anotasi yang ingin dihapus.'
     };
     pdfHint.querySelector('span').textContent = hints[tool] || 'Mode PDF';
-    syncActivePdfTools(); updatePdfCursor(); redrawPdfAnnotations();
+    syncActivePdfTools(); updatePdfCursor(); updatePdfStyleHint(); redrawPdfAnnotations();
   }
   function syncActivePdfTools(){ document.querySelectorAll('[data-pdf-tool]').forEach(b => b.classList.toggle('active', b.dataset.pdfTool === state.pdfTool)); }
   function updatePdfCursor(){
@@ -480,12 +534,15 @@
       const end = layerPoint(ev, layer); preview.remove();
       pushPdfHistory();
       if (state.pdfTool === 'draw') {
-        if (drawPoints.length > 3) state.pdfAnnotations.push({ id: uid(), type:'draw', pageIndex, points: drawPoints });
+        if (drawPoints.length > 3) state.pdfAnnotations.push({ id: uid(), type:'draw', pageIndex, points: drawPoints, color: state.pdfDrawColor });
       } else if (state.pdfTool === 'line') {
-        if (dist(start,end) > 4) state.pdfAnnotations.push({ id: uid(), type:'line', pageIndex, x1:start.x/rect.width, y1:start.y/rect.height, x2:end.x/rect.width, y2:end.y/rect.height });
+        if (dist(start,end) > 4) state.pdfAnnotations.push({ id: uid(), type:'line', pageIndex, x1:start.x/rect.width, y1:start.y/rect.height, x2:end.x/rect.width, y2:end.y/rect.height, color: state.pdfLineColor, borderColor: state.pdfLineColor });
       } else {
         const box = normBox(start, end, rect.width, rect.height);
-        if (box.w > .005 && box.h > .005) state.pdfAnnotations.push({ id: uid(), type:state.pdfTool, pageIndex, ...box });
+        if (box.w > .005 && box.h > .005) {
+          const extra = state.pdfTool === 'highlight' ? { color: state.pdfHighlightColor } : state.pdfTool === 'rect' ? { borderColor: state.pdfRectBorderColor, fillColor: state.pdfRectFillColor } : {};
+          state.pdfAnnotations.push({ id: uid(), type:state.pdfTool, pageIndex, ...box, ...extra });
+        }
       }
       markDirty(); redrawPdfAnnotations();
     };
@@ -498,27 +555,51 @@
   function createPdfPreview(layer, type, x, y){
     const el = document.createElement(type==='draw' ? 'svg' : 'div');
     el.className = 'pdf-preview ' + (type==='highlight'?'highlight':'');
-    if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML='<polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>'; }
-    else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; }
+    if (type === 'draw') { el.style.position='absolute'; el.style.inset='0'; el.style.width='100%'; el.style.height='100%'; el.innerHTML=`<polyline fill="none" stroke="${state.pdfDrawColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>`; }
+    else { el.style.left=x+'px'; el.style.top=y+'px'; el.style.width='1px'; el.style.height='1px'; if (type === 'highlight') { el.style.background = colorWithAlpha(state.pdfHighlightColor, .38); el.style.borderColor = state.pdfHighlightColor; } if (type === 'rect') { el.style.background = colorWithAlpha(state.pdfRectFillColor, .20); el.style.borderColor = state.pdfRectBorderColor; } }
     layer.appendChild(el); return el;
   }
   function updatePdfPreview(el, type, a, b){
-    if (type === 'line') { el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px'; el.style.background = 'transparent'; el.style.border = '0'; el.innerHTML = `<svg width="100%" height="100%" style="overflow:visible"><line x1="${a.x<b.x?0:Math.abs(a.x-b.x)}" y1="${a.y<b.y?0:Math.abs(a.y-b.y)}" x2="${a.x<b.x?Math.abs(a.x-b.x):0}" y2="${a.y<b.y?Math.abs(a.y-b.y):0}" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/></svg>`; return; }
+    if (type === 'line') { el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px'; el.style.background = 'transparent'; el.style.border = '0'; el.innerHTML = `<svg width="100%" height="100%" style="overflow:visible"><line x1="${a.x<b.x?0:Math.abs(a.x-b.x)}" y1="${a.y<b.y?0:Math.abs(a.y-b.y)}" x2="${a.x<b.x?Math.abs(a.x-b.x):0}" y2="${a.y<b.y?Math.abs(a.y-b.y):0}" stroke="${state.pdfLineColor}" stroke-width="3" stroke-linecap="round"/></svg>`; return; }
     el.style.left = Math.min(a.x,b.x)+'px'; el.style.top = Math.min(a.y,b.y)+'px'; el.style.width = Math.abs(a.x-b.x)+'px'; el.style.height = Math.abs(a.y-b.y)+'px';
   }
   function updateDrawPreview(svg, pts, w, h){ const poly = svg.querySelector('polyline'); poly.setAttribute('points', pts.map(p=>`${p.x*w},${p.y*h}`).join(' ')); }
 
   function createPdfTextInput(layer, pageIndex, x, y){
-    const input = document.createElement('textarea'); input.className = 'pdf-text-input'; input.placeholder = 'Ketik teks...'; input.style.left = x + 'px'; input.style.top = y + 'px'; layer.appendChild(input); input.focus();
+    const input = document.createElement('textarea');
+    input.className = 'pdf-text-input';
+    input.placeholder = 'Ketik teks PDF... Enter untuk simpan';
+    input.style.left = x + 'px';
+    input.style.top = y + 'px';
+    input.style.color = state.pdfTextColor;
+    input.style.borderColor = state.pdfTextColor;
+    layer.appendChild(input);
+    const r0 = layer.getBoundingClientRect();
+    if (x + 180 > r0.width) input.style.left = Math.max(0, r0.width - 190) + 'px';
+    setTimeout(() => input.focus(), 0);
+    let done = false;
     const finish = () => {
-      const text = input.value.trim(); input.remove();
+      if (done) return;
+      done = true;
+      const text = input.value.trim();
+      const wPx = Math.max(input.offsetWidth || 160, 160);
+      const hPx = Math.max(input.offsetHeight || 36, 36);
+      const leftPx = parseFloat(input.style.left) || x;
+      const topPx = parseFloat(input.style.top) || y;
+      input.remove();
       if (!text) return;
-      const r = layer.getBoundingClientRect(); pushPdfHistory();
-      state.pdfAnnotations.push({ id: uid(), type:'text', pageIndex, x:x/r.width, y:y/r.height, w:Math.max(input.offsetWidth,160)/r.width, h:Math.max(input.offsetHeight,36)/r.height, text });
-      markDirty(); redrawPdfAnnotations();
+      const r = layer.getBoundingClientRect();
+      pushPdfHistory();
+      state.pdfAnnotations.push({ id: uid(), type:'text', pageIndex, x:leftPx/r.width, y:topPx/r.height, w:wPx/r.width, h:hPx/r.height, text, color: state.pdfTextColor });
+      markDirty(); redrawPdfAnnotations(); setPdfTool('select');
     };
-    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(); } if (e.key === 'Escape') input.remove(); });
-    input.addEventListener('blur', finish, {once:true});
+    input.addEventListener('mousedown', ev => ev.stopPropagation());
+    input.addEventListener('click', ev => ev.stopPropagation());
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(); }
+      if (e.key === 'Escape') { done = true; input.remove(); }
+    });
+    input.addEventListener('blur', () => setTimeout(finish, 80), {once:true});
   }
 
   function redrawPdfAnnotations(){
@@ -528,16 +609,26 @@
       const r = layer.getBoundingClientRect();
       const el = document.createElement('div'); el.className = 'pdf-annotation ann-' + ann.type; el.dataset.id = ann.id;
       if (ann.id === state.selectedAnnotationId) el.classList.add('selected');
-      if (ann.type === 'text') { el.classList.add('ann-text'); el.textContent = ann.text; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'highlight') { el.classList.add('ann-highlight'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'rect') { el.classList.add('ann-rect'); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
-      if (ann.type === 'line') { el.classList.add('ann-line'); const x=Math.min(ann.x1,ann.x2)*r.width, y=Math.min(ann.y1,ann.y2)*r.height, w=Math.abs(ann.x2-ann.x1)*r.width || 1, h=Math.abs(ann.y2-ann.y1)*r.height || 1; setBox(el,x,y,w,h); el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible"><line x1="${ann.x1<ann.x2?0:w}" y1="${ann.y1<ann.y2?0:h}" x2="${ann.x1<ann.x2?w:0}" y2="${ann.y1<ann.y2?h:0}" /></svg>`; }
-      if (ann.type === 'draw') { el.classList.add('ann-draw'); setBox(el,0,0,r.width,r.height); el.innerHTML=`<svg width="${r.width}" height="${r.height}"><polyline points="${ann.points.map(p=>`${p.x*r.width},${p.y*r.height}`).join(' ')}" /></svg>`; }
+      if (ann.type === 'text') { el.classList.add('ann-text'); el.textContent = ann.text; el.style.color = ann.color || state.pdfTextColor; setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'highlight') { el.classList.add('ann-highlight'); el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, .38); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'rect') { el.classList.add('ann-rect'); el.style.borderColor = ann.borderColor || state.pdfRectBorderColor; el.style.background = colorWithAlpha(ann.fillColor || state.pdfRectFillColor, .18); setBox(el, ann.x*r.width, ann.y*r.height, ann.w*r.width, ann.h*r.height); }
+      if (ann.type === 'line') { el.classList.add('ann-line'); const x=Math.min(ann.x1,ann.x2)*r.width, y=Math.min(ann.y1,ann.y2)*r.height, w=Math.abs(ann.x2-ann.x1)*r.width || 1, h=Math.abs(ann.y2-ann.y1)*r.height || 1; setBox(el,x,y,w,h); const lineColor = ann.color || ann.borderColor || state.pdfLineColor; el.innerHTML=`<svg width="${w}" height="${h}" style="overflow:visible"><line x1="${ann.x1<ann.x2?0:w}" y1="${ann.y1<ann.y2?0:h}" x2="${ann.x1<ann.x2?w:0}" y2="${ann.y1<ann.y2?h:0}" stroke="${lineColor}" stroke-width="3" stroke-linecap="round" /></svg>`; }
+      if (ann.type === 'draw') { el.classList.add('ann-draw'); setBox(el,0,0,r.width,r.height); const drawColor = ann.color || state.pdfDrawColor; el.innerHTML=`<svg width="${r.width}" height="${r.height}"><polyline points="${ann.points.map(p=>`${p.x*r.width},${p.y*r.height}`).join(' ')}" stroke="${drawColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" /></svg>`; }
       el.addEventListener('mousedown', startAnnotationMouseDown);
       layer.appendChild(el);
     }
   }
   function setBox(el,x,y,w,h){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.width=w+'px'; el.style.height=h+'px'; }
+
+  function syncPdfInputsFromAnnotation(ann){
+    if (!ann) return;
+    if (ann.type === 'text' && ann.color) state.pdfTextColor = ann.color;
+    if (ann.type === 'highlight' && ann.color) state.pdfHighlightColor = ann.color;
+    if (ann.type === 'rect') { if (ann.borderColor) state.pdfRectBorderColor = ann.borderColor; if (ann.fillColor) state.pdfRectFillColor = ann.fillColor; }
+    if (ann.type === 'line' && (ann.color || ann.borderColor)) state.pdfLineColor = ann.color || ann.borderColor;
+    if (ann.type === 'draw' && ann.color) state.pdfDrawColor = ann.color;
+    ['pdfTextColor','pdfHighlightColor','pdfRectBorderColor','pdfRectFillColor','pdfLineColor','pdfDrawColor'].forEach(k => document.querySelectorAll(`[data-action="${k}"]`).forEach(input => { if (state[k]) input.value = state[k]; }));
+  }
 
   function startAnnotationMouseDown(e){
     e.preventDefault(); e.stopPropagation();
@@ -545,7 +636,7 @@
     const ann = state.pdfAnnotations.find(a => a.id === id); if (!ann) return;
     if (state.pdfTool === 'erase') { pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== id); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); return; }
     if (state.pdfTool !== 'select') return;
-    state.selectedAnnotationId = id; redrawPdfAnnotations();
+    state.selectedAnnotationId = id; syncPdfInputsFromAnnotation(ann); redrawPdfAnnotations();
     const layer = e.currentTarget.parentElement; const r = layer.getBoundingClientRect(); const start = {x:e.clientX, y:e.clientY}; const original = JSON.parse(JSON.stringify(ann));
     let moved = false;
     const move = (ev) => {
@@ -574,12 +665,12 @@
     for (const ann of state.pdfAnnotations) {
       const page = pages[ann.pageIndex]; if (!page) continue;
       const W = page.getWidth(), H = page.getHeight();
-      if (ann.type === 'highlight') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, color: rgb(1,.91,.05), opacity:.35 });
-      if (ann.type === 'rect') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, borderColor: rgb(.95,.33,.08), borderWidth: 2, color: rgb(1,.68,.35), opacity:.05 });
-      if (ann.type === 'text') page.drawText(ann.text || '', { x: ann.x*W, y: H - ann.y*H - 16, size: 14, font, color: rgb(.07,.09,.15), lineHeight: 16 });
-      if (ann.type === 'line') page.drawLine({ start:{x:ann.x1*W, y:H-ann.y1*H}, end:{x:ann.x2*W, y:H-ann.y2*H}, thickness:2.5, color:rgb(.94,.27,.27) });
+      if (ann.type === 'highlight') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, color: hexToPdfRgb(ann.color || state.pdfHighlightColor), opacity:.35 });
+      if (ann.type === 'rect') page.drawRectangle({ x: ann.x*W, y: H - (ann.y+ann.h)*H, width: ann.w*W, height: ann.h*H, borderColor: hexToPdfRgb(ann.borderColor || state.pdfRectBorderColor), borderWidth: 2, color: hexToPdfRgb(ann.fillColor || state.pdfRectFillColor), opacity:.18 });
+      if (ann.type === 'text') page.drawText(ann.text || '', { x: ann.x*W, y: H - ann.y*H - 16, size: 14, font, color: hexToPdfRgb(ann.color || state.pdfTextColor), lineHeight: 16 });
+      if (ann.type === 'line') page.drawLine({ start:{x:ann.x1*W, y:H-ann.y1*H}, end:{x:ann.x2*W, y:H-ann.y2*H}, thickness:2.5, color:hexToPdfRgb(ann.color || ann.borderColor || state.pdfLineColor) });
       if (ann.type === 'draw' && ann.points && ann.points.length > 1) {
-        for (let i=1;i<ann.points.length;i++) page.drawLine({ start:{x:ann.points[i-1].x*W, y:H-ann.points[i-1].y*H}, end:{x:ann.points[i].x*W, y:H-ann.points[i].y*H}, thickness:2, color:rgb(.15,.38,.92) });
+        for (let i=1;i<ann.points.length;i++) page.drawLine({ start:{x:ann.points[i-1].x*W, y:H-ann.points[i-1].y*H}, end:{x:ann.points[i].x*W, y:H-ann.points[i].y*H}, thickness:2, color:hexToPdfRgb(ann.color || state.pdfDrawColor) });
       }
     }
     const bytes = await pdfDoc.save();
