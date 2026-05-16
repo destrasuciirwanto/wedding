@@ -589,6 +589,7 @@
       <div class="nav-section" id="quickCategorySection" style="overflow:auto;display:none!important"><div class="nav-title">Kategori Cepat</div><div class="nav-list" id="genreNav"></div></div>
       <div class="sidebar-tools">
         <button class="btn primary" id="openAdminBtn">✦ Admin Mode</button>
+        <button class="btn danger dam-admin-exit-btn" id="exitAdminBtn" type="button" hidden>Keluar Admin Mode</button>
         <small class="sidebar-note">Kelola upload, edit, hapus, pindah lagu, dan kategori dari panel admin.</small>
       </div>
     </aside>
@@ -654,7 +655,7 @@
   <div class="toast-wrap" id="toastWrap"></div>
 
   <div class="modal" id="adminModal"><div class="modal-card">
-    <div class="modal-head"><div><h3>Admin Mode DAM</h3><p>Upload, edit, hapus, cover, kategori, dan pindah folder R2. Admin dibuka dengan password, tanpa kolom token manual.</p></div><button class="icon-btn" data-close="adminModal">×</button></div>
+    <div class="modal-head"><div><h3>Admin Mode DAM</h3><p>Upload, edit, hapus, cover, kategori, dan pindah folder R2. Admin dibuka dengan password, tanpa kolom token manual.</p></div><div class="admin-mode-head-actions"><button class="btn danger dam-admin-exit-btn" type="button" hidden>Keluar Admin Mode</button><button class="icon-btn" data-close="adminModal">×</button></div></div>
     <div class="admin-grid">
       <div class="admin-card dam-hidden-admin-token" hidden>
         <input id="adminToken" type="password" autocomplete="off" />
@@ -745,7 +746,7 @@
     };
     const navItems = [
       ['home','⌂','Home'], ['search','⌕','Search'], ['library','▦','Library'], ['genres','◇','Kategori'],
-      ['playlists','▱','Playlist'], ['favorites','♡','Favorite'], ['recent','◷','Recently'], ['queue','☰','Queue'], ['admin','✦','Admin']
+      ['playlists','▱','Playlist'], ['favorites','♡','Favorite'], ['recent','◷','Recently'], ['queue','☰','Queue']
     ];
     const gradients = [
       'linear-gradient(135deg,#a855f7,#22c55e)', 'linear-gradient(135deg,#06b6d4,#7c3aed)', 'linear-gradient(135deg,#f43f5e,#f59e0b)',
@@ -826,10 +827,10 @@
     }
     function renderHome(c){
       const current=getTrack(state.currentId) || state.tracks[0]; const genres=getGenres(); const rec=sortTracks([...state.tracks]).slice(0,8); const recent=state.recent.map(getTrack).filter(Boolean).slice(0,8);
-      c.innerHTML = `<section class="hero"><div><span class="eyebrow">✦ Cloudflare R2 Connected</span><h1>DestAra Music</h1><p>Music player premium dengan efek modern, queue, playlist, admin upload, edit, pindah kategori, dan cover otomatis bergaya wallpaper kalau belum ada gambar.</p><div class="hero-actions"><button class="btn primary" id="heroPlay">▶ Putar Semua</button><button class="btn" data-page="library">Library</button><button class="btn" data-page="admin">Admin Musik</button></div></div><div class="now-vinyl ${audio.paused?'paused':''}"><div class="vinyl-cover" style="background:${gradient(current||{})}">${current?.cover?`<img src="${attr(current.cover)}" alt="">`:`${esc((current?.title||'DAM').charAt(0))}`}</div></div></section>${insightsHTML()}${toolbarHTML()}<section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Lagu dari bucket Cloudflare kamu.</small></div><button class="btn" id="playRec">Putar Mix</button></div>${tracksHTML(rec)}</section>${recent.length?`<section class="section"><div class="section-head"><div><h2>Lanjutkan Dengarkan</h2><small>Riwayat lokal browser.</small></div></div>${tracksHTML(recent)}</section>`:''}<section class="section"><div class="section-head"><div><h2>Kategori Populer</h2><small>Genre otomatis dari folder R2.</small></div></div><div class="grid wide">${genres.slice(0,8).map(genreCard).join('')}</div></section>`;
+      c.innerHTML = `<section class="hero"><div><span class="eyebrow">✦ Cloudflare R2 Connected</span><h1>DestAra Music</h1><p>Music player premium dengan efek modern, queue, playlist, admin upload, edit, pindah kategori, dan cover otomatis bergaya wallpaper kalau belum ada gambar.</p><div class="hero-actions"><button class="btn primary" id="heroPlay">▶ Putar Semua</button><button class="btn" data-page="library">Library</button></div></div><div class="now-vinyl ${audio.paused?'paused':''}"><div class="vinyl-cover" style="background:${gradient(current||{})}">${current?.cover?`<img src="${attr(current.cover)}" alt="">`:`${esc((current?.title||'DAM').charAt(0))}`}</div></div></section>${insightsHTML()}${toolbarHTML()}<section class="section"><div class="section-head"><div><h2>Rekomendasi Hari Ini</h2><small>Lagu dari bucket Cloudflare kamu.</small></div><button class="btn" id="playRec">Putar Mix</button></div>${tracksHTML(rec)}</section>${recent.length?`<section class="section"><div class="section-head"><div><h2>Lanjutkan Dengarkan</h2><small>Riwayat lokal browser.</small></div></div>${tracksHTML(recent)}</section>`:''}<section class="section"><div class="section-head"><div><h2>Kategori Populer</h2><small>Genre otomatis dari folder R2.</small></div></div><div class="grid wide">${genres.slice(0,8).map(genreCard).join('')}</div></section>`;
       $('#heroPlay')?.addEventListener('click',()=>playAll(state.tracks)); $('#playRec')?.addEventListener('click',()=>playAll(rec)); bindToolbar();
     }
-    function insightsHTML(){ const genres=getGenres(); const totalSize=state.tracks.reduce((a,t)=>a+(t.size||0),0); return `<section class="section"><div class="insights"><div class="insight-card"><span class="eyebrow">Tracks</span><div class="num">${state.tracks.length}</div><small>Total lagu aktif</small></div><div class="insight-card"><span class="eyebrow">Genre</span><div class="num">${genres.length}</div><small>Kategori terbaca</small></div><div class="insight-card"><span class="eyebrow">Storage</span><div class="num">${sizeFmt(totalSize)}</div><small>Estimasi file audio</small></div><div class="insight-card"><span class="eyebrow">Mode</span><div class="num" style="font-size:1.2rem">${esc(state.view)}</div><small>Tampilan sekarang</small></div></div></section>`; }
+    function insightsHTML(){ const genres=getGenres(); const totalSize=state.tracks.reduce((a,t)=>a+(t.size||0),0); return `<section class="section"><div class="insights"><div class="insight-card"><span class="eyebrow">Tracks</span><div class="num">${state.tracks.length}</div><small>Total lagu aktif</small></div><div class="insight-card"><span class="eyebrow">Genre</span><div class="num">${genres.length}</div><small>Kategori terbaca</small></div><div class="insight-card dam-admin-storage-stat"><span class="eyebrow">Storage</span><div class="num">${sizeFmt(totalSize)}</div><small>Estimasi file audio</small></div><div class="insight-card"><span class="eyebrow">Mode</span><div class="num" style="font-size:1.2rem">${esc(state.view)}</div><small>Tampilan sekarang</small></div></div></section>`; }
     function toolbarHTML(){ return `<div class="toolbar"><div class="seg"><button data-view="grid" class="${state.view==='grid'?'active':''}">Grid</button><button data-view="wide" class="${state.view==='wide'?'active':''}">Wide</button><button data-view="list" class="${state.view==='list'?'active':''}">List</button><button data-view="compact" class="${state.view==='compact'?'active':''}">Compact</button><button data-view="masonry" class="${state.view==='masonry'?'active':''}">Masonry</button></div><div class="seg"><button data-sort="title" class="${state.sort==='title'?'active':''}">Judul</button><button data-sort="artist" class="${state.sort==='artist'?'active':''}">Artist</button><button data-sort="genre" class="${state.sort==='genre'?'active':''}">Genre</button><button data-sort="newest" class="${state.sort==='newest'?'active':''}">Terbaru</button></div></div>`; }
     function bindToolbar(){ $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view; localStorage.setItem(LS.view,state.view); render();})); $$('[data-sort]').forEach(b=>b.addEventListener('click',()=>{state.sort=b.dataset.sort; localStorage.setItem(LS.sort,state.sort); render();})); }
     function renderTracks(c,title,sub,tracks,isQueue=false){ c.innerHTML = `<section class="section" style="margin-top:0"><div class="section-head"><div><h2>${esc(title)}</h2><small>${esc(sub)}</small></div>${tracks.length?`<button class="btn primary" id="playSection">▶ Putar Semua</button>`:''}</div>${toolbarHTML()}${tracks.length?tracksHTML(tracks,isQueue):'<div class="empty">Belum ada lagu di bagian ini.</div>'}</section>`; $('#playSection')?.addEventListener('click',()=>playAll(tracks)); bindToolbar(); }
@@ -6784,6 +6785,128 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
+})();
+</script>
+
+
+<!-- DAM V59 - Admin mode visibility lock + logout + storage admin-only -->
+<style id="dam-v59-admin-mode-visibility-style">
+  /* Hanya mengunci tampilan Aksi Lagu dan Storage sampai Admin Mode aktif. */
+  body:not(.dam-admin-active) .mini-actions,
+  body:not(.dam-admin-active) .row-actions {
+    display: none !important;
+  }
+
+  body:not(.dam-admin-active) .dam-admin-storage-stat {
+    display: none !important;
+  }
+
+  .dam-admin-exit-btn[hidden] {
+    display: none !important;
+  }
+
+  .dam-admin-exit-btn {
+    width: 100%;
+  }
+
+  .admin-mode-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-mode-head-actions .dam-admin-exit-btn {
+    width: auto;
+    min-width: 168px;
+  }
+</style>
+
+<script id="dam-v59-admin-mode-visibility-script">
+(function () {
+  if (window.__DAM_V59_ADMIN_MODE_VISIBILITY__) return;
+  window.__DAM_V59_ADMIN_MODE_VISIBILITY__ = true;
+
+  var PASSWORD = 'destradanmutiara';
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  function adminActive() {
+    return Boolean(qs('#adminToken') && qs('#adminToken').value === PASSWORD);
+  }
+
+  function syncAdminUI() {
+    var active = adminActive();
+    document.body.classList.toggle('dam-admin-active', active);
+
+    try { adminUnlocked = active; } catch (e) {}
+
+    qsa('.dam-admin-exit-btn').forEach(function (exitBtn) { exitBtn.hidden = !active; });
+
+    var openBtn = qs('#openAdminBtn');
+    if (openBtn) {
+      openBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      openBtn.innerHTML = active ? '✦ Admin Mode Aktif' : '✦ Admin Mode';
+    }
+
+    if (!active) {
+      qsa('.mini-actions.open').forEach(function (menu) { menu.classList.remove('open'); });
+    }
+  }
+
+  function logoutAdminMode() {
+    var token = qs('#adminToken');
+    if (token) token.value = '';
+    localStorage.removeItem('dam_admin_token_v24');
+    syncAdminUI();
+
+    ['adminModal', 'editModal', 'moveModal', 'adminPasswordModal'].forEach(function (id) {
+      var modal = qs('#' + id);
+      if (modal) modal.classList.remove('show');
+    });
+
+    try {
+      if (typeof toast === 'function') toast('Admin keluar', 'Masukkan password lagi untuk masuk Admin Mode.', 'good');
+    } catch (e) {}
+
+    try { if (typeof renderNav === 'function') renderNav(); } catch (e) {}
+    try { if (typeof render === 'function') render(); } catch (e) {}
+  }
+
+  document.addEventListener('click', function (event) {
+    var actionButton = event.target && event.target.closest ? event.target.closest('.mini-actions button, .row-actions button') : null;
+    if (actionButton && !adminActive()) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      return;
+    }
+
+    var exitBtn = event.target && event.target.closest ? event.target.closest('.dam-admin-exit-btn') : null;
+    if (exitBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      logoutAdminMode();
+    }
+  }, true);
+
+  qs('#adminPasswordForm')?.addEventListener('submit', function () {
+    setTimeout(syncAdminUI, 0);
+    setTimeout(syncAdminUI, 90);
+  });
+
+  qs('#clearTokenBtn')?.addEventListener('click', function () {
+    setTimeout(syncAdminUI, 0);
+  });
+
+  var token = qs('#adminToken');
+  if (token) {
+    token.addEventListener('input', syncAdminUI);
+    token.addEventListener('change', syncAdminUI);
+  }
+
+  syncAdminUI();
 })();
 </script>
 
