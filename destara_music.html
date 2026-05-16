@@ -845,8 +845,61 @@
     function playlistCard(p,i=0){ return `<article class="playlist-card" data-page="playlist:${attr(p.id)}"><div class="cover" style="background:${gradient({gradientIndex:i,id:p.id})}"><span class="cover-letter">♫</span></div><div class="track-info"><b>${esc(p.name)}</b><small>${(p.trackIds||[]).length} lagu • ${esc(p.description||'Playlist')}</small></div></article>`; }
     function delegatedClick(e){ const b=e.target.closest('button,[data-page],.genre-card,.playlist-card'); if(!b) return; const page=b.dataset.page || b.closest('[data-page]')?.dataset.page; if(page){ state.page=page; renderNav(); render(); toggleSidebar(false); return; } if(b.dataset.play) return playTrack(b.dataset.play); if(b.dataset.fav) return toggleFavorite(b.dataset.fav); if(b.dataset.queue) return addQueue(b.dataset.queue); if(b.dataset.addplaylist) return openPlaylistModal(b.dataset.addplaylist); if(b.dataset.download) return downloadTrackId(b.dataset.download); if(b.dataset.edit) return openEdit(b.dataset.edit); if(b.dataset.move) return openMove(b.dataset.move); if(b.dataset.del) return deleteTrack(b.dataset.del); }
     function playAll(tracks){ if(!tracks.length) return; playTrack(tracks[0].id, tracks.map(t=>t.id)); }
-    function playTrack(id, queueIds){ const t=getTrack(id); if(!t) return; if(queueIds) state.queue=queueIds; else if(!state.queue.includes(id)) state.queue=[id,...state.queue]; state.currentId=id; state.queueIndex=Math.max(0,state.queue.indexOf(id)); audio.src=t.src; audio.play().catch(err=>toast('Audio belum bisa diputar',err.message,'bad')); addRecent(id); updateGlow(t); renderNav(); renderPlayer(); render(); }
-    function togglePlay(){ if(!state.currentId && state.tracks[0]) return playAll(state.tracks); audio.paused?audio.play():audio.pause(); renderPlayer(); render(); }
+    function updateHomeVinylOnly(t){
+      const vinyl = $('.now-vinyl');
+      if(vinyl) vinyl.classList.toggle('paused', audio.paused);
+      const vinylCover = $('.now-vinyl .vinyl-cover');
+      if(vinylCover && t){
+        vinylCover.style.background = gradient(t);
+        vinylCover.innerHTML = t.cover ? `<img src="${attr(t.cover)}" alt="">` : `${esc((t.title||'DAM').charAt(0))}`;
+      }
+    }
+    function updatePlayingStateOnly(t){
+      const activeId = t ? String(t.id) : '';
+      $$('.track-card').forEach(card=>{
+        const id = String(card.dataset.track || '');
+        const active = activeId && id === activeId;
+        card.classList.toggle('playing', !!active);
+        const btn = card.querySelector('[data-play]');
+        if(btn) btn.textContent = active && !audio.paused ? '⏸' : '▶';
+      });
+      $$('.row').forEach(row=>{
+        const btn = row.querySelector('[data-play]');
+        const id = String(btn?.dataset.play || '');
+        const active = activeId && id === activeId;
+        row.classList.toggle('playing', !!active);
+        if(btn) btn.textContent = active && !audio.paused ? '⏸' : '▶';
+      });
+    }
+    function refreshPlaybackUiOnly(t){
+      if(t) updateGlow(t);
+      renderNav();
+      renderPlayer();
+      updateHomeVinylOnly(t);
+      updatePlayingStateOnly(t);
+      renderProgress();
+    }
+    function playTrack(id, queueIds){
+      const t=getTrack(id);
+      if(!t) return;
+      if(queueIds) state.queue=[...queueIds];
+      else if(!state.queue.includes(id)) state.queue=[id,...state.queue];
+      state.currentId=id;
+      state.queueIndex=Math.max(0,state.queue.indexOf(id));
+      const currentSrc = audio.getAttribute('src') || '';
+      if(t.src && currentSrc !== t.src && audio.src !== t.src) audio.src=t.src;
+      audio.play().catch(err=>toast('Audio belum bisa diputar',err.message,'bad'));
+      addRecent(id);
+      refreshPlaybackUiOnly(t);
+    }
+    function togglePlay(){
+      if(!state.currentId && state.tracks[0]) return playAll(state.tracks);
+      audio.paused?audio.play():audio.pause();
+      const t=getTrack(state.currentId);
+      renderPlayer();
+      updateHomeVinylOnly(t);
+      updatePlayingStateOnly(t);
+    }
     function nextTrack(){ if(!state.queue.length) return; let i=state.shuffle?Math.floor(Math.random()*state.queue.length):state.queueIndex+1; if(i>=state.queue.length) i=0; playTrack(state.queue[i], state.queue); }
     function prevTrack(){ if(!state.queue.length) return; let i=state.queueIndex-1; if(i<0) i=state.queue.length-1; playTrack(state.queue[i], state.queue); }
     function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); const eq=$('#eq'); eq.style.opacity=audio.paused?.35:1; eq.classList.toggle('paused', audio.paused || !t); $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
@@ -863,7 +916,7 @@
     function renderPlaylistSelect(){ $('#playlistSelect').innerHTML = state.playlists.map(p=>`<option value="${attr(p.id)}">${esc(p.name)}</option>`).join('') || '<option value="">Buat playlist baru dulu</option>'; }
     function addSelectedToPlaylist(){ const id=$('#playlistTrackId').value; let name=$('#newPlaylistName').value.trim(); let pid=$('#playlistSelect').value; if(name){ pid='pl_'+Date.now(); state.playlists.push({id:pid,name,description:'Playlist lokal',trackIds:[],user:true}); } const p=state.playlists.find(x=>x.id===pid); if(!p) return toast('Playlist kosong','Buat playlist baru dulu.','bad'); if(!p.trackIds.includes(id)) p.trackIds.push(id); saveLS(LS.playlists,state.playlists); closeModal('playlistModal'); $('#newPlaylistName').value=''; toast('Masuk playlist', getTrack(id)?.title || 'Lagu ditambahkan','good'); render(); }
     function quickCreatePlaylist(){ const name=prompt('Nama playlist baru?'); if(!name) return; state.playlists.push({id:'pl_'+Date.now(),name:name.trim(),description:'Playlist lokal',trackIds:[],user:true}); saveLS(LS.playlists,state.playlists); render(); }
-    function deletePlaylist(id){ if(!confirm('Hapus playlist ini?')) return; state.playlists=state.playlists.filter(p=>p.id!==id); saveLS(LS.playlists,state.playlists); state.page='playlists'; renderNav(); render(); }
+    function deletePlaylist(id){ if(!confirm('Hapus playlist ini?')) return; state.playlists=state.playlists.filter(p=>p.id!==id); saveLS(LS.playlists,state.playlists); if(window.damNavigateTo) window.damNavigateTo('playlists',{replace:true}); else { state.page='playlists'; renderNav(); render(); } }
     function toggleFavorite(id){ state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[id,...state.favorites]; saveLS(LS.favorites,state.favorites); renderNav(); renderPlayer(); render(); }
     function addQueue(id){ if(!state.queue.includes(id)) state.queue.push(id); saveLS('dam_queue_v24', state.queue); renderNav(); toast('Ditambahkan ke Queue',getTrack(id)?.title||'Lagu','good'); }
     function addRecent(id){ state.recent=[id,...state.recent.filter(x=>x!==id)].slice(0,30); saveLS(LS.recent,state.recent); }
@@ -960,7 +1013,88 @@
     function toggleCustomGenre(sel){ const custom=$('#'+sel.dataset.customTarget); if(!custom) return; custom.hidden=sel.value!=='__custom__'; if(!custom.hidden) custom.focus?.(); renderGenrePicker(sel); }
     function getFormGenre(form){ const sel=form.genre; if(!sel) return ''; if(sel.value==='__custom__') return (form.genreCustom?.value||'').trim(); return (sel.value||'').trim(); }
     function renderQuickGenreChips(){ const wrap=$('#quickGenreChips'); if(!wrap) return; wrap.innerHTML=genreList().slice(0,14).map(g=>`<button class="admin-chip" type="button" data-quick-genre="${attr(g)}">${esc(g)}</button>`).join(''); $$('[data-quick-genre]',wrap).forEach(btn=>btn.onclick=()=>{ $('#newGenre').value=btn.dataset.quickGenre; }); }
-    async function shareCurrent(){ const t=getTrack(state.currentId); if(!t) return; await navigator.clipboard.writeText(t.src).catch(()=>{}); toast('Link disalin',t.title,'good'); }
+    function shareAdminActive(){ return Boolean($('#adminToken') && $('#adminToken').value === ADMIN_PASSWORD); }
+    function sharePageUrlForTrack(t){
+      const url = new URL(location.href);
+      url.hash = '';
+      url.searchParams.set('view','single');
+      url.searchParams.set('track', String(t?.id || ''));
+      url.searchParams.delete('admin');
+      url.searchParams.delete('token');
+      return url.toString();
+    }
+    function shareLinkForTrack(t){ return shareAdminActive() && t?.src ? t.src : sharePageUrlForTrack(t); }
+    function shareLabelForTrack(t){ return `${t?.title || 'DestAra Music'}${t?.artist ? ' - ' + t.artist : ''}`; }
+    function simpleShareLinkLabel(link){
+      try{
+        const u = new URL(link);
+        const single = u.searchParams.get('track') ? '1 lagu' : '';
+        const host = u.hostname.replace(/^www\./,'');
+        return single ? `${host} - ${single}` : host;
+      }catch(e){ return 'Link siap dibagikan'; }
+    }
+    function copyShareLink(text){
+      if(navigator.clipboard?.writeText) return navigator.clipboard.writeText(text).catch(()=>fallbackShareCopy(text));
+      fallbackShareCopy(text);
+      return Promise.resolve();
+    }
+    function fallbackShareCopy(text){
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.readOnly=true; ta.style.position='fixed'; ta.style.left='-9999px'; ta.style.top='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      ta.remove();
+    }
+    function ensureShareModal(){
+      let overlay=$('#damShareModal');
+      if(overlay) return overlay;
+      overlay=document.createElement('div');
+      overlay.id='damShareModal';
+      overlay.className='dam-share-modal';
+      overlay.innerHTML=`<div class="dam-share-card" role="dialog" aria-modal="true" aria-label="Share link lagu">
+        <div class="dam-share-head"><button class="dam-share-back" type="button" data-share-close aria-label="Kembali">‹</button><div class="dam-share-titlebox"><h3 id="damShareTitle">Share Lagu</h3><p id="damShareDesc">Pilih aplikasi atau salin link.</p></div><button class="dam-share-x" type="button" data-share-close aria-label="Tutup">×</button></div>
+        <div class="dam-share-linkpill"><span class="dam-share-link-icon">link</span><span id="damShareUrlText">Link siap dibagikan</span><button type="button" id="damShareCopyMini" title="Copy link" aria-label="Copy link">Copy</button></div>
+        <div class="dam-share-grid">
+          <button type="button" id="damShareNative"><span class="dam-share-app-icon native">share</span><span>Share</span></button>
+          <button type="button" id="damShareWA"><span class="dam-share-app-icon wa">WA</span><span>WhatsApp</span></button>
+          <button type="button" id="damShareTelegram"><span class="dam-share-app-icon tg">TG</span><span>Telegram</span></button>
+          <button type="button" id="damShareXBtn"><span class="dam-share-app-icon xicon">X</span><span>X</span></button>
+          <button type="button" id="damShareFacebook"><span class="dam-share-app-icon fb">f</span><span>Facebook</span></button>
+          <button type="button" id="damShareCopyBtn"><span class="dam-share-app-icon copy">copy</span><span>Copy</span></button>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', e=>{ if(e.target===overlay || e.target.closest('[data-share-close]')) closeShareModal(); });
+      const openExternal = url => window.open(url,'_blank','noopener,noreferrer');
+      $('#damShareNative', overlay).addEventListener('click', ()=>{
+        const t=overlay.__track, link=overlay.__link;
+        if(navigator.share){ navigator.share({title:shareLabelForTrack(t), text:shareLabelForTrack(t), url:link}).catch(()=>{}); closeShareModal(); }
+        else copyShareLink(link).then(()=>toast('Link disalin','Share perangkat tidak tersedia di browser ini.','good'));
+      });
+      $('#damShareWA', overlay).addEventListener('click', ()=>{ const t=overlay.__track, link=overlay.__link; openExternal('https://wa.me/?text='+encodeURIComponent(shareLabelForTrack(t)+'\n'+link)); closeShareModal(); });
+      $('#damShareTelegram', overlay).addEventListener('click', ()=>{ const t=overlay.__track, link=overlay.__link; openExternal('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(shareLabelForTrack(t))); closeShareModal(); });
+      $('#damShareXBtn', overlay).addEventListener('click', ()=>{ const t=overlay.__track, link=overlay.__link; openExternal('https://twitter.com/intent/tweet?text='+encodeURIComponent(shareLabelForTrack(t))+'&url='+encodeURIComponent(link)); closeShareModal(); });
+      $('#damShareFacebook', overlay).addEventListener('click', ()=>{ const link=overlay.__link; openExternal('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(link)); closeShareModal(); });
+      const doCopy=()=>{ const t=overlay.__track, link=overlay.__link; copyShareLink(link).then(()=>toast('Link disalin',t?.title || 'DestAra Music','good')); closeShareModal(); };
+      $('#damShareCopyBtn', overlay).addEventListener('click', doCopy);
+      $('#damShareCopyMini', overlay).addEventListener('click', doCopy);
+      return overlay;
+    }
+    function openShareModal(t){
+      if(!t) return;
+      const overlay=ensureShareModal();
+      const link=shareLinkForTrack(t);
+      overlay.__track=t; overlay.__link=link;
+      $('#damShareTitle',overlay).textContent=t.title || 'Share Lagu';
+      $('#damShareDesc',overlay).textContent=shareAdminActive() ? 'Link file audio' : 'Link halaman 1 lagu';
+      $('#damShareUrlText',overlay).textContent=simpleShareLinkLabel(link);
+      $('#damShareNative',overlay).hidden=!navigator.share;
+      overlay.classList.add('show');
+    }
+    function closeShareModal(){ const overlay=$('#damShareModal'); if(overlay) overlay.classList.remove('show'); }
+    async function shareCurrent(){ const t=getTrack(state.currentId); if(!t) return; openShareModal(t); }
+    window.damOpenShareSheet = openShareModal;
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeShareModal(); });
     function openCommand(){ $('#commandOverlay').classList.add('show'); $('#commandInput').value=''; renderCommand(); setTimeout(()=>$('#commandInput').focus(),20); }
     function closeCommand(){ $('#commandOverlay').classList.remove('show'); }
     function renderCommand(){ const q=$('#commandInput').value.toLowerCase().trim(); const pages=navItems.map(x=>({type:'page',id:x[0],title:x[2],icon:x[1]})); const tracks=getFilteredTracks(q).slice(0,10).map(t=>({type:'track',id:t.id,title:t.title,sub:t.artist,track:t})); const items=[...pages.filter(p=>p.title.toLowerCase().includes(q)),...tracks]; $('#commandResults').innerHTML=items.map(it=>it.type==='page'?`<div class="command-item" data-cmd-page="${it.id}"><div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)">${it.icon}</div><div><b>${esc(it.title)}</b><small>Halaman</small></div><span>↵</span></div>`:`<div class="command-item" data-cmd-track="${it.id}"><div class="cover" style="background:${gradient(it.track)}">${it.track.cover?`<img src="${attr(it.track.cover)}">`:esc(it.title.charAt(0))}</div><div><b>${esc(it.title)}</b><small>${esc(it.sub)}</small></div><span>Play</span></div>`).join('') || '<div class="empty">Tidak ada hasil.</div>'; $$('[data-cmd-page]').forEach(x=>x.onclick=()=>{ state.page=x.dataset.cmdPage; closeCommand(); renderNav(); render(); }); $$('[data-cmd-track]').forEach(x=>x.onclick=()=>{ playTrack(x.dataset.cmdTrack); closeCommand(); }); }
@@ -1440,7 +1574,7 @@
   const target = qs('#content') || document.body;
   const observer = new MutationObserver(run);
   observer.observe(target, { childList: true, subtree: true });
-  setInterval(run, 1200);
+  setInterval(run, 2600);
 })();
 </script>
 
@@ -1854,7 +1988,7 @@
   document.addEventListener('play', run, true);
   document.addEventListener('pause', run, true);
   document.addEventListener('click', function () { setTimeout(run, 0); }, true);
-  setInterval(run, 1200);
+  setInterval(run, 2600);
 })();
 </script>
 
@@ -3725,7 +3859,7 @@
   var mo = new MutationObserver(function(){ addTonearm(); });
   mo.observe(document.body, {childList:true, subtree:true});
   document.addEventListener('click', function(){ setTimeout(addTonearm, 0); }, true);
-  setInterval(addTonearm, 1200);
+  setInterval(addTonearm, 2600);
 })();
 </script>
 
@@ -3829,7 +3963,7 @@
   }
 
   document.addEventListener('click', function(){ setTimeout(syncTonearmState, 30); }, true);
-  setInterval(syncTonearmState, 900);
+  setInterval(syncTonearmState, 1800);
 })();
 </script>
 
@@ -5286,7 +5420,7 @@
 
     var observer = new MutationObserver(scheduleIcons);
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    setInterval(scheduleIcons, 900);
+    setInterval(scheduleIcons, 2200);
   }
 
   if (document.readyState === 'loading') {
@@ -5755,7 +5889,7 @@
 
   var observer = new MutationObserver(function () { run(); });
   observer.observe(document.body, { childList: true, subtree: true });
-  setInterval(run, 1200);
+  setInterval(run, 2600);
 })();
 </script>
 
@@ -6052,7 +6186,7 @@
 
   window.addEventListener('resize', positionOpenPickers);
   window.addEventListener('scroll', positionOpenPickers, true);
-  setInterval(positionOpenPickers, 700);
+  setInterval(positionOpenPickers, 1400);
 })();
 </script>
 
@@ -6773,14 +6907,14 @@
     refreshAll();
     var a = getAudio();
     if (a) {
-      ['play', 'pause', 'ended', 'loadedmetadata', 'timeupdate'].forEach(function(name){
+      ['play', 'pause', 'ended', 'loadedmetadata'].forEach(function(name){
         a.addEventListener(name, function(){ scheduleRefresh(30); }, true);
       });
     }
     document.addEventListener('keyup', function(){ scheduleRefresh(30); }, true);
     var observer = new MutationObserver(function(){ scheduleRefresh(30); });
     observer.observe(document.body, { childList: true, subtree: true });
-    setInterval(refreshAll, 650);
+    setInterval(refreshAll, 1800);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
@@ -6907,6 +7041,906 @@
   }
 
   syncAdminUI();
+})();
+</script>
+
+
+<!-- DAM V61 - Safe fix: Download admin-only + Share 1 lagu tanpa freeze -->
+<style id="dam-v61-safe-share-download-style">
+  /* Download disembunyikan untuk user biasa, muncul hanya saat Admin Mode aktif. */
+  body:not(.dam-admin-active) #downloadBtn,
+  body:not(.dam-admin-active) #damExpandedDownload,
+  body:not(.dam-admin-active) [data-download] {
+    display: none !important;
+  }
+
+  body.dam-admin-active #downloadBtn,
+  body.dam-admin-active #damExpandedDownload,
+  body.dam-admin-active [data-download] {
+    display: inline-flex !important;
+  }
+
+  body.dam-single-track-mode .sidebar,
+  body.dam-single-track-mode .topbar,
+  body.dam-single-track-mode .command-overlay,
+  body.dam-single-track-mode #openAdminBtn,
+  body.dam-single-track-mode [data-page="admin"] {
+    display: none !important;
+  }
+
+  body.dam-single-track-mode .app {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body.dam-single-track-mode .main,
+  body.dam-single-track-mode .player {
+    grid-column: 1 !important;
+  }
+
+  .dam-v61-single-hero {
+    min-height: calc(100dvh - var(--player) - 72px) !important;
+    grid-template-columns: minmax(0, .95fr) minmax(280px, .72fr) !important;
+    align-items: center !important;
+  }
+
+  .dam-v61-single-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.78);
+    font-size: .72rem;
+    font-weight: 950;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .dam-v61-single-cover {
+    width: min(360px, 78vw) !important;
+    aspect-ratio: 1;
+    border-radius: 34px !important;
+    box-shadow: 0 34px 90px rgba(0,0,0,.42) !important;
+    justify-self: center;
+  }
+
+  .dam-v61-single-note {
+    margin-top: 14px;
+    color: rgba(255,255,255,.56);
+    font-size: .82rem;
+    font-weight: 700;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 820px) {
+    .dam-v61-single-hero {
+      grid-template-columns: 1fr !important;
+      min-height: auto !important;
+      padding: 24px !important;
+    }
+
+    .dam-v61-single-cover {
+      width: min(300px, 82vw) !important;
+    }
+  }
+</style>
+
+<script id="dam-v61-safe-share-download-script">
+(function () {
+  if (window.__DAM_V61_SAFE_SHARE_DOWNLOAD__) return;
+  window.__DAM_V61_SAFE_SHARE_DOWNLOAD__ = true;
+
+  var PASSWORD = 'destradanmutiara';
+  var originalDownloadTrackId = null;
+  var originalRenderHome = null;
+  var singleModeApplied = false;
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  function safeEsc(value) {
+    try { if (typeof esc === 'function') return esc(value); } catch (e) {}
+    return String(value == null ? '' : value).replace(/[&<>"]/g, function (c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function safeAttr(value) {
+    try { if (typeof attr === 'function') return attr(value); } catch (e) {}
+    return safeEsc(value).replace(/'/g, '&#039;');
+  }
+
+  function getState() {
+    try { return typeof state !== 'undefined' ? state : null; } catch (e) { return null; }
+  }
+
+  function getAudio() {
+    try { return typeof audio !== 'undefined' ? audio : qs('#audio'); } catch (e) { return qs('#audio'); }
+  }
+
+  function adminActive() {
+    var token = qs('#adminToken');
+    return Boolean(token && token.value === PASSWORD);
+  }
+
+  function syncDownloadAndShareUi() {
+    var active = adminActive();
+    if (document.body.classList.contains('dam-admin-active') !== active) {
+      document.body.classList.toggle('dam-admin-active', active);
+    }
+
+    var download = qs('#downloadBtn');
+    if (download) {
+      download.hidden = !active;
+      download.title = active ? 'Download' : 'Download hanya untuk Admin Mode';
+      download.setAttribute('aria-hidden', active ? 'false' : 'true');
+    }
+
+    var expandedDownload = qs('#damExpandedDownload');
+    if (expandedDownload) {
+      expandedDownload.hidden = !active;
+      expandedDownload.title = active ? 'Download' : 'Download hanya untuk Admin Mode';
+      expandedDownload.setAttribute('aria-hidden', active ? 'false' : 'true');
+    }
+
+    qsa('[data-download]').forEach(function (button) {
+      button.hidden = !active;
+      button.title = active ? 'Download' : 'Download hanya untuk Admin Mode';
+      button.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+
+    var share = qs('#shareBtn');
+    if (share) share.title = active ? 'Share link file lagu' : 'Share link website 1 lagu';
+
+    var expandedShare = qs('#damExpandedShare');
+    if (expandedShare) {
+      expandedShare.textContent = active ? '⤴ Share Link' : '⤴ Share 1 Lagu';
+      expandedShare.title = active ? 'Share link file lagu' : 'Share link website 1 lagu';
+    }
+  }
+
+  function currentTrack() {
+    var s = getState();
+    try {
+      if (s && s.currentId && typeof getTrack === 'function') return getTrack(s.currentId);
+    } catch (e) {}
+    return null;
+  }
+
+  function trackById(id) {
+    var s = getState();
+    var needle = String(id || '');
+    if (!needle || !s || !Array.isArray(s.tracks)) return null;
+    return s.tracks.find(function (track) {
+      return String(track.id || '') === needle || String(track.key || '') === needle;
+    }) || null;
+  }
+
+  function singleTrackIdFromUrl() {
+    var params = new URLSearchParams(location.search);
+    if (params.get('view') !== 'single') return '';
+    return params.get('track') || params.get('dam_track') || params.get('song') || params.get('lagu') || '';
+  }
+
+  function shareUrlForTrack(track) {
+    var url = new URL(location.href);
+    url.hash = '';
+    url.searchParams.set('view', 'single');
+    url.searchParams.set('track', String((track && track.id) || ''));
+    url.searchParams.delete('admin');
+    url.searchParams.delete('token');
+    return url.toString();
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () { fallbackCopy(text); });
+    }
+    fallbackCopy(text);
+    return Promise.resolve();
+  }
+
+  function fallbackCopy(text) {
+    var input = document.createElement('textarea');
+    input.value = text;
+    input.setAttribute('readonly', 'readonly');
+    input.style.position = 'fixed';
+    input.style.left = '-9999px';
+    input.style.top = '0';
+    document.body.appendChild(input);
+    input.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    input.remove();
+  }
+
+  function shareTrack(track) {
+    if (!track) return;
+    if (typeof window.damOpenShareSheet === 'function') {
+      window.damOpenShareSheet(track);
+      return;
+    }
+    var link = adminActive() ? (track.src || shareUrlForTrack(track)) : shareUrlForTrack(track);
+    copyText(link);
+    try {
+      if (typeof toast === 'function') {
+        toast(adminActive() ? 'Link file disalin' : 'Link 1 lagu disalin', adminActive() ? (track.title || 'Lagu') : 'Orang yang buka link hanya melihat lagu ini.', 'good');
+      }
+    } catch (e) {}
+  }
+
+  function handleShareClick(event) {
+    var shareButton = event.target && event.target.closest ? event.target.closest('#shareBtn, #damExpandedShare, #damSingleShare') : null;
+    if (!shareButton) return;
+
+    var track = currentTrack();
+    var directId = shareButton.getAttribute('data-track') || '';
+    if (directId) track = trackById(directId) || track;
+    if (!track) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    shareTrack(track);
+  }
+
+  function blockDownloadForUser(event) {
+    var button = event.target && event.target.closest ? event.target.closest('#downloadBtn, #damExpandedDownload, [data-download]') : null;
+    if (!button || adminActive()) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    try { if (typeof toast === 'function') toast('Download khusus Admin Mode', 'Masukkan password admin untuk membuka download.', 'bad'); } catch (e) {}
+  }
+
+  function patchDownloadFunction() {
+    try {
+      if (typeof downloadTrackId === 'function' && !originalDownloadTrackId) {
+        originalDownloadTrackId = downloadTrackId;
+        downloadTrackId = function () {
+          if (!adminActive()) {
+            try { if (typeof toast === 'function') toast('Download khusus Admin Mode', 'Masukkan password admin untuk membuka download.', 'bad'); } catch (e) {}
+            return;
+          }
+          return originalDownloadTrackId.apply(this, arguments);
+        };
+      }
+    } catch (e) {}
+  }
+
+  function renderSingleLanding(container, track) {
+    if (!container || !track) return;
+    var coverHtml = track.cover
+      ? '<img src="' + safeAttr(track.cover) + '" loading="lazy" alt="">'
+      : '<span class="cover-letter">' + safeEsc(String(track.title || 'D').charAt(0)) + '</span>';
+    var bg = 'linear-gradient(135deg,#a855f7,#22c55e)';
+    try { if (typeof gradient === 'function') bg = gradient(track); } catch (e) {}
+
+    container.innerHTML = '<section class="hero dam-v61-single-hero">' +
+      '<div>' +
+        '<span class="dam-v61-single-badge">♫ Link Share 1 Lagu</span>' +
+        '<h1>' + safeEsc(track.title || 'Untitled') + '</h1>' +
+        '<p>' + safeEsc((track.artist || 'Unknown Artist') + ' • ' + (track.genre || 'Music') + ' • ' + (track.album || 'DestAra Music')) + '</p>' +
+        '<div class="hero-actions">' +
+          '<button class="btn primary" id="damSinglePlay" type="button" data-track="' + safeAttr(track.id) + '">▶ Putar Lagu</button>' +
+          '<button class="btn" id="damSingleShare" type="button" data-track="' + safeAttr(track.id) + '">⤴ Share Lagu</button>' +
+        '</div>' +
+        '<div class="dam-v61-single-note">Halaman ini adalah mode berbagi. Pengunjung hanya mendapat akses untuk mendengarkan lagu ini saja.</div>' +
+      '</div>' +
+      '<div class="cover dam-v61-single-cover" style="background:' + bg + '">' + coverHtml + '</div>' +
+    '</section>';
+
+    var play = qs('#damSinglePlay', container);
+    if (play) {
+      play.addEventListener('click', function () {
+        try {
+          if (typeof playTrack === 'function') playTrack(track.id, [track.id]);
+        } catch (e) {}
+      });
+    }
+  }
+
+  function patchRenderHome() {
+    try {
+      if (typeof renderHome === 'function' && !originalRenderHome) {
+        originalRenderHome = renderHome;
+        renderHome = function (container) {
+          var id = singleTrackIdFromUrl();
+          if (id) {
+            var track = trackById(id) || currentTrack();
+            if (track) return renderSingleLanding(container, track);
+          }
+          return originalRenderHome.apply(this, arguments);
+        };
+      }
+    } catch (e) {}
+  }
+
+  function applySingleMode() {
+    var id = singleTrackIdFromUrl();
+    if (!id || singleModeApplied) return Boolean(singleModeApplied);
+
+    var s = getState();
+    if (!s || !Array.isArray(s.tracks) || !s.tracks.length) return false;
+
+    var track = trackById(id);
+    if (!track) return false;
+
+    document.body.classList.add('dam-single-track-mode');
+    s.tracks = [track];
+    s.queue = [track.id];
+    s.queueIndex = 0;
+    s.currentId = track.id;
+    s.page = 'home';
+    s.filter = '';
+
+    var a = getAudio();
+    if (a && track.src && a.src !== track.src) a.src = track.src;
+
+    singleModeApplied = true;
+
+    try { if (typeof renderNav === 'function') renderNav(); } catch (e) {}
+    try { if (typeof renderPlayer === 'function') renderPlayer(); } catch (e) {}
+    try { if (typeof render === 'function') render(); } catch (e) {}
+    syncDownloadAndShareUi();
+    return true;
+  }
+
+  document.addEventListener('click', blockDownloadForUser, true);
+  document.addEventListener('click', handleShareClick, true);
+
+  patchDownloadFunction();
+  patchRenderHome();
+  syncDownloadAndShareUi();
+
+  qsa('[data-close="adminPasswordModal"]').forEach(function () { setTimeout(syncDownloadAndShareUi, 0); });
+  var adminForm = qs('#adminPasswordForm');
+  if (adminForm) adminForm.addEventListener('submit', function () {
+    setTimeout(syncDownloadAndShareUi, 0);
+    setTimeout(syncDownloadAndShareUi, 120);
+  });
+  var token = qs('#adminToken');
+  if (token) {
+    token.addEventListener('input', syncDownloadAndShareUi);
+    token.addEventListener('change', syncDownloadAndShareUi);
+  }
+
+  var attempts = 0;
+  var timer = setInterval(function () {
+    attempts += 1;
+    patchDownloadFunction();
+    patchRenderHome();
+    syncDownloadAndShareUi();
+    if (applySingleMode() || attempts > 100) clearInterval(timer);
+  }, 180);
+})();
+</script>
+
+
+
+<!-- DAM V63 - Real share popup + anti-flicker UI update. Audio source/quality untouched. -->
+<style id="dam-v63-share-flicker-fix-style">
+  .dam-share-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 14px;
+    background: rgba(0,0,0,.50);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .dam-share-modal.show { display: flex; }
+  .dam-share-card {
+    width: min(420px, 100%);
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,.13);
+    background: linear-gradient(180deg, rgba(24,24,32,.98), rgba(9,9,14,.98));
+    box-shadow: 0 24px 80px rgba(0,0,0,.55);
+    padding: 16px;
+    color: #fff;
+    animation: damSharePop .16s ease-out;
+  }
+  @keyframes damSharePop { from { opacity:0; transform: translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
+  .dam-share-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
+  .dam-share-head h3 { margin:0; font-size:1.03rem; letter-spacing:-.035em; max-width: 300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dam-share-head p { margin:4px 0 0; color:rgba(255,255,255,.56); line-height:1.4; font-size:.78rem; font-weight:750; }
+  .dam-share-x {
+    width: 34px; height: 34px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.07); color:#fff; font-weight:950;
+    flex: 0 0 auto;
+  }
+
+  .dam-share-titlebox { min-width: 0; flex: 1 1 auto; }
+  .dam-share-back {
+    width: 30px; height: 30px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.065); color:#fff; font-size:1.25rem; line-height:1;
+    display:grid; place-items:center; flex:0 0 auto; padding-bottom:2px;
+  }
+  .dam-share-back:hover { transform: translateY(-1px); background: rgba(255,255,255,.11); }
+  .dam-share-linkpill {
+    display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:8px; align-items:center;
+    min-height:42px; padding:6px 6px 6px 10px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.055);
+    color:rgba(255,255,255,.70); font-size:.74rem; font-weight:850; overflow:hidden;
+  }
+  .dam-share-link-icon {
+    width: 28px; height: 28px; border-radius:999px; display:grid; place-items:center;
+    background: rgba(255,255,255,.09); color: rgba(255,255,255,.82); font-size:.58rem; font-weight:950; text-transform:uppercase;
+  }
+  #damShareUrlText { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #damShareCopyMini {
+    min-height:30px; border-radius:999px; border:1px solid rgba(96,165,250,.28);
+    background: rgba(59,130,246,.16); color:#fff; font-weight:950; padding:0 11px; font-size:.72rem;
+  }
+  .dam-share-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+  .dam-share-grid button {
+    min-height: 82px; border-radius: 20px; border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06); color:#fff; font-weight:900; padding:10px 8px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    font-size:.75rem;
+  }
+  .dam-share-app-icon {
+    width: 40px; height: 40px; border-radius: 999px; display:grid; place-items:center;
+    color:#fff; font-size:.68rem; font-weight:950; letter-spacing:-.02em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .dam-share-app-icon.native { background: linear-gradient(135deg, #22c55e, #a855f7); font-size:.55rem; text-transform:uppercase; }
+  .dam-share-app-icon.wa { background:#22c55e; }
+  .dam-share-app-icon.tg { background:#38bdf8; }
+  .dam-share-app-icon.xicon { background:#111827; font-size:1rem; }
+  .dam-share-app-icon.fb { background:#2563eb; font-family:Arial, sans-serif; font-size:1.22rem; }
+  .dam-share-app-icon.copy { background:#64748b; font-size:.52rem; text-transform:uppercase; }
+  .dam-share-grid button:hover,
+  #damShareCopyMini:hover,
+  .dam-share-back:hover,
+  .dam-share-x:hover { transform: translateY(-1px); background: rgba(255,255,255,.11); }
+  @media (max-width: 420px) {
+    .dam-share-modal { padding: 10px; }
+    .dam-share-card { border-radius: 24px; padding: 14px; }
+    .dam-share-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap:8px; }
+    .dam-share-grid button { min-height: 76px; border-radius: 18px; font-size:.7rem; }
+    .dam-share-app-icon { width: 36px; height: 36px; }
+  }
+</style>
+
+
+<!-- DAM V66 - App back button + browser history navigation. Audio untouched. -->
+<style id="dam-v66-app-back-history-style">
+  .main { position: relative; }
+  .dam-top-left-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-width: 0;
+  }
+  #damAppBackBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.075);
+    color: #fff;
+    display: none;
+    place-items: center;
+    font-size: 1.3rem;
+    font-weight: 950;
+    line-height: 1;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 26px rgba(0,0,0,.18);
+    padding: 0 0 2px;
+  }
+  #damAppBackBtn.show { display: grid; }
+  #damAppBackBtn:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,.13);
+    border-color: rgba(255,255,255,.18);
+  }
+  #damAppBackBtn:active { transform: scale(.96); }
+  .topbar.dam-app-nav-ready {
+    grid-template-columns: auto minmax(260px, 1fr) auto;
+  }
+  @media (max-width: 1100px) {
+    .topbar.dam-app-nav-ready {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+    }
+    .topbar.dam-app-nav-ready .dam-top-left-actions {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .topbar.dam-app-nav-ready .search-wrap {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .topbar.dam-app-nav-ready .top-actions {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: flex-start;
+    }
+  }
+  @media (max-width: 740px) {
+    #damAppBackBtn {
+      width: 36px;
+      height: 36px;
+      font-size: 1.18rem;
+    }
+    .dam-top-left-actions { gap: 7px; }
+    .topbar.dam-app-nav-ready {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+    }
+  }
+</style>
+<script id="dam-v66-app-back-history-script">
+(function () {
+  if (window.__DAM_V66_APP_BACK_HISTORY__) return;
+  window.__DAM_V66_APP_BACK_HISTORY__ = true;
+
+  var lastKnownPage = '';
+  var suppressNextPop = false;
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+
+  function getAppState() {
+    try { return (typeof state !== 'undefined') ? state : null; } catch (error) { return null; }
+  }
+
+  function currentPage() {
+    var s = getAppState();
+    return s && s.page ? String(s.page) : 'home';
+  }
+
+  function normalizePage(page) {
+    page = String(page || '').trim();
+    return page || 'home';
+  }
+
+  function pageFromLocation() {
+    var hash = String(window.location.hash || '');
+    var match = hash.match(/^#page=(.*)$/);
+    if (!match) return '';
+    try { return decodeURIComponent(match[1] || 'home') || 'home'; }
+    catch (error) { return 'home'; }
+  }
+
+  function urlForPage(page) {
+    var url = new URL(window.location.href);
+    page = normalizePage(page);
+    if (page === 'home') url.hash = '';
+    else url.hash = 'page=' + encodeURIComponent(page);
+    return url.pathname + url.search + url.hash;
+  }
+
+  function closeTransientUi() {
+    try { if (typeof toggleSidebar === 'function') toggleSidebar(false); } catch (error) {}
+    try { if (typeof closeCommand === 'function') closeCommand(); } catch (error) {}
+    qsa('.mini-actions.open').forEach(function (menu) { menu.classList.remove('open'); });
+  }
+
+  function ensureBackButton() {
+    var topbar = qs('.topbar');
+    if (!topbar) return null;
+
+    var wrapper = qs('.dam-top-left-actions', topbar);
+    var search = qs('.search-wrap', topbar);
+    var menu = qs('#mobileMenuBtn', topbar) || qs('#mobileMenuBtn');
+
+    if (!wrapper) {
+      wrapper = document.createElement('div');
+      wrapper.className = 'dam-top-left-actions';
+      if (search) topbar.insertBefore(wrapper, search);
+      else topbar.insertBefore(wrapper, topbar.firstChild);
+    }
+
+    if (menu && menu.parentElement !== wrapper) wrapper.appendChild(menu);
+
+    var button = qs('#damAppBackBtn', wrapper);
+    if (!button) {
+      button = document.createElement('button');
+      button.type = 'button';
+      button.id = 'damAppBackBtn';
+      button.setAttribute('aria-label', 'Kembali');
+      button.setAttribute('title', 'Kembali');
+      button.innerHTML = '‹';
+      wrapper.appendChild(button);
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        goBack();
+      });
+    }
+
+    topbar.classList.add('dam-app-nav-ready');
+    return button;
+  }
+
+  function updateBackButton() {
+    var button = ensureBackButton();
+    if (!button) return;
+    var page = currentPage();
+    var show = page !== 'home';
+    button.classList.toggle('show', show);
+    button.disabled = !show;
+  }
+
+  function renderPage(page) {
+    var s = getAppState();
+    if (!s) return;
+    page = normalizePage(page);
+    s.page = page;
+    lastKnownPage = page;
+
+    try { if (typeof renderNav === 'function') renderNav(); } catch (error) {}
+    try { if (typeof render === 'function') render(); } catch (error) {}
+    closeTransientUi();
+    updateBackButton();
+
+    var content = qs('#content');
+    if (content) content.scrollTop = 0;
+  }
+
+  function historyDepth() {
+    var hs = window.history.state;
+    if (hs && hs.__damAppNav) return Number(hs.depth || 0);
+    return 0;
+  }
+
+  function writeHistory(page, mode) {
+    page = normalizePage(page);
+    var current = window.history.state;
+    var depth = current && current.__damAppNav ? Number(current.depth || 0) : 0;
+    var payload;
+
+    if (mode === 'push') {
+      payload = { __damAppNav: true, page: page, depth: depth + 1 };
+      window.history.pushState(payload, '', urlForPage(page));
+    } else {
+      payload = { __damAppNav: true, page: page, depth: depth };
+      window.history.replaceState(payload, '', urlForPage(page));
+    }
+  }
+
+  function navigateTo(page, options) {
+    options = options || {};
+    page = normalizePage(page);
+    var before = currentPage();
+    if (!options.fromPop) {
+      if (options.replace || page === before) writeHistory(page, 'replace');
+      else writeHistory(page, 'push');
+    }
+    renderPage(page);
+  }
+
+  function goBack() {
+    if (currentPage() === 'home') return;
+    if (historyDepth() > 0) {
+      window.history.back();
+      return;
+    }
+    navigateTo('home', { replace: true });
+  }
+
+  function interceptPageClick(event) {
+    var target = event.target && event.target.closest ? event.target.closest('[data-page], [data-cmd-page]') : null;
+    if (!target) return;
+
+    var page = target.dataset.page || target.dataset.cmdPage;
+    if (!page) return;
+
+    // Biarkan guard password admin yang sudah ada bekerja lebih dulu bila admin belum terbuka.
+    if (page === 'admin') {
+      var token = qs('#adminToken');
+      if (!token || token.value !== 'destradanmutiara') return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+
+    navigateTo(page);
+  }
+
+  function patchSearchNavigation() {
+    var input = qs('#searchInput');
+    if (!input || input.dataset.damBackHistorySearch === '1') return;
+    input.dataset.damBackHistorySearch = '1';
+    input.addEventListener('input', function () {
+      setTimeout(function () {
+        if (currentPage() === 'search' && lastKnownPage !== 'search') {
+          writeHistory('search', 'push');
+          lastKnownPage = 'search';
+          updateBackButton();
+        } else {
+          updateBackButton();
+        }
+      }, 0);
+    });
+  }
+
+  function patchProgrammaticHelpers() {
+    try {
+      if (typeof window.damNavigateTo !== 'function') window.damNavigateTo = navigateTo;
+      if (typeof window.damGoBack !== 'function') window.damGoBack = goBack;
+    } catch (error) {}
+  }
+
+  function initializeHistory() {
+    ensureBackButton();
+    patchSearchNavigation();
+    patchProgrammaticHelpers();
+
+    var initial = pageFromLocation() || currentPage() || 'home';
+    writeHistory(initial, 'replace');
+    renderPage(initial);
+  }
+
+  window.addEventListener('popstate', function (event) {
+    if (suppressNextPop) return;
+    var page = (event.state && event.state.__damAppNav && event.state.page) || pageFromLocation() || 'home';
+    navigateTo(page, { fromPop: true });
+  });
+
+  document.addEventListener('click', interceptPageClick, true);
+
+  var tries = 0;
+  var timer = setInterval(function () {
+    tries += 1;
+    if (getAppState() && qs('.topbar')) {
+      clearInterval(timer);
+      initializeHistory();
+      return;
+    }
+    if (tries > 80) clearInterval(timer);
+  }, 80);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    ensureBackButton();
+    updateBackButton();
+  });
+
+  setInterval(function () {
+    ensureBackButton();
+    patchSearchNavigation();
+    updateBackButton();
+  }, 1200);
+})();
+</script>
+
+
+<!-- DAM V67 - Deep audit stability fixes. Audio source/quality untouched. -->
+<style id="dam-v67-deep-audit-style">
+  /* UI-only stabilization: no audio processing, no volume/bitrate/filter changes. */
+  .now-vinyl .vinyl-cover,
+  #nowInfo .cover,
+  .track-card,
+  .row {
+    will-change: auto;
+  }
+  .dam-share-modal.show .dam-share-card {
+    transform: translateZ(0);
+  }
+</style>
+<script id="dam-v67-deep-audit-fix-script">
+(function () {
+  if (window.__DAM_V67_DEEP_AUDIT_FIX__) return;
+  window.__DAM_V67_DEEP_AUDIT_FIX__ = true;
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+  function getState() { try { return typeof state !== 'undefined' ? state : null; } catch (e) { return null; } }
+  function getAudio() { try { return typeof audio !== 'undefined' ? audio : qs('#audio'); } catch (e) { return qs('#audio'); } }
+
+  function syncAppBackButtonSoon() {
+    setTimeout(function () {
+      var btn = qs('#damAppBackBtn');
+      var s = getState();
+      if (btn && s) {
+        var show = s.page && s.page !== 'home';
+        btn.classList.toggle('show', !!show);
+        btn.disabled = !show;
+      }
+    }, 0);
+  }
+
+  function safeRenderNav() { try { if (typeof renderNav === 'function') renderNav(); } catch (e) {} }
+  function safeRenderPlayer() { try { if (typeof renderPlayer === 'function') renderPlayer(); } catch (e) {} }
+  function safeRenderProgress() { try { if (typeof renderProgress === 'function') renderProgress(); } catch (e) {} }
+
+  function syncPlayingClasses() {
+    var s = getState();
+    var a = getAudio();
+    if (!s) return;
+    var activeId = s.currentId ? String(s.currentId) : '';
+    qsa('.track-card').forEach(function (card) {
+      var id = String(card.getAttribute('data-track') || '');
+      var active = Boolean(activeId && id === activeId);
+      card.classList.toggle('playing', active);
+      var btn = qs('[data-play]', card);
+      if (btn && !btn.querySelector('.dam-svg-icon')) btn.textContent = active && a && !a.paused ? '⏸' : '▶';
+    });
+    qsa('.row').forEach(function (row) {
+      var btn = qs('[data-play]', row);
+      var id = String(btn ? btn.getAttribute('data-play') || '' : '');
+      var active = Boolean(activeId && id === activeId);
+      row.classList.toggle('playing', active);
+      if (btn && !btn.querySelector('.dam-svg-icon')) btn.textContent = active && a && !a.paused ? '⏸' : '▶';
+    });
+  }
+
+  function currentTrack() {
+    var s = getState();
+    if (!s || !Array.isArray(s.tracks)) return null;
+    return s.tracks.find(function (t) { return t && t.id === s.currentId; }) || null;
+  }
+
+  function refreshStablePlaybackUi() {
+    safeRenderPlayer();
+    safeRenderProgress();
+    syncPlayingClasses();
+    syncAppBackButtonSoon();
+  }
+
+  // Keep UI accurate without using audio timeupdate for heavy card/icon refreshes.
+  var a = getAudio();
+  if (a) {
+    ['play', 'pause', 'ended', 'loadedmetadata', 'emptied'].forEach(function (name) {
+      a.addEventListener(name, function () { setTimeout(refreshStablePlaybackUi, 20); }, true);
+    });
+  }
+
+  // Command palette page clicks: make sure they enter app history even if another script changes the handler later.
+  document.addEventListener('click', function (event) {
+    var cmdPage = event.target && event.target.closest ? event.target.closest('[data-cmd-page]') : null;
+    if (!cmdPage) return;
+    var page = cmdPage.getAttribute('data-cmd-page');
+    if (!page) return;
+    if (typeof window.damNavigateTo === 'function') {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      try { if (typeof closeCommand === 'function') closeCommand(); } catch (e) {}
+      window.damNavigateTo(page);
+    }
+  }, true);
+
+  // If admin password succeeds, refresh UI once after the hidden token is written.
+  var adminForm = qs('#adminPasswordForm');
+  if (adminForm) {
+    adminForm.addEventListener('submit', function () {
+      setTimeout(function () {
+        try { if (typeof renderNav === 'function') renderNav(); } catch (e) {}
+        try { if (getState() && getState().page === 'admin' && typeof render === 'function') render(); } catch (e) {}
+      }, 130);
+    });
+  }
+
+  // Avoid stale share sheet data after a song changes while the sheet is open.
+  function refreshOpenShareSheet() {
+    var overlay = qs('#damShareModal.show');
+    var track = currentTrack();
+    if (!overlay || !track) return;
+    if (overlay.__track && overlay.__track.id === track.id) return;
+    if (typeof window.damOpenShareSheet === 'function') window.damOpenShareSheet(track);
+  }
+  if (a) {
+    ['play', 'loadedmetadata'].forEach(function (name) {
+      a.addEventListener(name, function () { setTimeout(refreshOpenShareSheet, 40); }, true);
+    });
+  }
+
+  // Lightweight periodic health sync. This intentionally avoids scanning on every timeupdate.
+  setInterval(function () {
+    syncAppBackButtonSoon();
+    syncPlayingClasses();
+  }, 2200);
 })();
 </script>
 
