@@ -846,7 +846,60 @@
     function genreCard(g,i=0){ const count=state.tracks.filter(t=>t.genre===g).length; return `<article class="genre-card" data-page="genre:${attr(g)}"><div class="cover" style="background:${gradient({genre:g,gradientIndex:i})}"><span class="cover-letter">${esc(g.charAt(0))}</span></div><div class="track-info"><b>${esc(g)}</b><small>${count} lagu</small></div></article>`; }
     function playlistCard(p,i=0){ return `<article class="playlist-card" data-page="playlist:${attr(p.id)}"><div class="cover" style="background:${gradient({gradientIndex:i,id:p.id})}"><span class="cover-letter">♫</span></div><div class="track-info"><b>${esc(p.name)}</b><small>${(p.trackIds||[]).length} lagu • ${esc(p.description||'Playlist')}</small></div></article>`; }
     function delegatedClick(e){ const b=e.target.closest('button,[data-page],.genre-card,.playlist-card'); if(!b) return; const page=b.dataset.page || b.closest('[data-page]')?.dataset.page; if(page){ state.page=page; renderNav(); render(); toggleSidebar(false); return; } if(b.dataset.play) return playTrack(b.dataset.play); if(b.dataset.fav) return toggleFavorite(b.dataset.fav); if(b.dataset.queue) return addQueue(b.dataset.queue); if(b.dataset.addplaylist) return openPlaylistModal(b.dataset.addplaylist); if(b.dataset.download) return downloadTrackId(b.dataset.download); if(b.dataset.edit) return openEdit(b.dataset.edit); if(b.dataset.move) return openMove(b.dataset.move); if(b.dataset.del) return deleteTrack(b.dataset.del); }
-    function playAll(tracks){ if(!tracks.length) return; playTrack(tracks[0].id, tracks.map(t=>t.id)); }
+    function uniqueQueueIds(ids){
+      const seen = new Set();
+      return (ids || []).filter(id=>{
+        if(!id || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    }
+    function trackIdsFromList(tracks){
+      return uniqueQueueIds((tracks || []).map(t=>t && t.id).filter(Boolean));
+    }
+    function orderedTracksByGenre(genre){
+      return sortTracks(state.tracks.filter(t=>String(t.genre || '') === String(genre || '')));
+    }
+    function continuousGenreQueue(startGenre){
+      const genres = getGenres().filter(g=>state.tracks.some(t=>String(t.genre || '') === String(g || '')));
+      if(!genres.length) return trackIdsFromList(sortTracks(state.tracks));
+      const idx = Math.max(0, genres.indexOf(startGenre));
+      const orderedGenres = genres.slice(idx).concat(genres.slice(0, idx));
+      const ids = [];
+      orderedGenres.forEach(g=>ids.push(...trackIdsFromList(orderedTracksByGenre(g))));
+      return uniqueQueueIds(ids);
+    }
+    function queueForPlaylistPage(page){
+      const id = String(page || '').slice(9);
+      const p = [...autoPlaylists(), ...state.playlists].find(x=>x && x.id===id);
+      return p ? uniqueQueueIds((p.trackIds || []).filter(trackId=>getTrack(trackId))) : [];
+    }
+    function smartPlaybackQueue(startId, providedTracks, opts={}){
+      const page = String(state.page || '');
+      if(page.startsWith('genre:')){
+        const genre = page.slice(6);
+        return continuousGenreQueue(genre);
+      }
+      if(page === 'queue' && state.queue.length) return uniqueQueueIds(state.queue);
+      if(page === 'favorites') return uniqueQueueIds(state.favorites.filter(id=>getTrack(id)));
+      if(page === 'recent') return uniqueQueueIds(state.recent.filter(id=>getTrack(id)));
+      if(page.startsWith('playlist:')) return queueForPlaylistPage(page);
+      if(page === 'search' || page === 'library') return trackIdsFromList(getFilteredTracks());
+      if(opts.fromPlayAll && providedTracks && providedTracks.length) return trackIdsFromList(providedTracks);
+      if(providedTracks && providedTracks.length) return trackIdsFromList(providedTracks);
+      const t = getTrack(startId);
+      if(t && t.genre && (page === 'home' || page === 'genres')){
+        // Untuk klik lagu dari kartu kategori/home, tetap siapkan urutan genre yang rapi.
+        return continuousGenreQueue(t.genre);
+      }
+      return trackIdsFromList(sortTracks(state.tracks));
+    }
+    function playAll(tracks){
+      if(!tracks || !tracks.length) return;
+      const startId = tracks[0].id;
+      const queue = smartPlaybackQueue(startId, tracks, {fromPlayAll:true});
+      playTrack(startId, queue);
+    }
     function updateHomeVinylOnly(t){
       const vinyl = $('.now-vinyl');
       if(vinyl) vinyl.classList.toggle('paused', audio.paused);
@@ -884,8 +937,8 @@
     function playTrack(id, queueIds){
       const t=getTrack(id);
       if(!t) return;
-      if(queueIds) state.queue=[...queueIds];
-      else if(!state.queue.includes(id)) state.queue=[id,...state.queue];
+      const nextQueue = queueIds ? uniqueQueueIds(queueIds) : smartPlaybackQueue(id);
+      state.queue = nextQueue.includes(id) ? nextQueue : uniqueQueueIds([id, ...nextQueue]);
       state.currentId=id;
       state.queueIndex=Math.max(0,state.queue.indexOf(id));
       const currentSrc = audio.getAttribute('src') || '';
@@ -902,8 +955,48 @@
       updateHomeVinylOnly(t);
       updatePlayingStateOnly(t);
     }
-    function nextTrack(){ if(!state.queue.length) return; let i=state.shuffle?Math.floor(Math.random()*state.queue.length):state.queueIndex+1; if(i>=state.queue.length) i=0; playTrack(state.queue[i], state.queue); }
-    function prevTrack(){ if(!state.queue.length) return; let i=state.queueIndex-1; if(i<0) i=state.queue.length-1; playTrack(state.queue[i], state.queue); }
+    function ensureCurrentQueue(){
+      if(!state.queue.length && state.currentId) state.queue = smartPlaybackQueue(state.currentId);
+      state.queue = uniqueQueueIds(state.queue.filter(id=>getTrack(id)));
+      if(state.currentId && !state.queue.includes(state.currentId)){
+        const rebuilt = smartPlaybackQueue(state.currentId);
+        state.queue = rebuilt.includes(state.currentId) ? rebuilt : uniqueQueueIds([state.currentId, ...rebuilt]);
+      }
+      state.queueIndex = Math.max(0, state.queue.indexOf(state.currentId));
+      return state.queue;
+    }
+    function nextTrack(){
+      const queue = ensureCurrentQueue();
+      if(!queue.length){ if(state.tracks[0]) playAll(sortTracks(state.tracks)); return; }
+      let nextId;
+      if(state.shuffle){
+        const candidates = queue.filter(id=>id!==state.currentId);
+        nextId = candidates.length ? candidates[Math.floor(Math.random()*candidates.length)] : queue[0];
+      } else {
+        let i = queue.indexOf(state.currentId);
+        if(i < 0) i = state.queueIndex;
+        i = i + 1;
+        if(i >= queue.length) i = 0;
+        nextId = queue[i];
+      }
+      if(nextId) playTrack(nextId, queue);
+    }
+    function prevTrack(){
+      const queue = ensureCurrentQueue();
+      if(!queue.length) return;
+      let prevId;
+      if(state.shuffle){
+        const candidates = queue.filter(id=>id!==state.currentId);
+        prevId = candidates.length ? candidates[Math.floor(Math.random()*candidates.length)] : queue[0];
+      } else {
+        let i = queue.indexOf(state.currentId);
+        if(i < 0) i = state.queueIndex;
+        i = i - 1;
+        if(i < 0) i = queue.length - 1;
+        prevId = queue[i];
+      }
+      if(prevId) playTrack(prevId, queue);
+    }
     function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); const eq=$('#eq'); eq.style.opacity=audio.paused?.35:1; eq.classList.toggle('paused', audio.paused || !t); $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
     function renderProgress(){ const pct=audio.duration?(audio.currentTime/audio.duration)*100:0; $('#seek').value=pct||0; $('#curTime').textContent=fmt(audio.currentTime||0); $('#durTime').textContent=fmt(audio.duration||0); $('#playBtn').textContent=audio.paused?'▶':'⏸'; }
     async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); const file=f.file?.files?.[0]; if(file && !f.title.value.trim()) f.title.value = inferTitleFromKey(file.name); if(file && !String(file.type||'').startsWith('audio/')) return toast('File tidak valid','Masukkan file audio seperti MP3/MPEG/WAV/M4A/OGG/AAC/FLAC.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); if(!fd.get('title')) fd.set('title', f.title.value.trim()); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
@@ -9010,6 +9103,17 @@
   document.addEventListener('DOMContentLoaded', function () { ensureAudioCors(); patchNavigationAndRender(); injectEqNav(); });
   setTimeout(function () { ensureAudioCors(); patchNavigationAndRender(); injectEqNav(); }, 160);
 })();
+</script>
+
+
+<script id="dam-v76-category-sequence-fix">
+/*
+  DAM V76 - Category sequence playback fix
+  - Saat Shuffle OFF: lagu di kategori diputar berurutan dalam kategori aktif.
+  - Setelah kategori habis: lanjut kategori berikutnya sesuai urutan daftar kategori.
+  - Saat Shuffle ON: tombol Next tetap acak.
+  Logic utama ditempel di fungsi playTrack/playAll/nextTrack/prevTrack pada script utama.
+*/
 </script>
 
 </body>
