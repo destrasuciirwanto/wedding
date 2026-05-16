@@ -721,7 +721,7 @@
     <div class="command-results" id="commandResults"></div>
   </div></div>
 
-  <audio id="audio" preload="metadata"></audio>
+  <audio id="audio" crossorigin="anonymous" preload="metadata"></audio>
 
   <script>
     const DEFAULT_API = 'https://destara-music-api.destra751.workers.dev/api';
@@ -739,6 +739,8 @@
     const $ = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const audio = $('#audio');
+    audio.crossOrigin = 'anonymous';
+    audio.setAttribute('crossorigin','anonymous');
     const state = {
       page:'home', filter:'', tracks:[], folders:[], currentId:null, queue:[], queueIndex:-1, loading:true,
       favorites: loadLS(LS.favorites, []), recent: loadLS(LS.recent, []), playlists: loadLS(LS.playlists, []),
@@ -7941,6 +7943,1072 @@
     syncAppBackButtonSoon();
     syncPlayingClasses();
   }, 2200);
+})();
+</script>
+
+
+
+<!-- DAM V75 - Surround 3D manual only: preset tidak mengaktifkan surround otomatis, hanya tombol/manual. -->
+<style id="dam-v75-surround-manual-eq-style">
+  .dam-eq-nav-btn .icon { background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(168,85,247,.22)) !important; }
+  .dam-eq-page { display:grid; gap:16px; }
+  .dam-eq-hero {
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:32px;
+    padding:22px;
+    background:
+      radial-gradient(circle at 14% 0%, rgba(34,197,94,.20), transparent 34%),
+      radial-gradient(circle at 90% 10%, rgba(168,85,247,.22), transparent 32%),
+      linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.045));
+    box-shadow: 0 24px 70px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.06);
+    overflow:hidden;
+    position:relative;
+  }
+  .dam-eq-hero:after {
+    content:"";
+    position:absolute;
+    inset:auto -10% -45% 18%;
+    height:220px;
+    pointer-events:none;
+    background: radial-gradient(circle, rgba(34,197,94,.16), transparent 70%);
+    filter: blur(8px);
+  }
+  .dam-eq-hero > * { position:relative; z-index:1; }
+  .dam-eq-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .dam-eq-head h2 { margin:6px 0 6px; font-size: clamp(2rem, 4vw, 3.8rem); line-height:.92; letter-spacing:-.075em; }
+  .dam-eq-head p { margin:0; color:rgba(255,255,255,.66); font-weight:700; line-height:1.6; max-width:760px; }
+  .dam-eq-status { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .dam-eq-badge {
+    min-height:34px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.11);
+    background:rgba(255,255,255,.07);
+    color:rgba(255,255,255,.72);
+    padding:0 11px;
+    font-size:.75rem;
+    font-weight:900;
+  }
+  .dam-eq-badge.good { color:#bbf7d0; background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.26); }
+  .dam-eq-badge.warn { color:#fde68a; background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.24); }
+  .dam-eq-power {
+    width:64px;
+    height:64px;
+    border-radius:999px;
+    display:grid;
+    place-items:center;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.14);
+    color:#fff;
+    font-size:1.4rem;
+    font-weight:950;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 16px 40px rgba(0,0,0,.26);
+  }
+  .dam-eq-power.active {
+    background:linear-gradient(135deg, #22c55e, #a855f7);
+    border-color:rgba(255,255,255,.2);
+    box-shadow: 0 18px 45px rgba(34,197,94,.22), inset 0 1px 0 rgba(255,255,255,.16);
+  }
+  .dam-eq-super-card {
+    position:relative;
+    overflow:hidden;
+    border-radius:32px;
+    border:1px solid rgba(255,255,255,.14);
+    padding:18px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(245,158,11,.22), transparent 34%),
+      radial-gradient(circle at 88% 12%, rgba(34,197,94,.18), transparent 30%),
+      linear-gradient(135deg, rgba(168,85,247,.20), rgba(255,255,255,.065));
+    box-shadow:0 24px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .dam-eq-super-grid { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; align-items:center; }
+  .dam-eq-super-card h3 { margin:6px 0 6px; font-size:clamp(1.45rem, 3vw, 2.4rem); line-height:1; letter-spacing:-.065em; }
+  .dam-eq-super-card p { margin:0; color:rgba(255,255,255,.68); font-weight:750; line-height:1.6; max-width:760px; }
+  .dam-eq-super-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .dam-eq-super-tags span { border:1px solid rgba(255,255,255,.12); border-radius:999px; background:rgba(255,255,255,.08); padding:7px 10px; color:rgba(255,255,255,.76); font-size:.72rem; font-weight:950; }
+  .dam-eq-super-btn {
+    min-height:66px;
+    min-width:230px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.20);
+    background:linear-gradient(135deg, #22c55e, #a855f7 58%, #f59e0b);
+    color:#fff;
+    padding:0 22px;
+    font-weight:1000;
+    letter-spacing:-.02em;
+    box-shadow:0 20px 50px rgba(168,85,247,.30), inset 0 1px 0 rgba(255,255,255,.20);
+  }
+  .dam-eq-super-btn:hover { transform:translateY(-2px) scale(1.015); filter:saturate(1.08); }
+  .dam-eq-layout { display:grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap:16px; }
+  .dam-eq-card {
+    border:1px solid rgba(255,255,255,.105);
+    border-radius:28px;
+    padding:18px;
+    background:rgba(255,255,255,.065);
+    box-shadow: 0 20px 54px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .dam-eq-card h3 { margin:0 0 4px; font-size:1.08rem; letter-spacing:-.04em; }
+  .dam-eq-card small { color:rgba(255,255,255,.56); font-weight:700; line-height:1.55; }
+  .dam-eq-presets { display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:10px; margin-top:14px; }
+  .dam-eq-preset {
+    min-height:74px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.11);
+    background:linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.045));
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+    gap:5px;
+    padding:10px 12px;
+    font-weight:950;
+    text-align:left;
+  }
+  .dam-eq-preset i { font-style:normal; font-size:1.2rem; }
+  .dam-eq-preset span { font-size:.82rem; }
+  .dam-eq-preset small { font-size:.66rem; opacity:.72; }
+  .dam-eq-preset.active {
+    background:linear-gradient(135deg, rgba(34,197,94,.30), rgba(168,85,247,.22));
+    border-color:rgba(34,197,94,.38);
+    box-shadow:0 14px 34px rgba(34,197,94,.12);
+  }
+  .dam-eq-preset[data-eq-preset="signature"].active,
+  .dam-eq-preset[data-eq-preset="signature"]:hover {
+    background:linear-gradient(135deg, rgba(245,158,11,.30), rgba(168,85,247,.26));
+    border-color:rgba(245,158,11,.38);
+  }
+  .dam-eq-preset:hover { transform:translateY(-1px); background:rgba(255,255,255,.12); }
+  .dam-eq-sliders { display:grid; gap:14px; margin-top:16px; }
+  .dam-eq-row {
+    display:grid;
+    grid-template-columns: 128px minmax(0,1fr) 58px;
+    align-items:center;
+    gap:12px;
+  }
+  .dam-eq-row label { font-size:.78rem; font-weight:950; color:rgba(255,255,255,.82); }
+  .dam-eq-row output { color:rgba(255,255,255,.66); font-size:.72rem; font-weight:950; text-align:right; }
+  .dam-eq-row input[type="range"] { width:100%; accent-color:#22c55e; }
+  .dam-eq-sub-box, .dam-eq-boost-box {
+    margin-top:14px;
+    padding:14px;
+    border-radius:22px;
+    border:1px solid rgba(34,197,94,.20);
+    background:linear-gradient(135deg, rgba(34,197,94,.10), rgba(168,85,247,.065));
+  }
+  .dam-eq-boost-box { border-color:rgba(245,158,11,.22); background:linear-gradient(135deg, rgba(245,158,11,.11), rgba(168,85,247,.065)); }
+  .dam-eq-boost-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:12px; }
+  .dam-eq-switch {
+    min-height:40px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.08);
+    padding:0 13px;
+    color:#fff;
+    font-weight:950;
+  }
+  .dam-eq-switch.active { background:linear-gradient(135deg, rgba(34,197,94,.75), rgba(168,85,247,.75)); }
+  .dam-eq-boost-box .dam-eq-switch.active { background:linear-gradient(135deg, rgba(245,158,11,.75), rgba(168,85,247,.75)); }
+  .dam-eq-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .dam-eq-visual {
+    height:150px;
+    display:flex;
+    align-items:end;
+    gap:8px;
+    padding:14px;
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,.09);
+    background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.06));
+    margin-top:14px;
+  }
+  .dam-eq-bar {
+    flex:1;
+    min-width:20px;
+    border-radius:999px 999px 10px 10px;
+    background:linear-gradient(180deg, rgba(34,197,94,.88), rgba(168,85,247,.60));
+    box-shadow:0 12px 28px rgba(34,197,94,.10);
+    transition:height .16s ease, opacity .16s ease;
+  }
+  .dam-eq-bar.sub { background:linear-gradient(180deg, rgba(245,158,11,.90), rgba(34,197,94,.58)); }
+  .dam-eq-now { display:flex; gap:12px; align-items:center; margin-top:14px; min-width:0; }
+  .dam-eq-now .cover { width:58px; border-radius:16px; flex:0 0 auto; }
+  .dam-eq-now b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dam-eq-now small { display:block; margin-top:4px; color:rgba(255,255,255,.55); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dam-eq-note {
+    margin-top:14px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.045);
+    padding:13px 14px;
+    color:rgba(255,255,255,.58);
+    font-size:.78rem;
+    font-weight:700;
+    line-height:1.6;
+  }
+  .dam-eq-surround-box { border-color:rgba(56,189,248,.22); background:linear-gradient(135deg, rgba(56,189,248,.11), rgba(168,85,247,.07)); }
+  .dam-eq-test-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(138px,1fr)); gap:9px; margin-top:12px; }
+  .dam-eq-test-item { border:1px solid rgba(255,255,255,.10); border-radius:16px; padding:10px 11px; background:rgba(255,255,255,.055); }
+  .dam-eq-test-item b { display:block; font-size:.72rem; color:rgba(255,255,255,.55); margin-bottom:4px; }
+  .dam-eq-test-item span { display:block; font-size:.82rem; font-weight:950; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dam-eq-badge.blue { color:#bae6fd; background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.25); }
+  .dam-eq-bar.surround { background:linear-gradient(180deg, rgba(56,189,248,.92), rgba(168,85,247,.62)); }
+  .dam-eq-preset[data-eq-preset="bassmax"].active,
+  .dam-eq-preset[data-eq-preset="bassmax"]:hover { background:linear-gradient(135deg, rgba(245,158,11,.28), rgba(34,197,94,.22)); border-color:rgba(245,158,11,.38); }
+  .dam-eq-preset[data-eq-preset="surround"].active,
+  .dam-eq-preset[data-eq-preset="surround"]:hover { background:linear-gradient(135deg, rgba(56,189,248,.26), rgba(168,85,247,.24)); border-color:rgba(56,189,248,.38); }
+  @media (max-width: 920px) {
+    .dam-eq-layout, .dam-eq-super-grid { grid-template-columns:1fr; }
+    .dam-eq-super-btn { width:100%; min-width:0; }
+  }
+  @media (max-width: 620px) {
+    .dam-eq-hero, .dam-eq-card, .dam-eq-super-card { border-radius:24px; padding:16px; }
+    .dam-eq-row { grid-template-columns: 1fr 54px; gap:8px; }
+    .dam-eq-row label { grid-column:1 / -1; }
+    .dam-eq-presets { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .dam-eq-power { width:54px; height:54px; }
+  }
+</style>
+<script id="dam-v75-surround-manual-eq-script">
+(function () {
+  if (window.__DAM_V75_SURROUND_MANUAL_EQ__) return;
+  window.__DAM_V75_SURROUND_MANUAL_EQ__ = true;
+
+  var LS_KEY = 'dam_real_eq_v75_surround_manual_only';
+  var defaultSettings = {
+    enabled: false,
+    preset: 'flat',
+    boostOn: false,
+    boostDb: 0,
+    bands: { bass: 0, punch: 0, vocal: 0, instrument: 0, treble: 0 },
+    sub: { on: false, level: 0, depth: 0, tight: 3 },
+    surround: { on: false, width: 0, depth: 0 }
+  };
+  var presets = {
+    flat: { label:'Flat', icon:'○', hint:'Suara asli', enabled:false, boostOn:false, boostDb:0, bands:{ bass:0, punch:0, vocal:0, instrument:0, treble:0 }, sub:{ on:false, level:0, depth:0, tight:3 }, surround:{ on:false, width:0, depth:0 } },
+    signature: { label:'DAM Signature Pro', icon:'✨', hint:'Bass bersih, 3D manual', enabled:true, boostOn:true, boostDb:3, bands:{ bass:2, punch:2, vocal:4, instrument:4, treble:3 }, sub:{ on:true, level:4, depth:2, tight:6 }, surround:{ on:false, width:8, depth:5 } },
+    bassmax: { label:'Bass Enak Max', icon:'◆', hint:'Bass besar no mendem', enabled:true, boostOn:true, boostDb:2, bands:{ bass:3, punch:2, vocal:4, instrument:3, treble:3 }, sub:{ on:true, level:6, depth:3, tight:6 }, surround:{ on:false, width:0, depth:0 } },
+    bass: { label:'Sub Clean', icon:'●', hint:'Sub kuat vocal aman', enabled:true, boostOn:false, boostDb:0, bands:{ bass:2, punch:2, vocal:3, instrument:2, treble:2 }, sub:{ on:true, level:5, depth:2, tight:6 }, surround:{ on:false, width:0, depth:0 } },
+    surround: { label:'Surround 3D Ready', icon:'◈', hint:'Set ruang, ON manual', enabled:true, boostOn:false, boostDb:0, bands:{ bass:1, punch:1, vocal:4, instrument:4, treble:4 }, sub:{ on:true, level:2, depth:1, tight:5 }, surround:{ on:false, width:10, depth:6 } },
+    treble: { label:'Treble Clear', icon:'✦', hint:'Atas jernih', enabled:true, boostOn:false, boostDb:0, bands:{ bass:-1, punch:0, vocal:2, instrument:3, treble:5 }, sub:{ on:false, level:0, depth:0, tight:3 }, surround:{ on:false, width:0, depth:0 } },
+    vocal: { label:'Vocal Front', icon:'◉', hint:'Suara depan bersih', enabled:true, boostOn:false, boostDb:0, bands:{ bass:-1, punch:0, vocal:5, instrument:2, treble:2 }, sub:{ on:false, level:0, depth:0, tight:3 }, surround:{ on:false, width:0, depth:0 } },
+    instrument: { label:'Instrumen Detail', icon:'♫', hint:'Detail alat kebuka', enabled:true, boostOn:false, boostDb:0, bands:{ bass:0, punch:2, vocal:2, instrument:5, treble:3 }, sub:{ on:false, level:0, depth:0, tight:3 }, surround:{ on:false, width:0, depth:0 } },
+    cinema: { label:'Cinema Clean', icon:'◎', hint:'Sub aman, 3D manual', enabled:true, boostOn:true, boostDb:3, bands:{ bass:2, punch:2, vocal:4, instrument:4, treble:4 }, sub:{ on:true, level:4, depth:2, tight:6 }, surround:{ on:false, width:10, depth:6 } },
+    lofi: { label:'Lo-fi Warm', icon:'◒', hint:'Hangat vocal aman', enabled:true, boostOn:false, boostDb:0, bands:{ bass:2, punch:1, vocal:1, instrument:-1, treble:-3 }, sub:{ on:true, level:2, depth:1, tight:4 }, surround:{ on:false, width:0, depth:0 } },
+    loud: { label:'Boost Clean', icon:'▲', hint:'Keras tetap kebuka', enabled:true, boostOn:true, boostDb:4, bands:{ bass:1, punch:1, vocal:2, instrument:2, treble:2 }, sub:{ on:true, level:2, depth:1, tight:6 }, surround:{ on:false, width:0, depth:0 } }
+  };
+
+  var settings = loadSettings();
+  if (settings && settings.surround) settings.surround.on = false;
+  var audioGraph = null;
+  var buildPromise = null;
+  var graphError = '';
+  var graphStateText = 'belum aktif';
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+  function safeEsc(value) {
+    try { if (typeof esc === 'function') return esc(value); } catch (e) {}
+    return String(value == null ? '' : value).replace(/[&<>"]/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]); });
+  }
+  function safeAttr(value) { return safeEsc(value).replace(/'/g, '&#039;'); }
+  function getState() { try { return typeof state !== 'undefined' ? state : null; } catch (e) { return null; } }
+  function getAudio() { try { return typeof audio !== 'undefined' ? audio : qs('#audio'); } catch (e) { return qs('#audio'); } }
+  function dbToGain(db) { return Math.pow(10, Number(db || 0) / 20); }
+  function clamp(value, min, max) { value = Number(value || 0); return Math.max(min, Math.min(max, value)); }
+  function cloneBands(bands) { return { bass:+(bands&&bands.bass||0), punch:+(bands&&bands.punch||0), vocal:+(bands&&bands.vocal||0), instrument:+(bands&&bands.instrument||0), treble:+(bands&&bands.treble||0) }; }
+  function cloneSub(sub) { return { on:!!(sub&&sub.on), level:clamp(sub&&sub.level, 0, 8), depth:clamp(sub&&sub.depth, 0, 8), tight:clamp(sub&&sub.tight == null ? 3 : sub.tight, 0, 6) }; }
+  function cloneSurround(surround) { return { on:!!(surround&&surround.on), width:clamp(surround&&surround.width, 0, 10), depth:clamp(surround&&surround.depth, 0, 6) }; }
+  function stripSurroundAuto(surround) { var clean = cloneSurround(surround || {}); clean.on = false; return clean; }
+  function cloneSettings(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+  function normalizeSettings(raw) {
+    if (!raw || typeof raw !== 'object') return cloneSettings(defaultSettings);
+    return {
+      enabled: !!raw.enabled,
+      preset: raw.preset || 'flat',
+      boostOn: !!raw.boostOn,
+      boostDb: clamp(raw.boostDb, 0, 8),
+      bands: Object.assign({}, defaultSettings.bands, cloneBands(raw.bands || {})),
+      sub: cloneSub(raw.sub || {}),
+      surround: cloneSurround(raw.surround || {})
+    };
+  }
+
+  function loadSettings() {
+    try { return normalizeSettings(JSON.parse(localStorage.getItem(LS_KEY) || 'null')); }
+    catch (e) { return cloneSettings(defaultSettings); }
+  }
+  function saveSettings() {
+    try {
+      var saved = cloneSettings(settings);
+      if (saved.surround) saved.surround.on = false; // Surround 3D tidak pernah auto ON setelah reload. Harus manual.
+      localStorage.setItem(LS_KEY, JSON.stringify(saved));
+    } catch (e) {}
+  }
+
+  function toastSafe(title, msg, type) {
+    try { if (typeof toast === 'function') { toast(title, msg, type || ''); return; } } catch (e) {}
+    console.log('[DAM EQ]', title, msg || '');
+  }
+
+  function ensureAudioCors() {
+    var el = getAudio();
+    if (!el) return;
+    try {
+      if (el.crossOrigin !== 'anonymous') el.crossOrigin = 'anonymous';
+      el.setAttribute('crossorigin', 'anonymous');
+    } catch (e) {}
+  }
+
+  function currentAudioUrl() {
+    var el = getAudio();
+    if (!el) return '';
+    return el.currentSrc || el.src || '';
+  }
+
+  function isCrossOriginUrl(url) {
+    try { return !!url && new URL(url, location.href).origin !== location.origin; } catch (e) { return false; }
+  }
+
+  async function testCorsBeforeGraph() {
+    var url = currentAudioUrl();
+    if (!url || !isCrossOriginUrl(url) || !window.fetch) return true;
+    var controller = window.AbortController ? new AbortController() : null;
+    var timer = controller ? setTimeout(function () { try { controller.abort(); } catch(e) {} }, 2600) : null;
+    try {
+      var res = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-store',
+        headers: { 'Range': 'bytes=0-0' },
+        signal: controller ? controller.signal : undefined
+      });
+      if (timer) clearTimeout(timer);
+      return !!(res && (res.ok || res.status === 206 || res.status === 200));
+    } catch (e) {
+      if (timer) clearTimeout(timer);
+      graphError = 'File audio belum mengizinkan CORS untuk Equalizer. EQ dimatikan agar suara tidak hilang.';
+      return false;
+    }
+  }
+
+  function makeFilter(ctx, type, frequency, q) {
+    var filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.value = frequency;
+    if (typeof q === 'number') filter.Q.value = q;
+    if ('gain' in filter) filter.gain.value = 0;
+    return filter;
+  }
+
+  function buildGraph(ctx) {
+    var el = getAudio();
+    var source = ctx.createMediaElementSource(el);
+    var input = ctx.createGain();
+    var rumbleCut = makeFilter(ctx, 'highpass', 28, .72);
+    var subLift = makeFilter(ctx, 'lowshelf', 46);
+    var subBody = makeFilter(ctx, 'peaking', 72, 1.08);
+    var bass = makeFilter(ctx, 'lowshelf', 96);
+    var punch = makeFilter(ctx, 'peaking', 205, .94);
+    var mudGuard = makeFilter(ctx, 'peaking', 310, 1.12);
+    var vocal = makeFilter(ctx, 'peaking', 1380, .96);
+    var instrument = makeFilter(ctx, 'peaking', 3300, .88);
+    var treble = makeFilter(ctx, 'highshelf', 9200);
+    var dry = ctx.createGain();
+    var surroundDelayL = ctx.createDelay(.055);
+    var surroundDelayR = ctx.createDelay(.055);
+    var surroundToneL = makeFilter(ctx, 'highpass', 360, .70);
+    var surroundToneR = makeFilter(ctx, 'highpass', 360, .70);
+    var surroundWetL = ctx.createGain();
+    var surroundWetR = ctx.createGain();
+    var surroundPanL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    var surroundPanR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    dry.gain.value = 1;
+    surroundDelayL.delayTime.value = .014;
+    surroundDelayR.delayTime.value = .028;
+    surroundWetL.gain.value = 0;
+    surroundWetR.gain.value = 0;
+    if (surroundPanL) surroundPanL.pan.value = -.58;
+    if (surroundPanR) surroundPanR.pan.value = .58;
+    var boost = ctx.createGain();
+    var compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -18;
+    compressor.knee.value = 24;
+    compressor.ratio.value = 5.5;
+    compressor.attack.value = .004;
+    compressor.release.value = .18;
+
+    var limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.value = -1.2;
+    limiter.knee.value = 0;
+    limiter.ratio.value = 30;
+    limiter.attack.value = .001;
+    limiter.release.value = .075;
+
+    var master = ctx.createGain();
+    master.gain.value = .92;
+
+    source.connect(input);
+    input.connect(rumbleCut);
+    rumbleCut.connect(subLift);
+    subLift.connect(subBody);
+    subBody.connect(bass);
+    bass.connect(punch);
+    punch.connect(mudGuard);
+    mudGuard.connect(vocal);
+    vocal.connect(instrument);
+    instrument.connect(treble);
+    treble.connect(dry);
+    dry.connect(boost);
+    treble.connect(surroundDelayL);
+    surroundDelayL.connect(surroundToneL);
+    if (surroundPanL) { surroundToneL.connect(surroundPanL); surroundPanL.connect(surroundWetL); }
+    else { surroundToneL.connect(surroundWetL); }
+    surroundWetL.connect(boost);
+    treble.connect(surroundDelayR);
+    surroundDelayR.connect(surroundToneR);
+    if (surroundPanR) { surroundToneR.connect(surroundPanR); surroundPanR.connect(surroundWetR); }
+    else { surroundToneR.connect(surroundWetR); }
+    surroundWetR.connect(boost);
+    boost.connect(compressor);
+    compressor.connect(limiter);
+    limiter.connect(master);
+    master.connect(ctx.destination);
+
+    audioGraph = { ready:true, ctx:ctx, source:source, input:input, rumbleCut:rumbleCut, subLift:subLift, subBody:subBody, bass:bass, punch:punch, mudGuard:mudGuard, vocal:vocal, instrument:instrument, treble:treble, dry:dry, surroundDelayL:surroundDelayL, surroundDelayR:surroundDelayR, surroundToneL:surroundToneL, surroundToneR:surroundToneR, surroundWetL:surroundWetL, surroundWetR:surroundWetR, surroundPanL:surroundPanL, surroundPanR:surroundPanR, boost:boost, compressor:compressor, limiter:limiter, master:master };
+    graphStateText = 'running';
+    applyGraph();
+    return true;
+  }
+
+  async function prepareGraph(showToast) {
+    if (audioGraph && audioGraph.ready) {
+      try { if (audioGraph.ctx.state === 'suspended') await audioGraph.ctx.resume(); } catch(e) {}
+      graphStateText = audioGraph.ctx ? audioGraph.ctx.state : 'running';
+      return audioGraph.ctx && audioGraph.ctx.state !== 'suspended';
+    }
+    if (buildPromise) return buildPromise;
+
+    buildPromise = (async function () {
+      graphError = '';
+      graphStateText = 'menyiapkan';
+      renderEqControlsOnly(true);
+      ensureAudioCors();
+
+      var AudioContext = window.AudioContext || window.webkitAudioContext;
+      var el = getAudio();
+      if (!el || !AudioContext) {
+        graphError = 'Browser ini belum mendukung Web Audio API.';
+        return false;
+      }
+
+      if (!(await testCorsBeforeGraph())) return false;
+
+      try {
+        var ctx = new AudioContext();
+        if (ctx.state === 'suspended') {
+          graphStateText = 'menunggu izin audio';
+          renderEqControlsOnly(true);
+          await ctx.resume();
+        }
+        if (ctx.state === 'suspended') {
+          try { await new Promise(function(resolve){ setTimeout(resolve, 120); }); await ctx.resume(); } catch(e) {}
+        }
+        if (ctx.state === 'suspended') {
+          graphError = 'AudioContext belum bisa berjalan. Tekan Play lagu dulu, lalu aktifkan EQ lagi.';
+          try { await ctx.close(); } catch(e) {}
+          return false;
+        }
+        return buildGraph(ctx);
+      } catch (e) {
+        graphError = e && e.message ? e.message : 'Audio graph gagal dibuat.';
+        return false;
+      }
+    })();
+
+    var ok = await buildPromise;
+    buildPromise = null;
+    if (!ok) {
+      settings = cloneSettings(defaultSettings);
+      saveSettings();
+      graphStateText = graphError || 'gagal aktif';
+      renderEqControlsOnly();
+      if (showToast !== false) toastSafe('EQ dimatikan', graphError || 'Equalizer gagal aktif, suara normal dipertahankan.', 'bad');
+      return false;
+    }
+    renderEqControlsOnly();
+    return true;
+  }
+
+  function applyGraph() {
+    if (!audioGraph || !audioGraph.ready) return;
+    var enabled = !!settings.enabled;
+    var b = enabled ? settings.bands : defaultSettings.bands;
+    var sub = enabled ? settings.sub : defaultSettings.sub;
+    var surround = enabled ? settings.surround : defaultSettings.surround;
+    var boostDb = enabled && settings.boostOn ? clamp(settings.boostDb, 0, 8) : 0;
+    var t = audioGraph.ctx.currentTime || 0;
+    var ramp = .035;
+
+    var rawBassDb = clamp(b.bass, -9, 9);
+    var rawPunchDb = clamp(b.punch, -9, 9);
+    var rawVocalDb = clamp(b.vocal, -9, 9);
+    var rawInstrumentDb = clamp(b.instrument, -9, 9);
+    var rawTrebleDb = clamp(b.treble, -9, 9);
+    var subOn = enabled && sub.on;
+    var subLevelDb = subOn ? clamp(sub.level, 0, 8) : 0;
+    var subDepthDb = subOn ? clamp(sub.depth, 0, 8) : 0;
+    var subTight = subOn ? clamp(sub.tight, 0, 6) : 3;
+    var surroundOn = enabled && surround.on;
+    var surroundWidth = surroundOn ? clamp(surround.width, 0, 10) : 0;
+    var surroundDepth = surroundOn ? clamp(surround.depth, 0, 6) : 0;
+
+    // V72 Vocal Guard: low-end boleh naik, tapi mid/presence/air otomatis dijaga.
+    // Ini mencegah efek "mendem" saat Sub/Bass dinaikkan.
+    var lowIntent = Math.max(0, subLevelDb) * .74 + Math.max(0, subDepthDb) * .34 + Math.max(0, rawBassDb) * .42 + Math.max(0, rawPunchDb) * .14;
+    var vocalGuardDb = enabled ? Math.min(4.8, lowIntent * .30 + Math.max(0, rawBassDb) * .14 + (surroundOn ? .75 : 0)) : 0;
+    var detailGuardDb = enabled ? Math.min(3.8, lowIntent * .21 + Math.max(0, rawBassDb) * .09 + (surroundOn ? .65 : 0)) : 0;
+    var airGuardDb = enabled ? Math.min(3.2, lowIntent * .14 + (surroundOn ? 1.05 : 0)) : 0;
+
+    var subLiftDb = subOn ? subLevelDb * .76 : 0;
+    var subBodyDb = subOn ? subDepthDb * .42 : 0;
+    var bassDb = rawBassDb >= 0 ? rawBassDb * (subOn ? .66 : .82) : rawBassDb;
+    var punchDb = clamp(rawPunchDb + Math.min(1.1, lowIntent * .06), -9, 9);
+    var mudCutDb = enabled ? -Math.min(5.2, lowIntent * .30 + Math.max(0, rawBassDb) * .12 + Math.max(0, subDepthDb) * .20) : 0;
+    var vocalDb = clamp(rawVocalDb + vocalGuardDb, -9, 9);
+    var instrumentDb = clamp(rawInstrumentDb + detailGuardDb, -9, 9);
+    var trebleDb = clamp(rawTrebleDb + airGuardDb, -9, 9);
+
+    // Lebih sedikit global attenuation dibanding v71 agar vocal tidak ikut turun.
+    // Limiter/compressor tetap menjaga peak digital.
+    var positivePresence = Math.max(0, vocalDb) * .10 + Math.max(0, instrumentDb) * .08 + Math.max(0, trebleDb) * .06;
+    var headroomDb = enabled ? Math.min(7.6, (boostDb * .40) + (lowIntent * .17) + positivePresence + (subOn ? .32 : 0)) : 0;
+    var rumbleHz = subOn ? (19 + subTight * 2.8) : 18;
+    var subQ = .62 + subTight * .055;
+    var subBodyQ = .96 + subTight * .085;
+
+    audioGraph.input.gain.setTargetAtTime(dbToGain(-headroomDb), t, ramp);
+    audioGraph.rumbleCut.frequency.setTargetAtTime(rumbleHz, t, ramp);
+    audioGraph.rumbleCut.Q.setTargetAtTime(subQ, t, ramp);
+    audioGraph.subLift.gain.setTargetAtTime(subLiftDb, t, ramp);
+    audioGraph.subBody.gain.setTargetAtTime(subBodyDb, t, ramp);
+    audioGraph.subBody.Q.setTargetAtTime(subBodyQ, t, ramp);
+    audioGraph.bass.gain.setTargetAtTime(bassDb, t, ramp);
+    audioGraph.punch.gain.setTargetAtTime(punchDb, t, ramp);
+    if (audioGraph.mudGuard) audioGraph.mudGuard.gain.setTargetAtTime(mudCutDb, t, ramp);
+    audioGraph.vocal.gain.setTargetAtTime(vocalDb, t, ramp);
+    audioGraph.instrument.gain.setTargetAtTime(instrumentDb, t, ramp);
+    audioGraph.treble.gain.setTargetAtTime(trebleDb, t, ramp);
+    audioGraph.boost.gain.setTargetAtTime(dbToGain(boostDb * .90), t, ramp);
+
+    var surroundWet = surroundOn ? Math.min(.48, .085 + surroundWidth * .024 + surroundDepth * .026) : 0;
+    var delayL = surroundOn ? (.010 + surroundDepth * .0025) : .001;
+    var delayR = surroundOn ? (.024 + surroundWidth * .0018 + surroundDepth * .0022) : .001;
+    var dryGain = surroundOn ? Math.max(.88, 1 - surroundWet * .24) : 1;
+    if (audioGraph.surroundToneL) audioGraph.surroundToneL.frequency.setTargetAtTime(surroundOn ? 360 : 620, t, ramp);
+    if (audioGraph.surroundToneR) audioGraph.surroundToneR.frequency.setTargetAtTime(surroundOn ? 360 : 620, t, ramp);
+    if (audioGraph.dry) audioGraph.dry.gain.setTargetAtTime(dryGain, t, ramp);
+    if (audioGraph.surroundDelayL) audioGraph.surroundDelayL.delayTime.setTargetAtTime(delayL, t, ramp);
+    if (audioGraph.surroundDelayR) audioGraph.surroundDelayR.delayTime.setTargetAtTime(delayR, t, ramp);
+    if (audioGraph.surroundWetL) audioGraph.surroundWetL.gain.setTargetAtTime(surroundWet * .92, t, ramp);
+    if (audioGraph.surroundWetR) audioGraph.surroundWetR.gain.setTargetAtTime(surroundWet, t, ramp);
+    if (audioGraph.surroundPanL) audioGraph.surroundPanL.pan.setTargetAtTime(-Math.min(.98, .62 + surroundWidth * .036), t, ramp);
+    if (audioGraph.surroundPanR) audioGraph.surroundPanR.pan.setTargetAtTime(Math.min(.98, .62 + surroundWidth * .036), t, ramp);
+    audioGraph.surroundInfo = { wet: surroundWet, dry: dryGain, delayL: delayL, delayR: delayR, width: surroundWidth, depth: surroundDepth, on: surroundOn };
+
+    var compressorOn = enabled && (boostDb > 0 || lowIntent > 1 || settings.preset === 'cinema' || settings.preset === 'loud' || settings.preset === 'signature' || settings.preset === 'bassmax' || surroundOn);
+    audioGraph.compressor.threshold.setTargetAtTime(compressorOn ? -16 : 0, t, ramp);
+    audioGraph.compressor.knee.setTargetAtTime(compressorOn ? 22 : 0, t, ramp);
+    audioGraph.compressor.ratio.setTargetAtTime(compressorOn ? 4.2 : 1, t, ramp);
+    audioGraph.compressor.attack.setTargetAtTime(compressorOn ? .003 : .004, t, ramp);
+    audioGraph.compressor.release.setTargetAtTime(compressorOn ? .145 : .18, t, ramp);
+    audioGraph.limiter.threshold.setTargetAtTime(enabled ? -0.9 : 0, t, ramp);
+    audioGraph.limiter.knee.setTargetAtTime(0, t, ramp);
+    audioGraph.limiter.ratio.setTargetAtTime(enabled ? 32 : 1, t, ramp);
+    audioGraph.master.gain.setTargetAtTime(enabled ? .96 : 1, t, ramp);
+    graphStateText = audioGraph.ctx ? audioGraph.ctx.state : 'running';
+  }
+
+  async function setEnabled(value, shouldToast) {
+    settings.enabled = !!value;
+    if (settings.enabled) {
+      var ok = await prepareGraph(true);
+      if (!ok) return;
+    }
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly();
+    injectEqNav();
+    if (shouldToast) toastSafe(settings.enabled ? 'Equalizer aktif' : 'Equalizer flat', settings.enabled ? 'Efek EQ sekarang memproses audio musik.' : 'Suara dikembalikan ke flat.', settings.enabled ? 'good' : '');
+  }
+
+  async function applyPreset(name) {
+    var preset = presets[name] || presets.flat;
+    var manualSurround = cloneSurround(settings.surround || {});
+    var presetSurround = stripSurroundAuto(preset.surround || {});
+    // Preset tidak boleh menyalakan Surround 3D otomatis. Kalau user sudah menyalakan 3D manual,
+    // status ON itu dipertahankan; kalau belum, preset hanya menyiapkan nilai width/depth.
+    if (manualSurround.on) presetSurround = manualSurround;
+    settings = normalizeSettings({ enabled:!!preset.enabled, preset:name, boostOn:!!preset.boostOn, boostDb:preset.boostDb || 0, bands:preset.bands, sub:preset.sub, surround:presetSurround });
+    if (settings.enabled) {
+      var ok = await prepareGraph(true);
+      if (!ok) return;
+    }
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly();
+    injectEqNav();
+    var msg = settings.enabled ? 'Tuning diterapkan. Surround 3D tetap manual; tekan tombol 3D untuk ON.' : 'EQ kembali flat.';
+    toastSafe(name === 'signature' ? 'DAM Signature aktif' : (name === 'bassmax' ? 'Bass Enak Max aktif' : ('Preset EQ: ' + preset.label)), msg, settings.enabled ? 'good' : '');
+  }
+
+  async function updateBand(name, value) {
+    settings.enabled = true;
+    settings.preset = 'custom';
+    settings.bands[name] = clamp(value, -9, 9);
+    var ok = await prepareGraph(false);
+    if (!ok) return;
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly(false);
+    injectEqNav();
+  }
+
+  async function updateSub(name, value) {
+    settings.enabled = true;
+    settings.preset = 'custom';
+    settings.sub.on = true;
+    if (name === 'level') settings.sub.level = clamp(value, 0, 8);
+    if (name === 'depth') settings.sub.depth = clamp(value, 0, 8);
+    if (name === 'tight') settings.sub.tight = clamp(value, 0, 6);
+    var ok = await prepareGraph(false);
+    if (!ok) return;
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly(false);
+    injectEqNav();
+  }
+
+  async function toggleSubwoofer() {
+    settings.enabled = true;
+    settings.preset = 'custom';
+    settings.sub.on = !settings.sub.on;
+    if (settings.sub.on && settings.sub.level === 0 && settings.sub.depth === 0) { settings.sub.level = 4; settings.sub.depth = 3; settings.sub.tight = 4; }
+    var ok = await prepareGraph(true);
+    if (!ok) return;
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly();
+    injectEqNav();
+  }
+
+  async function updateBoost(value) {
+    settings.enabled = true;
+    settings.boostOn = true;
+    settings.preset = 'custom';
+    settings.boostDb = clamp(value, 0, 8);
+    var ok = await prepareGraph(false);
+    if (!ok) return;
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly(false);
+    injectEqNav();
+  }
+
+  function resetEq() {
+    settings = cloneSettings(defaultSettings);
+    applyGraph();
+    saveSettings();
+    renderEqPage();
+    injectEqNav();
+    toastSafe('EQ direset', 'Semua band, subwoofer, dan boost kembali flat.', 'good');
+  }
+
+  function renderEqPage(container) {
+    container = container || qs('#content');
+    if (!container) return;
+    var s = getState();
+    var current = null;
+    try { current = s && Array.isArray(s.tracks) ? s.tracks.find(function(t){ return t && t.id === s.currentId; }) : null; } catch (e) {}
+    var nowHtml = current ? '<div class="dam-eq-now"><div class="cover" style="background:'+ (typeof gradient === 'function' ? gradient(current) : 'linear-gradient(135deg,#a855f7,#22c55e)') +'">'+ (current.cover ? '<img src="'+safeAttr(current.cover)+'" alt="">' : '<span class="cover-letter" style="font-size:24px">'+safeEsc(String(current.title||'D').charAt(0))+'</span>') +'</div><div style="min-width:0"><b>'+safeEsc(current.title||'Untitled')+'</b><small>'+safeEsc((current.artist||'Unknown Artist') + ' • ' + (current.genre||'Music'))+'</small></div></div>' : '<div class="dam-eq-note">Pilih lagu dulu untuk mendengar perubahan EQ secara langsung.</div>';
+    var presetLabel = presets[settings.preset] ? presets[settings.preset].label : 'Custom';
+    container.innerHTML = '<section class="dam-eq-page">'
+      + '<div class="dam-eq-hero"><div class="dam-eq-head"><div><span class="eyebrow">Audio Control</span><h2>Equalizer</h2><p>Atur suara musik dengan tuning khusus, preset cepat Bass Enak Max, Subwoofer, Surround 3D manual, testing EQ, dan volume boost aman. Limiter anti-pecah aktif saat EQ/boost menyala.</p></div><button id="damEqPower" class="dam-eq-power '+(settings.enabled?'active':'')+'" type="button" title="Aktifkan/nonaktifkan Equalizer">&#x23fb;</button></div><div class="dam-eq-status"><span id="damEqStatus" class="dam-eq-badge '+(settings.enabled?'good':'')+'">'+(settings.enabled?'EQ Aktif':'EQ Flat')+'</span><span class="dam-eq-badge '+(settings.sub.on&&settings.enabled?'good':'')+'">Sub '+(settings.enabled&&settings.sub.on?('+'+settings.sub.level+' dB'):'Off')+'</span><span class="dam-eq-badge '+(settings.boostOn&&settings.enabled?'warn':'')+'">Boost '+(settings.enabled&&settings.boostOn?('+'+settings.boostDb+' dB'):'Off')+'</span><span class="dam-eq-badge">Preset '+safeEsc(presetLabel)+'</span><span class="dam-eq-badge blue">3D Manual '+(settings.enabled&&settings.surround.on?'ON':'Off')+'</span><span class="dam-eq-badge good">Limiter Aman</span></div></div>'
+      + '<div class="dam-eq-super-card"><div class="dam-eq-super-grid"><div><span class="eyebrow">One Tap Signature</span><h3>DAM Signature Pro</h3><p>Satu tombol tuning ulang: subwoofer dalam, bass besar, vocal tetap maju, instrumen kebuka, treble bersih, dan limiter menjaga output supaya tidak gampang pecah. Surround 3D tidak ikut aktif otomatis.</p><div class="dam-eq-super-tags"><span>Bass Enak</span><span>Vocal Guard</span><span>3D Manual</span><span>Safe Loud</span><span>Anti Mendem</span></div></div><button id="damEqSignatureBtn" class="dam-eq-super-btn" type="button">Aktifkan Tuning Pro</button></div></div>'
+      + '<div class="dam-eq-layout"><div class="dam-eq-card"><h3>Preset Cepat</h3><small>Pilih karakter suara. Preset tidak akan menyalakan Surround 3D otomatis; 3D hanya aktif lewat tombol ON manual di panel Surround.</small><div class="dam-eq-presets" id="damEqPresets"></div><div class="dam-eq-note">Catatan: mode Cinema/DAM Signature/Surround 3D bukan teknologi Dolby resmi. Preset hanya menyiapkan karakter suara; Surround 3D harus dinyalakan manual lewat tombol ON agar tidak aktif sendiri.</div></div>'
+      + '<div class="dam-eq-card"><h3>Now Playing</h3><small>Dengarkan perubahan sambil musik berjalan.</small>'+nowHtml+'<div class="dam-eq-visual" id="damEqVisual"></div></div></div>'
+      + '<div class="dam-eq-layout"><div class="dam-eq-card"><h3>EQ Manual</h3><small>Geser band untuk membentuk suara. Vocal Guard otomatis menjaga mid/detail saat bass atau subwoofer dinaikkan.</small><div class="dam-eq-sliders" id="damEqSliders"></div></div>'
+      + '<div class="dam-eq-card"><h3>Subwoofer Control</h3><small>Pengaturan khusus sub, bukan sekadar bass. Sub Level membuat low-end lebih dalam, Depth mengisi body sub, Tightness menahan rumble/muddy agar vocal dan instrumen tetap maju.</small><div class="dam-eq-sub-box"><div class="dam-eq-boost-head"><b>Subwoofer</b><button id="damEqSubToggle" class="dam-eq-switch '+(settings.sub.on&&settings.enabled?'active':'')+'" type="button">'+(settings.sub.on&&settings.enabled?'ON':'OFF')+'</button></div><div class="dam-eq-sliders" id="damEqSubSliders"></div></div></div></div>'
+      + '<div class="dam-eq-layout"><div class="dam-eq-card"><h3>Surround 3D</h3><small>Efek lebar stereo memakai pantulan delay kiri/kanan, tetapi tidak akan aktif otomatis dari preset. Nyalakan manual lewat tombol ON agar benar-benar aktif.</small><div class="dam-eq-sub-box dam-eq-surround-box"><div class="dam-eq-boost-head"><b>3D Width</b><button id="damEqSurroundToggle" class="dam-eq-switch '+(settings.surround.on&&settings.enabled?'active':'')+'" type="button">'+(settings.surround.on&&settings.enabled?'ON':'OFF')+'</button></div><div class="dam-eq-sliders" id="damEqSurroundSliders"></div></div></div><div class="dam-eq-card"><h3>Testing & Cek EQ</h3><small>Cek status audio graph, CORS, preset, limiter, subwoofer, surround, dan boost. Ini membantu memastikan efek benar-benar aktif.</small><div class="dam-eq-actions"><button class="btn primary" id="damEqTestBtn" type="button">Jalankan Cek EQ</button></div><div id="damEqTestResult" class="dam-eq-test-grid"></div></div></div>'
+      + '<div class="dam-eq-layout"><div class="dam-eq-card"><h3>Volume Boost</h3><small>Menaikkan loudness dengan headroom otomatis, compressor, dan limiter agar lebih keras tanpa mudah pecah.</small><div class="dam-eq-boost-box"><div class="dam-eq-boost-head"><b>Boost Output</b><button id="damEqBoostToggle" class="dam-eq-switch '+(settings.boostOn&&settings.enabled?'active':'')+'" type="button">'+(settings.boostOn&&settings.enabled?'ON':'OFF')+'</button></div><div class="dam-eq-row"><label for="damEqBoost">Boost</label><input id="damEqBoost" type="range" min="0" max="8" step="1" value="'+safeAttr(settings.boostDb)+'"><output id="damEqBoostValue">+'+safeEsc(settings.boostDb)+' dB</output></div></div><div class="dam-eq-actions"><button class="btn primary" id="damEqEnableBtn" type="button">'+(settings.enabled?'Matikan EQ':'Aktifkan EQ')+'</button><button class="btn" id="damEqResetBtn" type="button">Reset Flat</button></div><div id="damEqGraphNote" class="dam-eq-note"></div></div><div class="dam-eq-card"><h3>Safety Tuning</h3><small>Boost keras tanpa pecah selalu bergantung juga pada file asli, speaker/headset, dan volume perangkat. Sistem ini menjaga clipping digital dari sisi player.</small><div class="dam-eq-note">Tips: kalau speaker HP mulai pecah secara fisik, turunkan volume perangkat sedikit dan biarkan Boost/EQ tetap aktif. Itu biasanya lebih bersih daripada volume perangkat mentok.</div></div></div>'
+      + '</section>';
+    bindEqControls();
+    renderEqControlsOnly();
+  }
+
+  function renderEqControlsOnly(skipSliders) {
+    var presetWrap = qs('#damEqPresets');
+    if (presetWrap) {
+      presetWrap.innerHTML = Object.keys(presets).map(function (key) {
+        var p = presets[key];
+        var active = settings.preset === key || (key === 'flat' && !settings.enabled && settings.preset === 'flat');
+        return '<button type="button" class="dam-eq-preset '+(active?'active':'')+'" data-eq-preset="'+safeAttr(key)+'"><i>'+safeEsc(p.icon)+'</i><span>'+safeEsc(p.label)+'</span><small>'+safeEsc(p.hint)+'</small></button>';
+      }).join('');
+      qsa('[data-eq-preset]', presetWrap).forEach(function (btn) { btn.onclick = function () { applyPreset(btn.getAttribute('data-eq-preset')); }; });
+    }
+    if (!skipSliders) { renderEqSliders(); renderSubSliders(); renderSurroundSliders(); }
+
+    var power = qs('#damEqPower');
+    if (power) power.classList.toggle('active', !!settings.enabled);
+    var enableBtn = qs('#damEqEnableBtn');
+    if (enableBtn) enableBtn.textContent = settings.enabled ? 'Matikan EQ' : 'Aktifkan EQ';
+    var status = qs('#damEqStatus');
+    if (status) {
+      status.textContent = settings.enabled ? 'EQ Aktif' : 'EQ Flat';
+      status.classList.toggle('good', !!settings.enabled);
+    }
+    var surroundToggle = qs('#damEqSurroundToggle');
+    if (surroundToggle) surroundToggle.onclick = toggleSurround;
+    var testBtn = qs('#damEqTestBtn');
+    if (testBtn) testBtn.onclick = runEqTest;
+    var boostToggle = qs('#damEqBoostToggle');
+    if (boostToggle) {
+      boostToggle.textContent = settings.boostOn && settings.enabled ? 'ON' : 'OFF';
+      boostToggle.classList.toggle('active', !!(settings.boostOn && settings.enabled));
+    }
+    var subToggle = qs('#damEqSubToggle');
+    if (subToggle) {
+      subToggle.textContent = settings.sub.on && settings.enabled ? 'ON' : 'OFF';
+      subToggle.classList.toggle('active', !!(settings.sub.on && settings.enabled));
+    }
+    var surroundToggle = qs('#damEqSurroundToggle');
+    if (surroundToggle) {
+      surroundToggle.textContent = settings.surround.on && settings.enabled ? 'ON' : 'OFF';
+      surroundToggle.classList.toggle('active', !!(settings.surround.on && settings.enabled));
+    }
+    var boost = qs('#damEqBoost');
+    var boostOut = qs('#damEqBoostValue');
+    if (boost && document.activeElement !== boost) boost.value = settings.boostDb;
+    if (boostOut) boostOut.textContent = '+' + settings.boostDb + ' dB';
+
+    var note = qs('#damEqGraphNote');
+    if (note) {
+      var ctxState = audioGraph && audioGraph.ctx ? audioGraph.ctx.state : graphStateText;
+      note.textContent = graphError ? ('EQ aman dimatikan: ' + graphError) : ('Status audio graph: ' + ctxState + '. Vocal Guard + safe compressor + limiter aktif saat EQ/boost/subwoofer menyala. Surround 3D hanya aktif kalau tombol 3D dinyalakan manual.');
+    }
+    renderEqVisual();
+  }
+
+  function renderEqSliders() {
+    var wrap = qs('#damEqSliders');
+    if (!wrap) return;
+    var labels = [
+      ['bass','Bass','95-120 Hz'],
+      ['punch','Punch','180 Hz'],
+      ['vocal','Vocal','1 kHz'],
+      ['instrument','Instrumen','3-4 kHz'],
+      ['treble','Treble','8-10 kHz']
+    ];
+    wrap.innerHTML = labels.map(function (item) {
+      var key = item[0];
+      var val = clamp(settings.bands[key], -9, 9);
+      return '<div class="dam-eq-row"><label for="damEq_'+safeAttr(key)+'">'+safeEsc(item[1])+' <small>'+safeEsc(item[2])+'</small></label><input id="damEq_'+safeAttr(key)+'" data-eq-band="'+safeAttr(key)+'" type="range" min="-9" max="9" step="1" value="'+safeAttr(val)+'"><output id="damEqOut_'+safeAttr(key)+'">'+(val>0?'+':'')+safeEsc(val)+' dB</output></div>';
+    }).join('');
+    qsa('[data-eq-band]', wrap).forEach(function (range) {
+      range.addEventListener('input', function () {
+        var key = range.getAttribute('data-eq-band');
+        var value = clamp(range.value, -9, 9);
+        var out = qs('#damEqOut_' + key);
+        if (out) out.textContent = (value > 0 ? '+' : '') + value + ' dB';
+        updateBand(key, value);
+      });
+    });
+  }
+
+  function renderSubSliders() {
+    var wrap = qs('#damEqSubSliders');
+    if (!wrap) return;
+    var rows = [
+      ['level','Sub Level','45-60 Hz',0,8,' dB'],
+      ['depth','Sub Depth','65-85 Hz',0,8,' dB'],
+      ['tight','Tightness','rumble guard',0,6,'']
+    ];
+    wrap.innerHTML = rows.map(function (item) {
+      var key = item[0], min = item[3], max = item[4], suffix = item[5];
+      var val = clamp(settings.sub[key], min, max);
+      var text = key === 'tight' ? String(val) : ('+' + val + suffix);
+      return '<div class="dam-eq-row"><label for="damSub_'+safeAttr(key)+'">'+safeEsc(item[1])+' <small>'+safeEsc(item[2])+'</small></label><input id="damSub_'+safeAttr(key)+'" data-sub-band="'+safeAttr(key)+'" type="range" min="'+min+'" max="'+max+'" step="1" value="'+safeAttr(val)+'"><output id="damSubOut_'+safeAttr(key)+'">'+safeEsc(text)+'</output></div>';
+    }).join('');
+    qsa('[data-sub-band]', wrap).forEach(function (range) {
+      range.addEventListener('input', function () {
+        var key = range.getAttribute('data-sub-band');
+        var value = key === 'tight' ? clamp(range.value, 0, 6) : clamp(range.value, 0, 8);
+        var out = qs('#damSubOut_' + key);
+        if (out) out.textContent = key === 'tight' ? String(value) : ('+' + value + ' dB');
+        updateSub(key, value);
+      });
+    });
+  }
+
+  function renderSurroundSliders() {
+    var wrap = qs('#damEqSurroundSliders');
+    if (!wrap) return;
+    var rows = [
+      ['width','Width','stereo spread',0,10],
+      ['depth','Depth','early reflection',0,6]
+    ];
+    wrap.innerHTML = rows.map(function (item) {
+      var key = item[0], min = item[3], max = item[4];
+      var val = clamp(settings.surround[key], min, max);
+      return '<div class="dam-eq-row"><label for="damSur_'+safeAttr(key)+'">'+safeEsc(item[1])+' <small>'+safeEsc(item[2])+'</small></label><input id="damSur_'+safeAttr(key)+'" data-surround-band="'+safeAttr(key)+'" type="range" min="'+min+'" max="'+max+'" step="1" value="'+safeAttr(val)+'"><output id="damSurOut_'+safeAttr(key)+'">'+safeEsc(val)+'</output></div>';
+    }).join('');
+    qsa('[data-surround-band]', wrap).forEach(function (range) {
+      range.addEventListener('input', function () {
+        var key = range.getAttribute('data-surround-band');
+        var value = key === 'width' ? clamp(range.value, 0, 10) : clamp(range.value, 0, 6);
+        var out = qs('#damSurOut_' + key);
+        if (out) out.textContent = String(value);
+        updateSurround(key, value);
+      });
+    });
+  }
+
+  async function updateSurround(name, value) {
+    settings.preset = 'custom';
+    if (name === 'width') settings.surround.width = clamp(value, 0, 10);
+    if (name === 'depth') settings.surround.depth = clamp(value, 0, 6);
+    // Geser Width/Depth tidak menyalakan Surround otomatis. Efek hanya aktif setelah tombol 3D ON ditekan.
+    if (settings.surround.on) {
+      settings.enabled = true;
+      var ok = await prepareGraph(false);
+      if (!ok) return;
+      applyGraph();
+    } else {
+      applyGraph();
+    }
+    saveSettings();
+    renderEqControlsOnly(false);
+    injectEqNav();
+  }
+
+  async function toggleSurround() {
+    settings.enabled = true;
+    settings.preset = 'custom';
+    settings.surround.on = !settings.surround.on;
+    if (settings.surround.on && settings.surround.width === 0 && settings.surround.depth === 0) { settings.surround.width = 10; settings.surround.depth = 5; }
+    var ok = await prepareGraph(true);
+    if (!ok) return;
+    applyGraph();
+    saveSettings();
+    renderEqControlsOnly();
+    injectEqNav();
+  }
+
+  function setTestResults(rows) {
+    var box = qs('#damEqTestResult');
+    if (!box) return;
+    box.innerHTML = rows.map(function (row) {
+      return '<div class="dam-eq-test-item"><b>'+safeEsc(row[0])+'</b><span>'+safeEsc(row[1])+'</span></div>';
+    }).join('');
+  }
+
+  async function runEqTest() {
+    ensureAudioCors();
+    var el = getAudio();
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    var src = currentAudioUrl();
+    var cors = 'Tidak perlu';
+    if (src && isCrossOriginUrl(src)) cors = (await testCorsBeforeGraph()) ? 'OK' : 'Gagal';
+    var ctxState = audioGraph && audioGraph.ctx ? audioGraph.ctx.state : 'Belum dibuat';
+    var rows = [
+      ['Audio Element', el ? 'OK' : 'Tidak ditemukan'],
+      ['Audio Source', src ? 'Ada' : 'Belum ada lagu'],
+      ['CORS Audio', cors],
+      ['Web Audio API', AudioContext ? 'Didukung' : 'Tidak didukung'],
+      ['Audio Graph', ctxState],
+      ['Preset', presets[settings.preset] ? presets[settings.preset].label : 'Custom'],
+      ['EQ', settings.enabled ? 'Aktif' : 'Flat/Off'],
+      ['Subwoofer', settings.enabled && settings.sub.on ? ('ON +' + settings.sub.level + ' dB') : 'Off'],
+      ['Surround 3D', settings.enabled && settings.surround.on ? ('ON width ' + settings.surround.width + ' depth ' + settings.surround.depth) : 'Off'],
+      ['3D Wet Mix', audioGraph && audioGraph.surroundInfo && audioGraph.surroundInfo.on ? Math.round(audioGraph.surroundInfo.wet * 100) + '% wet / dry ' + Math.round(audioGraph.surroundInfo.dry * 100) + '%' : 'Belum aktif'],
+      ['3D Delay', audioGraph && audioGraph.surroundInfo && audioGraph.surroundInfo.on ? Math.round(audioGraph.surroundInfo.delayL * 1000) + 'ms L / ' + Math.round(audioGraph.surroundInfo.delayR * 1000) + 'ms R' : 'Belum aktif'],
+      ['Stereo Panner', audioGraph && audioGraph.surroundPanL && audioGraph.surroundPanR ? 'Didukung' : 'Fallback/basic'],
+      ['Boost', settings.enabled && settings.boostOn ? ('ON +' + settings.boostDb + ' dB') : 'Off'],
+      ['Limiter', settings.enabled ? 'Aktif/siaga' : 'Standby'],
+      ['Catatan', graphError ? graphError : 'Tidak ada error terdeteksi']
+    ];
+    setTestResults(rows);
+    toastSafe('Cek EQ selesai', graphError ? 'Ada catatan di panel Testing.' : 'Audio graph dan setting berhasil dicek.', graphError ? 'bad' : 'good');
+  }
+
+  function renderEqVisual() {
+    var visual = qs('#damEqVisual');
+    if (!visual) return;
+    var subVal = settings.sub.on && settings.enabled ? clamp(settings.sub.level, 0, 8) : 0;
+    var surroundVal = settings.surround.on && settings.enabled ? clamp(settings.surround.width, 0, 10) : 0;
+    var vals = [subVal, settings.bands.bass, settings.bands.punch, settings.bands.vocal, settings.bands.instrument, settings.bands.treble, surroundVal];
+    visual.innerHTML = vals.map(function (v, index) {
+      v = settings.enabled ? clamp(v, index === 0 ? 0 : (index === 6 ? 0 : -9), index === 0 ? 8 : (index === 6 ? 10 : 9)) : 0;
+      var h = index === 0 ? 42 + (v / 8) * 96 : (index === 6 ? 42 + (v / 10) * 96 : 42 + ((v + 9) / 18) * 96);
+      var op = settings.enabled ? 1 : .42;
+      return '<span class="dam-eq-bar '+(index === 0 ? 'sub' : (index === 6 ? 'surround' : ''))+'" style="height:'+h.toFixed(1)+'px;opacity:'+op+'"></span>';
+    }).join('');
+  }
+
+  function bindEqControls() {
+    var power = qs('#damEqPower');
+    if (power) power.onclick = function () { setEnabled(!settings.enabled, true); };
+    var signature = qs('#damEqSignatureBtn');
+    if (signature) signature.onclick = function () { applyPreset('signature'); };
+    var enable = qs('#damEqEnableBtn');
+    if (enable) enable.onclick = function () { setEnabled(!settings.enabled, true); };
+    var reset = qs('#damEqResetBtn');
+    if (reset) reset.onclick = resetEq;
+    var subToggle = qs('#damEqSubToggle');
+    if (subToggle) subToggle.onclick = toggleSubwoofer;
+    var surroundToggle = qs('#damEqSurroundToggle');
+    if (surroundToggle) surroundToggle.onclick = toggleSurround;
+    var testBtn = qs('#damEqTestBtn');
+    if (testBtn) testBtn.onclick = runEqTest;
+    var boostToggle = qs('#damEqBoostToggle');
+    if (boostToggle) boostToggle.onclick = function () {
+      settings.boostOn = !(settings.boostOn && settings.enabled);
+      settings.enabled = settings.boostOn ? true : settings.enabled;
+      if (settings.boostOn && settings.boostDb === 0) settings.boostDb = 3;
+      settings.preset = 'custom';
+      if (settings.enabled) prepareGraph(true).then(function(ok){ if (ok) applyGraph(); renderEqControlsOnly(); injectEqNav(); });
+      else { applyGraph(); renderEqControlsOnly(); injectEqNav(); }
+      saveSettings();
+    };
+    var surroundToggle = qs('#damEqSurroundToggle');
+    if (surroundToggle) {
+      surroundToggle.textContent = settings.surround.on && settings.enabled ? 'ON' : 'OFF';
+      surroundToggle.classList.toggle('active', !!(settings.surround.on && settings.enabled));
+    }
+    var boost = qs('#damEqBoost');
+    if (boost) boost.addEventListener('input', function () { updateBoost(boost.value); });
+  }
+
+  function injectEqNav() {
+    var nav = qs('#navList');
+    if (!nav) return;
+    var btn = qs('[data-page="eq"]', nav);
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.className = 'nav-btn dam-eq-nav-btn';
+      btn.setAttribute('data-page', 'eq');
+      var queueBtn = qs('[data-page="queue"]', nav);
+      if (queueBtn && queueBtn.nextSibling) nav.insertBefore(btn, queueBtn.nextSibling);
+      else nav.appendChild(btn);
+    }
+    var active = getState() && getState().page === 'eq';
+    btn.className = 'nav-btn dam-eq-nav-btn' + (active ? ' active' : '');
+    btn.innerHTML = '<span class="left"><span class="icon">&#x224b;</span><span>Equalizer</span></span>' + (settings.enabled ? '<span class="count-badge">ON</span>' : '');
+  }
+
+  function patchNavigationAndRender() {
+    try {
+      if (typeof renderNav === 'function' && !renderNav.__damEqPatchedV75) {
+        var originalRenderNav = renderNav;
+        renderNav = function () {
+          var result = originalRenderNav.apply(this, arguments);
+          injectEqNav();
+          return result;
+        };
+        renderNav.__damEqPatchedV75 = true;
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof render === 'function' && !render.__damEqPatchedV75) {
+        var originalRender = render;
+        render = function () {
+          var s = getState();
+          if (s && s.page === 'eq') {
+            var c = qs('#content');
+            if (s.loading && c) {
+              c.innerHTML = '<div class="loading-skel"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
+              return;
+            }
+            renderEqPage(c);
+            return;
+          }
+          return originalRender.apply(this, arguments);
+        };
+        render.__damEqPatchedV75 = true;
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof renderCommand === 'function' && !renderCommand.__damEqPatchedV73) {
+        var originalRenderCommand = renderCommand;
+        renderCommand = function () {
+          originalRenderCommand.apply(this, arguments);
+          var results = qs('#commandResults');
+          var input = qs('#commandInput');
+          if (!results || qs('[data-cmd-page="eq"]', results)) return;
+          var q = (input && input.value ? input.value : '').toLowerCase().trim();
+          if (q && !('equalizer audio eq suara subwoofer tuning bass surround 3d testing'.indexOf(q) >= 0 || q.indexOf('eq') >= 0 || q.indexOf('equal') >= 0 || q.indexOf('sub') >= 0 || q.indexOf('tuning') >= 0)) return;
+          var item = document.createElement('div');
+          item.className = 'command-item';
+          item.setAttribute('data-cmd-page', 'eq');
+          item.innerHTML = '<div class="cover" style="background:linear-gradient(135deg,#22c55e,#a855f7)">&#x224b;</div><div><b>Equalizer</b><small>Bass Max + Surround manual</small></div><span>&#x21b5;</span>';
+          results.insertBefore(item, results.firstChild);
+          item.onclick = function () {
+            try { if (typeof closeCommand === 'function') closeCommand(); } catch(e) {}
+            if (typeof window.damNavigateTo === 'function') window.damNavigateTo('eq');
+            else { var s = getState(); if (s) s.page = 'eq'; if (typeof renderNav === 'function') renderNav(); if (typeof render === 'function') render(); }
+          };
+        };
+        renderCommand.__damEqPatchedV73 = true;
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof playTrack === 'function' && !playTrack.__damEqCorsPatchedV73) {
+        var originalPlayTrack = playTrack;
+        playTrack = function () {
+          ensureAudioCors();
+          return originalPlayTrack.apply(this, arguments);
+        };
+        playTrack.__damEqCorsPatchedV73 = true;
+      }
+    } catch (e) {}
+  }
+
+  function refreshNowPlayingIfEqOpen() {
+    var s = getState();
+    if (s && s.page === 'eq') renderEqPage();
+  }
+
+  window.damEq = {
+    applyPreset: applyPreset,
+    signature: function(){ applyPreset('signature'); },
+    bassMax: function(){ applyPreset('bassmax'); },
+    surround3d: function(){ applyPreset('surround'); },
+    enable: function(){ setEnabled(true, true); },
+    disable: function(){ setEnabled(false, true); },
+    reset: resetEq,
+    settings: function(){ return cloneSettings(settings); }
+  };
+
+  ensureAudioCors();
+  patchNavigationAndRender();
+  injectEqNav();
+  var a = getAudio();
+  if (a) {
+    ['play','loadedmetadata','emptied'].forEach(function (name) {
+      a.addEventListener(name, function () {
+        ensureAudioCors();
+        if (name === 'play' && settings.enabled) prepareGraph(false).then(function(ok){ if (ok) applyGraph(); renderEqControlsOnly(); });
+        setTimeout(refreshNowPlayingIfEqOpen, 80);
+      }, true);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function () { ensureAudioCors(); patchNavigationAndRender(); injectEqNav(); });
+  setTimeout(function () { ensureAudioCors(); patchNavigationAndRender(); injectEqNav(); }, 160);
 })();
 </script>
 
