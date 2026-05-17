@@ -999,7 +999,93 @@
     }
     function renderPlayer(){ const t=getTrack(state.currentId); $('#playBtn').textContent=audio.paused?'▶':'⏸'; $('#shuffleBtn').classList.toggle('active',state.shuffle); $('#repeatBtn').classList.toggle('active',state.repeat); const eq=$('#eq'); eq.style.opacity=audio.paused?.35:1; eq.classList.toggle('paused', audio.paused || !t); $('#favCurrentBtn').textContent=t&&state.favorites.includes(t.id)?'♥':'♡'; $('#nowInfo').innerHTML=t?`<div class="cover" style="background:${gradient(t)}">${t.cover?`<img src="${attr(t.cover)}" alt="">`:`<span class="cover-letter" style="font-size:25px">${esc(t.title.charAt(0))}</span>`}</div><div style="min-width:0"><b>${esc(t.title)}</b><small>${esc(t.artist)} • ${esc(t.genre)}</small></div>`:`<div class="cover" style="background:linear-gradient(135deg,#a855f7,#22c55e)"><span class="cover-letter" style="font-size:20px">DAM</span></div><div><b>Belum ada lagu</b><small>Pilih lagu untuk mulai.</small></div>`; renderProgress(); }
     function renderProgress(){ const pct=audio.duration?(audio.currentTime/audio.duration)*100:0; $('#seek').value=pct||0; $('#curTime').textContent=fmt(audio.currentTime||0); $('#durTime').textContent=fmt(audio.duration||0); $('#playBtn').textContent=audio.paused?'▶':'⏸'; }
-    async function uploadTrack(e){ e.preventDefault(); const f=e.currentTarget, fd=new FormData(f); const genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); const file=f.file?.files?.[0]; if(file && !f.title.value.trim()) f.title.value = inferTitleFromKey(file.name); if(file && !String(file.type||'').startsWith('audio/')) return toast('File tidak valid','Masukkan file audio seperti MP3/MPEG/WAV/M4A/OGG/AAC/FLAC.','bad'); fd.set('genre', genre); fd.delete('genreCustom'); if(!fd.get('title')) fd.set('title', f.title.value.trim()); try{ setBusy(f,true); const data=await adminFetch('/admin/upload',{method:'POST',body:fd}); toast('Upload berhasil',data.message||'Lagu ditambahkan.','good'); f.reset(); setGenreSelectValue(f.genre,'Classic'); await loadTracks(); }catch(err){toast('Upload gagal',err.message,'bad')}finally{setBusy(f,false)} }
+    async function uploadTrack(e){
+      e.preventDefault();
+      const f=e.currentTarget, fd=new FormData(f);
+      const genre=getFormGenre(f);
+      const uploadProgress=ensureUploadProgress(f);
+      if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad');
+      const file=f.file?.files?.[0];
+      if(file && !f.title.value.trim()) f.title.value = inferTitleFromKey(file.name);
+      if(file && !String(file.type||'').startsWith('audio/')) return toast('File tidak valid','Masukkan file audio seperti MP3/MPEG/WAV/M4A/OGG/AAC/FLAC.','bad');
+      fd.set('genre', genre);
+      fd.delete('genreCustom');
+      if(!fd.get('title')) fd.set('title', f.title.value.trim());
+      try{
+        setBusy(f,true);
+        setUploadProgress(uploadProgress, 0, 'Menyiapkan upload...');
+        const data=await adminUploadFetch('/admin/upload',{method:'POST',body:fd,onProgress:(pct,label)=>setUploadProgress(uploadProgress,pct,label)});
+        setUploadProgress(uploadProgress, 100, 'Upload selesai. Menyegarkan library...');
+        toast('Upload berhasil',data.message||'Lagu ditambahkan.','good');
+        f.reset();
+        setGenreSelectValue(f.genre,'Classic');
+        await loadTracks();
+        setTimeout(()=>hideUploadProgress(uploadProgress), 900);
+      }catch(err){
+        setUploadProgress(uploadProgress, 0, 'Upload gagal. Coba lagi.', true);
+        toast('Upload gagal',err.message,'bad');
+      }finally{
+        setBusy(f,false);
+      }
+    }
+    function ensureUploadProgress(form){
+      let wrap=form.querySelector('.dam-upload-progress');
+      if(wrap) return wrap;
+      wrap=document.createElement('div');
+      wrap.className='dam-upload-progress';
+      wrap.innerHTML='<div class="dam-upload-progress-top"><span data-upload-label>Menunggu upload...</span><b data-upload-pct>0%</b></div><div class="dam-upload-progress-track"><i data-upload-bar></i></div>';
+      const actions=form.querySelector('.form-actions');
+      if(actions) form.insertBefore(wrap, actions); else form.appendChild(wrap);
+      return wrap;
+    }
+    function setUploadProgress(wrap, pct, label, bad=false){
+      if(!wrap) return;
+      const value=Math.max(0, Math.min(100, Math.round(Number(pct)||0)));
+      wrap.classList.add('show');
+      wrap.classList.toggle('bad', !!bad);
+      const bar=wrap.querySelector('[data-upload-bar]');
+      const pctEl=wrap.querySelector('[data-upload-pct]');
+      const labelEl=wrap.querySelector('[data-upload-label]');
+      if(bar) bar.style.width=value+'%';
+      if(pctEl) pctEl.textContent=value+'%';
+      if(labelEl) labelEl.textContent=label || 'Mengupload...';
+    }
+    function hideUploadProgress(wrap){
+      if(!wrap) return;
+      wrap.classList.remove('show','bad');
+      const bar=wrap.querySelector('[data-upload-bar]');
+      if(bar) bar.style.width='0%';
+    }
+    function adminUploadFetch(path, opts={}){
+      const token=$('#adminToken')?.value.trim() || (adminUnlocked ? ADMIN_PASSWORD : '');
+      if(!token) return Promise.reject(new Error('Admin belum dibuka. Masukkan password admin dulu.'));
+      return new Promise((resolve,reject)=>{
+        const xhr=new XMLHttpRequest();
+        xhr.open(opts.method||'POST', API_BASE+path, true);
+        xhr.setRequestHeader('X-DAM-Token', token);
+        xhr.upload.onprogress=(event)=>{
+          if(event.lengthComputable){
+            const pct=Math.min(98, Math.round((event.loaded/event.total)*100));
+            opts.onProgress?.(pct, 'Mengupload file...');
+          } else {
+            opts.onProgress?.(1, 'Mengupload file...');
+          }
+        };
+        xhr.onload=()=>{
+          let data={};
+          try{ data=JSON.parse(xhr.responseText||'{}'); }catch(e){}
+          if(xhr.status>=200 && xhr.status<300 && !data.error){
+            opts.onProgress?.(100, 'Upload selesai.');
+            resolve(data);
+          } else {
+            reject(new Error(data.message||'Request admin gagal.'));
+          }
+        };
+        xhr.onerror=()=>reject(new Error('Koneksi upload gagal.'));
+        xhr.onabort=()=>reject(new Error('Upload dibatalkan.'));
+        xhr.send(opts.body);
+      });
+    }
     async function createFolder(){ const genre=$('#newGenre').value.trim(), album=$('#newAlbum').value.trim(); if(!genre) return toast('Genre kosong','Isi nama genre/kategori dulu.','bad'); try{ const d=await adminFetch('/admin/folder',{method:'POST',json:{genre,album}}); toast('Kategori dibuat',d.message||genre,'good'); $('#newGenre').value=''; $('#newAlbum').value=''; await loadFolders(false); await loadTracks(); }catch(err){toast('Gagal membuat kategori',err.message,'bad')} }
     function openEdit(id){ const t=getTrack(id); if(!t) return; const f=$('#editForm'); f.key.value=t.key; f.title.value=t.title; f.artist.value=t.artist; f.album.value=t.album; setGenreSelectValue(f.genre,t.genre); f.cover.value=''; $('#editTitle').textContent='Edit ' + t.title; openModal('editModal'); }
     async function saveEdit(e){ e.preventDefault(); const f=e.currentTarget, key=f.key.value, genre=getFormGenre(f); if(!genre) return toast('Genre kosong','Pilih genre atau isi custom genre.','bad'); try{ setBusy(f,true); await adminFetch('/admin/track',{method:'PATCH',json:{key,title:f.title.value,artist:f.artist.value,album:f.album.value,genre}}); if(f.cover.files[0]){ const fd=new FormData(); fd.append('key',key); fd.append('cover',f.cover.files[0]); await adminFetch('/admin/cover',{method:'POST',body:fd}); } closeModal('editModal'); toast('Lagu diperbarui','Metadata dan cover disimpan.','good'); await loadTracks(); }catch(err){toast('Edit gagal',err.message,'bad')}finally{setBusy(f,false)} }
@@ -9750,6 +9836,56 @@
 })();
 </script>
 
+
+
+
+<style id="dam-v80-admin-upload-progress-style">
+  #uploadForm .dam-upload-progress {
+    display: none;
+    margin-top: 14px;
+    padding: 13px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: linear-gradient(135deg, rgba(34,197,94,.13), rgba(168,85,247,.10));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  #uploadForm .dam-upload-progress.show { display: block; }
+  #uploadForm .dam-upload-progress.bad {
+    background: rgba(244,63,94,.12);
+    border-color: rgba(244,63,94,.30);
+  }
+  #uploadForm .dam-upload-progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+    color: rgba(255,255,255,.82);
+    font-size: .82rem;
+    font-weight: 900;
+  }
+  #uploadForm .dam-upload-progress-top b {
+    color: #fff;
+    font-size: .9rem;
+  }
+  #uploadForm .dam-upload-progress-track {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+  }
+  #uploadForm .dam-upload-progress-track i {
+    display: block;
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22c55e, #a855f7);
+    transition: width .18s ease;
+  }
+  #uploadForm .dam-upload-progress.bad .dam-upload-progress-track i {
+    background: #fb7185;
+  }
+</style>
 
 </body>
 </html>
