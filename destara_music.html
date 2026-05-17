@@ -8294,6 +8294,7 @@
 
   var settings = loadSettings();
   if (settings && settings.surround) settings.surround.on = false;
+  // DAM V78: EQ tidak di-reset saat refresh. Status terakhir tetap dipakai dari localStorage.
   var audioGraph = null;
   var buildPromise = null;
   var graphError = '';
@@ -8409,6 +8410,28 @@
     var vocal = makeFilter(ctx, 'peaking', 1380, .96);
     var instrument = makeFilter(ctx, 'peaking', 3300, .88);
     var treble = makeFilter(ctx, 'highshelf', 9200);
+    // DAM V77: HiFi chain terpisah dari EQ. Chain ini tetap flat saat HiFi OFF.
+    var hifiPre = ctx.createGain();
+    var hifiRumble = makeFilter(ctx, 'highpass', 22, .72);
+    var hifiWarm = makeFilter(ctx, 'lowshelf', 82, .72);
+    var hifiMud = makeFilter(ctx, 'peaking', 255, 1.08);
+    var hifiVocal = makeFilter(ctx, 'peaking', 1650, .92);
+    var hifiDetail = makeFilter(ctx, 'peaking', 4300, .86);
+    var hifiAir = makeFilter(ctx, 'highshelf', 11800, .70);
+    var hifiComp = ctx.createDynamicsCompressor();
+    hifiComp.threshold.value = 0;
+    hifiComp.knee.value = 0;
+    hifiComp.ratio.value = 1;
+    hifiComp.attack.value = .003;
+    hifiComp.release.value = .16;
+    var hifiLimiter = ctx.createDynamicsCompressor();
+    hifiLimiter.threshold.value = 0;
+    hifiLimiter.knee.value = 0;
+    hifiLimiter.ratio.value = 1;
+    hifiLimiter.attack.value = .001;
+    hifiLimiter.release.value = .055;
+    var hifiMaster = ctx.createGain();
+    hifiMaster.gain.value = 1;
     var dry = ctx.createGain();
     var surroundDelayL = ctx.createDelay(.055);
     var surroundDelayR = ctx.createDelay(.055);
@@ -8443,7 +8466,17 @@
     var master = ctx.createGain();
     master.gain.value = .92;
 
-    source.connect(input);
+    source.connect(hifiPre);
+    hifiPre.connect(hifiRumble);
+    hifiRumble.connect(hifiWarm);
+    hifiWarm.connect(hifiMud);
+    hifiMud.connect(hifiVocal);
+    hifiVocal.connect(hifiDetail);
+    hifiDetail.connect(hifiAir);
+    hifiAir.connect(hifiComp);
+    hifiComp.connect(hifiLimiter);
+    hifiLimiter.connect(hifiMaster);
+    hifiMaster.connect(input);
     input.connect(rumbleCut);
     rumbleCut.connect(subLift);
     subLift.connect(subBody);
@@ -8470,7 +8503,7 @@
     limiter.connect(master);
     master.connect(ctx.destination);
 
-    audioGraph = { ready:true, ctx:ctx, source:source, input:input, rumbleCut:rumbleCut, subLift:subLift, subBody:subBody, bass:bass, punch:punch, mudGuard:mudGuard, vocal:vocal, instrument:instrument, treble:treble, dry:dry, surroundDelayL:surroundDelayL, surroundDelayR:surroundDelayR, surroundToneL:surroundToneL, surroundToneR:surroundToneR, surroundWetL:surroundWetL, surroundWetR:surroundWetR, surroundPanL:surroundPanL, surroundPanR:surroundPanR, boost:boost, compressor:compressor, limiter:limiter, master:master };
+    audioGraph = { ready:true, ctx:ctx, source:source, hifiPre:hifiPre, hifiRumble:hifiRumble, hifiWarm:hifiWarm, hifiMud:hifiMud, hifiVocal:hifiVocal, hifiDetail:hifiDetail, hifiAir:hifiAir, hifiComp:hifiComp, hifiLimiter:hifiLimiter, hifiMaster:hifiMaster, input:input, rumbleCut:rumbleCut, subLift:subLift, subBody:subBody, bass:bass, punch:punch, mudGuard:mudGuard, vocal:vocal, instrument:instrument, treble:treble, dry:dry, surroundDelayL:surroundDelayL, surroundDelayR:surroundDelayR, surroundToneL:surroundToneL, surroundToneR:surroundToneR, surroundWetL:surroundWetL, surroundWetR:surroundWetR, surroundPanL:surroundPanL, surroundPanR:surroundPanR, boost:boost, compressor:compressor, limiter:limiter, master:master };
     graphStateText = 'running';
     applyGraph();
     return true;
@@ -8544,6 +8577,46 @@
     var boostDb = enabled && settings.boostOn ? clamp(settings.boostDb, 0, 8) : 0;
     var t = audioGraph.ctx.currentTime || 0;
     var ramp = .035;
+
+    // DAM V79 HiFi Engine: terpisah dari EQ dan bisa aktif bersamaan dengan EQ.
+    var hifi = null;
+    try { hifi = window.damHifi && typeof window.damHifi.settings === 'function' ? window.damHifi.settings() : null; } catch (e) {}
+    var hifiOn = !!(hifi && hifi.enabled);
+    var hifiProfiles = {
+      ultra: { input:-1.2, bass:1.15, mud:-1.35, vocal:1.55, detail:1.65, air:2.35, master:1.015, threshold:-15, knee:18, ratio:2.05, release:.15 },
+      studio: { input:-1.0, bass:.55, mud:-1.75, vocal:1.05, detail:2.05, air:1.75, master:1.01, threshold:-17, knee:20, ratio:1.9, release:.17 },
+      vocal: { input:-.85, bass:.25, mud:-1.25, vocal:2.25, detail:1.3, air:1.55, master:1.01, threshold:-16, knee:18, ratio:1.85, release:.16 },
+      luxury: { input:-1.4, bass:1.55, mud:-1.05, vocal:.9, detail:1.2, air:1.4, master:1.02, threshold:-18, knee:22, ratio:2.2, release:.20 },
+      night: { input:-1.8, bass:.65, mud:-.9, vocal:1.15, detail:.8, air:.75, master:.94, threshold:-22, knee:24, ratio:2.7, release:.22 }
+    };
+    var hifiProfile = hifiProfiles[(hifi && hifi.preset) || 'ultra'] || hifiProfiles.ultra;
+    var hifiAmount = hifiOn ? clamp(Number(hifi.intensity || 78), 0, 100) / 100 : 0;
+    if (audioGraph.hifiPre) audioGraph.hifiPre.gain.setTargetAtTime(dbToGain((hifiProfile.input || 0) * hifiAmount), t, ramp);
+    if (audioGraph.hifiRumble) {
+      audioGraph.hifiRumble.frequency.setTargetAtTime(hifiOn ? (18 + hifiAmount * 12) : 10, t, ramp);
+      audioGraph.hifiRumble.Q.setTargetAtTime(hifiOn ? .72 : .50, t, ramp);
+    }
+    if (audioGraph.hifiWarm) audioGraph.hifiWarm.gain.setTargetAtTime((hifiProfile.bass || 0) * hifiAmount, t, ramp);
+    if (audioGraph.hifiMud) audioGraph.hifiMud.gain.setTargetAtTime((hifiProfile.mud || 0) * hifiAmount, t, ramp);
+    if (audioGraph.hifiVocal) audioGraph.hifiVocal.gain.setTargetAtTime((hifiProfile.vocal || 0) * hifiAmount, t, ramp);
+    if (audioGraph.hifiDetail) audioGraph.hifiDetail.gain.setTargetAtTime((hifiProfile.detail || 0) * hifiAmount, t, ramp);
+    if (audioGraph.hifiAir) audioGraph.hifiAir.gain.setTargetAtTime((hifiProfile.air || 0) * hifiAmount, t, ramp);
+    if (audioGraph.hifiComp) {
+      audioGraph.hifiComp.threshold.setTargetAtTime(hifiOn ? hifiProfile.threshold : 0, t, ramp);
+      audioGraph.hifiComp.knee.setTargetAtTime(hifiOn ? hifiProfile.knee : 0, t, ramp);
+      audioGraph.hifiComp.ratio.setTargetAtTime(hifiOn ? hifiProfile.ratio : 1, t, ramp);
+      audioGraph.hifiComp.attack.setTargetAtTime(hifiOn ? .003 : .004, t, ramp);
+      audioGraph.hifiComp.release.setTargetAtTime(hifiOn ? hifiProfile.release : .16, t, ramp);
+    }
+    if (audioGraph.hifiLimiter) {
+      audioGraph.hifiLimiter.threshold.setTargetAtTime(hifiOn ? -0.75 : 0, t, ramp);
+      audioGraph.hifiLimiter.knee.setTargetAtTime(0, t, ramp);
+      audioGraph.hifiLimiter.ratio.setTargetAtTime(hifiOn ? 22 : 1, t, ramp);
+      audioGraph.hifiLimiter.attack.setTargetAtTime(.001, t, ramp);
+      audioGraph.hifiLimiter.release.setTargetAtTime(hifiOn ? .06 : .055, t, ramp);
+    }
+    if (audioGraph.hifiMaster) audioGraph.hifiMaster.gain.setTargetAtTime(hifiOn ? hifiProfile.master : 1, t, ramp);
+    audioGraph.hifiInfo = { on:hifiOn, preset:(hifi && hifi.preset) || 'ultra', intensity:Math.round(hifiAmount * 100) };
 
     var rawBassDb = clamp(b.bass, -9, 9);
     var rawPunchDb = clamp(b.punch, -9, 9);
@@ -9084,7 +9157,17 @@
     enable: function(){ setEnabled(true, true); },
     disable: function(){ setEnabled(false, true); },
     reset: resetEq,
-    settings: function(){ return cloneSettings(settings); }
+    settings: function(){ return cloneSettings(settings); },
+    prepareAudioGraph: function(){ return prepareGraph(false); },
+    applyGraph: applyGraph,
+    forceEqOff: function(silent){
+      settings = cloneSettings(defaultSettings);
+      applyGraph();
+      saveSettings();
+      renderEqControlsOnly();
+      injectEqNav();
+      if (!silent) toastSafe('EQ mati', 'Equalizer dikembalikan ke flat.', 'good');
+    }
   };
 
   ensureAudioCors();
@@ -9115,6 +9198,558 @@
   Logic utama ditempel di fungsi playTrack/playAll/nextTrack/prevTrack pada script utama.
 */
 </script>
+
+
+<style id="dam-v77-ultra-hifi-style">
+  /* DAM V77 - Ultra HiFi terpisah dari Equalizer */
+  .dam-hifi-nav-btn .icon {
+    background: linear-gradient(135deg, rgba(96,165,250,.28), rgba(34,197,94,.22), rgba(168,85,247,.24)) !important;
+  }
+  .dam-hifi-page { display:grid; gap:16px; }
+  .dam-hifi-hero {
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:34px;
+    padding:24px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(96,165,250,.26), transparent 32%),
+      radial-gradient(circle at 88% 4%, rgba(34,197,94,.18), transparent 28%),
+      radial-gradient(circle at 54% 120%, rgba(168,85,247,.22), transparent 38%),
+      linear-gradient(135deg, rgba(255,255,255,.095), rgba(255,255,255,.045));
+    box-shadow:0 26px 80px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .dam-hifi-hero:before {
+    content:"";
+    position:absolute;
+    inset:-50% -20% auto auto;
+    width:420px;
+    height:420px;
+    border-radius:999px;
+    background:conic-gradient(from 90deg, rgba(96,165,250,.0), rgba(96,165,250,.28), rgba(34,197,94,.22), rgba(168,85,247,.24), rgba(96,165,250,.0));
+    filter:blur(18px);
+    opacity:.78;
+    animation:damHifiSpin 13s linear infinite;
+  }
+  .dam-hifi-hero > * { position:relative; z-index:1; }
+  @keyframes damHifiSpin { to { transform:rotate(360deg); } }
+  .dam-hifi-head { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; align-items:start; }
+  .dam-hifi-head h2 {
+    margin:8px 0 8px;
+    font-size:clamp(2.25rem, 5vw, 4.7rem);
+    line-height:.9;
+    letter-spacing:-.08em;
+  }
+  .dam-hifi-head p {
+    margin:0;
+    max-width:820px;
+    color:rgba(255,255,255,.68);
+    font-weight:750;
+    line-height:1.68;
+  }
+  .dam-hifi-power {
+    width:74px;
+    height:74px;
+    border-radius:999px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    font-size:1.45rem;
+    font-weight:1000;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 18px 48px rgba(0,0,0,.30);
+  }
+  .dam-hifi-power.active {
+    background:linear-gradient(135deg, #60a5fa, #22c55e 48%, #a855f7);
+    box-shadow:0 20px 54px rgba(96,165,250,.24), 0 0 0 7px rgba(96,165,250,.10), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .dam-hifi-status { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .dam-hifi-badge {
+    min-height:34px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.075);
+    color:rgba(255,255,255,.72);
+    padding:0 11px;
+    font-size:.74rem;
+    font-weight:950;
+  }
+  .dam-hifi-badge.good { color:#dbeafe; background:rgba(96,165,250,.13); border-color:rgba(96,165,250,.28); }
+  .dam-hifi-badge.green { color:#bbf7d0; background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.24); }
+  .dam-hifi-grid { display:grid; grid-template-columns:1.08fr .92fr; gap:14px; align-items:start; }
+  .dam-hifi-card {
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:30px;
+    padding:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.045));
+    box-shadow:0 22px 64px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .dam-hifi-card h3 { margin:0 0 7px; font-size:1.35rem; letter-spacing:-.045em; }
+  .dam-hifi-card p { margin:0; color:rgba(255,255,255,.62); line-height:1.62; font-weight:700; }
+  .dam-hifi-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:14px; }
+  .dam-hifi-preset {
+    min-height:86px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.11);
+    background:rgba(255,255,255,.065);
+    color:rgba(255,255,255,.76);
+    padding:12px;
+    text-align:left;
+    display:grid;
+    gap:4px;
+  }
+  .dam-hifi-preset i { font-style:normal; font-size:1.35rem; }
+  .dam-hifi-preset b { font-size:.92rem; letter-spacing:-.02em; }
+  .dam-hifi-preset small { color:rgba(255,255,255,.50); font-weight:800; line-height:1.35; }
+  .dam-hifi-preset.active,
+  .dam-hifi-preset:hover {
+    color:#fff;
+    transform:translateY(-1px);
+    border-color:rgba(96,165,250,.40);
+    background:linear-gradient(135deg, rgba(96,165,250,.20), rgba(34,197,94,.13), rgba(168,85,247,.14));
+  }
+  .dam-hifi-slider-box { display:grid; gap:12px; margin-top:16px; }
+  .dam-hifi-row {
+    display:grid;
+    grid-template-columns:160px minmax(0,1fr) 64px;
+    gap:12px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;
+    padding:11px 12px;
+    background:rgba(255,255,255,.05);
+  }
+  .dam-hifi-row label { color:rgba(255,255,255,.74); font-size:.82rem; font-weight:950; }
+  .dam-hifi-row output { text-align:right; color:#fff; font-weight:950; font-size:.82rem; }
+  .dam-hifi-meter {
+    height:188px;
+    display:flex;
+    align-items:end;
+    gap:7px;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:24px;
+    background:radial-gradient(circle at 50% 0%, rgba(96,165,250,.14), transparent 46%), rgba(255,255,255,.045);
+    overflow:hidden;
+    margin-top:14px;
+  }
+  .dam-hifi-meter i {
+    flex:1;
+    min-width:8px;
+    border-radius:999px 999px 8px 8px;
+    background:linear-gradient(180deg, rgba(96,165,250,.96), rgba(34,197,94,.75), rgba(168,85,247,.55));
+    height:18%;
+    opacity:.55;
+    transition:height .18s ease, opacity .18s ease;
+  }
+  .dam-hifi-meter.active i { opacity:.92; animation:damHifiMeter 1.05s ease-in-out infinite; }
+  .dam-hifi-meter i:nth-child(2){ animation-delay:.08s; }
+  .dam-hifi-meter i:nth-child(3){ animation-delay:.16s; }
+  .dam-hifi-meter i:nth-child(4){ animation-delay:.04s; }
+  .dam-hifi-meter i:nth-child(5){ animation-delay:.22s; }
+  .dam-hifi-meter i:nth-child(6){ animation-delay:.12s; }
+  .dam-hifi-meter i:nth-child(7){ animation-delay:.28s; }
+  @keyframes damHifiMeter { 0%,100%{ height:22%; } 50%{ height:var(--h, 78%); } }
+  .dam-hifi-engine-list { display:grid; gap:9px; margin-top:14px; }
+  .dam-hifi-engine-list div {
+    display:grid;
+    grid-template-columns:38px minmax(0,1fr);
+    gap:10px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;
+    padding:10px;
+    background:rgba(255,255,255,.052);
+  }
+  .dam-hifi-engine-list span {
+    width:38px;
+    height:38px;
+    border-radius:15px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg, rgba(96,165,250,.24), rgba(34,197,94,.16));
+    font-weight:950;
+  }
+  .dam-hifi-engine-list b { display:block; font-size:.88rem; }
+  .dam-hifi-engine-list small { display:block; margin-top:3px; color:rgba(255,255,255,.52); line-height:1.4; font-weight:750; }
+  .dam-hifi-note {
+    border:1px solid rgba(245,158,11,.20);
+    background:rgba(245,158,11,.075);
+    color:rgba(255,255,255,.68);
+    border-radius:20px;
+    padding:12px 14px;
+    font-size:.78rem;
+    line-height:1.55;
+    font-weight:750;
+    margin-top:14px;
+  }
+  .dam-hifi-player-btn {
+    border-color:rgba(96,165,250,.20) !important;
+    color:#dbeafe !important;
+  }
+  .dam-hifi-player-btn.active {
+    background:linear-gradient(135deg, rgba(96,165,250,.28), rgba(34,197,94,.18)) !important;
+    color:#fff !important;
+    box-shadow:0 12px 28px rgba(96,165,250,.16) !important;
+  }
+  @media (max-width: 960px) {
+    .dam-hifi-grid, .dam-hifi-head { grid-template-columns:1fr; }
+    .dam-hifi-power { width:64px; height:64px; }
+  }
+  @media (max-width: 620px) {
+    .dam-hifi-hero, .dam-hifi-card { border-radius:24px; padding:16px; }
+    .dam-hifi-presets { grid-template-columns:1fr; }
+    .dam-hifi-row { grid-template-columns:1fr 64px; }
+    .dam-hifi-row label { grid-column:1 / -1; }
+  }
+</style>
+
+
+<script id="dam-v77-ultra-hifi-script">
+(function () {
+  if (window.__DAM_V77_ULTRA_HIFI__) return;
+  window.__DAM_V77_ULTRA_HIFI__ = true;
+
+  var LS_KEY = 'dam_hifi_v77_ultra_separate';
+  var EQ_LS_KEY = 'dam_real_eq_v75_surround_manual_only';
+  var defaults = { enabled:false, preset:'ultra', intensity:78 };
+  var presetLabels = {
+    ultra: { icon:'✦', label:'Ultra HiFi', hint:'Clarity, air, dan limiter halus' },
+    studio: { icon:'◆', label:'Studio Detail', hint:'Instrumen kebuka, mud dipangkas' },
+    vocal: { icon:'◉', label:'Crystal Vocal', hint:'Vocal lebih maju dan bersih' },
+    luxury: { icon:'◇', label:'Luxury Bass', hint:'Low-end lembut, tetap rapi' },
+    night: { icon:'◒', label:'Night Safe', hint:'Halus untuk volume malam' }
+  };
+  var settings = load();
+
+  function qs(selector, root) { return (root || document).querySelector(selector); }
+  function qsa(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
+  function escLocal(value) {
+    try { if (typeof esc === 'function') return esc(value); } catch (e) {}
+    return String(value == null ? '' : value).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]); });
+  }
+  function safeToast(title, msg, type) {
+    try { if (typeof toast === 'function') return toast(title, msg, type || ''); } catch (e) {}
+  }
+  function getStateSafe() {
+    try { return typeof state !== 'undefined' ? state : null; } catch (e) { return null; }
+  }
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function normalize(value) {
+    value = value || {};
+    return {
+      enabled: !!value.enabled,
+      preset: presetLabels[value.preset] ? value.preset : defaults.preset,
+      intensity: Math.max(0, Math.min(100, Number(value.intensity == null ? defaults.intensity : value.intensity) || defaults.intensity))
+    };
+  }
+  function load() {
+    try { return normalize(JSON.parse(localStorage.getItem(LS_KEY) || 'null')); } catch (e) { return clone(defaults); }
+  }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(settings)); } catch (e) {}
+  }
+
+  function forceEqBootOff() {
+    try {
+      var eq = JSON.parse(localStorage.getItem(EQ_LS_KEY) || '{}');
+      eq.enabled = false;
+      eq.preset = 'flat';
+      eq.boostOn = false;
+      eq.boostDb = 0;
+      eq.bands = { bass:0, punch:0, vocal:0, instrument:0, treble:0 };
+      eq.sub = { on:false, level:0, depth:0, tight:3 };
+      eq.surround = { on:false, width:0, depth:0 };
+      localStorage.setItem(EQ_LS_KEY, JSON.stringify(eq));
+    } catch (e) {}
+    try { if (window.damEq && typeof window.damEq.forceEqOff === 'function') window.damEq.forceEqOff(true); } catch (e) {}
+  }
+
+  function currentTrack() {
+    var s = getStateSafe();
+    try { return s && Array.isArray(s.tracks) ? s.tracks.find(function(t){ return t && t.id === s.currentId; }) : null; } catch (e) { return null; }
+  }
+
+  async function ensureGraph() {
+    if (window.damEq && typeof window.damEq.prepareAudioGraph === 'function') {
+      return await window.damEq.prepareAudioGraph();
+    }
+    return false;
+  }
+
+  function applySharedGraph() {
+    try { if (window.damEq && typeof window.damEq.applyGraph === 'function') window.damEq.applyGraph(); } catch (e) {}
+  }
+
+  async function setEnabled(value, showToast) {
+    settings.enabled = !!value;
+    if (settings.enabled) {
+      var ok = await ensureGraph();
+      if (!ok) {
+        settings.enabled = false;
+        save();
+        renderHifiControlsOnly();
+        injectHifiNav();
+        safeToast('HiFi belum aktif', 'Tekan Play lagu dulu, lalu aktifkan HiFi lagi jika browser meminta izin audio.', 'bad');
+        return;
+      }
+    }
+    save();
+    applySharedGraph();
+    renderHifiControlsOnly();
+    injectHifiNav();
+    injectPlayerButton();
+    if (showToast) {
+      safeToast(settings.enabled ? 'Ultra HiFi aktif' : 'HiFi mati', settings.enabled ? 'Engine HiFi aktif. EQ tidak dimatikan.' : 'Audio kembali normal tanpa HiFi.', settings.enabled ? 'good' : '');
+    }
+  }
+
+  async function setPreset(name) {
+    if (!presetLabels[name]) name = 'ultra';
+    settings.preset = name;
+    settings.enabled = true;
+    var ok = await ensureGraph();
+    if (!ok) {
+      settings.enabled = false;
+      save();
+      renderHifiControlsOnly();
+      injectHifiNav();
+      safeToast('HiFi belum aktif', 'Browser belum mengizinkan audio graph. Putar lagu dulu, lalu coba lagi.', 'bad');
+      return;
+    }
+    save();
+    applySharedGraph();
+    renderHifiControlsOnly();
+    injectHifiNav();
+    injectPlayerButton();
+    safeToast('HiFi preset aktif', presetLabels[name].label + ' dipakai. EQ tetap bisa hidup.', 'good');
+  }
+
+  function setIntensity(value) {
+    settings.intensity = Math.max(0, Math.min(100, Number(value) || 0));
+    if (settings.intensity > 0) settings.enabled = true;
+    save();
+    applySharedGraph();
+    renderHifiControlsOnly(true);
+    injectHifiNav();
+    injectPlayerButton();
+  }
+
+  function disableQuietly() {
+    settings.enabled = false;
+    save();
+    applySharedGraph();
+    renderHifiControlsOnly();
+    injectHifiNav();
+    injectPlayerButton();
+  }
+
+  function renderHifiPage(container) {
+    container = container || qs('#content');
+    if (!container) return;
+
+    var t = currentTrack();
+    var label = presetLabels[settings.preset] || presetLabels.ultra;
+    var now = t
+      ? '<div class="dam-eq-now"><div class="cover" style="background:'+(typeof gradient === 'function' ? gradient(t) : 'linear-gradient(135deg,#60a5fa,#22c55e)')+'">'+(t.cover ? '<img src="'+escLocal(t.cover)+'" alt="">' : '<span class="cover-letter" style="font-size:24px">'+escLocal(String(t.title||'D').charAt(0))+'</span>')+'</div><div style="min-width:0"><b>'+escLocal(t.title||'Untitled')+'</b><small>'+escLocal((t.artist||'Unknown Artist')+' • '+(t.genre||'Music'))+'</small></div></div>'
+      : '<div class="dam-hifi-note">Pilih lagu dulu untuk mendengar proses HiFi secara langsung.</div>';
+
+    container.innerHTML = '<section class="dam-hifi-page">'
+      + '<div class="dam-hifi-hero"><div class="dam-hifi-head"><div><span class="eyebrow">Separate Audio Engine</span><h2>Ultra HiFi</h2><p>Mode HiFi ini dibuat terpisah dari Equalizer dan bisa aktif bersamaan. Fokusnya clarity, clean bass, vocal guard, detail instrumen, air treble, dan limiter halus.</p></div><button id="damHifiPower" class="dam-hifi-power '+(settings.enabled?'active':'')+'" type="button" title="Aktifkan/nonaktifkan HiFi">HI</button></div><div class="dam-hifi-status"><span id="damHifiStatus" class="dam-hifi-badge '+(settings.enabled?'good':'')+'">'+(settings.enabled?'HiFi Aktif':'HiFi Off')+'</span><span class="dam-hifi-badge green">EQ Terpisah</span><span class="dam-hifi-badge">Preset '+escLocal(label.label)+'</span><span class="dam-hifi-badge">Intensity '+Math.round(settings.intensity)+'%</span><span class="dam-hifi-badge good">Safe Limiter</span></div></div>'
+      + '<div class="dam-hifi-grid"><div class="dam-hifi-card"><h3>Preset HiFi</h3><p>Pilih karakter HiFi tanpa menyentuh band EQ manual.</p><div id="damHifiPresets" class="dam-hifi-presets"></div><div class="dam-hifi-slider-box"><div class="dam-hifi-row"><label>HiFi Intensity</label><input id="damHifiIntensity" type="range" min="0" max="100" value="'+Math.round(settings.intensity)+'"><output id="damHifiIntensityOut">'+Math.round(settings.intensity)+'%</output></div></div><div id="damHifiMeter" class="dam-hifi-meter '+(settings.enabled?'active':'')+'">'+Array.from({length:7}, function(_, i){ return '<i style="--h:'+(42 + ((i*17)%45))+'%"></i>'; }).join('')+'</div></div>'
+      + '<div class="dam-hifi-card"><h3>HiFi Engine</h3><p>Proses ringan berbasis Web Audio yang menjaga headroom dan mengangkat detail tanpa menggabungkan panelnya dengan EQ.</p><div class="dam-hifi-engine-list"><div><span>01</span><div><b>Clean Headroom</b><small>Gain awal diturunkan sedikit agar tidak mudah pecah.</small></div></div><div><span>02</span><div><b>De-Mud Detail</b><small>Low-mid kotor dipangkas halus supaya vocal/instrumen kebuka.</small></div></div><div><span>03</span><div><b>Air & Presence</b><small>Presence dan treble atas dinaikkan secukupnya untuk rasa HiFi.</small></div></div><div><span>04</span><div><b>Soft Limiter</b><small>Peak dijaga agar output tetap aman saat volume besar.</small></div></div></div>'+now+'<div class="dam-hifi-note">Catatan jujur: fitur ini meningkatkan karakter playback di browser, tetapi tidak mengubah file sumber menjadi lossless/hi-res asli.</div></div></div>'
+      + '</section>';
+
+    bindHifiControls();
+  }
+
+  function renderHifiControlsOnly(skipPresets) {
+    var power = qs('#damHifiPower');
+    if (power) power.classList.toggle('active', !!settings.enabled);
+    var status = qs('#damHifiStatus');
+    if (status) {
+      status.textContent = settings.enabled ? 'HiFi Aktif' : 'HiFi Off';
+      status.classList.toggle('good', !!settings.enabled);
+    }
+    var meter = qs('#damHifiMeter');
+    if (meter) meter.classList.toggle('active', !!settings.enabled);
+    var intensity = qs('#damHifiIntensity');
+    var out = qs('#damHifiIntensityOut');
+    if (intensity && document.activeElement !== intensity) intensity.value = Math.round(settings.intensity);
+    if (out) out.textContent = Math.round(settings.intensity) + '%';
+    if (!skipPresets) renderPresetButtons();
+  }
+
+  function renderPresetButtons() {
+    var wrap = qs('#damHifiPresets');
+    if (!wrap) return;
+    wrap.innerHTML = Object.keys(presetLabels).map(function(key) {
+      var p = presetLabels[key];
+      return '<button type="button" class="dam-hifi-preset '+(settings.preset===key?'active':'')+'" data-hifi-preset="'+key+'"><i>'+escLocal(p.icon)+'</i><b>'+escLocal(p.label)+'</b><small>'+escLocal(p.hint)+'</small></button>';
+    }).join('');
+    qsa('[data-hifi-preset]', wrap).forEach(function(btn) {
+      btn.onclick = function() { setPreset(btn.getAttribute('data-hifi-preset')); };
+    });
+  }
+
+  function bindHifiControls() {
+    renderPresetButtons();
+    var power = qs('#damHifiPower');
+    if (power) power.onclick = function() { setEnabled(!settings.enabled, true); };
+    var intensity = qs('#damHifiIntensity');
+    if (intensity) intensity.addEventListener('input', function() { setIntensity(intensity.value); });
+  }
+
+  function injectHifiNav() {
+    var nav = qs('#navList');
+    if (!nav) return;
+    var btn = qs('[data-page="hifi"]', nav);
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.className = 'nav-btn dam-hifi-nav-btn';
+      btn.setAttribute('data-page', 'hifi');
+      var eqBtn = qs('[data-page="eq"]', nav);
+      if (eqBtn && eqBtn.nextSibling) nav.insertBefore(btn, eqBtn.nextSibling);
+      else if (eqBtn) nav.appendChild(btn);
+      else nav.appendChild(btn);
+    }
+    var s = getStateSafe();
+    btn.className = 'nav-btn dam-hifi-nav-btn' + (s && s.page === 'hifi' ? ' active' : '');
+    btn.innerHTML = '<span class="left"><span class="icon">HI</span><span>HiFi</span></span>' + (settings.enabled ? '<span class="count-badge">ON</span>' : '');
+  }
+
+  function injectPlayerButton() {
+    var group = qs('.player-action-group');
+    if (!group) return;
+    var btn = qs('#damHifiPlayerBtn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'damHifiPlayerBtn';
+      btn.type = 'button';
+      btn.className = 'player-side-btn dam-hifi-player-btn';
+      btn.title = 'Ultra HiFi';
+      btn.innerHTML = '<span class="ico">HI</span>';
+      group.insertBefore(btn, group.firstChild);
+      btn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setEnabled(!settings.enabled, true);
+      });
+    }
+    btn.classList.toggle('active', !!settings.enabled);
+  }
+
+  function patchRenderAndNav() {
+    try {
+      if (typeof renderNav === 'function' && !renderNav.__damHifiPatchedV77) {
+        var originalRenderNav = renderNav;
+        renderNav = function() {
+          var result = originalRenderNav.apply(this, arguments);
+          injectHifiNav();
+          injectPlayerButton();
+          return result;
+        };
+        renderNav.__damHifiPatchedV77 = true;
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof render === 'function' && !render.__damHifiPatchedV77) {
+        var originalRender = render;
+        render = function() {
+          var s = getStateSafe();
+          if (s && s.page === 'hifi') {
+            var c = qs('#content');
+            if (s.loading && c) {
+              c.innerHTML = '<div class="loading-skel"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
+              return;
+            }
+            renderHifiPage(c);
+            return;
+          }
+          return originalRender.apply(this, arguments);
+        };
+        render.__damHifiPatchedV77 = true;
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof renderCommand === 'function' && !renderCommand.__damHifiPatchedV77) {
+        var originalRenderCommand = renderCommand;
+        renderCommand = function() {
+          originalRenderCommand.apply(this, arguments);
+          var results = qs('#commandResults');
+          var input = qs('#commandInput');
+          if (!results || qs('[data-cmd-page="hifi"]', results)) return;
+          var q = (input && input.value ? input.value : '').toLowerCase().trim();
+          if (q && !('hifi hi fi audio quality kualitas jernih lossless detail clean'.indexOf(q) >= 0 || q.indexOf('hi') >= 0 || q.indexOf('hifi') >= 0)) return;
+          var item = document.createElement('div');
+          item.className = 'command-item';
+          item.setAttribute('data-cmd-page', 'hifi');
+          item.innerHTML = '<div class="cover" style="background:linear-gradient(135deg,#60a5fa,#22c55e,#a855f7)">HI</div><div><b>Ultra HiFi</b><small>Engine HiFi terpisah dari EQ</small></div><span>&#x21b5;</span>';
+          results.insertBefore(item, results.firstChild);
+          item.onclick = function() {
+            try { if (typeof closeCommand === 'function') closeCommand(); } catch(e) {}
+            if (typeof window.damNavigateTo === 'function') window.damNavigateTo('hifi');
+            else { var s = getStateSafe(); if (s) s.page = 'hifi'; if (typeof renderNav === 'function') renderNav(); if (typeof render === 'function') render(); }
+          };
+        };
+        renderCommand.__damHifiPatchedV77 = true;
+      }
+    } catch (e) {}
+  }
+
+  window.damHifi = {
+    enable: function(){ return setEnabled(true, true); },
+    disable: function(){ return setEnabled(false, true); },
+    disableQuietly: disableQuietly,
+    setPreset: setPreset,
+    setIntensity: setIntensity,
+    settings: function(){ return clone(settings); },
+    isEnabled: function(){ return !!settings.enabled; },
+    render: renderHifiPage
+  };
+
+  function resumeHifiIfNeeded() {
+    if (!settings.enabled) return;
+    ensureGraph().then(function(ok) {
+      if (ok) applySharedGraph();
+      renderHifiControlsOnly();
+      injectHifiNav();
+      injectPlayerButton();
+    });
+  }
+
+  // DAM V79: refresh tidak mematikan EQ/HiFi dan keduanya tidak saling mematikan.
+  patchRenderAndNav();
+  injectHifiNav();
+  injectPlayerButton();
+  resumeHifiIfNeeded();
+  document.addEventListener('DOMContentLoaded', function() {
+    patchRenderAndNav();
+    injectHifiNav();
+    injectPlayerButton();
+    resumeHifiIfNeeded();
+  });
+  var hifiAudio = qs('#audio');
+  if (hifiAudio) {
+    ['play','loadedmetadata'].forEach(function(name) {
+      hifiAudio.addEventListener(name, resumeHifiIfNeeded, true);
+    });
+  }
+  setTimeout(function() {
+    patchRenderAndNav();
+    injectHifiNav();
+    injectPlayerButton();
+    resumeHifiIfNeeded();
+  }, 180);
+})();
+</script>
+
 
 </body>
 </html>
