@@ -1568,7 +1568,7 @@ input.selected-object-disabled{
 
 
 <style id="destara-native-pdf-reader-v6">
-/* V6: Reader Native di dalam aplikasi. Seleksi teks memakai viewer PDF bawaan browser, bukan canvas editor. */
+/* V6: Reader di dalam aplikasi. Seleksi teks memakai viewer PDF bawaan browser, bukan canvas editor. */
 .pdf-native-reader{
   display:none;
   flex:1 1 auto;
@@ -1635,7 +1635,7 @@ input.selected-object-disabled{
 
 
 <style id="destara-native-reader-v7-visible-fix">
-/* V7: tombol Reader Native dibuat statis dan dipaksa terlihat, bukan hanya injeksi runtime. */
+/* V7: tombol Reader dibuat statis dan dipaksa terlihat, bukan hanya injeksi runtime. */
 .native-reader-quick{
   color:#fff!important;
   background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
@@ -1682,17 +1682,101 @@ input.selected-object-disabled{
   #pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard{margin-left:130px!important}
 }
 </style>
+
+
+<style id="destara-final-reader-short-pdf-space-v1">
+/* Revisi akhir: tombol Reader pendek, bar kosong bawah header disembunyikan saat PDF, area PDF lebih lega. */
+.app.pdf-mode .docbar,
+.app.pdf-native-mode .docbar{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+.app.pdf-mode .tabs,
+.app.pdf-mode .ribbon,
+.app.pdf-native-mode .tabs,
+.app.pdf-native-mode .ribbon{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+.app.pdf-mode .workspace,
+.app.pdf-native-mode .workspace{
+  padding-top:4px!important;
+  padding-bottom:26px!important;
+}
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+#pdfPane .pdf-toolbar-grouped{
+  min-height:42px!important;
+  margin:0 8px 6px!important;
+  padding:5px 12px!important;
+  gap:8px 14px!important;
+}
+#pdfPane .pdf-toolbar-grouped > .pdf-menu > summary,
+#pdfPane .pdf-toolbar-grouped > .pdf-tool{
+  height:32px!important;
+  min-height:32px!important;
+}
+#pdfPane .pdf-toolbar-grouped > #pdfStylePanelToggle.pdf-panel-switch,
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.pdf-panel-switch,
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > .pdf-tool.native-reader-hard{
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 10px!important;
+}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard span,
+#pdfPane .pdf-toolbar-grouped .native-reader-primary span,
+.native-reader-quick span{
+  max-width:58px!important;
+}
+.pdf-native-toolbar{
+  margin:0 8px 6px!important;
+  padding:7px 10px!important;
+}
+.pdf-doc-scroll{
+  padding-top:0!important;
+}
+@media(max-width:900px){
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+  #pdfPane .pdf-toolbar-grouped{
+    padding-top:44px!important;
+  }
+  #pdfPane .pdf-toolbar-grouped > #pdfStylePanelToggle.pdf-panel-switch,
+  #pdfPane .pdf-toolbar-grouped > .pdf-tool.pdf-panel-switch{
+    top:6px!important;
+  }
+}
+@media(max-width:760px){
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+  #pdfPane .pdf-toolbar-grouped{
+    margin:0 6px 6px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+    gap:7px 10px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
-  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn native-reader-quick" data-action="pdfOpenNativeReader" title="Buka mode Reader Native untuk copy/select teks PDF"><i data-lucide="file-search"></i><span>Reader Native</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn native-reader-quick" data-action="pdfOpenNativeReader" title="Buka mode Reader untuk copy/select teks PDF"><i data-lucide="file-search"></i><span>Reader</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
   <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor file web</h1><p>Tarik PDF, Word, Excel, gambar, PowerPoint, HTML, TXT, atau CSV ke sini. Fitur paling lengkap tetap untuk PDF, sementara file lain bisa dibuka untuk preview, edit ringan, dan export sesuai dukungan browser.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih File</span></button><div class="file-types"><span class="chip">PDF Pro</span><span class="chip">Word/DOCX</span><span class="chip">Excel/CSV</span><span class="chip">Gambar</span><span class="chip">PPTX/HTML/TXT</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><select class="mode-select" data-action="pageSizeSelect" id="paperSizeSelect" title="Ukuran kertas"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option></select><select class="mode-select" data-action="pageOrientationSelect" id="paperOrientationSelect" title="Orientasi"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select><select class="mode-select" data-action="marginSelect" id="marginSelect" title="Margin"><option value="72">Margin normal</option><option value="36">Margin kecil</option><option value="96">Margin lebar</option></select><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview Word menjaga pemisah halaman. Edit Cepat untuk mengetik.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
   <button class="pdf-tool pdf-panel-switch" data-action="togglePdfStylePanel" id="pdfStylePanelToggle" title="Sembunyikan / tampilkan panel Warna & Gaya"><i data-lucide="panel-left-close"></i><span id="pdfStylePanelToggleText">Hide Panel</span></button>
-  <button class="pdf-tool native-reader-hard" data-action="pdfOpenNativeReader" id="pdfNativeReaderHardBtn" title="Reader Native: seleksi/copy teks memakai viewer PDF bawaan browser"><i data-lucide="file-search"></i><span>Reader Native</span></button>
+  <button class="pdf-tool native-reader-hard" data-action="pdfOpenNativeReader" id="pdfNativeReaderHardBtn" title="Reader: seleksi/copy teks memakai viewer PDF bawaan browser"><i data-lucide="file-search"></i><span>Reader</span></button>
   <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Pilih & Tulis</div>
     <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih/Geser</span></button>
     <button class="pdf-tool" data-action="pdfTogglePan"><i data-lucide="hand"></i><span>Pan Scroll</span></button>
@@ -1732,6 +1816,7 @@ input.selected-object-disabled{
   <details class="pdf-menu"><summary><i data-lucide="move-3d"></i><span>Objek</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Edit Objek</div>
     <button class="pdf-tool" data-action="pdfEditSelectedText"><i data-lucide="pencil"></i><span>Edit Teks</span></button>
     <button class="pdf-tool" data-action="pdfDuplicateSelected"><i data-lucide="copy-plus"></i><span>Duplikat</span></button>
+    <button class="pdf-tool" data-action="pdfDuplicateSelectedToPage"><i data-lucide="copy-check"></i><span>Duplikat ke Halaman</span></button>
     <button class="pdf-tool" data-action="pdfDeleteSelected"><i data-lucide="delete"></i><span>Hapus</span></button>
     <button class="pdf-tool" data-action="pdfCopySelected"><i data-lucide="copy"></i><span>Copy</span></button>
     <button class="pdf-tool" data-action="pdfPasteObject"><i data-lucide="clipboard-paste"></i><span>Paste</span></button>
@@ -2146,7 +2231,7 @@ input.selected-object-disabled{
       {title:'Tanda', items:[pdfTool('highlight','highlighter','Highlight'),pdfTool('rect','square','Kotak'),pdfTool('ellipse','circle','Lingkaran'),pdfTool('line','minus','Garis'),pdfTool('arrow','move-up-right','Panah'),pdfTool('draw','pen-line','Coret')]},
       {title:'Markup', items:[pdfTool('redact','shield-x','Sensor'),pdfTool('check','check','Ceklis'),pdfTool('cross','x','Silang'),btn('pdfImageStamp','image-plus','Gambar'),pdfTool('erase','trash-2','Hapus')]},
       {title:'Gaya', items:[btn('focusPdfStyle','palette','Warna/Gaya')]},
-      {title:'Objek', items:[btn('pdfEditSelectedText','pencil','Edit Teks'),btn('pdfDuplicateSelected','copy-plus','Duplikat'),btn('pdfDeleteSelected','delete','Hapus Pilihan'),btn('clearPdfAnnotations','eraser','Bersihkan Anotasi')]},
+      {title:'Objek', items:[btn('pdfEditSelectedText','pencil','Edit Teks'),btn('pdfDuplicateSelected','copy-plus','Duplikat'),btn('pdfDuplicateSelectedToPage','copy-check','Duplikat ke Halaman'),btn('pdfDeleteSelected','delete','Hapus Pilihan'),btn('clearPdfAnnotations','eraser','Bersihkan Anotasi')]},
       {title:'File PDF', items:[btn('save','save','Simpan PDF'),btn('replacePdf','folder-open','Ganti PDF'),btn('newBlankPdf','file-plus','PDF Kosong'),btn('closePdf','x-circle','Tutup PDF')]},
       {title:'Aksi', items:[btn('undo','undo-2','Undo'),btn('redo','redo-2','Redo'),btn('pdfSearchText','search','Cari Teks'),btn('pdfRotateView','rotate-cw','Putar')]}
     ],
@@ -2393,7 +2478,7 @@ input.selected-object-disabled{
         h1: () => execDocCommand('formatBlock','H1'), h2: () => execDocCommand('formatBlock','H2'), quote: () => execDocCommand('formatBlock','BLOCKQUOTE'), codeBlock: insertCodeBlock,
         removeFormat: () => execDocCommand('removeFormat'),
         pageA4: () => setPageSize('A4'), pageLetter: () => setPageSize('Letter'), pageLegal: () => setPageSize('Legal'), pageFolio: () => setPageSize('Folio'), pageA5: () => setPageSize('A5'), orientPortrait: () => setPageOrientation('portrait'), orientLandscape: () => setPageOrientation('landscape'), marginNormal: () => setMargin(72), marginNarrow: () => setMargin(36), marginWide: () => setMargin(96), insertPageBreak, fitWidth, pageWidth,
-        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle, pdfSetFillTransparent, pdfAddApprovedStamp, pdfAddDraftStamp, pdfAddRejectedStamp, pdfAddDateStamp, pdfAddPageNumbers, pdfAddWatermarkDraft, pdfAddCustomWatermark, pdfAddHeaderFooter, pdfSetBackgroundColor, pdfDrawSignature, pdfAddLink, pdfAttachFile, mergePdfFiles, splitPdfByRange, splitPdfEveryPage, openPdfOrganizer, pdfInsertBlankPage, pdfImportPages, pdfDeletePages, pdfExtractPages, pdfReplacePages, pdfCropPages, pdfSetPageSize, pdfStraightenPages, pdfRotateCurrentLeft, pdfRotateCurrentRight, pdfRotateAllPages, pdfToImage, pdfExtractText, pdfOcrCurrentPage, pdfCompress, pdfListFormFields, pdfFillFormField, pdfFlattenForm, pdfUnsupportedSecurity, pdfTogglePan, pdfShowPremiumDashboard, pdfOpenThumbnailSidebar, pdfFindAdvanced, pdfCommentsManager, pdfToggleAnnotationVisibility, pdfFlattenAnnotations, pdfEditMetadata, pdfInfoReport, pdfExportInfoReport, pdfOcrAllPages, pdfSnipCurrentPage, pdfCreateFromImages, pdfInsertImagePages, pdfAddBatesNumbering, pdfAddPageRangeLabel, pdfDuplicateCurrentPage, pdfReversePages, pdfMoveCurrentPageToFront, pdfMoveCurrentPageToBack, pdfAlignLeft, pdfAlignCenter, pdfAlignRight, pdfAlignTop, pdfAlignMiddle, pdfAlignBottom, pdfNudgeLeft, pdfNudgeRight, pdfNudgeUp, pdfNudgeDown, pdfLockSelected, pdfUnlockSelected, pdfClearCurrentPageAnnotations,
+        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfDuplicateSelectedToPage, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle, pdfSetFillTransparent, pdfAddApprovedStamp, pdfAddDraftStamp, pdfAddRejectedStamp, pdfAddDateStamp, pdfAddPageNumbers, pdfAddWatermarkDraft, pdfAddCustomWatermark, pdfAddHeaderFooter, pdfSetBackgroundColor, pdfDrawSignature, pdfAddLink, pdfAttachFile, mergePdfFiles, splitPdfByRange, splitPdfEveryPage, openPdfOrganizer, pdfInsertBlankPage, pdfImportPages, pdfDeletePages, pdfExtractPages, pdfReplacePages, pdfCropPages, pdfSetPageSize, pdfStraightenPages, pdfRotateCurrentLeft, pdfRotateCurrentRight, pdfRotateAllPages, pdfToImage, pdfExtractText, pdfOcrCurrentPage, pdfCompress, pdfListFormFields, pdfFillFormField, pdfFlattenForm, pdfUnsupportedSecurity, pdfTogglePan, pdfShowPremiumDashboard, pdfOpenThumbnailSidebar, pdfFindAdvanced, pdfCommentsManager, pdfToggleAnnotationVisibility, pdfFlattenAnnotations, pdfEditMetadata, pdfInfoReport, pdfExportInfoReport, pdfOcrAllPages, pdfSnipCurrentPage, pdfCreateFromImages, pdfInsertImagePages, pdfAddBatesNumbering, pdfAddPageRangeLabel, pdfDuplicateCurrentPage, pdfReversePages, pdfMoveCurrentPageToFront, pdfMoveCurrentPageToBack, pdfAlignLeft, pdfAlignCenter, pdfAlignRight, pdfAlignTop, pdfAlignMiddle, pdfAlignBottom, pdfNudgeLeft, pdfNudgeRight, pdfNudgeUp, pdfNudgeDown, pdfLockSelected, pdfUnlockSelected, pdfClearCurrentPageAnnotations,
         sheetAddRow, sheetDeleteRow, sheetAddCol, sheetDeleteCol, sheetFormulaSum, sheetFormulaAvg, sheetSortAsc: () => sortSheet(true), sheetSortDesc: () => sortSheet(false),
         zoomOut: () => changeZoom(-0.1), zoomReset: () => setZoom(1), zoomIn: () => changeZoom(0.1), toggleTheme, toggleFocus, fullscreen, updateCount: updateWordCount,
         docPreview: showDocPreview, docEdit: enterDocEdit, normalizeDoc, reloadFile
@@ -3056,7 +3141,7 @@ input.selected-object-disabled{
       });
     }
     const selectedOnlyActions = [
-      'pdfEditSelectedText','pdfDuplicateSelected','pdfDeleteSelected','pdfCopySelected',
+      'pdfEditSelectedText','pdfDuplicateSelected','pdfDuplicateSelectedToPage','pdfDeleteSelected','pdfCopySelected',
       'pdfLockSelected','pdfUnlockSelected','pdfBringFront','pdfSendBack','pdfResetSelectedRotation',
       'pdfAlignLeft','pdfAlignCenter','pdfAlignRight','pdfAlignTop','pdfAlignMiddle','pdfAlignBottom',
       'pdfNudgeLeft','pdfNudgeRight','pdfNudgeUp','pdfNudgeDown','pdfGrowSelected','pdfShrinkSelected',
@@ -3387,14 +3472,50 @@ input.selected-object-disabled{
     const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
     if (!ann) return;
     pushPdfHistory();
-    const copy = JSON.parse(JSON.stringify(ann));
-    copy.id = uid();
-    copy.locked = false;
-    if ('x' in copy) copy.x = clamp(copy.x + 0.025, 0, .96);
-    if ('y' in copy) copy.y = clamp(copy.y + 0.025, 0, .96);
-    if ('x1' in copy) { copy.x1 = clamp(copy.x1 + 0.025, 0, 1); copy.x2 = clamp(copy.x2 + 0.025, 0, 1); copy.y1 = clamp(copy.y1 + 0.025, 0, 1); copy.y2 = clamp(copy.y2 + 0.025, 0, 1); }
-    if (copy.points) copy.points = copy.points.map(p=>({x:clamp(p.x+.025,0,1), y:clamp(p.y+.025,0,1)}));
-    state.pdfAnnotations.push(copy); state.selectedAnnotationId = copy.id; markDirty(); redrawPdfAnnotations();
+    const copy = clonePdfAnnotationForPaste(ann);
+    copy.pageIndex = Number(ann.pageIndex || 0);
+    state.pdfAnnotations.push(copy);
+    state.selectedAnnotationId = copy.id;
+    markDirty();
+    redrawPdfAnnotations();
+    toast('Objek diduplikat di halaman yang sama.', 'good');
+  }
+
+  async function pdfDuplicateSelectedToPage(){
+    if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
+    if (!state.selectedAnnotationId) return toast('Pilih objek dulu.', 'warn');
+    const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
+    if (!ann) return toast('Objek tidak ditemukan.', 'warn');
+    const total = state.pdfDoc ? state.pdfDoc.numPages : 1;
+    const current = Number(ann.pageIndex || 0) + 1;
+    const def = total > 1 ? String(Math.min(total, current + 1)) : String(current);
+    const raw = await appPageRangeModal('Duplikat objek ke halaman lain', total, def);
+    if (raw == null) return;
+    let pages;
+    try { pages = parsePageRange(raw, total); }
+    catch (err) { toast(err.message || 'Range halaman tidak valid.', 'bad'); return; }
+    if (!pages.length) return toast('Tidak ada halaman yang dipilih.', 'warn');
+    pushPdfHistory();
+    let last = null;
+    pages.forEach(pageIndex => {
+      const copy = JSON.parse(JSON.stringify(ann));
+      copy.id = uid();
+      copy.locked = false;
+      copy.pageIndex = pageIndex;
+      if (pageIndex === Number(ann.pageIndex || 0)) {
+        const shifted = clonePdfAnnotationForPaste(copy);
+        shifted.pageIndex = pageIndex;
+        state.pdfAnnotations.push(shifted);
+        last = shifted;
+      } else {
+        state.pdfAnnotations.push(copy);
+        last = copy;
+      }
+    });
+    if (last) state.selectedAnnotationId = last.id;
+    markDirty();
+    redrawPdfAnnotations();
+    toast('Objek diduplikat ke ' + pages.length + ' halaman.', 'good');
   }
 
   async function pdfSearchText(){
@@ -3508,6 +3629,126 @@ input.selected-object-disabled{
     document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
   }
 
+
+  const PDF_BOX_ANN_TYPES = ['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'];
+  function isPdfBoxAnnotation(ann){ return ann && PDF_BOX_ANN_TYPES.includes(ann.type); }
+  function pdfLayerForPage(pageIndex){ return document.querySelector(`.pdf-layer[data-page-index="${Number(pageIndex || 0)}"]`); }
+  function getPdfLayerAtPoint(clientX, clientY){
+    const layers = Array.from(document.querySelectorAll('.pdf-layer'));
+    for (const layer of layers) {
+      const r = layer.getBoundingClientRect();
+      if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) return layer;
+    }
+    return null;
+  }
+  function getNearestPdfLayerAtPoint(clientX, clientY){
+    const direct = getPdfLayerAtPoint(clientX, clientY);
+    if (direct) return direct;
+    let best = null;
+    let bestDist = Infinity;
+    document.querySelectorAll('.pdf-layer').forEach(layer => {
+      const r = layer.getBoundingClientRect();
+      const cx = clamp(clientX, r.left, r.right);
+      const cy = clamp(clientY, r.top, r.bottom);
+      const d = Math.hypot(clientX - cx, clientY - cy);
+      if (d < bestDist) { bestDist = d; best = layer; }
+    });
+    return best;
+  }
+  function getPdfAnnotationBounds(ann){
+    if (!ann) return {x:0,y:0,w:.05,h:.05};
+    if (isPdfBoxAnnotation(ann)) return {x:Number(ann.x||0), y:Number(ann.y||0), w:Number(ann.w||.05), h:Number(ann.h||.05)};
+    if (ann.type === 'line' || ann.type === 'arrow') {
+      const x1 = Number(ann.x1 || 0), x2 = Number(ann.x2 || 0), y1 = Number(ann.y1 || 0), y2 = Number(ann.y2 || 0);
+      return {x:Math.min(x1,x2), y:Math.min(y1,y2), w:Math.abs(x2-x1), h:Math.abs(y2-y1)};
+    }
+    if (ann.type === 'draw' && Array.isArray(ann.points) && ann.points.length) {
+      const xs = ann.points.map(p => Number(p.x || 0));
+      const ys = ann.points.map(p => Number(p.y || 0));
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      return {x:minX, y:minY, w:Math.max(.005, maxX-minX), h:Math.max(.005, maxY-minY)};
+    }
+    return {x:0,y:0,w:.05,h:.05};
+  }
+  function movePdfAnnotationToPagePosition(ann, original, targetPageIndex, targetX, targetY, originalBounds){
+    const b = originalBounds || getPdfAnnotationBounds(original);
+    ann.pageIndex = Number(targetPageIndex || 0);
+    if (isPdfBoxAnnotation(original)) {
+      ann.x = clamp(targetX, 0, Math.max(0, 1 - (original.w || b.w || .05)));
+      ann.y = clamp(targetY, 0, Math.max(0, 1 - (original.h || b.h || .05)));
+      return;
+    }
+    const dx = targetX - b.x;
+    const dy = targetY - b.y;
+    if (original.type === 'line' || original.type === 'arrow') {
+      ann.x1 = clamp(Number(original.x1 || 0) + dx, 0, 1);
+      ann.x2 = clamp(Number(original.x2 || 0) + dx, 0, 1);
+      ann.y1 = clamp(Number(original.y1 || 0) + dy, 0, 1);
+      ann.y2 = clamp(Number(original.y2 || 0) + dy, 0, 1);
+      return;
+    }
+    if (original.type === 'draw' && Array.isArray(original.points)) {
+      ann.points = original.points.map(p => ({ x: clamp(Number(p.x || 0) + dx, 0, 1), y: clamp(Number(p.y || 0) + dy, 0, 1) }));
+    }
+  }
+  function movePdfAnnotationBy(ann, dx, dy){
+    if (!ann) return false;
+    if (isPdfBoxAnnotation(ann)) {
+      ann.x = clamp((ann.x || 0) + dx, 0, Math.max(0, 1 - (ann.w || 0.05)));
+      ann.y = clamp((ann.y || 0) + dy, 0, Math.max(0, 1 - (ann.h || 0.05)));
+      return true;
+    }
+    if (ann.type === 'line' || ann.type === 'arrow') {
+      const b = getPdfAnnotationBounds(ann);
+      const safeDx = clamp(b.x + dx, 0, Math.max(0, 1 - b.w)) - b.x;
+      const safeDy = clamp(b.y + dy, 0, Math.max(0, 1 - b.h)) - b.y;
+      ann.x1 = clamp((ann.x1 || 0) + safeDx, 0, 1); ann.x2 = clamp((ann.x2 || 0) + safeDx, 0, 1);
+      ann.y1 = clamp((ann.y1 || 0) + safeDy, 0, 1); ann.y2 = clamp((ann.y2 || 0) + safeDy, 0, 1);
+      return true;
+    }
+    if (ann.type === 'draw' && Array.isArray(ann.points)) {
+      const b = getPdfAnnotationBounds(ann);
+      const safeDx = clamp(b.x + dx, 0, Math.max(0, 1 - b.w)) - b.x;
+      const safeDy = clamp(b.y + dy, 0, Math.max(0, 1 - b.h)) - b.y;
+      ann.points = ann.points.map(p => ({ x: clamp((p.x || 0) + safeDx, 0, 1), y: clamp((p.y || 0) + safeDy, 0, 1) }));
+      return true;
+    }
+    return false;
+  }
+  function autoScrollPdfDuringDrag(ev){
+    const scroller = document.querySelector('#pdfPane .pdf-doc-scroll') || workspace;
+    if (!scroller) return;
+    const r = scroller.getBoundingClientRect();
+    const edge = 72;
+    let dy = 0;
+    if (ev.clientY > r.bottom - edge) dy = Math.min(28, (ev.clientY - (r.bottom - edge)) * 0.45 + 4);
+    else if (ev.clientY < r.top + edge) dy = -Math.min(28, ((r.top + edge) - ev.clientY) * 0.45 + 4);
+    if (dy) scroller.scrollTop += dy;
+  }
+  function handlePdfShiftWheelMove(e){
+    if (!e.shiftKey || e.ctrlKey || e.metaKey || state.mode !== 'pdf' || !state.selectedAnnotationId) return false;
+    const active = document.activeElement;
+    if (active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName)) return false;
+    const ann = state.pdfAnnotations.find(a => a.id === state.selectedAnnotationId);
+    if (!ann) return false;
+    if (ann.locked) { e.preventDefault(); toast('Objek terkunci. Buka kunci dulu.', 'warn'); return true; }
+    e.preventDefault();
+    const layer = pdfLayerForPage(ann.pageIndex);
+    const r = layer ? layer.getBoundingClientRect() : null;
+    const dy = (e.deltaY || 0) / Math.max(200, r ? r.height : 1000);
+    if (!state.pdfWheelNudgeActive) {
+      pushPdfHistory();
+      state.pdfWheelNudgeActive = true;
+    }
+    clearTimeout(state.pdfWheelNudgeTimer);
+    state.pdfWheelNudgeTimer = setTimeout(() => { state.pdfWheelNudgeActive = false; }, 350);
+    if (movePdfAnnotationBy(ann, 0, dy)) {
+      markDirty();
+      redrawPdfAnnotations();
+    }
+    return true;
+  }
+
   function startAnnotationMouseDown(e){
     if (e.button !== 0) return;
     if (e.target && (e.target.classList.contains('ann-handle') || e.target.classList.contains('ann-rotate'))) return;
@@ -3516,13 +3757,13 @@ input.selected-object-disabled{
     const ann = state.pdfAnnotations.find(a => a.id === id); if (!ann) return;
     if (state.pdfTool === 'erase') { if (ann.locked) return toast('Objek terkunci. Buka kunci dulu.', 'warn'); pushPdfHistory(); state.pdfAnnotations = state.pdfAnnotations.filter(a => a.id !== id); state.selectedAnnotationId = null; markDirty(); redrawPdfAnnotations(); return; }
 
-    // Semua objek PDF sekarang bisa langsung digeser setelah diklik.
-    // Kalau user masih berada di tool lain, klik objek otomatis masuk mode Pilih.
+    // Semua objek PDF bisa langsung digeser. Saat objek ditarik melewati halaman lain,
+    // pageIndex ikut dipindah sehingga foto/stempel/teks/shape tidak terkunci di satu halaman.
     if (state.pdfTool !== 'select') {
       state.pdfTool = 'select';
       syncActivePdfTools();
       updatePdfCursor();
-      if (pdfHint && pdfHint.querySelector('span')) pdfHint.querySelector('span').textContent = 'Mode aktif: Pilih. Objek siap digeser.';
+      if (pdfHint && pdfHint.querySelector('span')) pdfHint.querySelector('span').textContent = 'Mode aktif: Pilih. Objek siap digeser antar halaman.';
     }
 
     state.selectedAnnotationId = id;
@@ -3530,33 +3771,35 @@ input.selected-object-disabled{
     redrawPdfAnnotations();
     if (ann.locked) { toast('Objek terkunci. Buka kunci dulu untuk menggeser.', 'warn'); return; }
 
-    const layer = document.querySelector(`.pdf-layer[data-page-index="${ann.pageIndex}"]`) || e.currentTarget.parentElement;
-    const r = layer.getBoundingClientRect();
+    const initialLayer = pdfLayerForPage(ann.pageIndex) || e.currentTarget.parentElement;
+    const initialRect = initialLayer.getBoundingClientRect();
     const start = {x:e.clientX, y:e.clientY};
     const original = JSON.parse(JSON.stringify(ann));
+    const originalBounds = getPdfAnnotationBounds(original);
+    const pointerOffset = {
+      x: e.clientX - (initialRect.left + originalBounds.x * initialRect.width),
+      y: e.clientY - (initialRect.top + originalBounds.y * initialRect.height)
+    };
     let moved = false;
     let historyPushed = false;
 
     const move = (ev) => {
+      autoScrollPdfDuringDrag(ev);
       const dxPx = ev.clientX - start.x;
       const dyPx = ev.clientY - start.y;
       if (!moved && Math.hypot(dxPx, dyPx) < 2) return;
       if (!historyPushed) { pushPdfHistory(); historyPushed = true; }
       moved = true;
-      const dx=dxPx/r.width, dy=dyPx/r.height;
-      if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) {
-        const maxX = Math.max(0, 1 - (original.w || 0));
-        const maxY = Math.max(0, 1 - (original.h || 0));
-        ann.x=clamp((original.x || 0)+dx,0,maxX);
-        ann.y=clamp((original.y || 0)+dy,0,maxY);
-      }
-      if (ann.type === 'line' || ann.type === 'arrow') {
-        ann.x1=clamp(original.x1+dx,0,1); ann.x2=clamp(original.x2+dx,0,1);
-        ann.y1=clamp(original.y1+dy,0,1); ann.y2=clamp(original.y2+dy,0,1);
-      }
-      if (ann.type === 'draw' && original.points) {
-        ann.points = original.points.map(p=>({x:clamp(p.x+dx,0,1), y:clamp(p.y+dy,0,1)}));
-      }
+
+      const targetLayer = getNearestPdfLayerAtPoint(ev.clientX, ev.clientY) || pdfLayerForPage(ann.pageIndex) || initialLayer;
+      const targetRect = targetLayer.getBoundingClientRect();
+      const targetPageIndex = Number(targetLayer.dataset.pageIndex || ann.pageIndex || 0);
+      const maxX = Math.max(0, 1 - (originalBounds.w || .05));
+      const maxY = Math.max(0, 1 - (originalBounds.h || .05));
+      const targetX = clamp((ev.clientX - targetRect.left - pointerOffset.x) / targetRect.width, 0, maxX);
+      const targetY = clamp((ev.clientY - targetRect.top - pointerOffset.y) / targetRect.height, 0, maxY);
+
+      movePdfAnnotationToPagePosition(ann, original, targetPageIndex, targetX, targetY, originalBounds);
       markDirty();
       redrawPdfAnnotations();
     };
@@ -3622,18 +3865,12 @@ input.selected-object-disabled{
     if (!ann) return false;
     if (ann.locked) { toast('Objek terkunci. Buka kunci dulu.', 'warn'); return false; }
     pushPdfHistory();
-    if (['text','highlight','rect','ellipse','redact','note','stamp','check','cross','image'].includes(ann.type)) {
-      ann.x = clamp((ann.x || 0) + dx, 0, Math.max(0, 1 - (ann.w || 0.05)));
-      ann.y = clamp((ann.y || 0) + dy, 0, Math.max(0, 1 - (ann.h || 0.05)));
-    } else if (ann.type === 'line' || ann.type === 'arrow') {
-      ann.x1 = clamp((ann.x1 || 0) + dx, 0, 1); ann.x2 = clamp((ann.x2 || 0) + dx, 0, 1);
-      ann.y1 = clamp((ann.y1 || 0) + dy, 0, 1); ann.y2 = clamp((ann.y2 || 0) + dy, 0, 1);
-    } else if (ann.type === 'draw' && ann.points) {
-      ann.points = ann.points.map(p => ({ x: clamp(p.x + dx, 0, 1), y: clamp(p.y + dy, 0, 1) }));
+    const ok = movePdfAnnotationBy(ann, dx, dy);
+    if (ok) {
+      markDirty();
+      redrawPdfAnnotations();
     }
-    markDirty();
-    redrawPdfAnnotations();
-    return true;
+    return ok;
   }
   function pdfExportAnnotations(){
     if (state.mode !== 'pdf') return toast('Buka PDF dulu.', 'warn');
@@ -4563,7 +4800,7 @@ input.selected-object-disabled{
     }
     if(e.key==='Delete' && state.mode==='pdf' && state.selectedAnnotationId) pdfDeleteSelected();
   }
-  function handleCtrlWheel(e){ if(!e.ctrlKey && !e.metaKey) return; e.preventDefault(); changeZoom(e.deltaY < 0 ? .1 : -.1); }
+  function handleCtrlWheel(e){ if(handlePdfShiftWheelMove(e)) return; if(!e.ctrlKey && !e.metaKey) return; e.preventDefault(); changeZoom(e.deltaY < 0 ? .1 : -.1); }
   function changeZoom(delta){ setZoom(state.zoom + delta); }
   function setZoom(v){ state.zoom = clamp(Math.round(v*10)/10, .4, 2.5); updateZoomUI(); applyZoom(); }
   function updateZoomUI(){ zoomPercent.textContent = Math.round(state.zoom*100) + '%'; }
@@ -5550,7 +5787,7 @@ input.selected-object-disabled{
   };
 
 
-  /* ===== V6 Reader Native: seleksi teks langsung memakai viewer PDF bawaan browser ===== */
+  /* ===== V6 Reader: seleksi teks langsung memakai viewer PDF bawaan browser ===== */
   function destaraV6SetupNativeReader(){
     if (document.getElementById('pdfNativeReader')) return;
     const layout = document.getElementById('pdfEditorLayout');
@@ -5563,9 +5800,9 @@ input.selected-object-disabled{
         <button class="pdf-tool native-reader-primary" data-action="pdfCloseNativeReader" title="Kembali ke editor PDF"><i data-lucide="pen-tool"></i><span>Kembali Edit</span></button>
         <button class="pdf-tool" data-action="pdfOpenNativeNewTab" title="Buka PDF di tab viewer browser"><i data-lucide="external-link"></i><span>Buka Tab</span></button>
         <button class="pdf-tool" data-action="pdfDownloadNativeOriginal" title="Download PDF aktif"><i data-lucide="download"></i><span>Download PDF</span></button>
-        <div class="native-note"><strong>Reader Native aktif.</strong> Blok teks langsung di PDF lalu tekan Ctrl+C. Ini memakai viewer PDF bawaan browser seperti Edge/Chrome, jadi lebih stabil daripada seleksi di canvas editor.</div>
+        <div class="native-note"><strong>Reader aktif.</strong> Blok teks langsung di PDF lalu tekan Ctrl+C. Ini memakai viewer PDF bawaan browser seperti Edge/Chrome, jadi lebih stabil daripada seleksi di canvas editor.</div>
       </div>
-      <div class="pdf-native-frame-wrap"><iframe id="pdfNativeFrame" class="pdf-native-frame" title="Reader native PDF" loading="lazy"></iframe></div>`;
+      <div class="pdf-native-frame-wrap"><iframe id="pdfNativeFrame" class="pdf-native-frame" title="Reader PDF" loading="lazy"></iframe></div>`;
     pdfPane.insertBefore(reader, layout);
     refreshIcons();
   }
@@ -5590,12 +5827,12 @@ input.selected-object-disabled{
     destaraV6SetupNativeReader();
     const frame = document.getElementById('pdfNativeFrame');
     const url = destaraV6MakeNativeUrl();
-    if (!url) return toast('PDF belum siap dibuka di Reader Native.', 'warn');
+    if (!url) return toast('PDF belum siap dibuka di Reader.', 'warn');
     if (frame) frame.src = url + '#toolbar=1&navpanes=0&view=FitH';
     state.pdfNativeMode = true;
     appRoot.classList.add('pdf-native-mode');
-    status('Reader Native aktif - seleksi teks langsung di viewer browser.');
-    toast('Reader Native aktif. Blok teks langsung di PDF lalu Ctrl+C.', 'good');
+    status('Reader aktif - seleksi teks langsung di viewer browser.');
+    toast('Reader aktif. Blok teks langsung di PDF lalu Ctrl+C.', 'good');
     refreshIcons();
   }
 
@@ -5628,7 +5865,7 @@ input.selected-object-disabled{
       const btn = document.createElement('button');
       btn.className = 'pdf-tool native-reader-primary';
       btn.dataset.action = 'pdfOpenNativeReader';
-      btn.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      btn.innerHTML = '<i data-lucide="file-search"></i><span>Reader</span>';
       alatBody.insertBefore(btn, alatBody.firstChild);
       alatBody.insertBefore(title, btn);
     }
@@ -5638,7 +5875,7 @@ input.selected-object-disabled{
       topBtn.className = 'pdf-tool native-reader-primary';
       topBtn.dataset.action = 'pdfOpenNativeReader';
       topBtn.title = 'Mode baca/select PDF native';
-      topBtn.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      topBtn.innerHTML = '<i data-lucide="file-search"></i><span>Reader</span>';
       const after = topbar.querySelector('#pdfStylePanelToggle');
       if (after && after.nextSibling) topbar.insertBefore(topBtn, after.nextSibling);
       else topbar.insertBefore(topBtn, topbar.firstChild);
@@ -5683,7 +5920,7 @@ input.selected-object-disabled{
     }
   };
 
-  // V7 hard fallback: klik Reader Native ditangkap langsung agar tidak bergantung pada injeksi tombol.
+  // V7 hard fallback: klik Reader ditangkap langsung agar tidak bergantung pada injeksi tombol.
   document.addEventListener('click', function(e){
     const btn = e.target && e.target.closest && e.target.closest('[data-action="pdfOpenNativeReader"], #pdfNativeReaderHardBtn, .native-reader-quick');
     if (!btn) return;
@@ -5700,8 +5937,8 @@ input.selected-object-disabled{
       b.className = 'pdf-tool native-reader-hard';
       b.id = 'pdfNativeReaderHardBtn';
       b.dataset.action = 'pdfOpenNativeReader';
-      b.title = 'Reader Native: seleksi/copy teks memakai viewer PDF bawaan browser';
-      b.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      b.title = 'Reader: seleksi/copy teks memakai viewer PDF bawaan browser';
+      b.innerHTML = '<i data-lucide="file-search"></i><span>Reader</span>';
       const panelBtn = topbar.querySelector('#pdfStylePanelToggle');
       if (panelBtn && panelBtn.nextSibling) topbar.insertBefore(b, panelBtn.nextSibling);
       else topbar.insertBefore(b, topbar.firstChild);
@@ -5713,6 +5950,539 @@ input.selected-object-disabled{
     _destaraV7OldInjectNativeButtons();
     destaraV7EnsureVisibleNativeButtons();
   };
+
+
+  /* ===== FINAL FIX: Transparansi dipisah menjadi Border/Teks dan Isi/Latar, berlaku untuk semua anotasi PDF ===== */
+  (function destaraDualTransparencyPatch(){
+    function destaraDualClampAlpha(value, fallback){
+      const n = Number(value);
+      if (!Number.isFinite(n)) return Number.isFinite(Number(fallback)) ? Math.max(0, Math.min(1, Number(fallback))) : 1;
+      return Math.max(0, Math.min(1, n));
+    }
+    function destaraDualClampPercent(value){
+      const n = Number(value);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(100, Math.round(n)));
+    }
+    function destaraDualAlphaFromPercent(value){ return Math.max(0, Math.min(1, 1 - destaraDualClampPercent(value) / 100)); }
+    function destaraDualPercentFromAlpha(alpha, fallback){
+      const safe = destaraDualClampAlpha(alpha, fallback);
+      return Math.round((1 - safe) * 100);
+    }
+    function destaraDualEnsureState(){
+      if (!Number.isFinite(Number(state.pdfBorderOpacity))) state.pdfBorderOpacity = 1;
+      if (!Number.isFinite(Number(state.pdfFillOpacity))) state.pdfFillOpacity = destaraDualClampAlpha(state.pdfOpacity ?? .38, .38);
+      if (!Number.isFinite(Number(state.pdfOpacity))) state.pdfOpacity = destaraDualClampAlpha(state.pdfFillOpacity, .38);
+    }
+    function destaraDualHasFill(type){ return ['highlight','rect','ellipse','note','stamp','image'].includes(type); }
+    function destaraDualHasBorder(type){ return ['text','note','stamp','check','cross','rect','ellipse','line','arrow','draw'].includes(type); }
+    function destaraDualFillColor(ann){
+      if (!ann) return 'transparent';
+      if (ann.type === 'highlight') return ann.color || state.pdfHighlightColor;
+      if (ann.type === 'rect' || ann.type === 'ellipse') return Object.prototype.hasOwnProperty.call(ann, 'fillColor') ? ann.fillColor : state.pdfRectFillColor;
+      if (ann.type === 'note') return ann.fillColor ?? state.pdfHighlightColor;
+      if (ann.type === 'stamp') return ann.fillColor ?? '#ffffff';
+      return 'transparent';
+    }
+    function destaraDualBorderColor(ann){
+      if (!ann) return '#000000';
+      if (['text','note','stamp','check','cross'].includes(ann.type)) return ann.color || (ann.type === 'check' ? '#16a34a' : ann.type === 'cross' ? '#ef4444' : state.pdfTextColor);
+      if (ann.type === 'rect' || ann.type === 'ellipse') return ann.borderColor || state.pdfRectBorderColor;
+      if (ann.type === 'line' || ann.type === 'arrow') return ann.color || ann.borderColor || state.pdfLineColor;
+      if (ann.type === 'draw') return ann.color || state.pdfDrawColor;
+      return ann.color || state.pdfTextColor || '#111827';
+    }
+    function destaraDualDefaultFillOpacityFor(type){
+      destaraDualEnsureState();
+      if (type === 'stamp') return .6;
+      if (type === 'note') return .9;
+      if (type === 'image') return 1;
+      if (type === 'highlight' || type === 'rect' || type === 'ellipse') return destaraDualClampAlpha(state.pdfFillOpacity ?? state.pdfOpacity, .38);
+      return destaraDualClampAlpha(state.pdfFillOpacity, .38);
+    }
+    function destaraDualDefaultBorderOpacityFor(type){
+      destaraDualEnsureState();
+      return destaraDualHasBorder(type) ? destaraDualClampAlpha(state.pdfBorderOpacity, 1) : 1;
+    }
+    function destaraDualAnnBorderOpacity(ann){
+      if (!ann) return destaraDualDefaultBorderOpacityFor(currentPdfStyleType());
+      if (ann.borderOpacity != null) return destaraDualClampAlpha(ann.borderOpacity, 1);
+      if (ann.opacity != null && ['text','stamp','line','arrow','draw','check','cross'].includes(ann.type)) return destaraDualClampAlpha(ann.opacity, 1);
+      return destaraDualDefaultBorderOpacityFor(ann.type);
+    }
+    function destaraDualAnnFillOpacity(ann){
+      if (!ann) return destaraDualDefaultFillOpacityFor(currentPdfStyleType());
+      if (ann.fillOpacity != null) return destaraDualClampAlpha(ann.fillOpacity, destaraDualDefaultFillOpacityFor(ann.type));
+      if (ann.opacity != null && destaraDualHasFill(ann.type)) return destaraDualClampAlpha(ann.opacity, destaraDualDefaultFillOpacityFor(ann.type));
+      return destaraDualDefaultFillOpacityFor(ann.type);
+    }
+    function destaraDualEnsureAnnotationOpacityDefaults(){
+      destaraDualEnsureState();
+      (state.pdfAnnotations || []).forEach(ann => {
+        if (!ann || !ann.type) return;
+        if (destaraDualHasBorder(ann.type) && ann.borderOpacity == null) ann.borderOpacity = destaraDualAnnBorderOpacity(ann);
+        if (destaraDualHasFill(ann.type) && ann.fillOpacity == null) ann.fillOpacity = destaraDualAnnFillOpacity(ann);
+        if (destaraDualHasFill(ann.type) && ann.opacity == null) ann.opacity = destaraDualAnnFillOpacity(ann);
+      });
+    }
+    function destaraDualSelectedOrToolBorderOpacity(){
+      const ann = selectedPdfAnnotation ? selectedPdfAnnotation() : null;
+      return ann ? destaraDualAnnBorderOpacity(ann) : destaraDualDefaultBorderOpacityFor(currentPdfStyleType());
+    }
+    function destaraDualSelectedOrToolFillOpacity(){
+      const ann = selectedPdfAnnotation ? selectedPdfAnnotation() : null;
+      return ann ? destaraDualAnnFillOpacity(ann) : destaraDualDefaultFillOpacityFor(currentPdfStyleType());
+    }
+    function destaraDualSetOutput(sliderId, outputId, alpha){
+      const pct = destaraDualPercentFromAlpha(alpha, 1);
+      const slider = document.getElementById(sliderId);
+      const output = document.getElementById(outputId);
+      if (slider && String(slider.value) !== String(pct)) slider.value = String(pct);
+      if (output) output.textContent = pct + '%';
+    }
+    function destaraDualUpdateSliders(){
+      destaraDualSetOutput('pdfSmartBorderTransparencyPct', 'pdfBorderTransparencyValue', destaraDualSelectedOrToolBorderOpacity());
+      destaraDualSetOutput('pdfSmartFillTransparencyPct', 'pdfFillTransparencyValue', destaraDualSelectedOrToolFillOpacity());
+    }
+    function destaraDualInstallStyle(){
+      if (document.getElementById('destara-dual-transparency-style-v1')) return;
+      document.head.insertAdjacentHTML('beforeend', `<style id="destara-dual-transparency-style-v1">
+        #pdfBorderOpacityRow,#pdfFillOpacityRow,#pdfOpacityRow{grid-template-columns:1fr!important;align-items:start!important}
+        #pdfBorderOpacityRow .opacity-control,#pdfFillOpacityRow .opacity-control,#pdfOpacityRow .opacity-control{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:8px 8px;align-items:center;width:100%;min-width:0}
+        #pdfBorderOpacityRow input[type="range"],#pdfFillOpacityRow input[type="range"],#pdfOpacityRow input[type="range"]{grid-column:1/2;width:100%;min-width:0}
+        #pdfBorderTransparencyValue,#pdfFillTransparencyValue{grid-column:2/3;min-width:44px;text-align:right;font-weight:900;color:var(--text)}
+        #pdfBorderOpacityRow .opacity-help,#pdfFillOpacityRow .opacity-help{grid-column:1/-1;font-size:11.5px;line-height:1.35;color:var(--muted)}
+        #pdfBorderOpacityRow .opacity-presets,#pdfFillOpacityRow .opacity-presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+        #pdfBorderOpacityRow .opacity-presets button,#pdfFillOpacityRow .opacity-presets button{min-height:28px;border-radius:999px;border:1px solid var(--line);background:var(--panel-solid);color:var(--text);padding:0 10px;font-size:11.5px;font-weight:800}
+        #pdfBorderOpacityRow .opacity-presets button:hover,#pdfFillOpacityRow .opacity-presets button:hover{transform:translateY(-1px);box-shadow:var(--soft)}
+      </style>`);
+    }
+    function destaraDualInstallUi(){
+      destaraDualInstallStyle();
+      const oldRow = document.getElementById('pdfOpacityRow');
+      if (!oldRow) return;
+      oldRow.id = 'pdfBorderOpacityRow';
+      const oldLabel = oldRow.querySelector('label');
+      if (oldLabel) oldLabel.textContent = 'Transparansi Border/Teks';
+      const oldSlider = oldRow.querySelector('input[type="range"]');
+      if (oldSlider) {
+        oldSlider.id = 'pdfSmartBorderTransparencyPct';
+        oldSlider.dataset.action = 'pdfSmartBorderTransparencyPct';
+        oldSlider.setAttribute('aria-label', 'Transparansi border atau teks 0 sampai 100 persen');
+      }
+      const oldOutput = oldRow.querySelector('output');
+      if (oldOutput) {
+        oldOutput.id = 'pdfBorderTransparencyValue';
+        oldOutput.textContent = '0%';
+      }
+      oldRow.querySelectorAll('[data-transparency-preset]').forEach(btn => {
+        btn.dataset.borderTransparencyPreset = btn.dataset.transparencyPreset;
+        btn.removeAttribute('data-transparency-preset');
+      });
+      if (!oldRow.querySelector('.opacity-help')) {
+        const help = document.createElement('div');
+        help.className = 'opacity-help';
+        help.textContent = 'Mengatur ketebalan visual bagian luar: border, garis, coretan, teks, ceklis, silang, dan teks stempel.';
+        const control = oldRow.querySelector('.opacity-control');
+        if (control) control.appendChild(help);
+      }
+      if (!document.getElementById('pdfFillOpacityRow')) {
+        const fillRow = document.createElement('div');
+        fillRow.className = 'smart-row hidden';
+        fillRow.id = 'pdfFillOpacityRow';
+        fillRow.innerHTML = `<label id="pdfFillOpacityLabel">Transparansi Isi</label><div class="opacity-control"><input type="range" min="0" max="100" step="1" value="62" data-action="pdfSmartFillTransparencyPct" id="pdfSmartFillTransparencyPct" aria-label="Transparansi isi atau latar 0 sampai 100 persen"><output id="pdfFillTransparencyValue">62%</output><div class="opacity-presets"><button type="button" data-fill-transparency-preset="0">Tidak transparan</button><button type="button" data-fill-transparency-preset="50">50%</button><button type="button" data-fill-transparency-preset="100">100%</button></div><div class="opacity-help">Mengatur bagian dalam: isi kotak/oval, highlight, note, latar stempel, watermark, dan gambar.</div></div>`;
+        oldRow.insertAdjacentElement('afterend', fillRow);
+      }
+    }
+    function destaraDualSetTransparency(kind, value){
+      destaraDualEnsureState();
+      const alpha = destaraDualAlphaFromPercent(value);
+      const ann = selectedPdfAnnotation ? selectedPdfAnnotation() : null;
+      if (ann) {
+        const prop = kind === 'border' ? 'borderOpacity' : 'fillOpacity';
+        if (Math.abs(destaraDualClampAlpha(ann[prop], kind === 'border' ? 1 : destaraDualDefaultFillOpacityFor(ann.type)) - alpha) < .001) {
+          destaraDualUpdateSliders();
+          return;
+        }
+        pushPdfHistory();
+        ann[prop] = alpha;
+        if (kind === 'fill' && destaraDualHasFill(ann.type)) ann.opacity = alpha;
+        markDirty();
+        redrawPdfAnnotations();
+      } else {
+        if (kind === 'border') state.pdfBorderOpacity = alpha;
+        else { state.pdfFillOpacity = alpha; state.pdfOpacity = alpha; }
+      }
+      destaraDualUpdateSliders();
+      updatePdfStyleHint();
+    }
+    function destaraDualApplyVisibilityToControls(){
+      destaraDualInstallUi();
+      const type = currentPdfStyleType();
+      const borderRow = document.getElementById('pdfBorderOpacityRow');
+      const fillRow = document.getElementById('pdfFillOpacityRow');
+      const borderLabel = borderRow && borderRow.querySelector('label');
+      const fillLabel = document.getElementById('pdfFillOpacityLabel');
+      const canBorder = destaraDualHasBorder(type);
+      const canFill = destaraDualHasFill(type);
+      if (borderRow) borderRow.classList.toggle('hidden', !canBorder);
+      if (fillRow) fillRow.classList.toggle('hidden', !canFill);
+      if (borderLabel) {
+        borderLabel.textContent = ['line','arrow','draw'].includes(type) ? 'Transparansi Garis' :
+          ['text','check','cross'].includes(type) ? 'Transparansi Teks/Tanda' :
+          type === 'stamp' ? 'Transparansi Border/Teks' : 'Transparansi Border';
+      }
+      if (fillLabel) {
+        fillLabel.textContent = type === 'highlight' ? 'Transparansi Highlight' :
+          type === 'image' ? 'Transparansi Gambar' :
+          type === 'stamp' || type === 'note' ? 'Transparansi Isi/Latar' : 'Transparansi Isi';
+      }
+      const desc = document.getElementById('pdfStyleDesc');
+      if (desc && (canBorder || canFill)) {
+        desc.textContent = 'Transparansi sekarang dipisah: Border/Teks untuk garis luar atau tulisan, dan Isi/Latar untuk bagian dalam. Pengaturan ini berlaku untuk semua objek yang mendukungnya.';
+      }
+      destaraDualUpdateSliders();
+    }
+
+    document.addEventListener('input', function(e){
+      const border = e.target.closest && e.target.closest('[data-action="pdfSmartBorderTransparencyPct"]');
+      const fill = e.target.closest && e.target.closest('[data-action="pdfSmartFillTransparencyPct"]');
+      if (border) return destaraDualSetTransparency('border', border.value);
+      if (fill) return destaraDualSetTransparency('fill', fill.value);
+    }, true);
+    document.addEventListener('change', function(e){
+      const border = e.target.closest && e.target.closest('[data-action="pdfSmartBorderTransparencyPct"]');
+      const fill = e.target.closest && e.target.closest('[data-action="pdfSmartFillTransparencyPct"]');
+      if (border) return destaraDualSetTransparency('border', border.value);
+      if (fill) return destaraDualSetTransparency('fill', fill.value);
+    }, true);
+    document.addEventListener('click', function(e){
+      const borderBtn = e.target.closest && e.target.closest('[data-border-transparency-preset]');
+      const fillBtn = e.target.closest && e.target.closest('[data-fill-transparency-preset]');
+      if (!borderBtn && !fillBtn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (borderBtn) return destaraDualSetTransparency('border', borderBtn.dataset.borderTransparencyPreset);
+      return destaraDualSetTransparency('fill', fillBtn.dataset.fillTransparencyPreset);
+    }, true);
+
+    const _destaraDualOldSetPdfSetting = setPdfSetting;
+    setPdfSetting = function(action, value){
+      if (action === 'pdfBorderOpacity') return destaraDualSetTransparency('border', destaraDualPercentFromAlpha(value, 1));
+      if (action === 'pdfFillOpacity') return destaraDualSetTransparency('fill', destaraDualPercentFromAlpha(value, .38));
+      if (action === 'pdfOpacity') {
+        const alpha = destaraDualClampAlpha(value, .38);
+        state.pdfFillOpacity = alpha;
+        state.pdfOpacity = alpha;
+        const ann = selectedPdfAnnotation ? selectedPdfAnnotation() : null;
+        if (ann && destaraDualHasFill(ann.type)) {
+          pushPdfHistory();
+          ann.fillOpacity = alpha;
+          ann.opacity = alpha;
+          markDirty();
+          redrawPdfAnnotations();
+          return;
+        }
+      }
+      return _destaraDualOldSetPdfSetting(action, value);
+    };
+
+    const _destaraDualOldUpdateControls = updatePdfStyleControls;
+    updatePdfStyleControls = function(){
+      destaraDualInstallUi();
+      _destaraDualOldUpdateControls();
+      destaraDualApplyVisibilityToControls();
+    };
+
+    const _destaraDualOldUpdateHint = updatePdfStyleHint;
+    updatePdfStyleHint = function(){
+      _destaraDualOldUpdateHint();
+      destaraDualApplyVisibilityToControls();
+    };
+
+    const _destaraDualOldRedraw = redrawPdfAnnotations;
+    redrawPdfAnnotations = function(){
+      destaraDualEnsureAnnotationOpacityDefaults();
+      _destaraDualOldRedraw();
+      document.querySelectorAll('.pdf-annotation').forEach(el => {
+        const ann = state.pdfAnnotations.find(a => a.id === el.dataset.id);
+        if (!ann) return;
+        const bAlpha = destaraDualAnnBorderOpacity(ann);
+        const fAlpha = destaraDualAnnFillOpacity(ann);
+        if (ann.type === 'text') {
+          el.style.color = colorWithAlpha(ann.color || state.pdfTextColor, bAlpha);
+        }
+        if (ann.type === 'note') {
+          el.style.color = colorWithAlpha(ann.color || state.pdfTextColor, bAlpha);
+          el.style.borderColor = colorWithAlpha('#d4a017', bAlpha);
+          el.style.background = colorWithAlpha(destaraDualFillColor(ann), fAlpha);
+        }
+        if (ann.type === 'stamp') {
+          const c = ann.color || '#ef4444';
+          el.style.color = colorWithAlpha(c, bAlpha);
+          el.style.borderColor = colorWithAlpha(c, bAlpha);
+          el.style.background = colorWithAlpha(destaraDualFillColor(ann), fAlpha);
+        }
+        if (ann.type === 'check' || ann.type === 'cross') {
+          el.style.color = colorWithAlpha(ann.color || (ann.type === 'check' ? '#16a34a' : '#ef4444'), bAlpha);
+        }
+        if (ann.type === 'highlight') {
+          el.style.background = colorWithAlpha(ann.color || state.pdfHighlightColor, fAlpha);
+        }
+        if (ann.type === 'rect' || ann.type === 'ellipse') {
+          const stroke = ann.borderColor || state.pdfRectBorderColor;
+          el.style.borderColor = colorWithAlpha(stroke, bAlpha);
+          el.style.background = colorWithAlpha(getAnnFillColor(ann), fAlpha);
+          el.querySelectorAll('path,rect').forEach(shapeEl => {
+            const fill = ann.fillColor ?? state.pdfRectFillColor;
+            shapeEl.setAttribute('stroke-opacity', isTransparentColor(stroke) ? '0' : String(bAlpha));
+            shapeEl.setAttribute('fill-opacity', isTransparentColor(fill) ? '0' : String(fAlpha));
+          });
+        }
+        if (ann.type === 'line' || ann.type === 'arrow') {
+          const c = colorWithAlpha(ann.color || ann.borderColor || state.pdfLineColor, bAlpha);
+          el.querySelectorAll('line').forEach(line => line.style.stroke = c);
+          el.querySelectorAll('marker path,path').forEach(path => {
+            path.setAttribute('fill', c);
+            path.style.fill = c;
+          });
+        }
+        if (ann.type === 'draw') {
+          const c = colorWithAlpha(ann.color || state.pdfDrawColor, bAlpha);
+          el.querySelectorAll('polyline').forEach(line => line.style.stroke = c);
+        }
+        if (ann.type === 'image') {
+          el.style.opacity = String(fAlpha);
+        }
+      });
+      destaraDualUpdateSliders();
+    };
+
+    const _destaraDualOldCreatePreview = createPdfPreview;
+    createPdfPreview = function(layer, type, x, y){
+      const el = _destaraDualOldCreatePreview(layer, type, x, y);
+      if (type === 'highlight') el.style.background = colorWithAlpha(state.pdfHighlightColor, destaraDualClampAlpha(state.pdfFillOpacity ?? state.pdfOpacity, .38));
+      if (type === 'rect' || type === 'ellipse') {
+        el.style.background = colorWithAlpha(state.pdfRectFillColor, destaraDualClampAlpha(state.pdfFillOpacity ?? state.pdfOpacity, .38));
+        el.style.borderColor = colorWithAlpha(state.pdfRectBorderColor, destaraDualClampAlpha(state.pdfBorderOpacity, 1));
+      }
+      if (type === 'draw') {
+        const poly = el.querySelector('polyline');
+        if (poly) poly.style.stroke = colorWithAlpha(state.pdfDrawColor, destaraDualClampAlpha(state.pdfBorderOpacity, 1));
+      }
+      return el;
+    };
+
+    const _destaraDualOldUpdatePreview = updatePdfPreview;
+    updatePdfPreview = function(el, type, a, b){
+      _destaraDualOldUpdatePreview(el, type, a, b);
+      if (type === 'line' || type === 'arrow') {
+        const line = el.querySelector('line');
+        if (line) line.style.stroke = colorWithAlpha(state.pdfLineColor, destaraDualClampAlpha(state.pdfBorderOpacity, 1));
+      }
+    };
+
+    const _destaraDualOldAddAtCenter = addPdfAnnotationAtCenter;
+    addPdfAnnotationAtCenter = function(ann){
+      if (ann && ann.type) {
+        if (destaraDualHasBorder(ann.type) && ann.borderOpacity == null) ann.borderOpacity = destaraDualDefaultBorderOpacityFor(ann.type);
+        if (destaraDualHasFill(ann.type) && ann.fillOpacity == null) {
+          ann.fillOpacity = destaraDualDefaultFillOpacityFor(ann.type);
+          ann.opacity = ann.fillOpacity;
+        }
+      }
+      return _destaraDualOldAddAtCenter(ann);
+    };
+
+    drawPdfArrow = function(page, ann, W, H){
+      const cVal = ann.color || ann.borderColor || state.pdfLineColor;
+      const alpha = destaraDualAnnBorderOpacity(ann);
+      if (isTransparentColor(cVal) || alpha <= 0) return;
+      const sw = ann.strokeWidth || state.pdfStrokeWidth;
+      const color = hexToPdfRgb(cVal);
+      const start = {x:ann.x1*W, y:H-ann.y1*H};
+      const end = {x:ann.x2*W, y:H-ann.y2*H};
+      page.drawLine({start, end, thickness:sw, color, opacity:alpha});
+      const angle = Math.atan2(end.y-start.y, end.x-start.x);
+      const len = Math.max(10, sw * 4.5);
+      const a1 = angle + Math.PI * 0.84;
+      const a2 = angle - Math.PI * 0.84;
+      page.drawLine({start:end, end:{x:end.x+Math.cos(a1)*len, y:end.y+Math.sin(a1)*len}, thickness:sw, color, opacity:alpha});
+      page.drawLine({start:end, end:{x:end.x+Math.cos(a2)*len, y:end.y+Math.sin(a2)*len}, thickness:sw, color, opacity:alpha});
+    };
+
+    drawPolygonShapeOnPdf = function(page, ann, W, H){
+      const sx = ann.x * W, sy = ann.y * H, sw = (ann.w||0) * W, sh = (ann.h||0)*H;
+      const shape = ann.shape || 'rect';
+      if (!shape || shape === 'rect') return false;
+      const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+      const fill = ann.fillColor ?? state.pdfRectFillColor;
+      const bAlpha = destaraDualAnnBorderOpacity(ann);
+      const fAlpha = destaraDualAnnFillOpacity(ann);
+      const applyStroke = opts => {
+        if (isTransparentColor(strokeVal) || bAlpha <= 0) { opts.borderWidth = 0; opts.borderOpacity = 0; }
+        else { opts.borderColor = hexToPdfRgb(strokeVal); opts.borderOpacity = bAlpha; }
+      };
+      const applyFill = opts => {
+        if (!isTransparentColor(fill) && fAlpha > 0) { opts.color = hexToPdfRgb(fill); opts.opacity = fAlpha; }
+      };
+      if (shape === 'rounded') {
+        const opts = { x:sx, y:H-(sy+sh), width:sw, height:sh, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
+        applyStroke(opts); applyFill(opts);
+        if (opts.color || opts.borderWidth) page.drawRectangle(opts);
+        return true;
+      }
+      const raw = shapeSvgPath(shape);
+      try {
+        const opts = { x:sx, y:H-(sy+sh), xScale:sw/100, yScale:sh/100, borderWidth:ann.strokeWidth||state.pdfStrokeWidth };
+        applyStroke(opts); applyFill(opts);
+        if (opts.color || opts.borderWidth) page.drawSvgPath(raw, opts);
+        return true;
+      } catch (err) {
+        if (isTransparentColor(strokeVal) || bAlpha <= 0) return true;
+        const nums = raw.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+        if (nums.length < 4) return false;
+        const color = hexToPdfRgb(strokeVal);
+        const points=[]; for(let i=0;i<nums.length;i+=2) points.push({x:sx+(nums[i]/100)*sw, y:H-(sy+(nums[i+1]/100)*sh)});
+        for(let i=0;i<points.length;i++) page.drawLine({start:points[i], end:points[(i+1)%points.length], thickness:ann.strokeWidth||state.pdfStrokeWidth, color, opacity:bAlpha});
+        return true;
+      }
+    };
+
+    savePdfBlob = async function(){
+      if (!state.pdfBytes) throw new Error('Tidak ada PDF yang dibuka.');
+      destaraDualEnsureAnnotationOpacityDefaults();
+      const { PDFDocument } = PDFLib;
+      const pdfDoc = await PDFDocument.load(state.pdfBytes.slice(0));
+      const fontCache = {};
+      const pages = pdfDoc.getPages();
+      for (const ann of state.pdfAnnotations) {
+        const page = pages[ann.pageIndex]; if (!page) continue;
+        const W = page.getWidth(), H = page.getHeight();
+        const sx = (ann.x || 0) * W, sy = (ann.y || 0) * H, sw = (ann.w || 0) * W, sh = (ann.h || 0) * H;
+        const bAlpha = destaraDualAnnBorderOpacity(ann);
+        const fAlpha = destaraDualAnnFillOpacity(ann);
+        if (ann.type === 'highlight') {
+          const cVal = ann.color || state.pdfHighlightColor;
+          if (!isTransparentColor(cVal) && fAlpha > 0) page.drawRectangle({ x:sx, y:H-(sy+sh), width:sw, height:sh, color:hexToPdfRgb(cVal), opacity:fAlpha });
+        }
+        if (ann.type === 'rect') {
+          if (ann.shape && ann.shape !== 'rect') drawPolygonShapeOnPdf(page, ann, W, H);
+          else {
+            const fill = Object.prototype.hasOwnProperty.call(ann,'fillColor') ? ann.fillColor : state.pdfRectFillColor;
+            const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+            const opts = {x:sx, y:H-(sy+sh), width:sw, height:sh, borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
+            if (!isTransparentColor(strokeVal) && bAlpha > 0) { opts.borderColor = hexToPdfRgb(strokeVal); opts.borderOpacity = bAlpha; } else { opts.borderWidth = 0; opts.borderOpacity = 0; }
+            if (!isTransparentColor(fill) && fAlpha > 0) { opts.color = hexToPdfRgb(fill); opts.opacity = fAlpha; }
+            if (opts.color || opts.borderWidth) page.drawRectangle(opts);
+          }
+        }
+        if (ann.type === 'ellipse') {
+          const fill = Object.prototype.hasOwnProperty.call(ann,'fillColor') ? ann.fillColor : state.pdfRectFillColor;
+          const strokeVal = ann.borderColor || state.pdfRectBorderColor;
+          const opts = {x:sx+sw/2, y:H-(sy+sh/2), xScale:sw/2, yScale:sh/2, borderWidth:ann.strokeWidth||state.pdfStrokeWidth};
+          if (!isTransparentColor(strokeVal) && bAlpha > 0) { opts.borderColor = hexToPdfRgb(strokeVal); opts.borderOpacity = bAlpha; } else { opts.borderWidth = 0; opts.borderOpacity = 0; }
+          if (!isTransparentColor(fill) && fAlpha > 0) { opts.color = hexToPdfRgb(fill); opts.opacity = fAlpha; }
+          if (opts.color || opts.borderWidth) page.drawEllipse(opts);
+        }
+        if (ann.type === 'redact') page.drawRectangle({x:sx, y:H-(sy+sh), width:sw, height:sh, color:PDFLib.rgb(0,0,0), opacity:1});
+        if (ann.type === 'text') {
+          const cVal = ann.color || state.pdfTextColor;
+          const size = ann.size || state.pdfTextSize;
+          if (!isTransparentColor(cVal) && bAlpha > 0) {
+            const font = await getFontForAnn(pdfDoc, fontCache, ann);
+            page.drawText(ann.text || '', {x:sx, y:H-sy-size, size, font, color:hexToPdfRgb(cVal), lineHeight:size+2, rotate:PDFLib.degrees(ann.rotation||0), opacity:bAlpha});
+          }
+          if (ann.url) addPdfLinkAnnotation(pdfDoc, page, sx, H-(sy+Math.max(sh,size+4)), Math.max(sw,120), Math.max(sh,size+8), ann.url);
+        }
+        if (ann.type === 'note') {
+          const size = ann.size || 13;
+          const font = await getFontForAnn(pdfDoc, fontCache, ann);
+          const noteFill = ann.fillColor ?? state.pdfHighlightColor;
+          const noteBox = {x:sx, y:H-(sy+sh), width:sw, height:sh, borderColor:PDFLib.rgb(.65,.48,.05), borderWidth:1, borderOpacity:bAlpha};
+          if (!isTransparentColor(noteFill) && fAlpha > 0) { noteBox.color = hexToPdfRgb(noteFill); noteBox.opacity = fAlpha; }
+          if (noteBox.color || bAlpha > 0) page.drawRectangle(noteBox);
+          const cVal = ann.color || state.pdfTextColor;
+          if (!isTransparentColor(cVal) && bAlpha > 0) page.drawText(ann.text || '', {x:sx+5, y:H-sy-size-5, size, font, color:hexToPdfRgb(cVal), lineHeight:size+2, opacity:bAlpha});
+        }
+        if (ann.type === 'stamp') {
+          const cVal = ann.color || '#ef4444';
+          const fill = destaraDualFillColor(ann);
+          const size = ann.size || 22;
+          const font = await getFontForAnn(pdfDoc, fontCache, ann);
+          const box = {x:sx, y:H-(sy+sh), width:sw, height:sh, borderWidth:ann.subtype === 'watermark' ? 0 : 3};
+          if (!isTransparentColor(cVal) && bAlpha > 0 && box.borderWidth > 0) { box.borderColor = hexToPdfRgb(cVal); box.borderOpacity = bAlpha; } else { box.borderWidth = 0; box.borderOpacity = 0; }
+          if (!isTransparentColor(fill) && fAlpha > 0) { box.color = hexToPdfRgb(fill); box.opacity = fAlpha; }
+          if (box.color || box.borderWidth) page.drawRectangle(box);
+          if (!isTransparentColor(cVal) && bAlpha > 0) page.drawText((ann.text || 'STAMP').slice(0,60), {x:sx+8, y:H-sy-sh/2-5, size, font, color:hexToPdfRgb(cVal), rotate:PDFLib.degrees(ann.rotation||0), opacity:bAlpha});
+        }
+        if (ann.type === 'line') {
+          const cVal = ann.color || ann.borderColor || state.pdfLineColor;
+          if (!isTransparentColor(cVal) && bAlpha > 0) page.drawLine({start:{x:ann.x1*W,y:H-ann.y1*H}, end:{x:ann.x2*W,y:H-ann.y2*H}, thickness:ann.strokeWidth||state.pdfStrokeWidth, color:hexToPdfRgb(cVal), opacity:bAlpha});
+        }
+        if (ann.type === 'arrow') drawPdfArrow(page, ann, W, H);
+        if (ann.type === 'draw' && ann.points && ann.points.length > 1) {
+          const cVal = ann.color || state.pdfDrawColor;
+          if (!isTransparentColor(cVal) && bAlpha > 0) for (let i=1;i<ann.points.length;i++) page.drawLine({start:{x:ann.points[i-1].x*W, y:H-ann.points[i-1].y*H}, end:{x:ann.points[i].x*W, y:H-ann.points[i].y*H}, thickness:ann.strokeWidth||state.pdfStrokeWidth, color:hexToPdfRgb(cVal), opacity:bAlpha});
+        }
+        if (ann.type === 'check') {
+          const cVal = ann.color || '#16a34a';
+          if (!isTransparentColor(cVal) && bAlpha > 0) {
+            const c = hexToPdfRgb(cVal), t = Math.max(2, (ann.size||28)/8);
+            page.drawLine({start:{x:sx,y:H-sy-sh*.55}, end:{x:sx+sw*.35,y:H-sy-sh}, thickness:t, color:c, opacity:bAlpha});
+            page.drawLine({start:{x:sx+sw*.35,y:H-sy-sh}, end:{x:sx+sw,y:H-sy}, thickness:t, color:c, opacity:bAlpha});
+          }
+        }
+        if (ann.type === 'cross') {
+          const cVal = ann.color || '#ef4444';
+          if (!isTransparentColor(cVal) && bAlpha > 0) {
+            const c = hexToPdfRgb(cVal), t = Math.max(2, (ann.size||28)/8);
+            page.drawLine({start:{x:sx,y:H-sy}, end:{x:sx+sw,y:H-sy-sh}, thickness:t, color:c, opacity:bAlpha});
+            page.drawLine({start:{x:sx+sw,y:H-sy}, end:{x:sx,y:H-sy-sh}, thickness:t, color:c, opacity:bAlpha});
+          }
+        }
+        if (ann.type === 'image' && ann.dataUrl) {
+          const imgBytes = dataUrlToUint8(ann.dataUrl);
+          const img = (ann.imageType||'').includes('jpeg') || ann.dataUrl.startsWith('data:image/jpeg') ? await pdfDoc.embedJpg(imgBytes) : await pdfDoc.embedPng(imgBytes);
+          page.drawImage(img, {x:sx, y:H-(sy+sh), width:sw, height:sh, rotate:PDFLib.degrees(ann.rotation||0), opacity:fAlpha});
+        }
+      }
+      const bytes = await pdfDoc.save();
+      return new Blob([bytes], {type:'application/pdf'});
+    };
+
+    const _destaraDualOldCapture = captureActiveDocument;
+    captureActiveDocument = function(){
+      _destaraDualOldCapture();
+      if (!state.activeDocId) return;
+      const doc = state.documents.find(d => d.id === state.activeDocId);
+      if (!doc) return;
+      doc.pdfBorderOpacity = state.pdfBorderOpacity;
+      doc.pdfFillOpacity = state.pdfFillOpacity;
+    };
+
+    const _destaraDualOldRestore = restoreDocument;
+    restoreDocument = async function(doc){
+      state.pdfBorderOpacity = doc && doc.pdfBorderOpacity != null ? doc.pdfBorderOpacity : 1;
+      state.pdfFillOpacity = doc && doc.pdfFillOpacity != null ? doc.pdfFillOpacity : (doc && doc.pdfOpacity != null ? doc.pdfOpacity : .38);
+      const result = await _destaraDualOldRestore(doc);
+      destaraDualEnsureState();
+      destaraDualEnsureAnnotationOpacityDefaults();
+      updatePdfStyleControls();
+      return result;
+    };
+
+    const _destaraDualOldInit = init;
+    init = function(){
+      destaraDualEnsureState();
+      destaraDualInstallUi();
+      const result = _destaraDualOldInit();
+      destaraDualInstallUi();
+      updatePdfStyleControls();
+      return result;
+    };
+  })();
+
 
 
   init();
