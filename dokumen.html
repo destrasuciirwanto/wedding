@@ -1950,6 +1950,103 @@ input.selected-object-disabled{
 .ann-stamp{font-weight:800}
 </style>
 
+
+
+<style id="destara-reader-right-like-hide-panel-v1">
+/* PATCH: tombol Reader ditempel di sisi kanan toolbar PDF, sebagai pasangan visual dari Hide Panel yang ada di kiri. */
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+#pdfPane .pdf-toolbar-grouped{
+  padding-left:150px!important;
+  padding-right:150px!important;
+}
+
+/* Reader: tombol kanan, style tetap terlihat seperti tombol khusus dan tidak ikut alur menu tengah. */
+#pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard{
+  position:absolute!important;
+  right:12px!important;
+  left:auto!important;
+  top:50%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  transform:translateY(-50%)!important;
+  order:9999!important;
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 10px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  border:1px solid rgba(41,87,255,.34)!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
+  color:#fff!important;
+  font-weight:900!important;
+  box-shadow:0 9px 22px rgba(41,87,255,.18)!important;
+}
+#pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard:hover,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard:hover{
+  color:#fff!important;
+  transform:translateY(calc(-50% - 1px))!important;
+  box-shadow:0 12px 30px rgba(41,87,255,.24)!important;
+}
+#pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard::after,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard::after{
+  display:none!important;
+  content:none!important;
+}
+#pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard span,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard span{
+  max-width:68px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+[data-theme=dark] #pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard,
+[data-theme=dark] #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard{
+  color:#fff!important;
+  background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
+  border-color:rgba(129,151,255,.42)!important;
+}
+
+/* Di layar kecil: Hide Panel tetap kiri atas, Reader tetap kanan atas, menu PDF turun di bawahnya. */
+@media(max-width:900px){
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+  #pdfPane .pdf-toolbar-grouped{
+    padding-left:12px!important;
+    padding-right:12px!important;
+    padding-top:44px!important;
+  }
+  #pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard,
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard{
+    top:6px!important;
+    right:12px!important;
+    transform:none!important;
+  }
+  #pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard:hover,
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard:hover{
+    transform:translateY(-1px)!important;
+  }
+}
+
+@media(max-width:760px){
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped,
+  #pdfPane .pdf-toolbar-grouped{
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  #pdfPane .pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard,
+  #pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > #pdfNativeReaderHardBtn.native-reader-hard{
+    right:10px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
