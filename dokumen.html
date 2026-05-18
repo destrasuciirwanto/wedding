@@ -1852,17 +1852,45 @@ input.selected-object-disabled{
 }
 </style>
 
+
+<!-- Patch: Print Studio printer preference + original-file margin fix (2026-05-18) -->
+
+
+<style id="destara-document-tabs-restored-v1">
+/* FIX: bar DOKUMEN/tabs file harus tetap tampil di mode PDF agar bisa buka dan pindah banyak dokumen. */
+.app.pdf-mode:not(.focus-mode) .docbar.has-docs,
+.app.pdf-native-mode:not(.focus-mode) .docbar.has-docs{
+  display:flex!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:3px 10px!important;
+  margin:0!important;
+  border-bottom:1px solid var(--line)!important;
+  overflow:hidden!important;
+  opacity:1!important;
+  filter:none!important;
+}
+.app.pdf-mode:not(.focus-mode) .docbar.has-docs .doctabs-scroll,
+.app.pdf-native-mode:not(.focus-mode) .docbar.has-docs .doctabs-scroll{
+  display:flex!important;
+}
+@media print{
+  .docbar{display:none!important}
+}
+</style>
+
+
+<!-- Patch: reader top removed, printer choice moved up, sharp PDF print, Print Studio Ctrl+wheel zoom (2026-05-18) -->
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
-  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn native-reader-quick" data-action="pdfOpenNativeReader" title="Buka mode Reader untuk copy/select teks PDF"><i data-lucide="file-search"></i><span>Reader</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
   <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor file web</h1><p>Tarik PDF, Word, Excel, gambar, PowerPoint, HTML, TXT, atau CSV ke sini. Fitur paling lengkap tetap untuk PDF, sementara file lain bisa dibuka untuk preview, edit ringan, dan export sesuai dukungan browser.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih File</span></button><div class="file-types"><span class="chip">PDF Pro</span><span class="chip">Word/DOCX</span><span class="chip">Excel/CSV</span><span class="chip">Gambar</span><span class="chip">PPTX/HTML/TXT</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><select class="mode-select" data-action="pageSizeSelect" id="paperSizeSelect" title="Ukuran kertas"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option></select><select class="mode-select" data-action="pageOrientationSelect" id="paperOrientationSelect" title="Orientasi"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select><select class="mode-select" data-action="marginSelect" id="marginSelect" title="Margin"><option value="72">Margin normal</option><option value="36">Margin kecil</option><option value="96">Margin lebar</option></select><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview Word menjaga pemisah halaman. Edit Cepat untuk mengetik.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
   <button class="pdf-tool pdf-panel-switch" data-action="togglePdfStylePanel" id="pdfStylePanelToggle" title="Sembunyikan / tampilkan panel Warna & Gaya"><i data-lucide="panel-left-close"></i><span id="pdfStylePanelToggleText">Hide Panel</span></button>
-  <button class="pdf-tool native-reader-hard" data-action="pdfOpenNativeReader" id="pdfNativeReaderHardBtn" title="Reader: seleksi/copy teks memakai viewer PDF bawaan browser"><i data-lucide="file-search"></i><span>Reader</span></button>
   <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Pilih & Tulis</div>
     <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih/Geser</span></button>
     <button class="pdf-tool" data-action="pdfTogglePan"><i data-lucide="hand"></i><span>Pan Scroll</span></button>
@@ -2041,7 +2069,7 @@ input.selected-object-disabled{
 <div id="tpModalRoot" aria-live="polite"></div>
 
 <div class="modal" id="findModal"><div class="modal-card"><h3>Cari dan ganti</h3><label>Cari</label><input id="findText" /><label>Ganti dengan</label><input id="replaceText" /><div class="modal-actions"><button class="qbtn" data-action="closeFind">Batal</button><button class="qbtn" data-action="findNext">Cari</button><button class="qbtn primary" data-action="replaceAll">Ganti semua</button></div></div></div>
-<input type="file" id="fileInput" hidden accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.doc,application/msword,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xls,application/vnd.ms-excel,.ods,application/vnd.oasis.opendocument.spreadsheet,.csv,text/csv,.txt,text/plain,.md,.html,text/html,.htm,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,image/*,.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,.ppt,application/vnd.ms-powerpoint" /><input type="file" id="imageInput" hidden accept="image/*" />
+<input type="file" id="fileInput" hidden multiple accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.doc,application/msword,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xls,application/vnd.ms-excel,.ods,application/vnd.oasis.opendocument.spreadsheet,.csv,text/csv,.txt,text/plain,.md,.html,text/html,.htm,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg,image/*,.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,.ppt,application/vnd.ms-powerpoint" /><input type="file" id="imageInput" hidden accept="image/*" />
 <script id="appScript">
 
 (function(){
@@ -2443,7 +2471,7 @@ input.selected-object-disabled{
     document.addEventListener('toggle', handlePdfMenuToggle, true);
     document.addEventListener('fullscreenchange', updateFullscreenButton);
     document.addEventListener('keydown', handleKeys);
-    fileInput.addEventListener('change', e => { const file = e.target.files && e.target.files[0]; if (file) openFile(file, null); e.target.value = ''; });
+    fileInput.addEventListener('change', async e => { const files = Array.from(e.target.files || []); if (files.length) await openFiles(files); e.target.value = ''; });
     imageInput.addEventListener('change', insertImageFromInput);
     docEditor.addEventListener('input', () => { markDirty(); updateWordCount(); });
     docEditor.addEventListener('paste', () => setTimeout(() => { normalizeImagesInEditor(); markDirty(); }, 0));
@@ -2554,7 +2582,7 @@ input.selected-object-disabled{
     try {
       if (action.startsWith('cmd:')) return execDocCommand(action.slice(4));
       const map = {
-        open: openPicker, save: () => saveCurrent(false), saveAs: () => saveCurrent(true), print: () => window.print(),
+        open: openPicker, save: () => saveCurrent(false), saveAs: () => saveCurrent(true), print: openDestaraPrintStudio,
         togglePdfStylePanel,
         closeDrop: hideDropOverlay, undo: performUndo, redo: performRedo, clear: clearCurrent,
         exportHtml, exportText, exportDocx, exportPdfPrint, exportCsv, exportXlsx, fileInfo, newDoc, closeActiveDoc,
@@ -2590,6 +2618,8 @@ input.selected-object-disabled{
     window.addEventListener('drop', async e => {
       if (!hasFiles(e)) return;
       e.preventDefault(); dragDepth = 0; hideDropOverlay();
+      const droppedFiles = Array.from(e.dataTransfer.files || []);
+      if (droppedFiles.length > 1) return openFiles(droppedFiles);
       const item = e.dataTransfer.items && e.dataTransfer.items[0];
       let handle = null;
       let file = null;
@@ -2599,7 +2629,7 @@ input.selected-object-disabled{
           if (h && h.kind === 'file') { handle = h; file = await h.getFile(); }
         }
       } catch (err) { console.warn('Handle drag-drop tidak tersedia:', err); }
-      if (!file) file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!file) file = droppedFiles[0] || (e.dataTransfer.files && e.dataTransfer.files[0]);
       if (file) openFile(file, handle);
     });
     dropOverlay.addEventListener('click', e => { if (e.target === dropOverlay) hideDropOverlay(); });
@@ -2611,8 +2641,8 @@ input.selected-object-disabled{
   async function openPicker(){
     hideDropOverlay();
     if (window.showOpenFilePicker) {
-      const [handle] = await window.showOpenFilePicker({
-        multiple:false,
+      const handles = await window.showOpenFilePicker({
+        multiple:true,
         types:[{
           description:'PDF, Office, gambar, HTML, dan teks',
           accept:{
@@ -2636,10 +2666,26 @@ input.selected-object-disabled{
           }
         }]
       });
-      const file = await handle.getFile();
-      return openFile(file, handle);
+      return openHandles(handles);
     }
     fileInput.click();
+  }
+
+  async function openHandles(handles){
+    const list = Array.from(handles || []).filter(Boolean);
+    if (!list.length) return;
+    for (const handle of list) {
+      const file = await handle.getFile();
+      await openFile(file, handle);
+    }
+    toast(list.length > 1 ? `${list.length} dokumen dibuka.` : 'Dokumen dibuka.', 'good');
+  }
+
+  async function openFiles(files){
+    const list = Array.from(files || []).filter(Boolean);
+    if (!list.length) return;
+    for (const file of list) await openFile(file, null);
+    toast(list.length > 1 ? `${list.length} dokumen dibuka.` : 'Dokumen dibuka.', 'good');
   }
 
   async function openFile(file, handle, options = {}){
@@ -4852,7 +4898,7 @@ input.selected-object-disabled{
   function exportHtml(){ downloadBlob(new Blob([fullHtmlDocument(docEditor.innerHTML)],{type:'text/html'}), baseName(state.fileName)+'.html'); }
   function exportText(){ downloadBlob(new Blob([state.mode==='sheet'?state.sheetData.map(r=>r.join('\t')).join('\n'):docEditor.innerText],{type:'text/plain'}), baseName(state.fileName)+'.txt'); }
   async function exportDocx(){ const blob = window.htmlDocx ? window.htmlDocx.asBlob(fullHtmlDocument(docEditor.innerHTML)) : await makeDocBlob(); downloadBlob(blob, baseName(state.fileName)+'.docx'); }
-  function exportPdfPrint(){ window.print(); }
+  function exportPdfPrint(){ return openDestaraPrintStudio(); }
   function exportCsv(){ if(state.mode!=='sheet') return toast('Buka spreadsheet dulu.', 'warn'); downloadBlob(makeCsvBlob(), baseName(state.fileName)+'.csv'); }
   function exportXlsx(){ if(state.mode!=='sheet') return toast('Buka spreadsheet dulu.', 'warn'); downloadBlob(makeXlsxBlob(), baseName(state.fileName)+'.xlsx'); }
   function downloadBlob(blob, name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();}, 1000); }
@@ -4867,6 +4913,806 @@ input.selected-object-disabled{
   function newDoc(){ captureActiveDocument(); const id=uid(); state.activeDocId=id; state.documents.push({id,title:'dokumen-baru.html',file:null,fileHandle:null,fileName:'dokumen-baru.html',ext:'html',mode:'doc',docMode:'edit',dirty:true,createdAt:Date.now()}); state.file=null; state.fileHandle=null; state.fileName='dokumen-baru.html'; state.ext='html'; fileNameEl.textContent=state.fileName; setMode('doc'); state.docMode='edit'; state.docEditHtml='<h1>Dokumen Baru</h1><p></p>'; docEditor.innerHTML=state.docEditHtml; docPreview.innerHTML=''; docPreviewWrap.classList.add('hidden'); docEditWrap.classList.remove('hidden'); setDocModeButtons(); markDirty(); updateWordCount(); captureActiveDocument(); renderDocTabs(); status('Dokumen baru dibuat'); }
   async function reloadFile(){ if(state.file) return openFile(state.file, state.fileHandle, {reuseActive:true}); toast('Tidak ada file untuk dimuat ulang.', 'warn'); }
 
+
+  /* === Destara Print Studio Max: cetak hanya dokumen/PDF, bukan seluruh layar aplikasi. === */
+  const DESTARA_PRINT_STYLE_ID = 'destara-print-studio-v2-max';
+
+  function installDestaraPrintStudioStyles(){
+    if (document.getElementById(DESTARA_PRINT_STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = DESTARA_PRINT_STYLE_ID;
+    st.textContent = `
+      .destara-print-backdrop{position:fixed;inset:0;z-index:42000;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(15,23,42,.62);backdrop-filter:blur(16px);color:#111827}
+      .destara-print-card{width:min(1460px,calc(100vw - 22px));height:min(94vh,940px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(209,219,234,.96);border-radius:30px;background:rgba(255,255,255,.98);box-shadow:0 36px 110px rgba(15,23,42,.35)}
+      .destara-print-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid #e6edf8;background:linear-gradient(135deg,#f8fbff,#eef4ff)}
+      .destara-print-title{display:flex;gap:12px;min-width:0}.destara-print-icon{width:48px;height:48px;border-radius:17px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 14px 30px rgba(41,87,255,.24);flex:0 0 auto}.destara-print-icon i{width:23px;height:23px}
+      .destara-print-head h3{margin:0;font-size:21px;letter-spacing:-.035em}.destara-print-head p{margin:4px 0 0;color:#64748b;font-size:12.5px;line-height:1.45;max-width:780px}.destara-print-close{width:36px;height:36px;border-radius:999px;border:1px solid #dbe5f3;background:#fff;color:#475569;font-size:24px;display:grid;place-items:center}
+      .destara-print-body{min-height:0;display:grid;grid-template-columns:390px minmax(0,1fr);gap:0}.destara-print-controls{min-height:0;overflow:auto;padding:14px;border-right:1px solid #e6edf8;background:#fbfdff;scrollbar-width:thin}.destara-print-preview{min-height:0;overflow:auto;padding:16px;background:radial-gradient(circle at 20% 0%,rgba(41,87,255,.10),transparent 24%),#eef2f7;scrollbar-width:thin}
+      .destara-print-section{display:grid;gap:10px;padding:12px;margin-bottom:11px;border:1px solid #dfe7f3;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.04)}.destara-print-section h4{margin:0;display:flex;align-items:center;gap:7px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#40506a}.destara-print-section h4:before{content:'';width:7px;height:7px;border-radius:99px;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 0 0 4px rgba(41,87,255,.10)}
+      .destara-print-row{display:grid;gap:6px}.destara-print-row label{font-size:11.5px;font-weight:900;color:#64748b}.destara-print-input,.destara-print-select{width:100%;height:38px;border:1px solid #cfd9e8;border-radius:13px;background:#fff;color:#111827;padding:0 10px;outline:0}.destara-print-input[type=range]{padding:0}.destara-print-input:focus,.destara-print-select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(41,87,255,.12)}.destara-print-two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.destara-print-three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.destara-print-checks{display:grid;gap:8px}.destara-print-check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#334155}.destara-print-check input{width:16px;height:16px}.destara-print-help{font-size:11.5px;line-height:1.45;color:#64748b}.destara-print-warn{padding:9px 10px;border:1px dashed #f59e0b;border-radius:13px;background:#fffbeb;color:#92400e;font-size:11.8px;line-height:1.45}.destara-printer-list{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center}.destara-printer-save{min-height:38px;border-radius:13px;border:1px solid #d5dfef;background:#fff;color:#1f2937;padding:0 12px;font-weight:900}.destara-printer-save:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,24,40,.12)}.destara-print-printer-status{padding:8px 10px;border-radius:13px;background:#f1f5ff;color:#334155;border:1px solid #dbe5f3;font-size:11.7px;line-height:1.45}.destara-print-chipbar{display:flex;flex-wrap:wrap;gap:6px}.destara-print-chip{min-height:30px;border-radius:999px;border:1px solid #d5dfef;background:#fff;color:#334155;padding:0 10px;font-size:11.5px;font-weight:800}.destara-print-chip:hover{background:#eef4ff;border-color:#b9c9ef;transform:translateY(-1px)}.destara-print-preview-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.destara-print-zoom-tools{display:inline-flex;align-items:center;gap:5px;padding:3px;border:1px solid #dbe5f3;border-radius:999px;background:#fff}.destara-print-zoom-btn{width:30px;height:30px;border-radius:999px;border:1px solid #d5dfef;background:#fff;color:#1f2937;font-weight:900}.destara-print-zoom-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(16,24,40,.10)}.destara-print-zoom-text{min-width:52px;text-align:center;font-size:12px;font-weight:900;color:#334155}.destara-print-quality-note{padding:8px 10px;border-radius:13px;background:#ecfdf5;color:#166534;border:1px solid #bbf7d0;font-size:11.7px;line-height:1.45}
+      .destara-print-summary{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding:11px 12px;border:1px solid #dbe5f3;border-radius:17px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);box-shadow:0 10px 28px rgba(15,23,42,.08)}.destara-print-summary strong{font-size:13px}.destara-print-summary span{font-size:12px;color:#64748b}.destara-print-pages{display:grid;gap:18px;justify-content:center}.destara-print-empty{padding:24px;text-align:center;border:1px dashed #cbd5e1;border-radius:18px;background:#fff;color:#64748b}.destara-print-more{padding:16px;text-align:center;border:1px dashed #cbd5e1;border-radius:18px;background:rgba(255,255,255,.85);color:#64748b;font-size:12.5px}
+      .destara-print-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:13px 20px;border-top:1px solid #e6edf8;background:#fbfdff}.destara-print-actions{display:flex;gap:9px;flex-wrap:wrap}.destara-print-btn{min-height:38px;border-radius:13px;border:1px solid #d5dfef;background:#fff;color:#1f2937;padding:0 14px;font-weight:900}.destara-print-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(41,87,255,.20)}.destara-print-btn.danger{color:#fff;border-color:transparent;background:linear-gradient(135deg,#ef4444,#f97316)}.destara-print-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,24,40,.12)}.destara-print-hidden{display:none!important}
+      .destara-print-document{display:grid;gap:18px;justify-content:center}.destara-print-sheet{position:relative;background:#fff;color:#111827;overflow:hidden;box-sizing:border-box;break-after:page;page-break-after:always}.destara-print-sheet:last-child{break-after:auto;page-break-after:auto}.destara-print-sheet.preview{box-shadow:0 18px 48px rgba(15,23,42,.18);border-radius:7px;overflow:hidden}.destara-print-page-base{position:relative;background:#fff;color:#111827;overflow:hidden;box-sizing:border-box}.destara-print-source-wrap{position:absolute;left:0;top:0;transform-origin:top left}.destara-print-pdf-page img.destara-print-pdf-image{position:absolute;inset:0;width:100%;height:100%;display:block}.destara-print-pdf-page .pdf-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.destara-print-pdf-page .pdf-annotation{position:absolute;transform-origin:top left;pointer-events:none;user-select:none}.destara-print-pdf-page .ann-handle,.destara-print-pdf-page .ann-rotate{display:none!important}.destara-print-pdf-page .pdf-annotation.selected{outline:0!important}
+      .destara-print-doc-page .doc-page,.destara-print-doc-page section.docx,.destara-print-doc-page .docx{box-shadow:none!important;margin:0!important;background:#fff!important;color:#111827!important;break-after:auto!important;page-break-after:auto!important;max-width:100%!important}.destara-print-doc-page .page-break{break-after:page;page-break-after:always;height:0!important;margin:0!important;border:0!important;background:transparent!important}.destara-print-doc-page .page-break:after{display:none!important}.destara-print-sheet-page{padding:32px}.destara-print-table-wrap{overflow:visible}.destara-print-sheet-page table{border-collapse:collapse;width:100%;color:#111827}.destara-print-sheet-page th,.destara-print-sheet-page td{border:1px solid #cbd5e1;padding:6px;min-width:70px;font-size:11px}.destara-print-sheet-page input{border:0;background:transparent;color:#111827;width:100%}
+      .ann-text{white-space:pre-wrap;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px}.ann-highlight{border-radius:2px}.ann-rect{border-style:solid}.ann-ellipse{border-style:solid;border-radius:999px}.ann-redact{background:#000}.ann-note{border:1px solid #d4a017;border-radius:6px;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.12);white-space:pre-wrap;overflow:hidden}.ann-stamp{border-style:solid;font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center}.ann-mark{font-weight:900;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}svg{overflow:visible}
+      .destara-sheet-meta{position:absolute;z-index:30;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px;font:600 11px/1.35 Inter,Arial,sans-serif;color:#334155;pointer-events:none}.destara-sheet-meta.top{top:9px}.destara-sheet-meta.bottom{bottom:9px}.destara-sheet-watermark{position:absolute;z-index:25;left:50%;top:50%;transform:translate(-50%,-50%) rotate(var(--wm-rot,-28deg));font:900 var(--wm-size,54px)/1 Inter,Arial,sans-serif;color:rgba(15,23,42,var(--wm-op,.12));white-space:nowrap;pointer-events:none;text-transform:uppercase;letter-spacing:.08em}.destara-sheet-border{position:absolute;inset:var(--border-inset,14px);border:1px solid rgba(15,23,42,.26);z-index:24;pointer-events:none}.destara-hole-punch{position:absolute;left:6px;top:50%;transform:translateY(-50%);z-index:26;display:grid;gap:56px;pointer-events:none}.destara-hole-punch i{display:block;width:10px;height:10px;border:1px solid rgba(15,23,42,.32);border-radius:99px;background:#fff}.destara-crop-mark{position:absolute;z-index:28;width:18px;height:18px;pointer-events:none}.destara-crop-mark:before,.destara-crop-mark:after{content:'';position:absolute;background:#111827}.destara-crop-mark:before{width:18px;height:1px}.destara-crop-mark:after{width:1px;height:18px}.destara-crop-mark.tl{left:5px;top:5px}.destara-crop-mark.tr{right:5px;top:5px;transform:rotate(90deg)}.destara-crop-mark.br{right:5px;bottom:5px;transform:rotate(180deg)}.destara-crop-mark.bl{left:5px;bottom:5px;transform:rotate(270deg)}
+      .destara-nup-grid{position:absolute;inset:32px;display:grid;gap:12px}.destara-nup-cell{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}.destara-nup-cell.with-border{border:1px solid rgba(15,23,42,.24)}.destara-mini-scale{position:relative;transform-origin:top left;background:#fff}.destara-mini-label{position:absolute;right:4px;bottom:3px;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.82);font:700 9px/1.2 Inter,Arial;color:#334155;box-shadow:0 1px 4px rgba(15,23,42,.12)}.destara-cut-line-v,.destara-cut-line-h{position:absolute;z-index:22;pointer-events:none;border-color:rgba(15,23,42,.32)}.destara-cut-line-v{top:32px;bottom:32px;border-left:1px dashed rgba(15,23,42,.32)}.destara-cut-line-h{left:32px;right:32px;border-top:1px dashed rgba(15,23,42,.32)}
+      .destara-poster-clip{position:absolute;inset:32px;overflow:hidden;background:#fff}.destara-poster-inner{position:absolute;transform-origin:top left}.destara-blank-page{display:grid;place-items:center;background:#fff;color:#94a3b8;border:1px dashed #cbd5e1;font:800 14px/1 Inter,Arial}.destara-printer-note{position:absolute;left:12px;right:12px;bottom:12px;z-index:29;padding:7px 9px;border-radius:11px;background:rgba(255,251,235,.92);color:#92400e;font:700 10.5px/1.35 Inter,Arial;pointer-events:none}
+      [data-theme=dark] .destara-print-card{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.22);box-shadow:0 34px 100px rgba(0,0,0,.58)}[data-theme=dark] .destara-print-head{background:linear-gradient(135deg,#172033,#202a3e);border-color:rgba(148,163,184,.18)}[data-theme=dark] .destara-print-head p,[data-theme=dark] .destara-print-help,[data-theme=dark] .destara-print-summary span{color:#cbd5e1}[data-theme=dark] .destara-print-controls,[data-theme=dark] .destara-print-foot{background:#0f172a;border-color:rgba(148,163,184,.18)}[data-theme=dark] .destara-print-section,[data-theme=dark] .destara-print-summary{background:#172033;border-color:rgba(148,163,184,.18)}[data-theme=dark] .destara-print-section h4,[data-theme=dark] .destara-print-row label{color:#dbeafe}[data-theme=dark] .destara-print-input,[data-theme=dark] .destara-print-select,[data-theme=dark] .destara-print-btn,[data-theme=dark] .destara-print-chip,[data-theme=dark] .destara-print-close{background:#1e293b;border-color:rgba(148,163,184,.22);color:#f8fafc}[data-theme=dark] .destara-print-check{color:#e5e7eb}[data-theme=dark] .destara-print-preview{background:radial-gradient(circle at 20% 0%,rgba(124,58,237,.14),transparent 24%),#0b1020}[data-theme=dark] .destara-print-warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.32);color:#fbbf24}
+      @media print{html,body{margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.destara-print-document{display:block!important}.destara-print-sheet{box-shadow:none!important;border-radius:0!important;overflow:hidden!important;margin:0!important}.destara-print-sheet.preview{box-shadow:none!important;border-radius:0!important}.no-print{display:none!important}}
+      @media(max-width:980px){.destara-print-card{height:95vh}.destara-print-body{grid-template-columns:1fr}.destara-print-controls{border-right:0;border-bottom:1px solid #e6edf8;max-height:45vh}.destara-print-foot{justify-content:stretch}.destara-print-actions,.destara-print-btn{flex:1}.destara-print-two,.destara-print-three{grid-template-columns:1fr}}
+    `;
+    document.head.appendChild(st);
+  }
+
+  function destaraPrintTotalPages(){
+    if (state.mode === 'pdf' && state.pdfDoc) return state.pdfDoc.numPages || document.querySelectorAll('#pdfPages .pdf-page').length || 0;
+    if (state.mode === 'sheet') return 1;
+    if (state.mode === 'doc') {
+      const previewVisible = !docPreviewWrap.classList.contains('hidden') && docPreview.textContent.trim();
+      if (previewVisible) {
+        const pages = docPreview.querySelectorAll('section.docx,.docx-wrapper>section,.doc-page');
+        if (pages.length) return pages.length;
+      }
+      const breaks = docEditor.querySelectorAll('.page-break,[style*="page-break"],[style*="break-after"]');
+      return Math.max(1, breaks.length + 1);
+    }
+    return 0;
+  }
+
+  function destaraCurrentPdfPageIndex(){
+    const pages = Array.from(document.querySelectorAll('#pdfPages .pdf-page'));
+    if (!pages.length) return 0;
+    const viewportCenter = (window.innerHeight || document.documentElement.clientHeight || 800) / 2;
+    let best = 0, dist = Infinity;
+    pages.forEach((p, i) => {
+      const r = p.getBoundingClientRect();
+      const c = r.top + r.height / 2;
+      const d = Math.abs(c - viewportCenter);
+      if (d < dist) { dist = d; best = i; }
+    });
+    return best;
+  }
+
+  function parseDestaraPrintRange(raw, total, currentIndex){
+    total = Number(total || 0);
+    if (!total) return [];
+    const text = String(raw || '').trim().toLowerCase();
+    if (!text || text === 'all' || text === 'semua') return Array.from({length:total}, (_, i) => i);
+    if (text === 'current' || text === 'aktif' || text === 'halaman ini') return [clamp(Number(currentIndex || 0), 0, total - 1)];
+    const set = new Set();
+    text.split(',').map(x => x.trim()).filter(Boolean).forEach(part => {
+      const m = part.match(/^(\d*)\s*-\s*(\d*)$/);
+      if (m) {
+        const a = m[1] ? Number(m[1]) : 1;
+        const b = m[2] ? Number(m[2]) : total;
+        const start = clamp(Math.min(a, b), 1, total);
+        const end = clamp(Math.max(a, b), 1, total);
+        for (let n = start; n <= end; n++) set.add(n - 1);
+      } else {
+        const n = Number(part);
+        if (Number.isFinite(n) && n >= 1 && n <= total) set.add(n - 1);
+      }
+    });
+    return Array.from(set).sort((a, b) => a - b);
+  }
+
+  function destaraSafeOuterHTML(el){
+    if (!el) return '';
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('.selected,.ann-handle,.ann-rotate,[contenteditable]').forEach(node => {
+      node.classList && node.classList.remove('selected');
+      if (node.classList && (node.classList.contains('ann-handle') || node.classList.contains('ann-rotate'))) node.remove();
+      if (node.removeAttribute) node.removeAttribute('contenteditable');
+    });
+    return clone.outerHTML;
+  }
+
+  function destaraMmToPx(mm){ return Math.max(1, Math.round(Number(mm || 0) * 96 / 25.4)); }
+  function destaraPxToMm(px){ return Number(px || 0) * 25.4 / 96; }
+  function destaraPaperPx(options){
+    const customW = Number(options.customPaperW || 0), customH = Number(options.customPaperH || 0);
+    const map = { A4:[794,1123], Letter:[816,1056], Legal:[816,1344], Folio:[816,1248], A5:[559,794], A3:[1123,1587], A6:[397,559], B5:[665,944], B4:[944,1335], Tabloid:[1056,1632] };
+    let arr = options.paper === 'custom' && customW > 0 && customH > 0 ? [destaraMmToPx(customW), destaraMmToPx(customH)] : (map[options.paper] || map.A4);
+    const orient = destaraEffectiveOrientation(options);
+    let w = arr[0], h = arr[1];
+    if (orient === 'landscape' && h > w) [w,h] = [h,w];
+    if (orient === 'portrait' && w > h) [w,h] = [h,w];
+    return {w,h};
+  }
+  function destaraEffectiveOrientation(options){ return options.layoutMode === 'booklet' ? 'landscape' : (options.orientation || 'portrait'); }
+  function destaraPageSizeCss(options){
+    if (options.paper === 'auto') return `${destaraEffectiveOrientation(options)}`;
+    if (options.paper === 'custom' && Number(options.customPaperW) > 0 && Number(options.customPaperH) > 0) return `${Number(options.customPaperW)}mm ${Number(options.customPaperH)}mm`;
+    return `${options.paper || 'A4'} ${destaraEffectiveOrientation(options)}`;
+  }
+  function destaraMarginCss(options){
+    // Default dibuat tanpa margin tambahan agar hasil browser print tetap sedekat mungkin dengan file asli.
+    const map = { none:'0mm', original:'0mm', hairline:'3mm', small:'7mm', normal:'12mm', large:'20mm', mirrored:'16mm 12mm 16mm 24mm' };
+    if (options.margin === 'custom') return `${Number(options.marginTop||0)}mm ${Number(options.marginRight||0)}mm ${Number(options.marginBottom||0)}mm ${Number(options.marginLeft||0)}mm`;
+    return map[options.margin] || '0mm';
+  }
+  function destaraNupGrid(n, order){
+    n = Number(n || 1);
+    if (n <= 1) return {cols:1, rows:1};
+    if (n === 2) return order === 'vertical' ? {cols:1, rows:2} : {cols:2, rows:1};
+    if (n === 4) return {cols:2, rows:2};
+    if (n === 6) return order === 'vertical' ? {cols:2, rows:3} : {cols:3, rows:2};
+    if (n === 8) return order === 'vertical' ? {cols:2, rows:4} : {cols:4, rows:2};
+    if (n === 9) return {cols:3, rows:3};
+    if (n === 16) return {cols:4, rows:4};
+    return {cols:2, rows:2};
+  }
+  function destaraFilterIndicesBySubset(indices, subset){
+    if (subset === 'odd') return indices.filter(i => (i + 1) % 2 === 1);
+    if (subset === 'even') return indices.filter(i => (i + 1) % 2 === 0);
+    return indices;
+  }
+  function destaraPassFilter(items, pass){
+    if (!pass || pass === 'all') return items;
+    if (pass === 'front') return items.filter((_, i) => i % 2 === 0);
+    if (pass === 'back') return items.filter((_, i) => i % 2 === 1);
+    return items;
+  }
+
+  function destaraPdfPageObject(pageEl, pageNo, options){
+    const canvas = pageEl && pageEl.querySelector('canvas');
+    if (!pageEl || !canvas) return null;
+    const currentW = Math.max(1, Math.round(parseFloat(pageEl.style.width) || (pageEl.getBoundingClientRect && pageEl.getBoundingClientRect().width) || canvas.clientWidth || canvas.width || 794));
+    const currentH = Math.max(1, Math.round(parseFloat(pageEl.style.height) || (pageEl.getBoundingClientRect && pageEl.getBoundingClientRect().height) || canvas.clientHeight || canvas.height || 1123));
+    const meta = options && options.pdfPrintPageMeta && options.pdfPrintPageMeta[pageNo];
+    const zoomSafe = Math.max(0.05, Number(state.zoom || 1));
+    const w = Math.max(1, Math.round((meta && meta.w) || (currentW / zoomSafe) || currentW || 794));
+    const h = Math.max(1, Math.round((meta && meta.h) || (currentH / zoomSafe) || currentH || 1123));
+    let src = meta && meta.src ? meta.src : '';
+    if (!src) {
+      try { src = canvas.toDataURL('image/png'); } catch (err) { console.warn('Canvas PDF tidak bisa dibuat data URL:', err); }
+    }
+    let layerHtml = '';
+    if (options.includeAnnotations) {
+      const layer = pageEl.querySelector('.pdf-layer');
+      if (layer) {
+        const clone = layer.cloneNode(true);
+        clone.querySelectorAll('.ann-handle,.ann-rotate').forEach(n => n.remove());
+        clone.querySelectorAll('.selected').forEach(n => n.classList.remove('selected'));
+        const sx = currentW > 0 ? w / currentW : 1;
+        const sy = currentH > 0 ? h / currentH : 1;
+        clone.style.cssText = `position:absolute;left:0;top:0;right:auto;bottom:auto;width:${currentW}px;height:${currentH}px;transform-origin:top left;transform:scale(${sx},${sy});pointer-events:none;overflow:hidden;`;
+        layerHtml = clone.outerHTML;
+      }
+    }
+    const img = src ? `<img class="destara-print-pdf-image" src="${src}" alt="Halaman PDF ${pageNo}">` : '';
+    const html = `<div class="destara-print-page-base destara-print-pdf-page" data-source-page="${pageNo}" style="width:${w}px;height:${h}px">${img}${layerHtml}</div>`;
+    return destaraApplyCropToPage({html,w,h,sourceNo:pageNo, blank:false}, options);
+  }
+
+  function destaraDocPageObjects(indices, options){
+    let sourcePages = [];
+    const previewVisible = state.mode === 'doc' && !docPreviewWrap.classList.contains('hidden') && docPreview.textContent.trim();
+    if (previewVisible) sourcePages = Array.from(docPreview.querySelectorAll('section.docx,.docx-wrapper>section,.doc-page'));
+    if (!sourcePages.length && state.mode === 'doc') {
+      const editorClone = docEditWrap && docEditWrap.querySelector('.doc-page') ? docEditWrap.querySelector('.doc-page') : docEditor;
+      const outer = destaraSafeOuterHTML(editorClone);
+      const w = state.paperOrientation === 'landscape' ? 1123 : 794;
+      const h = state.paperOrientation === 'landscape' ? 794 : 1123;
+      return indices.map(i => destaraApplyCropToPage({html:`<div class="destara-print-page-base destara-print-doc-page" data-source-page="${i+1}" style="width:${w}px;min-height:${h}px">${outer}</div>`, w, h, sourceNo:i+1, blank:false}, options));
+    }
+    return indices.map(i => {
+      const el = sourcePages[i] || sourcePages[0];
+      const r = el && el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+      const w = Math.max(1, Math.round((r && r.width) || 794));
+      const h = Math.max(1, Math.round((r && r.height) || 1123));
+      return destaraApplyCropToPage({html:`<div class="destara-print-page-base destara-print-doc-page" data-source-page="${i+1}" style="width:${w}px;min-height:${h}px">${destaraSafeOuterHTML(el)}</div>`, w, h, sourceNo:i+1, blank:false}, options);
+    });
+  }
+
+  function destaraSheetObject(options){
+    const html = destaraSafeOuterHTML(sheetGrid);
+    const w = 1123, h = 794;
+    return destaraApplyCropToPage({html:`<div class="destara-print-page-base destara-print-sheet-page" data-source-page="1" style="width:${w}px;min-height:${h}px"><h2>${escapeHtml(baseName(state.fileName || 'Spreadsheet'))}</h2><div class="destara-print-table-wrap">${html}</div></div>`, w, h, sourceNo:1, blank:false}, options);
+  }
+
+  function destaraBlankPageObject(w, h, label){
+    return {w, h, sourceNo:0, blank:true, html:`<div class="destara-print-page-base destara-blank-page" style="width:${w}px;height:${h}px">${escapeHtml(label || 'Halaman kosong')}</div>`};
+  }
+
+  function destaraApplyCropToPage(page, options){
+    const top = Math.max(0, Number(options.cropTop || 0));
+    const right = Math.max(0, Number(options.cropRight || 0));
+    const bottom = Math.max(0, Number(options.cropBottom || 0));
+    const left = Math.max(0, Number(options.cropLeft || 0));
+    if (!top && !right && !bottom && !left) return page;
+    const w = Math.max(40, page.w - left - right);
+    const h = Math.max(40, page.h - top - bottom);
+    const html = `<div class="destara-print-page-base" data-source-page="${page.sourceNo}" style="width:${w}px;height:${h}px;overflow:hidden"><div class="destara-print-source-wrap" style="width:${page.w}px;height:${page.h}px;transform:translate(${-left}px,${-top}px)">${page.html}</div></div>`;
+    return {...page, html, w, h};
+  }
+
+  function destaraCollectSourcePages(options){
+    const total = destaraPrintTotalPages();
+    const current = state.mode === 'pdf' ? destaraCurrentPdfPageIndex() : 0;
+    let indices = parseDestaraPrintRange(options.range, total, current);
+    indices = destaraFilterIndicesBySubset(indices, options.sourceSubset);
+    if (options.reverse) indices.reverse();
+    let pages = [];
+    if (state.mode === 'pdf') {
+      const pageEls = Array.from(document.querySelectorAll('#pdfPages .pdf-page'));
+      pages = indices.map(i => destaraPdfPageObject(pageEls[i], i + 1, options)).filter(Boolean);
+    } else if (state.mode === 'sheet') {
+      pages = destaraFilterIndicesBySubset([0], options.sourceSubset).length ? [destaraSheetObject(options)] : [];
+    } else {
+      pages = destaraDocPageObjects(indices, options).filter(Boolean);
+    }
+    return {pages, indices, total};
+  }
+
+  function destaraApplyCopies(pages, options){
+    const copies = clamp(Number(options.copies || 1), 1, 99);
+    if (copies === 1) return pages.slice();
+    const out = [];
+    if (options.collate) {
+      for (let c = 0; c < copies; c++) pages.forEach(p => out.push({...p, copyNo:c+1}));
+    } else {
+      pages.forEach(p => { for (let c = 0; c < copies; c++) out.push({...p, copyNo:c+1}); });
+    }
+    return out;
+  }
+
+  function destaraFitScale(page, boxW, boxH, options){
+    const custom = Number(options.scale || 1);
+    const fit = Math.min(boxW / page.w, boxH / page.h);
+    if (options.fitMode === 'actual') return custom;
+    if (options.fitMode === 'fill') return Math.max(boxW / page.w, boxH / page.h) * custom;
+    if (options.fitMode === 'shrink') return Math.min(1, fit) * custom;
+    return fit * custom;
+  }
+
+  function destaraRenderMiniPage(page, boxW, boxH, options, label){
+    const s = destaraFitScale(page, boxW, boxH, options);
+    const w = Math.max(1, Math.round(page.w * s));
+    const h = Math.max(1, Math.round(page.h * s));
+    const left = Math.max(0, Math.round((boxW - w) / 2));
+    const top = Math.max(0, Math.round((boxH - h) / 2));
+    const pageLabel = options.pageNumbers && page.sourceNo ? `<div class="destara-mini-label">${escapeHtml(String(label || page.sourceNo))}</div>` : '';
+    return `<div class="destara-mini-scale" style="width:${page.w}px;height:${page.h}px;transform:translate(${left}px,${top}px) scale(${s});position:absolute;left:0;top:0">${page.html}</div>${pageLabel}`;
+  }
+
+  function destaraSheetOverlays(sheetNo, totalSheets, sourceLabel, options){
+    const bits = [];
+    const file = escapeHtml(state.fileName || 'Dokumen');
+    const now = new Date().toLocaleString('id-ID');
+    const headerLeft = options.showFileName ? file : '';
+    const headerCenter = options.headerText ? escapeHtml(options.headerText) : '';
+    const headerRight = options.showDate ? escapeHtml(now) : '';
+    const footerLeft = options.footerText ? escapeHtml(options.footerText) : '';
+    const footerCenter = options.pageNumbers ? `Hal. ${sheetNo}${totalSheets ? ' / ' + totalSheets : ''}` : '';
+    const footerRight = sourceLabel ? escapeHtml(sourceLabel) : '';
+    if (headerLeft || headerCenter || headerRight) bits.push(`<div class="destara-sheet-meta top"><span>${headerLeft}</span><span>${headerCenter}</span><span>${headerRight}</span></div>`);
+    if (footerLeft || footerCenter || footerRight) bits.push(`<div class="destara-sheet-meta bottom"><span>${footerLeft}</span><span>${footerCenter}</span><span>${footerRight}</span></div>`);
+    if (options.watermarkText) bits.push(`<div class="destara-sheet-watermark" style="--wm-op:${Number(options.watermarkOpacity || 12)/100};--wm-rot:${Number(options.watermarkRotate || -28)}deg;--wm-size:${Number(options.watermarkSize || 54)}px">${escapeHtml(options.watermarkText)}</div>`);
+    if (options.sheetBorder) bits.push(`<div class="destara-sheet-border"></div>`);
+    if (options.holePunch) bits.push(`<div class="destara-hole-punch"><i></i><i></i><i></i></div>`);
+    if (options.cropMarks) bits.push(`<i class="destara-crop-mark tl"></i><i class="destara-crop-mark tr"></i><i class="destara-crop-mark br"></i><i class="destara-crop-mark bl"></i>`);
+    const printerNotes = [];
+    if (options.printerName && options.printerName !== 'browser-default') printerNotes.push(`Printer pilihan: ${options.printerName}`);
+    if (options.printerHint && options.printerHint !== 'none') printerNotes.push(`Setel di dialog printer: ${options.printerHintLabel || options.printerHint}`);
+    if (printerNotes.length) bits.push(`<div class="destara-printer-note">${escapeHtml(printerNotes.join(' · '))}</div>`);
+    return bits.join('');
+  }
+
+  function destaraMakeSheet(content, w, h, options, sourceLabel, extraClass){
+    return {w, h, sourceLabel: sourceLabel || '', html:`<div class="destara-print-sheet ${extraClass || ''}" style="width:${w}px;height:${h}px">${content}</div>`};
+  }
+
+  function destaraBuildSingleSheets(sourcePages, options){
+    const out = [];
+    sourcePages.forEach(page => {
+      const s = Number(options.scale || 1);
+      const w = Math.max(1, Math.round(page.w * s));
+      const h = Math.max(1, Math.round(page.h * s));
+      const content = `<div style="position:absolute;left:0;top:0;width:${page.w}px;height:${page.h}px;transform-origin:top left;transform:scale(${s})">${page.html}</div>`;
+      out.push(destaraMakeSheet(content, w, h, options, page.sourceNo ? `Sumber ${page.sourceNo}` : '', ''));
+    });
+    return out;
+  }
+
+  function destaraBuildNupSheets(sourcePages, options){
+    const sheet = destaraPaperPx(options);
+    const n = Number(options.nup || 2);
+    const grid = destaraNupGrid(n, options.nupOrder);
+    const pad = Number(options.innerPadding || 32);
+    const gap = Number(options.nupGap || 12);
+    const cellW = (sheet.w - pad * 2 - gap * (grid.cols - 1)) / grid.cols;
+    const cellH = (sheet.h - pad * 2 - gap * (grid.rows - 1)) / grid.rows;
+    const chunks = [];
+    for (let i = 0; i < sourcePages.length; i += n) chunks.push(sourcePages.slice(i, i+n));
+    return chunks.map((chunk, idx) => {
+      const cells = [];
+      for (let i = 0; i < n; i++) {
+        const page = chunk[i];
+        const border = options.nupBorder ? ' with-border' : '';
+        const cell = page ? destaraRenderMiniPage(page, cellW, cellH, options, page.sourceNo) : '';
+        cells.push(`<div class="destara-nup-cell${border}" style="position:relative;width:${cellW}px;height:${cellH}px">${cell}</div>`);
+      }
+      let cut = '';
+      if (options.cutLines) {
+        for (let c = 1; c < grid.cols; c++) cut += `<i class="destara-cut-line-v" style="left:${pad + c*cellW + (c-.5)*gap}px"></i>`;
+        for (let r = 1; r < grid.rows; r++) cut += `<i class="destara-cut-line-h" style="top:${pad + r*cellH + (r-.5)*gap}px"></i>`;
+      }
+      const gridHtml = `<div class="destara-nup-grid" style="inset:${pad}px;grid-template-columns:repeat(${grid.cols},${cellW}px);grid-template-rows:repeat(${grid.rows},${cellH}px);gap:${gap}px">${cells.join('')}</div>${cut}`;
+      return destaraMakeSheet(gridHtml, sheet.w, sheet.h, options, `Sheet ${idx+1}`, 'destara-nup-sheet');
+    });
+  }
+
+  function destaraBuildBookletSheets(sourcePages, options){
+    const sheet = destaraPaperPx({...options, orientation:'landscape'});
+    const pad = Number(options.innerPadding || 32);
+    const gap = Number(options.nupGap || 12);
+    const cellW = (sheet.w - pad * 2 - gap) / 2;
+    const cellH = sheet.h - pad * 2;
+    const pages = sourcePages.slice();
+    if (options.bookletPad !== false) {
+      const base = pages[0] || {w:794,h:1123};
+      while (pages.length % 4 !== 0) pages.push(destaraBlankPageObject(base.w, base.h, 'Blank'));
+    }
+    const N = pages.length;
+    const pairs = [];
+    for (let s = 0; s < N / 4; s++) {
+      const front = [pages[N - 1 - 2*s], pages[2*s]];
+      const back = [pages[2*s + 1], pages[N - 2 - 2*s]];
+      pairs.push({side:'Front', pages: options.bookletBinding === 'right' ? front.reverse() : front});
+      pairs.push({side:'Back', pages: options.bookletBinding === 'right' ? back.reverse() : back});
+    }
+    return pairs.map((pair, idx) => {
+      const cells = pair.pages.map((page, i) => `<div class="destara-nup-cell${options.nupBorder ? ' with-border' : ''}" style="position:relative;width:${cellW}px;height:${cellH}px">${destaraRenderMiniPage(page, cellW, cellH, options, page.sourceNo || 'Blank')}</div>`).join('');
+      const line = options.cutLines ? `<i class="destara-cut-line-v" style="left:${pad + cellW + gap/2}px;top:${pad}px;bottom:${pad}px"></i>` : '';
+      const content = `<div class="destara-nup-grid" style="inset:${pad}px;grid-template-columns:${cellW}px ${cellW}px;grid-template-rows:${cellH}px;gap:${gap}px">${cells}</div>${line}`;
+      return destaraMakeSheet(content, sheet.w, sheet.h, options, `Booklet ${pair.side}`, 'destara-booklet-sheet');
+    });
+  }
+
+  function destaraBuildPosterSheets(sourcePages, options){
+    const sheet = destaraPaperPx(options);
+    const [cols, rows] = String(options.posterTiles || '2x2').split('x').map(n => Math.max(1, Number(n || 1)));
+    const pad = Number(options.innerPadding || 32);
+    const boxW = sheet.w - pad * 2;
+    const boxH = sheet.h - pad * 2;
+    const out = [];
+    sourcePages.forEach(page => {
+      const scale = Math.min((boxW * cols) / page.w, (boxH * rows) / page.h) * Number(options.scale || 1);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const inner = `<div class="destara-poster-clip" style="inset:${pad}px"><div class="destara-poster-inner" style="width:${page.w}px;height:${page.h}px;transform:translate(${-c*boxW}px,${-r*boxH}px) scale(${scale})">${page.html}</div></div>`;
+          out.push(destaraMakeSheet(inner, sheet.w, sheet.h, options, `Poster ${page.sourceNo || ''} ${r+1}-${c+1}`, 'destara-poster-sheet'));
+        }
+      }
+    });
+    return out;
+  }
+
+  function collectDestaraPrintSheets(options){
+    const src = destaraCollectSourcePages(options);
+    const withCopies = destaraApplyCopies(src.pages, options);
+    let sheets;
+    if (options.layoutMode === 'nup') sheets = destaraBuildNupSheets(withCopies, options);
+    else if (options.layoutMode === 'booklet') sheets = destaraBuildBookletSheets(withCopies, options);
+    else if (options.layoutMode === 'poster') sheets = destaraBuildPosterSheets(withCopies, options);
+    else sheets = destaraBuildSingleSheets(withCopies, options);
+    sheets = destaraPassFilter(sheets, options.duplexPass);
+    return {sheets, sourcePageCount:src.pages.length, selectedIndices:src.indices, copies:clamp(Number(options.copies || 1), 1, 99), total:src.total};
+  }
+
+  function destaraPrintPageCss(options, forPreview){
+    const margin = destaraMarginCss(options);
+    const pageSize = destaraPageSizeCss(options);
+    const bg = options.backgrounds ? '#fff' : 'transparent';
+    const filterParts = [];
+    if (options.grayscale) filterParts.push('grayscale(100%)');
+    if (options.highContrast) filterParts.push('contrast(115%)');
+    if (options.invert) filterParts.push('invert(100%)');
+    if (options.sepia) filterParts.push('sepia(100%)');
+    const filter = filterParts.length ? `filter:${filterParts.join(' ')};` : '';
+    return `
+      @page{size:${pageSize};margin:${margin}}
+      html,body{margin:0!important;padding:0!important;background:${forPreview ? 'transparent' : '#fff'};color:#111827;font-family:Inter,Arial,sans-serif;-webkit-print-color-adjust:${options.backgrounds ? 'exact' : 'economy'};print-color-adjust:${options.backgrounds ? 'exact' : 'economy'}}
+      .destara-print-document{display:${forPreview ? 'grid' : 'block'};gap:${forPreview ? '18px' : '0'};justify-content:center;background:${forPreview ? 'transparent' : '#fff'}}
+      .destara-print-sheet{position:relative;margin:${forPreview ? '0 auto' : '0'};background:${bg};color:#111827;overflow:hidden;box-sizing:border-box;break-after:page;page-break-after:always;${filter}}
+      .destara-print-sheet:last-child{break-after:auto;page-break-after:auto}.destara-print-sheet.preview{box-shadow:0 18px 48px rgba(15,23,42,.18);border-radius:7px}.destara-print-page-base{position:relative;background:${bg};color:#111827;overflow:hidden;box-sizing:border-box}
+      .destara-print-source-wrap{position:absolute;left:0;top:0;transform-origin:top left}.destara-print-pdf-page img.destara-print-pdf-image{position:absolute;inset:0;width:100%;height:100%;display:block}.destara-print-pdf-page .pdf-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.destara-print-pdf-page .pdf-annotation{position:absolute;transform-origin:top left;pointer-events:none;user-select:none}.destara-print-pdf-page .ann-handle,.destara-print-pdf-page .ann-rotate{display:none!important}.destara-print-pdf-page .pdf-annotation.selected{outline:0!important}
+      .destara-print-doc-page .doc-page,.destara-print-doc-page section.docx,.destara-print-doc-page .docx{box-shadow:none!important;margin:0!important;background:${bg}!important;color:#111827!important;break-after:auto!important;page-break-after:auto!important;max-width:100%!important}.destara-print-doc-page .page-break{break-after:page;page-break-after:always;height:0!important;margin:0!important;border:0!important;background:transparent!important}.destara-print-doc-page .page-break:after{display:none!important}.destara-print-sheet-page{padding:32px}.destara-print-table-wrap{overflow:visible}.destara-print-sheet-page table{border-collapse:collapse;width:100%;color:#111827}.destara-print-sheet-page th,.destara-print-sheet-page td{border:1px solid #cbd5e1;padding:6px;min-width:70px;font-size:11px}.destara-print-sheet-page input{border:0;background:transparent;color:#111827;width:100%}
+      .ann-text{white-space:pre-wrap;background:rgba(255,255,255,.72);padding:1px 3px;border-radius:3px}.ann-highlight{border-radius:2px}.ann-rect{border-style:solid}.ann-ellipse{border-style:solid;border-radius:999px}.ann-redact{background:#000}.ann-note{border:1px solid #d4a017;border-radius:6px;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.12);white-space:pre-wrap;overflow:hidden}.ann-stamp{border-style:solid;font-weight:900;letter-spacing:.08em;text-align:center;display:flex;align-items:center;justify-content:center}.ann-mark{font-weight:900;line-height:1}.ann-image img{width:100%;height:100%;object-fit:contain;display:block}svg{overflow:visible}.destara-sheet-meta{position:absolute;z-index:30;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px;font:600 11px/1.35 Inter,Arial,sans-serif;color:#334155;pointer-events:none}.destara-sheet-meta.top{top:9px}.destara-sheet-meta.bottom{bottom:9px}.destara-sheet-watermark{position:absolute;z-index:25;left:50%;top:50%;transform:translate(-50%,-50%) rotate(var(--wm-rot,-28deg));font:900 var(--wm-size,54px)/1 Inter,Arial,sans-serif;color:rgba(15,23,42,var(--wm-op,.12));white-space:nowrap;pointer-events:none;text-transform:uppercase;letter-spacing:.08em}.destara-sheet-border{position:absolute;inset:var(--border-inset,14px);border:1px solid rgba(15,23,42,.26);z-index:24;pointer-events:none}.destara-hole-punch{position:absolute;left:6px;top:50%;transform:translateY(-50%);z-index:26;display:grid;gap:56px;pointer-events:none}.destara-hole-punch i{display:block;width:10px;height:10px;border:1px solid rgba(15,23,42,.32);border-radius:99px;background:#fff}.destara-crop-mark{position:absolute;z-index:28;width:18px;height:18px;pointer-events:none}.destara-crop-mark:before,.destara-crop-mark:after{content:'';position:absolute;background:#111827}.destara-crop-mark:before{width:18px;height:1px}.destara-crop-mark:after{width:1px;height:18px}.destara-crop-mark.tl{left:5px;top:5px}.destara-crop-mark.tr{right:5px;top:5px;transform:rotate(90deg)}.destara-crop-mark.br{right:5px;bottom:5px;transform:rotate(180deg)}.destara-crop-mark.bl{left:5px;bottom:5px;transform:rotate(270deg)}.destara-nup-grid{position:absolute;inset:32px;display:grid;gap:12px}.destara-nup-cell{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}.destara-nup-cell.with-border{border:1px solid rgba(15,23,42,.24)}.destara-mini-scale{position:relative;transform-origin:top left;background:#fff}.destara-mini-label{position:absolute;right:4px;bottom:3px;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.82);font:700 9px/1.2 Inter,Arial;color:#334155;box-shadow:0 1px 4px rgba(15,23,42,.12)}.destara-cut-line-v,.destara-cut-line-h{position:absolute;z-index:22;pointer-events:none;border-color:rgba(15,23,42,.32)}.destara-cut-line-v{top:32px;bottom:32px;border-left:1px dashed rgba(15,23,42,.32)}.destara-cut-line-h{left:32px;right:32px;border-top:1px dashed rgba(15,23,42,.32)}.destara-poster-clip{position:absolute;inset:32px;overflow:hidden;background:#fff}.destara-poster-inner{position:absolute;transform-origin:top left}.destara-blank-page{display:grid;place-items:center;background:#fff;color:#94a3b8;border:1px dashed #cbd5e1;font:800 14px/1 Inter,Arial}.destara-printer-note{position:absolute;left:12px;right:12px;bottom:12px;z-index:29;padding:7px 9px;border-radius:11px;background:rgba(255,251,235,.92);color:#92400e;font:700 10.5px/1.35 Inter,Arial;pointer-events:none}
+      @media print{@page{size:${pageSize};margin:${margin}!important}html,body{margin:0!important;padding:0!important}.destara-print-sheet{box-shadow:none!important;border-radius:0!important;margin:0!important}.no-print{display:none!important}}
+    `;
+  }
+
+  function destaraWrapSheets(sheetObjs, options, forPreview){
+    const total = sheetObjs.length;
+    const html = sheetObjs.map((sheet, idx) => {
+      let h = sheet.html;
+      h = h.replace('destara-print-sheet ', `destara-print-sheet ${forPreview ? 'preview ' : ''}`);
+      const overlays = destaraSheetOverlays(idx + 1, total, sheet.sourceLabel, options);
+      h = h.replace('</div>', overlays + '</div>');
+      return h;
+    }).join('');
+    return `<div class="destara-print-document">${html}</div>`;
+  }
+
+  function makeDestaraPrintHtml(options, forPreview){
+    const result = collectDestaraPrintSheets(options);
+    const limit = Number(options.previewLimit || 0);
+    const sheets = limit ? result.sheets.slice(0, limit) : result.sheets;
+    const body = sheets.length ? destaraWrapSheets(sheets, options, forPreview) : '<div class="destara-print-empty">Tidak ada halaman yang cocok dengan pengaturan.</div>';
+    const more = forPreview && result.sheets.length > sheets.length ? `<div class="destara-print-more">Preview menampilkan ${sheets.length} dari ${result.sheets.length} sheet. Saat print/preview tab, semua sheet tetap dipakai.</div>` : '';
+    const css = destaraPrintPageCss(options, forPreview);
+    if (forPreview) return {html: body + more, result, css};
+    return `<!doctype html><html><head><meta charset="utf-8"><title>Print - ${escapeHtml(state.fileName || 'Dokumen')}</title><style>${css}</style></head><body>${body}</body></html>`;
+  }
+
+
+  async function destaraPreparePdfPrintAssets(options){
+    if (!options || state.mode !== 'pdf' || !state.pdfDoc) return options;
+    const total = destaraPrintTotalPages();
+    const current = state.mode === 'pdf' ? destaraCurrentPdfPageIndex() : 0;
+    let indices = parseDestaraPrintRange(options.range || '1-' + total, total, current);
+    indices = destaraFilterIndicesBySubset(indices, options.sourceSubset);
+    if (options.reverse) indices.reverse();
+    indices = Array.from(new Set(indices)).filter(i => i >= 0 && i < total);
+    if (!indices.length) return options;
+    const qualityRaw = Number(options.pdfPrintQuality || 6);
+    const quality = Math.max(2, Math.min(10, qualityRaw));
+    const baseScale = 1.35;
+    const meta = {};
+    for (const i of indices) {
+      const pageNo = i + 1;
+      const page = await state.pdfDoc.getPage(pageNo);
+      const baseViewport = page.getViewport({ scale: baseScale, rotation: state.pdfRotation || 0 });
+      const renderViewport = page.getViewport({ scale: baseScale * quality, rotation: state.pdfRotation || 0 });
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.floor(renderViewport.width));
+      c.height = Math.max(1, Math.floor(renderViewport.height));
+      const ctx = c.getContext('2d', { alpha: false });
+      await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
+      meta[pageNo] = { w: Math.round(baseViewport.width), h: Math.round(baseViewport.height), src: c.toDataURL('image/png') };
+    }
+    options.pdfPrintPageMeta = meta;
+    return options;
+  }
+
+  const DESTARA_PRINT_PRINTERS_KEY = 'destaraPrintStudioPrinters';
+  const DESTARA_PRINT_SELECTED_PRINTER_KEY = 'destaraPrintStudioSelectedPrinter';
+
+  function destaraGetSavedPrinters(){
+    try {
+      const raw = JSON.parse(localStorage.getItem(DESTARA_PRINT_PRINTERS_KEY) || '[]');
+      const out = [];
+      (Array.isArray(raw) ? raw : []).forEach(name => {
+        const clean = String(name || '').trim();
+        if (clean && !out.includes(clean)) out.push(clean.slice(0, 90));
+      });
+      return out;
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function destaraSetSelectedPrinter(name){
+    try { localStorage.setItem(DESTARA_PRINT_SELECTED_PRINTER_KEY, String(name || 'browser-default')); } catch (err) {}
+  }
+
+  function destaraSavePrinterName(name){
+    const clean = String(name || '').trim().slice(0, 90);
+    if (!clean) return '';
+    const list = destaraGetSavedPrinters().filter(x => x !== clean);
+    list.unshift(clean);
+    try { localStorage.setItem(DESTARA_PRINT_PRINTERS_KEY, JSON.stringify(list.slice(0, 20))); } catch (err) {}
+    destaraSetSelectedPrinter(clean);
+    return clean;
+  }
+
+  function destaraGetSelectedPrinter(){
+    try { return localStorage.getItem(DESTARA_PRINT_SELECTED_PRINTER_KEY) || 'browser-default'; }
+    catch (err) { return 'browser-default'; }
+  }
+
+  function destaraPrinterLabel(value){
+    return value && value !== 'browser-default' ? value : 'Default browser / printer terakhir';
+  }
+
+  function destaraPopulatePrinterSelect(modal){
+    const select = modal.querySelector('#destaraPrintPrinterSelect');
+    if (!select) return;
+    const saved = destaraGetSavedPrinters();
+    const selected = destaraGetSelectedPrinter();
+    select.innerHTML = '<option value="browser-default">Default browser / printer terakhir</option>' + saved.map(name => `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`).join('');
+    select.value = saved.includes(selected) ? selected : 'browser-default';
+    const status = modal.querySelector('#destaraPrintPrinterStatus');
+    if (status) status.textContent = select.value === 'browser-default'
+      ? 'Browser akan memakai printer default/terakhir yang dipilih di dialog print.'
+      : `Printer pilihan tersimpan: ${select.value}. Jika browser tetap menampilkan dialog, pilih nama ini di dialog printer.`;
+  }
+
+  function destaraSavePrinterFromModal(modal){
+    const input = modal.querySelector('#destaraPrintPrinterName');
+    const saved = destaraSavePrinterName(input && input.value);
+    if (!saved) return toast('Isi nama printer dulu, misalnya Epson L3110 atau Canon G2010.', 'warn');
+    if (input) input.value = '';
+    destaraPopulatePrinterSelect(modal);
+    toast('Printer pilihan disimpan untuk Print Studio.', 'good');
+  }
+
+  function destaraReadPrintOptions(modal){
+    const get = id => modal.querySelector('#' + id);
+    const preset = get('destaraPrintPreset')?.value || 'all';
+    const total = destaraPrintTotalPages();
+    const current = state.mode === 'pdf' ? destaraCurrentPdfPageIndex() + 1 : 1;
+    let range = get('destaraPrintRange')?.value || '';
+    if (preset === 'all') range = '1-' + total;
+    if (preset === 'current') range = String(current);
+    const hint = get('destaraPrintPrinterHint')?.value || 'none';
+    const hintLabels = {none:'', duplexLong:'Duplex sisi panjang', duplexShort:'Duplex sisi pendek', staple:'Staple / jilid di printer', tray:'Pilih tray kertas di printer', savePdf:'Destination: Save as PDF'};
+    return {
+      range,
+      sourceSubset: get('destaraPrintSubset')?.value || 'all',
+      reverse: !!get('destaraPrintReverse')?.checked,
+      copies: Number(get('destaraPrintCopies')?.value || 1),
+      collate: !!get('destaraPrintCollate')?.checked,
+      duplexPass: get('destaraPrintDuplexPass')?.value || 'all',
+      paper: get('destaraPrintPaper')?.value || 'A4',
+      customPaperW: Number(get('destaraPrintCustomW')?.value || 0),
+      customPaperH: Number(get('destaraPrintCustomH')?.value || 0),
+      orientation: get('destaraPrintOrientation')?.value || 'portrait',
+      margin: get('destaraPrintMargin')?.value || 'none',
+      printerName: get('destaraPrintPrinterSelect')?.value || 'browser-default',
+      printerNameLabel: destaraPrinterLabel(get('destaraPrintPrinterSelect')?.value || 'browser-default'),
+      marginTop: Number(get('destaraPrintMarginTop')?.value || 0),
+      marginRight: Number(get('destaraPrintMarginRight')?.value || 0),
+      marginBottom: Number(get('destaraPrintMarginBottom')?.value || 0),
+      marginLeft: Number(get('destaraPrintMarginLeft')?.value || 0),
+      layoutMode: get('destaraPrintLayoutMode')?.value || 'single',
+      nup: Number(get('destaraPrintNup')?.value || 2),
+      nupOrder: get('destaraPrintNupOrder')?.value || 'horizontal',
+      nupGap: Number(get('destaraPrintNupGap')?.value || 12),
+      innerPadding: Number(get('destaraPrintInnerPadding')?.value || 32),
+      nupBorder: !!get('destaraPrintNupBorder')?.checked,
+      cutLines: !!get('destaraPrintCutLines')?.checked,
+      bookletBinding: get('destaraPrintBookletBinding')?.value || 'left',
+      bookletPad: !!get('destaraPrintBookletPad')?.checked,
+      posterTiles: get('destaraPrintPosterTiles')?.value || '2x2',
+      fitMode: get('destaraPrintFitMode')?.value || 'fit',
+      scale: Number(get('destaraPrintScale')?.value || 1),
+      pdfPrintQuality: Number(get('destaraPrintPdfQuality')?.value || 6),
+      includeAnnotations: !!get('destaraPrintAnnotations')?.checked,
+      backgrounds: !!get('destaraPrintBackgrounds')?.checked,
+      grayscale: !!get('destaraPrintGrayscale')?.checked,
+      highContrast: !!get('destaraPrintHighContrast')?.checked,
+      invert: !!get('destaraPrintInvert')?.checked,
+      sepia: !!get('destaraPrintSepia')?.checked,
+      pageNumbers: !!get('destaraPrintPageNumbers')?.checked,
+      showFileName: !!get('destaraPrintFileName')?.checked,
+      showDate: !!get('destaraPrintDate')?.checked,
+      headerText: get('destaraPrintHeaderText')?.value || '',
+      footerText: get('destaraPrintFooterText')?.value || '',
+      watermarkText: get('destaraPrintWatermarkText')?.value || '',
+      watermarkOpacity: Number(get('destaraPrintWatermarkOpacity')?.value || 12),
+      watermarkRotate: Number(get('destaraPrintWatermarkRotate')?.value || -28),
+      watermarkSize: Number(get('destaraPrintWatermarkSize')?.value || 54),
+      sheetBorder: !!get('destaraPrintSheetBorder')?.checked,
+      cropMarks: !!get('destaraPrintCropMarks')?.checked,
+      holePunch: !!get('destaraPrintHolePunch')?.checked,
+      printerHint: hint,
+      printerHintLabel: hintLabels[hint] || '',
+      cropTop: Number(get('destaraPrintCropTop')?.value || 0),
+      cropRight: Number(get('destaraPrintCropRight')?.value || 0),
+      cropBottom: Number(get('destaraPrintCropBottom')?.value || 0),
+      cropLeft: Number(get('destaraPrintCropLeft')?.value || 0)
+    };
+  }
+
+  function destaraApplyPrintPreset(modal){
+    const preset = modal.querySelector('#destaraPrintPreset')?.value || 'all';
+    const range = modal.querySelector('#destaraPrintRange');
+    const total = destaraPrintTotalPages();
+    const current = state.mode === 'pdf' ? destaraCurrentPdfPageIndex() + 1 : 1;
+    if (!range) return;
+    if (preset === 'all') range.value = '1-' + total;
+    if (preset === 'current') range.value = String(current);
+    range.disabled = preset !== 'custom';
+  }
+
+  function destaraUpdatePrintVisibility(modal){
+    const val = id => modal.querySelector('#' + id)?.value;
+    const layout = val('destaraPrintLayoutMode') || 'single';
+    modal.querySelectorAll('[data-print-show]').forEach(el => {
+      const keys = String(el.dataset.printShow || '').split(',').map(s => s.trim());
+      el.classList.toggle('destara-print-hidden', !keys.includes(layout));
+    });
+    modal.querySelectorAll('[data-print-paper-custom]').forEach(el => el.classList.toggle('destara-print-hidden', val('destaraPrintPaper') !== 'custom'));
+    modal.querySelectorAll('[data-print-margin-custom]').forEach(el => el.classList.toggle('destara-print-hidden', val('destaraPrintMargin') !== 'custom'));
+  }
+
+  function destaraGetPrintPreviewZoom(modal){
+    const z = Number(modal && modal.dataset && modal.dataset.printZoom);
+    return Number.isFinite(z) && z > 0 ? z : 1;
+  }
+
+  function destaraSetPrintPreviewZoom(modal, value){
+    if (!modal) return;
+    const z = clamp(Math.round(Number(value || 1) * 100) / 100, 0.35, 2.5);
+    modal.dataset.printZoom = String(z);
+    const pages = modal.querySelector('#destaraPrintPreviewPages');
+    if (pages) {
+      pages.style.zoom = String(z);
+      pages.style.transformOrigin = 'top center';
+    }
+    const text = modal.querySelector('#destaraPrintZoomText');
+    if (text) text.textContent = Math.round(z * 100) + '%';
+  }
+
+  function destaraAdjustPrintPreviewZoom(modal, delta){
+    destaraSetPrintPreviewZoom(modal, destaraGetPrintPreviewZoom(modal) + Number(delta || 0));
+  }
+
+  function destaraApplyPrintPreviewZoom(modal){
+    destaraSetPrintPreviewZoom(modal, destaraGetPrintPreviewZoom(modal));
+  }
+
+  async function destaraRenderPrintPreview(modal){
+    destaraApplyPrintPreset(modal);
+    destaraUpdatePrintVisibility(modal);
+    const preview = modal.querySelector('#destaraPrintPreviewPages');
+    const summary = modal.querySelector('#destaraPrintSummaryText');
+    if (!preview) return;
+    const options = destaraReadPrintOptions(modal);
+    options.previewLimit = 12;
+    const data = makeDestaraPrintHtml(options, true);
+    preview.innerHTML = `<style>${data.css}</style>` + data.html;
+    destaraApplyPrintPreviewZoom(modal);
+    const totalSheets = data.result.sheets.length;
+    if (summary) {
+      const selected = data.result.sourcePageCount;
+      const copies = data.result.copies;
+      const layoutText = options.layoutMode === 'nup' ? `${options.nup} halaman/sheet` : options.layoutMode === 'booklet' ? 'booklet' : options.layoutMode === 'poster' ? `poster ${options.posterTiles}` : '1 halaman/sheet';
+      const printerText = options.printerName && options.printerName !== 'browser-default' ? ` · printer: ${options.printerName}` : '';
+      summary.textContent = `${selected} halaman sumber × ${copies} copy · ${layoutText} · hasil ${totalSheets} sheet siap print${printerText}.`;
+    }
+    const op = modal.querySelector('#destaraPrintWatermarkOpacityValue'); if (op) op.textContent = String(options.watermarkOpacity) + '%';
+    const sc = modal.querySelector('#destaraPrintScaleValue'); if (sc) sc.textContent = Math.round(Number(options.scale || 1) * 100) + '%';
+  }
+
+  async function destaraPrintNow(options){
+    options.previewLimit = 0;
+    if (state.mode === 'pdf') toast('Menyiapkan kualitas print super tajam...', 'good');
+    await destaraPreparePdfPrintAssets(options);
+    const html = makeDestaraPrintHtml(options, false);
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed'; iframe.style.right = '0'; iframe.style.bottom = '0'; iframe.style.width = '0'; iframe.style.height = '0'; iframe.style.border = '0'; iframe.setAttribute('aria-hidden','true');
+    document.body.appendChild(iframe);
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+    const win = iframe.contentWindow;
+    if (options.printerName) destaraSetSelectedPrinter(options.printerName);
+    const cleanup = () => setTimeout(() => { try { iframe.remove(); } catch {} }, 1200);
+    const waitImages = () => Promise.all(Array.from(doc.images || []).map(img => img.complete ? Promise.resolve() : new Promise(res => { img.onload = img.onerror = res; })));
+    await waitImages();
+    setTimeout(() => {
+      try { win.focus(); win.print(); const ptxt = options.printerName && options.printerName !== 'browser-default' ? ` Target printer: ${options.printerName}.` : ''; toast('Dialog print dibuka.' + ptxt + ' Margin disiapkan kecil/sesuai file asli.', 'good'); }
+      catch (err) { console.warn('Print iframe gagal:', err); destaraOpenPrintWindow(options); }
+      cleanup();
+    }, 140);
+  }
+
+  async function destaraOpenPrintWindow(options){
+    options.previewLimit = 0;
+    if (state.mode === 'pdf') toast('Menyiapkan preview tab kualitas super tajam...', 'good');
+    await destaraPreparePdfPrintAssets(options);
+    const html = makeDestaraPrintHtml(options, false);
+    const w = window.open('', '_blank');
+    if (!w) { toast('Popup diblokir browser. Izinkan popup untuk preview tab baru.', 'warn'); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+    setTimeout(() => { try { w.focus(); } catch {} }, 80);
+  }
+
+  async function destaraDownloadPrintHtml(options){
+    options.previewLimit = 0;
+    if (state.mode === 'pdf') toast('Menyiapkan file print kualitas super tajam...', 'good');
+    await destaraPreparePdfPrintAssets(options);
+    const html = makeDestaraPrintHtml(options, false);
+    downloadBlob(new Blob([html], {type:'text/html;charset=utf-8'}), baseName(state.fileName || 'dokumen') + '-print-ready.html');
+  }
+
+  async function openDestaraPrintStudio(){
+    if (state.mode === 'empty' || !destaraPrintTotalPages()) return toast('Buka dokumen atau PDF dulu sebelum print.', 'warn');
+    installDestaraPrintStudioStyles();
+    if (state.mode === 'pdf') redrawPdfAnnotations();
+    const total = destaraPrintTotalPages();
+    const isPdf = state.mode === 'pdf';
+    const current = isPdf ? destaraCurrentPdfPageIndex() + 1 : 1;
+    const modal = document.createElement('div');
+    modal.className = 'destara-print-backdrop';
+    modal.innerHTML = `
+      <div class="destara-print-card" role="dialog" aria-modal="true" aria-label="Print Studio Max">
+        <header class="destara-print-head">
+          <div class="destara-print-title"><div class="destara-print-icon"><i data-lucide="printer"></i></div><div><h3>Print Studio Max</h3><p>Preview ini hanya berisi dokumen/PDF yang akan dicetak. Toolbar, panel, tombol, background aplikasi, dan elemen editor tidak ikut masuk print. Fitur perangkat fisik seperti duplex/staple/tray tetap dipilih di dialog printer karena browser tidak punya API universal untuk memaksa hardware printer.</p></div></div>
+          <button class="destara-print-close" data-print-close title="Tutup">×</button>
+        </header>
+        <div class="destara-print-body">
+          <aside class="destara-print-controls">
+            <div class="destara-print-section"><h4>Halaman</h4>
+              <div class="destara-print-row"><label>Preset halaman</label><select class="destara-print-select" id="destaraPrintPreset"><option value="all">Semua halaman (${total})</option><option value="current">Halaman aktif (${current})</option><option value="custom">Custom range</option></select></div>
+              <div class="destara-print-row"><label>Range halaman</label><input class="destara-print-input" id="destaraPrintRange" value="1-${total}" placeholder="1-3,5,8-10"><div class="destara-print-help">Gunakan koma dan rentang. Contoh: 1-2,4,7-9.</div></div>
+              <div class="destara-print-two"><div class="destara-print-row"><label>Subset</label><select class="destara-print-select" id="destaraPrintSubset"><option value="all">Semua dalam range</option><option value="odd">Ganjil saja</option><option value="even">Genap saja</option></select></div><div class="destara-print-row"><label>Duplex/manual pass</label><select class="destara-print-select" id="destaraPrintDuplexPass"><option value="all">Semua sheet</option><option value="front">Sisi depan saja</option><option value="back">Sisi belakang saja</option></select></div></div>
+              <div class="destara-print-checks"><label class="destara-print-check"><input type="checkbox" id="destaraPrintReverse">Balik urutan print</label></div>
+              <div class="destara-print-chipbar"><button class="destara-print-chip" data-range="1-${Math.min(2,total)}">Awal</button><button class="destara-print-chip" data-range="${current}">Aktif</button><button class="destara-print-chip" data-range="${total}">Terakhir</button><button class="destara-print-chip" data-range="1-${total}">Semua</button><button class="destara-print-chip" data-range="1,3,5,7,9">Contoh ganjil</button></div>
+            </div>
+            <div class="destara-print-section"><h4>Copy & Susunan</h4>
+              <div class="destara-print-two"><div class="destara-print-row"><label>Jumlah copy</label><input class="destara-print-input" id="destaraPrintCopies" type="number" min="1" max="99" value="1"></div><div class="destara-print-row"><label>Layout</label><select class="destara-print-select" id="destaraPrintLayoutMode"><option value="single">Normal 1 halaman/sheet</option><option value="nup">Multiple pages per sheet</option><option value="booklet">Booklet / buku lipat</option><option value="poster">Poster / tile besar</option></select></div></div>
+              <div class="destara-print-checks"><label class="destara-print-check"><input type="checkbox" id="destaraPrintCollate" checked>Collate copy: 1-2-3, 1-2-3</label></div>
+              <div class="destara-print-two" data-print-show="nup"><div class="destara-print-row"><label>Pages per sheet</label><select class="destara-print-select" id="destaraPrintNup"><option value="2">2</option><option value="4" selected>4</option><option value="6">6</option><option value="8">8</option><option value="9">9</option><option value="16">16</option></select></div><div class="destara-print-row"><label>Urutan isi</label><select class="destara-print-select" id="destaraPrintNupOrder"><option value="horizontal">Kiri ke kanan</option><option value="vertical">Atas ke bawah</option></select></div></div>
+              <div class="destara-print-two" data-print-show="booklet"><div class="destara-print-row"><label>Binding booklet</label><select class="destara-print-select" id="destaraPrintBookletBinding"><option value="left">Kiri</option><option value="right">Kanan</option></select></div><label class="destara-print-check" style="align-self:end"><input type="checkbox" id="destaraPrintBookletPad" checked>Tambah blank agar kelipatan 4</label></div>
+              <div class="destara-print-two" data-print-show="poster"><div class="destara-print-row"><label>Poster tile</label><select class="destara-print-select" id="destaraPrintPosterTiles"><option value="2x2">2 × 2</option><option value="3x3">3 × 3</option><option value="4x4">4 × 4</option><option value="2x3">2 × 3</option><option value="3x2">3 × 2</option></select></div><div class="destara-print-row"><label>Catatan</label><div class="destara-print-help">Setiap halaman diperbesar dan dipotong menjadi beberapa sheet.</div></div></div>
+              <div class="destara-print-three"><label class="destara-print-check"><input type="checkbox" id="destaraPrintNupBorder" checked>Border mini page</label><label class="destara-print-check"><input type="checkbox" id="destaraPrintCutLines">Garis potong</label><label class="destara-print-check"><input type="checkbox" id="destaraPrintSheetBorder">Border sheet</label></div>
+            </div>
+            <div class="destara-print-section"><h4>Kertas & Ukuran</h4>
+              <div class="destara-print-two"><div class="destara-print-row"><label>Ukuran kertas</label><select class="destara-print-select" id="destaraPrintPaper"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option><option value="A3">A3</option><option value="A6">A6</option><option value="B5">B5</option><option value="B4">B4</option><option value="Tabloid">Tabloid</option><option value="custom">Custom mm</option><option value="auto">Auto</option></select></div><div class="destara-print-row"><label>Orientasi</label><select class="destara-print-select" id="destaraPrintOrientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div></div>
+              <div class="destara-print-two destara-print-hidden" data-print-paper-custom><div class="destara-print-row"><label>Lebar custom (mm)</label><input class="destara-print-input" id="destaraPrintCustomW" type="number" min="20" value="210"></div><div class="destara-print-row"><label>Tinggi custom (mm)</label><input class="destara-print-input" id="destaraPrintCustomH" type="number" min="20" value="297"></div></div>
+              <div class="destara-print-two"><div class="destara-print-row"><label>Margin browser</label><select class="destara-print-select" id="destaraPrintMargin"><option value="none" selected>Sesuai file / tanpa margin ekstra</option><option value="hairline">Tipis 3mm</option><option value="small">Kecil 7mm</option><option value="normal">Normal 12mm</option><option value="large">Lebar 20mm</option><option value="mirrored">Mirrored/gutter</option><option value="custom">Custom</option></select><div class="destara-print-help">Default ini mengirim @page margin 0mm ke browser supaya tepi atas, bawah, kiri, dan kanan tidak membesar.</div></div><div class="destara-print-row"><label>Fit mode</label><select class="destara-print-select" id="destaraPrintFitMode"><option value="fit">Fit to printable area</option><option value="shrink">Shrink oversized only</option><option value="actual">Actual/custom size</option><option value="fill">Fill/crop</option></select></div></div>
+              <div class="destara-print-four destara-print-hidden" data-print-margin-custom><div class="destara-print-two"><input class="destara-print-input" id="destaraPrintMarginTop" type="number" value="3" title="Top mm"><input class="destara-print-input" id="destaraPrintMarginRight" type="number" value="3" title="Right mm"></div><div class="destara-print-two"><input class="destara-print-input" id="destaraPrintMarginBottom" type="number" value="3" title="Bottom mm"><input class="destara-print-input" id="destaraPrintMarginLeft" type="number" value="3" title="Left mm"></div><div class="destara-print-help">Urutan custom: top, right, bottom, left dalam milimeter.</div></div>
+              <div class="destara-print-two"><div class="destara-print-row"><label>Skala manual <span id="destaraPrintScaleValue">100%</span></label><input class="destara-print-input" id="destaraPrintScale" type="range" min="0.35" max="2" step="0.05" value="1"></div><div class="destara-print-row"><label>Padding isi sheet</label><input class="destara-print-input" id="destaraPrintInnerPadding" type="number" min="0" max="120" value="32"></div></div>
+              <div class="destara-print-row"><label>Jarak antar halaman mini</label><input class="destara-print-input" id="destaraPrintNupGap" type="number" min="0" max="80" value="12"></div>
+            </div>
+            <div class="destara-print-section"><h4>Output Visual</h4>
+              <div class="destara-print-checks">
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintAnnotations" ${isPdf ? 'checked' : ''} ${isPdf ? '' : 'disabled'}>Ikutkan editan/anotasi PDF</label>
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintBackgrounds" checked>Cetak background/warna</label>
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintGrayscale">Hitam putih / grayscale</label>
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintHighContrast">Kontras lebih tinggi</label>
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintSepia">Sepia</label>
+                <label class="destara-print-check"><input type="checkbox" id="destaraPrintInvert">Invert warna</label>
+              </div>
+              <div class="destara-print-row"><label>Kualitas hasil PDF saat print</label><select class="destara-print-select" id="destaraPrintPdfQuality" ${isPdf ? '' : 'disabled'}><option value="3">Tajam 3×</option><option value="4">Ultra 4×</option><option value="6" selected>Super tajam 6×</option><option value="8">Ekstrem 8×</option><option value="10">Maksimal 10×</option></select><div class="destara-print-quality-note">Mode 6× ke atas merender ulang PDF jauh lebih besar agar hasil cetak lebih tajam. Jika file banyak halaman terasa berat, turunkan ke 4× atau 3×.</div></div>
+            </div>
+            <div class="destara-print-section"><h4>Header, Footer, Watermark</h4>
+              <div class="destara-print-checks"><label class="destara-print-check"><input type="checkbox" id="destaraPrintPageNumbers" checked>Nomor sheet/halaman</label><label class="destara-print-check"><input type="checkbox" id="destaraPrintFileName">Nama file di header</label><label class="destara-print-check"><input type="checkbox" id="destaraPrintDate">Tanggal/jam cetak</label></div>
+              <div class="destara-print-row"><label>Header custom</label><input class="destara-print-input" id="destaraPrintHeaderText" placeholder="Contoh: Dokumen rahasia"></div>
+              <div class="destara-print-row"><label>Footer custom</label><input class="destara-print-input" id="destaraPrintFooterText" placeholder="Contoh: Dicetak oleh Destara"></div>
+              <div class="destara-print-row"><label>Watermark</label><input class="destara-print-input" id="destaraPrintWatermarkText" placeholder="DRAFT / CONFIDENTIAL / COPY"></div>
+              <div class="destara-print-three"><div class="destara-print-row"><label>Opacity <span id="destaraPrintWatermarkOpacityValue">12%</span></label><input class="destara-print-input" id="destaraPrintWatermarkOpacity" type="range" min="2" max="60" value="12"></div><div class="destara-print-row"><label>Rotasi</label><input class="destara-print-input" id="destaraPrintWatermarkRotate" type="number" value="-28"></div><div class="destara-print-row"><label>Ukuran</label><input class="destara-print-input" id="destaraPrintWatermarkSize" type="number" value="54"></div></div>
+              <div class="destara-print-checks"><label class="destara-print-check"><input type="checkbox" id="destaraPrintCropMarks">Crop marks</label><label class="destara-print-check"><input type="checkbox" id="destaraPrintHolePunch">Simulasi hole punch kiri</label></div>
+            </div>
+            <div class="destara-print-section"><h4>Crop / Potong Konten</h4>
+              <div class="destara-print-two"><input class="destara-print-input" id="destaraPrintCropTop" type="number" min="0" value="0" title="Crop top px"><input class="destara-print-input" id="destaraPrintCropRight" type="number" min="0" value="0" title="Crop right px"></div>
+              <div class="destara-print-two"><input class="destara-print-input" id="destaraPrintCropBottom" type="number" min="0" value="0" title="Crop bottom px"><input class="destara-print-input" id="destaraPrintCropLeft" type="number" min="0" value="0" title="Crop left px"></div>
+              <div class="destara-print-help">Nilai dalam pixel sumber. Pakai untuk buang pinggir/kop kosong sebelum print.</div>
+            </div>
+
+          </aside>
+          <section class="destara-print-preview"><div class="destara-print-summary"><div><strong>Review print</strong><br><span id="destaraPrintSummaryText">Menyiapkan preview...</span></div><div class="destara-print-preview-tools"><div class="destara-print-zoom-tools" title="Ctrl + scroll untuk zoom preview"><button class="destara-print-zoom-btn" data-print-zoom-out type="button">−</button><span class="destara-print-zoom-text" id="destaraPrintZoomText">100%</span><button class="destara-print-zoom-btn" data-print-zoom-in type="button">+</button></div><button class="destara-print-btn" data-print-refresh>Refresh</button></div></div><div class="destara-print-pages" id="destaraPrintPreviewPages"></div></section>
+        </div>
+        <footer class="destara-print-foot"><div class="destara-print-help">Print Sekarang membuka dialog printer asli, tetapi isi yang dikirim sudah berupa halaman print khusus tanpa UI aplikasi.</div><div class="destara-print-actions"><button class="destara-print-btn" data-print-download>Simpan HTML Print</button><button class="destara-print-btn" data-print-tab>Preview Tab</button><button class="destara-print-btn danger" data-print-close>Batal</button><button class="destara-print-btn primary" data-print-now>Print Sekarang</button></div></footer>
+      </div>`;
+    document.body.appendChild(modal);
+    destaraPopulatePrinterSelect(modal);
+    refreshIcons();
+    const close = () => modal.remove();
+    modal.querySelectorAll('[data-print-close]').forEach(b => b.addEventListener('click', close));
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    modal.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    modal.querySelectorAll('input,select').forEach(el => el.addEventListener('input', () => destaraRenderPrintPreview(modal)));
+    modal.querySelectorAll('input,select').forEach(el => el.addEventListener('change', () => destaraRenderPrintPreview(modal)));
+    modal.querySelectorAll('[data-range]').forEach(btn => btn.addEventListener('click', () => { modal.querySelector('#destaraPrintPreset').value = 'custom'; modal.querySelector('#destaraPrintRange').disabled = false; modal.querySelector('#destaraPrintRange').value = btn.dataset.range || ''; destaraRenderPrintPreview(modal); }));
+    modal.querySelector('#destaraPrintPrinterSelect')?.addEventListener('change', () => { destaraSetSelectedPrinter(modal.querySelector('#destaraPrintPrinterSelect')?.value || 'browser-default'); destaraPopulatePrinterSelect(modal); destaraRenderPrintPreview(modal); });
+    modal.querySelector('[data-print-save-printer]')?.addEventListener('click', () => { destaraSavePrinterFromModal(modal); destaraRenderPrintPreview(modal); });
+    modal.querySelector('[data-print-refresh]').addEventListener('click', () => destaraRenderPrintPreview(modal));
+    modal.querySelector('[data-print-tab]').addEventListener('click', async () => { await destaraOpenPrintWindow(destaraReadPrintOptions(modal)); });
+    modal.querySelector('[data-print-download]').addEventListener('click', async () => { await destaraDownloadPrintHtml(destaraReadPrintOptions(modal)); });
+    modal.querySelector('[data-print-zoom-out]')?.addEventListener('click', () => destaraAdjustPrintPreviewZoom(modal, -0.1));
+    modal.querySelector('[data-print-zoom-in]')?.addEventListener('click', () => destaraAdjustPrintPreviewZoom(modal, 0.1));
+    modal.addEventListener('wheel', e => { if (!(e.ctrlKey || e.metaKey)) return; e.preventDefault(); destaraAdjustPrintPreviewZoom(modal, e.deltaY < 0 ? 0.1 : -0.1); }, {passive:false});
+    modal.querySelector('[data-print-now]').addEventListener('click', async () => { const opts = destaraReadPrintOptions(modal); close(); await destaraPrintNow(opts); });
+    await destaraRenderPrintPreview(modal);
+    setTimeout(() => modal.querySelector('#destaraPrintPreset')?.focus(), 30);
+  }
+
   function handleKeys(e){
     if(e.key==='Escape') { hideDropOverlay(); findModal.classList.remove('show'); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='o') { e.preventDefault(); openPicker(); }
@@ -4875,6 +5721,7 @@ input.selected-object-disabled{
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z') { e.preventDefault(); e.shiftKey ? performRedo() : performUndo(); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='y') { e.preventDefault(); performRedo(); }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='f') { e.preventDefault(); findModal.classList.add('show'); $('findText').focus(); }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='p') { e.preventDefault(); openDestaraPrintStudio(); }
     if(state.mode==='pdf' && state.selectedAnnotationId && (e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='c') { e.preventDefault(); pdfCopySelected(); }
     if(state.mode==='pdf' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='v') { e.preventDefault(); pdfPasteObject(); }
     if(state.mode==='pdf' && state.selectedAnnotationId && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
@@ -5972,17 +6819,7 @@ input.selected-object-disabled{
       alatBody.insertBefore(btn, alatBody.firstChild);
       alatBody.insertBefore(title, btn);
     }
-    const topbar = pdfPane && pdfPane.querySelector('.pdf-toolbar-local.pdf-toolbar-grouped');
-    if (topbar && !topbar.querySelector('[data-action="pdfOpenNativeReader"]')) {
-      const topBtn = document.createElement('button');
-      topBtn.className = 'pdf-tool native-reader-primary';
-      topBtn.dataset.action = 'pdfOpenNativeReader';
-      topBtn.title = 'Mode baca/select PDF native';
-      topBtn.innerHTML = '<i data-lucide="file-search"></i><span>Reader</span>';
-      const after = topbar.querySelector('#pdfStylePanelToggle');
-      if (after && after.nextSibling) topbar.insertBefore(topBtn, after.nextSibling);
-      else topbar.insertBefore(topBtn, topbar.firstChild);
-    }
+    // Reader tetap tersedia di dropdown Alat, tetapi tombol Reader yang selalu terlihat di toolbar atas disembunyikan.
     refreshIcons();
   }
 
@@ -6025,7 +6862,7 @@ input.selected-object-disabled{
 
   // V7 hard fallback: klik Reader ditangkap langsung agar tidak bergantung pada injeksi tombol.
   document.addEventListener('click', function(e){
-    const btn = e.target && e.target.closest && e.target.closest('[data-action="pdfOpenNativeReader"], #pdfNativeReaderHardBtn, .native-reader-quick');
+    const btn = e.target && e.target.closest && e.target.closest('[data-action="pdfOpenNativeReader"]');
     if (!btn) return;
     e.preventDefault();
     e.stopImmediatePropagation();
@@ -6034,19 +6871,8 @@ input.selected-object-disabled{
 
   // Pastikan tombol statis tetap ada walau patch lain merender ulang toolbar.
   function destaraV7EnsureVisibleNativeButtons(){
-    const topbar = pdfPane && pdfPane.querySelector('.pdf-toolbar-local.pdf-toolbar-grouped');
-    if (topbar && !topbar.querySelector('#pdfNativeReaderHardBtn')) {
-      const b = document.createElement('button');
-      b.className = 'pdf-tool native-reader-hard';
-      b.id = 'pdfNativeReaderHardBtn';
-      b.dataset.action = 'pdfOpenNativeReader';
-      b.title = 'Reader: seleksi/copy teks memakai viewer PDF bawaan browser';
-      b.innerHTML = '<i data-lucide="file-search"></i><span>Reader</span>';
-      const panelBtn = topbar.querySelector('#pdfStylePanelToggle');
-      if (panelBtn && panelBtn.nextSibling) topbar.insertBefore(b, panelBtn.nextSibling);
-      else topbar.insertBefore(b, topbar.firstChild);
-      refreshIcons();
-    }
+    // Diminta: tidak menampilkan tombol Reader di toolbar atas. Reader tetap bisa dibuka dari menu Alat.
+    return;
   }
   const _destaraV7OldInjectNativeButtons = destaraV6InjectNativeButtons;
   destaraV6InjectNativeButtons = function(){
