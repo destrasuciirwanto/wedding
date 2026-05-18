@@ -1565,6 +1565,41 @@ input.selected-object-disabled{
 }
 </style>
 
+
+
+<style id="destara-pdf-copy-text-layer-v1">
+/* PDF copy/select text: layer teks asli PDF dibuat transparan di atas canvas.
+   Mode ini tidak mengubah render, simpan, flatten, atau anotasi yang sudah ada. */
+.pdf-page canvas{position:relative;z-index:1}
+.pdf-text-layer{position:absolute;inset:0;overflow:hidden;line-height:1;z-index:2;opacity:1;pointer-events:none;user-select:none;-webkit-user-select:none}
+.pdf-text-layer span,.pdf-text-layer br{color:transparent!important;position:absolute;white-space:pre;cursor:text;transform-origin:0% 0%;user-select:none;-webkit-user-select:none}
+.pdf-text-layer ::selection{background:rgba(41,87,255,.28);color:transparent}
+.pdf-text-layer ::-moz-selection{background:rgba(41,87,255,.28);color:transparent}
+.pdf-layer{z-index:4}
+.app.pdf-copy-mode .pdf-layer{pointer-events:none!important}
+.app.pdf-copy-mode .pdf-annotation{pointer-events:none!important}
+.app.pdf-copy-mode .pdf-text-layer{pointer-events:auto!important;user-select:text!important;-webkit-user-select:text!important}
+.app.pdf-copy-mode .pdf-text-layer span{user-select:text!important;-webkit-user-select:text!important}
+.app.pdf-copy-mode .pdf-page{cursor:text}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.active[data-action="pdfToggleTextSelection"]{color:var(--primary)!important}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.active[data-action="pdfToggleTextSelection"]::after{left:0!important;right:0!important;opacity:1!important;transform:scaleX(1)!important}
+</style>
+
+
+
+<style id="destara-pdf-copy-text-layer-v2">
+/* V2: text layer dibuat lebih pasti bisa diklik/select, tanpa mengubah fitur edit/anotasi PDF. */
+.pdf-page{position:relative!important}
+.pdf-text-layer{position:absolute!important;inset:0!important;overflow:hidden!important;line-height:1!important;z-index:3!important;pointer-events:none!important;user-select:none!important;-webkit-user-select:none!important}
+.pdf-text-layer span,.pdf-text-layer br{position:absolute!important;white-space:pre!important;transform-origin:0 0!important;user-select:none!important;-webkit-user-select:none!important;color:rgba(0,0,0,.01)!important;background:transparent!important;cursor:text!important}
+.app.pdf-copy-mode .pdf-text-layer{z-index:9999!important;pointer-events:auto!important;user-select:text!important;-webkit-user-select:text!important;cursor:text!important}
+.app.pdf-copy-mode .pdf-text-layer span,.app.pdf-copy-mode .pdf-text-layer br{pointer-events:auto!important;user-select:text!important;-webkit-user-select:text!important;color:rgba(0,0,0,.01)!important}
+.app.pdf-copy-mode .pdf-layer,.app.pdf-copy-mode .pdf-annotation{pointer-events:none!important}
+.app.pdf-copy-mode .pdf-text-layer span::selection,.app.pdf-copy-mode .pdf-text-layer br::selection{background:rgba(41,87,255,.32)!important;color:rgba(0,0,0,.01)!important}
+.app.pdf-copy-mode .pdf-text-layer span::-moz-selection,.app.pdf-copy-mode .pdf-text-layer br::-moz-selection{background:rgba(41,87,255,.32)!important;color:rgba(0,0,0,.01)!important}
+.app.pdf-copy-mode .pdf-page{cursor:text!important}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
@@ -1716,7 +1751,10 @@ input.selected-object-disabled{
     <button class="pdf-tool warn" data-action="closePdf"><i data-lucide="x-circle"></i><span>Tutup PDF</span></button>
     <div class="pdf-menu-title">Convert / Export</div>
     <button class="pdf-tool" data-action="pdfToImage"><i data-lucide="image-down"></i><span>PDF to Image</span></button>
+    <button class="pdf-tool" data-action="pdfToggleTextSelection"><i data-lucide="text-select"></i><span>Copy Text Mode</span></button>
+    <button class="pdf-tool" data-action="pdfCopyAllText"><i data-lucide="clipboard-copy"></i><span>Copy Semua Teks</span></button>
     <button class="pdf-tool" data-action="pdfExtractText"><i data-lucide="file-text"></i><span>Extract Text</span></button>
+    <button class="pdf-tool" data-action="pdfExtractTextToEditor"><i data-lucide="file-pen-line"></i><span>Teks ke Editor</span></button>
     <button class="pdf-tool" data-action="pdfOcrCurrentPage"><i data-lucide="scan-text"></i><span>OCR Page</span></button>
     <button class="pdf-tool" data-action="pdfCompress"><i data-lucide="archive"></i><span>Compress</span></button>
     <button class="pdf-tool" data-action="pdfExportAnnotations"><i data-lucide="download"></i><span>Export Editan</span></button>
@@ -1967,6 +2005,8 @@ input.selected-object-disabled{
     docEditHtml: '',
     pdfDoc: null,
     pdfBytes: null,
+    pdfTextContentCache: {},
+    pdfTextSelectionEnabled: false,
     pdfAnnotations: [],
     pdfTool: 'select',
     pdfTextColor: '#111827',
@@ -2275,7 +2315,7 @@ input.selected-object-disabled{
         h1: () => execDocCommand('formatBlock','H1'), h2: () => execDocCommand('formatBlock','H2'), quote: () => execDocCommand('formatBlock','BLOCKQUOTE'), codeBlock: insertCodeBlock,
         removeFormat: () => execDocCommand('removeFormat'),
         pageA4: () => setPageSize('A4'), pageLetter: () => setPageSize('Letter'), pageLegal: () => setPageSize('Legal'), pageFolio: () => setPageSize('Folio'), pageA5: () => setPageSize('A5'), orientPortrait: () => setPageOrientation('portrait'), orientLandscape: () => setPageOrientation('landscape'), marginNormal: () => setMargin(72), marginNarrow: () => setMargin(36), marginWide: () => setMargin(96), insertPageBreak, fitWidth, pageWidth,
-        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle, pdfSetFillTransparent, pdfAddApprovedStamp, pdfAddDraftStamp, pdfAddRejectedStamp, pdfAddDateStamp, pdfAddPageNumbers, pdfAddWatermarkDraft, pdfAddCustomWatermark, pdfAddHeaderFooter, pdfSetBackgroundColor, pdfDrawSignature, pdfAddLink, pdfAttachFile, mergePdfFiles, splitPdfByRange, splitPdfEveryPage, openPdfOrganizer, pdfInsertBlankPage, pdfImportPages, pdfDeletePages, pdfExtractPages, pdfReplacePages, pdfCropPages, pdfSetPageSize, pdfStraightenPages, pdfRotateCurrentLeft, pdfRotateCurrentRight, pdfRotateAllPages, pdfToImage, pdfExtractText, pdfOcrCurrentPage, pdfCompress, pdfListFormFields, pdfFillFormField, pdfFlattenForm, pdfUnsupportedSecurity, pdfTogglePan, pdfShowPremiumDashboard, pdfOpenThumbnailSidebar, pdfFindAdvanced, pdfCommentsManager, pdfToggleAnnotationVisibility, pdfFlattenAnnotations, pdfEditMetadata, pdfInfoReport, pdfExportInfoReport, pdfOcrAllPages, pdfSnipCurrentPage, pdfCreateFromImages, pdfInsertImagePages, pdfAddBatesNumbering, pdfAddPageRangeLabel, pdfDuplicateCurrentPage, pdfReversePages, pdfMoveCurrentPageToFront, pdfMoveCurrentPageToBack, pdfAlignLeft, pdfAlignCenter, pdfAlignRight, pdfAlignTop, pdfAlignMiddle, pdfAlignBottom, pdfNudgeLeft, pdfNudgeRight, pdfNudgeUp, pdfNudgeDown, pdfLockSelected, pdfUnlockSelected, pdfClearCurrentPageAnnotations,
+        pdfDeleteSelected, clearPdfAnnotations, pdfEditSelectedText, pdfDuplicateSelected, pdfImageStamp, pdfSearchText, pdfRotateView, pdfRotateSelectedLeft, pdfRotateSelectedRight, pdfGrowSelected, pdfShrinkSelected, pdfBringFront, pdfSendBack, pdfCopySelected, pdfPasteObject, pdfResetSelectedRotation, pdfExportAnnotations, pdfImportAnnotations, replacePdf, newBlankPdf, closePdf, focusPdfStyle, pdfSetFillTransparent, pdfAddApprovedStamp, pdfAddDraftStamp, pdfAddRejectedStamp, pdfAddDateStamp, pdfAddPageNumbers, pdfAddWatermarkDraft, pdfAddCustomWatermark, pdfAddHeaderFooter, pdfSetBackgroundColor, pdfDrawSignature, pdfAddLink, pdfAttachFile, mergePdfFiles, splitPdfByRange, splitPdfEveryPage, openPdfOrganizer, pdfInsertBlankPage, pdfImportPages, pdfDeletePages, pdfExtractPages, pdfReplacePages, pdfCropPages, pdfSetPageSize, pdfStraightenPages, pdfRotateCurrentLeft, pdfRotateCurrentRight, pdfRotateAllPages, pdfToImage, pdfToggleTextSelection, pdfCopyAllText, pdfExtractText, pdfExtractTextToEditor, pdfOcrCurrentPage, pdfCompress, pdfListFormFields, pdfFillFormField, pdfFlattenForm, pdfUnsupportedSecurity, pdfTogglePan, pdfShowPremiumDashboard, pdfOpenThumbnailSidebar, pdfFindAdvanced, pdfCommentsManager, pdfToggleAnnotationVisibility, pdfFlattenAnnotations, pdfEditMetadata, pdfInfoReport, pdfExportInfoReport, pdfOcrAllPages, pdfSnipCurrentPage, pdfCreateFromImages, pdfInsertImagePages, pdfAddBatesNumbering, pdfAddPageRangeLabel, pdfDuplicateCurrentPage, pdfReversePages, pdfMoveCurrentPageToFront, pdfMoveCurrentPageToBack, pdfAlignLeft, pdfAlignCenter, pdfAlignRight, pdfAlignTop, pdfAlignMiddle, pdfAlignBottom, pdfNudgeLeft, pdfNudgeRight, pdfNudgeUp, pdfNudgeDown, pdfLockSelected, pdfUnlockSelected, pdfClearCurrentPageAnnotations,
         sheetAddRow, sheetDeleteRow, sheetAddCol, sheetDeleteCol, sheetFormulaSum, sheetFormulaAvg, sheetSortAsc: () => sortSheet(true), sheetSortDesc: () => sortSheet(false),
         zoomOut: () => changeZoom(-0.1), zoomReset: () => setZoom(1), zoomIn: () => changeZoom(0.1), toggleTheme, toggleFocus, fullscreen, updateCount: updateWordCount,
         docPreview: showDocPreview, docEdit: enterDocEdit, normalizeDoc, reloadFile
@@ -2435,6 +2475,7 @@ input.selected-object-disabled{
     doc.pdfStrokeWidth = state.pdfStrokeWidth;
     doc.pdfOpacity = state.pdfOpacity;
     doc.pdfRotation = state.pdfRotation || 0;
+    doc.pdfTextSelectionEnabled = !!state.pdfTextSelectionEnabled;
     doc.sheetData = (state.sheetData || []).map(row => row.slice());
     doc.sheetUndo = cloneJson(state.sheetUndo);
     doc.sheetRedo = cloneJson(state.sheetRedo);
@@ -2473,6 +2514,8 @@ input.selected-object-disabled{
     state.pdfAnnotations = cloneJson(doc.pdfAnnotations);
     state.pdfUndo = cloneJson(doc.pdfUndo);
     state.pdfRedo = cloneJson(doc.pdfRedo);
+    state.pdfTextContentCache = {};
+    state.pdfTextSelectionEnabled = !!doc.pdfTextSelectionEnabled;
     state.pdfTool = doc.pdfTool || 'select';
     state.pdfTextColor = doc.pdfTextColor || '#111827';
     state.pdfHighlightColor = doc.pdfHighlightColor || '#fff176';
@@ -2562,6 +2605,7 @@ input.selected-object-disabled{
     refreshIcons();
     updateToolAvailability();
     updatePdfStylePanelState();
+    applyPdfTextSelectionMode();
   }
 
   function isImageFile(ext, mime){
@@ -2793,6 +2837,9 @@ input.selected-object-disabled{
   async function loadPdf(buffer){
     if (!window.pdfjsLib || !window.PDFLib) throw new Error('Library PDF belum termuat. Cek koneksi internet/CDN.');
     state.pdfBytes = buffer.slice(0);
+    state.pdfTextContentCache = {};
+    state.pdfTextSelectionEnabled = false;
+    applyPdfTextSelectionMode();
     state.pdfAnnotations = []; state.pdfUndo = []; state.pdfRedo = []; state.selectedAnnotationId = null;
     setMode('pdf'); setPdfTool('select'); updatePdfStyleControls();
     state.activeTab = 'PDF'; renderTabs(); renderRibbon();
@@ -2816,12 +2863,88 @@ input.selected-object-disabled{
       const canvas = document.createElement('canvas'); canvas.width = Math.floor(viewport.width); canvas.height = Math.floor(viewport.height);
       canvas.style.width = viewport.width + 'px'; canvas.style.height = viewport.height + 'px';
       const overlay = document.createElement('div'); overlay.className = 'pdf-layer'; overlay.dataset.pageIndex = String(i-1); overlay.style.width = viewport.width + 'px'; overlay.style.height = viewport.height + 'px';
-      pageEl.appendChild(canvas); pageEl.appendChild(overlay); pdfPages.appendChild(pageEl);
+      pageEl.appendChild(canvas); pdfPages.appendChild(pageEl);
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      await renderPdfSelectableTextLayer(page, viewport, pageEl, i-1);
+      pageEl.appendChild(overlay);
       attachPdfOverlayEvents(overlay);
     }
     redrawPdfAnnotations();
     updatePdfCursor();
+    applyPdfTextSelectionMode();
+  }
+
+  async function renderPdfSelectableTextLayer(page, viewport, pageEl, pageIndex){
+    const textLayer = document.createElement('div');
+    textLayer.className = 'pdf-text-layer';
+    textLayer.dataset.pageIndex = String(pageIndex);
+    textLayer.style.width = viewport.width + 'px';
+    textLayer.style.height = viewport.height + 'px';
+    pageEl.appendChild(textLayer);
+    try {
+      const textContent = await page.getTextContent({ includeMarkedContent:true, disableNormalization:false });
+      state.pdfTextContentCache[pageIndex] = textContent;
+      if (window.pdfjsLib && typeof pdfjsLib.renderTextLayer === 'function') {
+        let task;
+        try {
+          task = pdfjsLib.renderTextLayer({ textContentSource:textContent, container:textLayer, viewport, textDivs:[], enhanceTextSelection:true });
+        } catch (err) {
+          task = pdfjsLib.renderTextLayer({ textContent, container:textLayer, viewport, textDivs:[], enhanceTextSelection:true });
+        }
+        if (task && task.promise) await task.promise;
+        else if (task && typeof task.then === 'function') await task;
+      } else {
+        renderPdfTextLayerFallback(textContent, viewport, textLayer);
+      }
+      textLayer.dataset.ready = '1';
+    } catch (err) {
+      console.warn('Text layer PDF gagal dibuat:', err);
+      textLayer.dataset.error = '1';
+    }
+  }
+
+  function renderPdfTextLayerFallback(textContent, viewport, textLayer){
+    const util = window.pdfjsLib && pdfjsLib.Util;
+    (textContent.items || []).forEach(item => {
+      const str = item && item.str ? String(item.str) : '';
+      if (!str.trim() || !item.transform || !util) return;
+      const tx = util.transform(viewport.transform, item.transform);
+      const fontHeight = Math.max(1, Math.hypot(tx[2], tx[3]) || Math.abs(tx[3]) || 10);
+      const angle = Math.atan2(tx[1], tx[0]);
+      const span = document.createElement('span');
+      span.textContent = str;
+      span.style.left = tx[4] + 'px';
+      span.style.top = (tx[5] - fontHeight) + 'px';
+      span.style.fontSize = fontHeight + 'px';
+      span.style.fontFamily = 'sans-serif';
+      span.style.transform = 'rotate(' + angle + 'rad)';
+      textLayer.appendChild(span);
+    });
+  }
+
+  function applyPdfTextSelectionMode(){
+    const on = !!(state.mode === 'pdf' && state.pdfTextSelectionEnabled);
+    appRoot.classList.toggle('pdf-copy-mode', on);
+    document.querySelectorAll('[data-action="pdfToggleTextSelection"]').forEach(btn => {
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.title = on ? 'Mode copy/select text aktif' : 'Aktifkan copy/select text PDF';
+    });
+    if (on && pdfHint && pdfHint.querySelector('span')) pdfHint.querySelector('span').textContent = 'Mode copy/select text aktif. Blok teks PDF lalu Ctrl+C. Matikan mode ini untuk mengedit anotasi lagi.';
+  }
+
+  function pdfToggleTextSelection(){
+    if (!ensurePdfOpen()) return;
+    state.pdfTextSelectionEnabled = !state.pdfTextSelectionEnabled;
+    if (state.pdfTextSelectionEnabled) {
+      state.selectedAnnotationId = null;
+      document.querySelectorAll('.pdf-menu[open]').forEach(d => d.removeAttribute('open'));
+      redrawPdfAnnotations();
+      toast('Mode copy/select text aktif. Blok teks di PDF lalu Ctrl+C.', 'good');
+    } else {
+      toast('Mode copy/select text dimatikan. Anotasi bisa diedit lagi.', 'good');
+    }
+    applyPdfTextSelectionMode();
   }
 
   function setPdfColor(action, value){
@@ -3078,6 +3201,7 @@ input.selected-object-disabled{
 
   function setPdfTool(tool){
     document.querySelectorAll('.pdf-menu[open]').forEach(d => d.removeAttribute('open'));
+    if (state.pdfTextSelectionEnabled) { state.pdfTextSelectionEnabled = false; applyPdfTextSelectionMode(); }
     state.pdfTool = tool; state.selectedAnnotationId = null;
     const hints = {
       select: 'Mode aktif: Pilih. Klik anotasi untuk memilih dan geser posisinya.',
@@ -3904,12 +4028,88 @@ input.selected-object-disabled{
     }
     if (zip) downloadBlob(await zip.generateAsync({type:'blob'}), baseName(state.fileName) + '-images.zip');
   }
+  function pdfTextContentToText(textContent){
+    let out = '';
+    let lastY = null;
+    (textContent.items || []).forEach(item => {
+      const str = item && item.str ? String(item.str) : '';
+      if (!str) return;
+      const y = item.transform ? Math.round(item.transform[5]) : null;
+      if (lastY !== null && y !== null && Math.abs(y - lastY) > 5 && out.trim()) out += '\n';
+      else if (out && !/[\s-]$/.test(out) && !/^\s/.test(str)) out += ' ';
+      out += str;
+      lastY = y;
+    });
+    return out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  async function collectPdfTextParts(){
+    if (!ensurePdfOpen()) return [];
+    const parts = [];
+    for (let i=1;i<=state.pdfDoc.numPages;i++) {
+      const page = await state.pdfDoc.getPage(i);
+      const txt = await page.getTextContent({ includeMarkedContent:true, disableNormalization:false });
+      parts.push({ page:i, text:pdfTextContentToText(txt), textContent:txt });
+    }
+    return parts;
+  }
+
+  async function pdfPlainTextWithHeaders(){
+    const parts = await collectPdfTextParts();
+    return parts.map(p => `--- Halaman ${p.page} ---\n${p.text || ''}`).join('\n\n').trim();
+  }
+
+  async function pdfCopyAllText(){
+    if (!ensurePdfOpen()) return;
+    status('Menyalin teks PDF...');
+    const text = await pdfPlainTextWithHeaders();
+    if (!text.replace(/--- Halaman \d+ ---/g, '').trim()) { status('PDF tidak punya teks selectable'); return toast('Teks asli tidak terdeteksi. Kalau PDF scan/foto, gunakan OCR.', 'warn'); }
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API tidak tersedia');
+      await navigator.clipboard.writeText(text);
+      status('Teks PDF disalin');
+      toast('Semua teks PDF berhasil disalin ke clipboard.', 'good');
+    } catch (err) {
+      downloadBlob(new Blob([text], {type:'text/plain;charset=utf-8'}), baseName(state.fileName) + '-teks.txt');
+      status('Clipboard tidak tersedia, teks diunduh');
+      toast('Clipboard browser tidak mengizinkan. Teks diunduh sebagai TXT.', 'warn');
+    }
+  }
+
   async function pdfExtractText(){
     if (!ensurePdfOpen()) return;
     status('Mengekstrak teks PDF...');
-    const parts = [];
-    for (let i=1;i<=state.pdfDoc.numPages;i++) { const page = await state.pdfDoc.getPage(i); const txt = await page.getTextContent(); parts.push(`--- Halaman ${i} ---\n` + txt.items.map(it => it.str || '').join(' ')); }
-    downloadBlob(new Blob([parts.join('\n\n')], {type:'text/plain;charset=utf-8'}), baseName(state.fileName) + '-teks.txt'); status('Teks diekstrak');
+    const text = await pdfPlainTextWithHeaders();
+    if (!text.replace(/--- Halaman \d+ ---/g, '').trim()) toast('Teks asli tidak terdeteksi. Kalau PDF scan/foto, gunakan OCR.', 'warn');
+    downloadBlob(new Blob([text], {type:'text/plain;charset=utf-8'}), baseName(state.fileName) + '-teks.txt'); status('Teks diekstrak');
+  }
+
+  async function pdfExtractTextToEditor(){
+    if (!ensurePdfOpen()) return;
+    status('Menyiapkan teks PDF ke editor...');
+    const parts = await collectPdfTextParts();
+    const hasText = parts.some(p => (p.text || '').trim());
+    if (!hasText) return toast('Teks asli tidak terdeteksi. Kalau PDF scan/foto, jalankan OCR dulu.', 'warn');
+    captureActiveDocument();
+    const title = baseName(state.fileName || 'pdf') + '-teks-edit.html';
+    const html = `<h1>${escapeHtml(baseName(state.fileName || 'PDF'))}</h1>` + parts.map(p => `<h2>Halaman ${p.page}</h2><p>${escapeHtml(p.text || '').replace(/\n/g,'<br>')}</p>`).join('');
+    const id = uid();
+    state.activeDocId = id;
+    state.documents.push({id,title,file:null,fileHandle:null,fileName:title,ext:'html',mode:'doc',docMode:'edit',dirty:true,createdAt:Date.now()});
+    state.file = null; state.fileHandle = null; state.fileName = title; state.ext = 'html';
+    fileNameEl.textContent = state.fileName;
+    setMode('doc');
+    state.docMode = 'edit';
+    state.docEditHtml = html;
+    docEditor.innerHTML = html;
+    docPreview.innerHTML = '';
+    docPreviewWrap.classList.add('hidden');
+    docEditWrap.classList.remove('hidden');
+    setDocModeButtons();
+    state.activeTab = 'Format'; renderTabs(); renderRibbon();
+    markDirty(); updateWordCount(); captureActiveDocument(); renderDocTabs();
+    status('Teks PDF dibuka sebagai dokumen editable');
+    toast('Teks PDF sudah masuk editor. Layout asli PDF tidak dijamin sama, tetapi teks bisa diedit bebas.', 'good');
   }
   async function pdfOcrCurrentPage(){
     if (!ensurePdfOpen()) return;
@@ -5429,6 +5629,116 @@ input.selected-object-disabled{
       scroller._pdfPanBound=true;
     }
     toast(state.pdfPanEnabled?'Pan scroll aktif. Drag area dokumen untuk menggeser tampilan.':'Pan scroll dimatikan.', 'good');
+  };
+
+
+
+
+  /* ===== PDF selectable text layer v2: lebih kuat untuk copy/select text ===== */
+  function destaraPdfTextScale(){ return Math.max(.5, Math.min(3, 1.35 * state.zoom)); }
+
+  function destaraRenderManualPdfTextLayer(textContent, viewport, textLayer){
+    if (!textLayer) return;
+    textLayer.innerHTML = '';
+    if (!textContent || !Array.isArray(textContent.items)) return;
+    const util = window.pdfjsLib && pdfjsLib.Util;
+    if (!util || !viewport || !viewport.transform) return;
+    const items = textContent.items;
+    for (let n = 0; n < items.length; n++) {
+      const item = items[n];
+      if (!item || typeof item.str !== 'string' || !item.str) continue;
+      if (!item.transform) continue;
+      const tx = util.transform(viewport.transform, item.transform);
+      const angle = Math.atan2(tx[1], tx[0]);
+      const fontHeight = Math.max(1, Math.hypot(tx[2], tx[3]) || Math.abs(tx[3]) || 10);
+      const width = Math.max(1, (item.width || item.str.length * fontHeight * .45) * (viewport.scale || destaraPdfTextScale()));
+      const span = document.createElement('span');
+      span.textContent = item.str;
+      span.style.left = tx[4] + 'px';
+      span.style.top = (tx[5] - fontHeight) + 'px';
+      span.style.fontSize = fontHeight + 'px';
+      span.style.fontFamily = 'sans-serif';
+      span.style.width = width + 'px';
+      span.style.height = Math.ceil(fontHeight * 1.25) + 'px';
+      span.style.transform = 'rotate(' + angle + 'rad)';
+      textLayer.appendChild(span);
+    }
+    textLayer.dataset.ready = '1';
+    textLayer.dataset.manual = '1';
+  }
+
+  async function destaraEnsurePdfTextLayers(){
+    if (!state.pdfDoc || state.mode !== 'pdf') return;
+    const scale = destaraPdfTextScale();
+    const rotation = state.pdfRotation || 0;
+    const pageEls = Array.from(document.querySelectorAll('.pdf-page[data-page-index]'));
+    for (const pageEl of pageEls) {
+      const pageIndex = Number(pageEl.dataset.pageIndex || 0);
+      let textLayer = pageEl.querySelector('.pdf-text-layer');
+      if (textLayer && textLayer.querySelector('span')) continue;
+      if (!textLayer) {
+        textLayer = document.createElement('div');
+        textLayer.className = 'pdf-text-layer';
+        textLayer.dataset.pageIndex = String(pageIndex);
+        pageEl.appendChild(textLayer);
+      }
+      const page = await state.pdfDoc.getPage(pageIndex + 1);
+      const viewport = page.getViewport({ scale, rotation });
+      textLayer.style.width = viewport.width + 'px';
+      textLayer.style.height = viewport.height + 'px';
+      const textContent = await page.getTextContent({ disableNormalization:false });
+      state.pdfTextContentCache[pageIndex] = textContent;
+      destaraRenderManualPdfTextLayer(textContent, viewport, textLayer);
+    }
+  }
+
+  function destaraApplySelectableTextAttributes(){
+    const on = !!(state.mode === 'pdf' && state.pdfTextSelectionEnabled);
+    document.querySelectorAll('.pdf-text-layer').forEach(layer => {
+      layer.style.pointerEvents = on ? 'auto' : 'none';
+      layer.style.userSelect = on ? 'text' : 'none';
+      layer.style.webkitUserSelect = on ? 'text' : 'none';
+      layer.style.zIndex = on ? '9999' : '3';
+      layer.querySelectorAll('span,br').forEach(span => {
+        span.style.pointerEvents = on ? 'auto' : 'none';
+        span.style.userSelect = on ? 'text' : 'none';
+        span.style.webkitUserSelect = on ? 'text' : 'none';
+      });
+    });
+  }
+
+  const _destaraTextV2OldApplyTextMode = applyPdfTextSelectionMode;
+  applyPdfTextSelectionMode = function(){
+    _destaraTextV2OldApplyTextMode();
+    destaraApplySelectableTextAttributes();
+  };
+
+  const _destaraTextV2OldToggleText = pdfToggleTextSelection;
+  pdfToggleTextSelection = async function(){
+    const willEnable = !state.pdfTextSelectionEnabled;
+    const result = await _destaraTextV2OldToggleText();
+    if (willEnable && state.pdfTextSelectionEnabled) {
+      state.pdfPanEnabled = false;
+      appRoot.classList.remove('pdf-pan-active');
+      await destaraEnsurePdfTextLayers();
+      destaraApplySelectableTextAttributes();
+      toast('Mode copy/select text aktif. Kalau belum bisa diblok, coba zoom 100% lalu blok teksnya.', 'good');
+    }
+    return result;
+  };
+
+  const _destaraTextV2OldRenderAll = renderAllPdfPages;
+  renderAllPdfPages = async function(){
+    await _destaraTextV2OldRenderAll();
+    await destaraEnsurePdfTextLayers();
+    applyPdfTextSelectionMode();
+  };
+
+  const _destaraTextV2OldPdfCopyAllText = pdfCopyAllText;
+  pdfCopyAllText = async function(){
+    if (!ensurePdfOpen()) return;
+    await destaraEnsurePdfTextLayers();
+    return _destaraTextV2OldPdfCopyAllText();
   };
 
 
