@@ -1766,6 +1766,92 @@ input.selected-object-disabled{
 }
 </style>
 
+
+<style id="destara-pdf-center-100-final-fix">
+/* FINAL FIX: pusatkan halaman PDF pada zoom 100%, 90%, dan zoom lain tanpa menggeser toolbar/panel. */
+.app.pdf-mode .workspace,
+.app.pdf-native-mode .workspace{
+  overflow:hidden!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+
+#pdfPane.workspace-pane.active{
+  min-width:0!important;
+  max-width:100vw!important;
+}
+
+#pdfPane .pdf-editor-layout{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  align-items:stretch!important;
+}
+
+#pdfPane .pdf-doc-scroll{
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:0!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  box-sizing:border-box!important;
+  padding-left:10px!important;
+  padding-right:10px!important;
+  scrollbar-gutter:stable both-edges!important;
+}
+
+#pdfPane .pdf-doc-scroll #pdfPages,
+#pdfPane .pdf-doc-scroll .pdf-pages{
+  display:block!important;
+  width:max-content!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+#pdfPane .pdf-doc-scroll .pdf-page{
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+.app.pdf-style-collapsed #pdfPane .pdf-editor-layout{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+.app.pdf-style-collapsed #pdfPane .pdf-doc-scroll{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+}
+
+@media(max-width:960px){
+  .app.pdf-mode .workspace{
+    overflow:auto!important;
+  }
+  #pdfPane .pdf-editor-layout{
+    overflow:visible!important;
+  }
+  #pdfPane .pdf-doc-scroll{
+    height:auto!important;
+    max-height:none!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
@@ -5744,7 +5830,7 @@ input.selected-object-disabled{
   };
 
 
-  /* ===== Fix scrollbar bawah saat PDF di-zoom ===== */
+  /* ===== Fix scrollbar bawah dan center PDF saat zoom ===== */
   function destaraPdfDocScroller(){ return document.getElementById('pdfDocScroll'); }
   function destaraSyncPdfDocScroll(){
     const scroller = destaraPdfDocScroller();
@@ -5752,21 +5838,38 @@ input.selected-object-disabled{
     const hasHorizontal = scroller.scrollWidth > scroller.clientWidth + 2;
     scroller.classList.toggle('has-horizontal-overflow', hasHorizontal);
   }
+  function destaraCenterPdfDocScroll(){
+    const scroller = destaraPdfDocScroller();
+    if (!scroller) return;
+    const maxLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    scroller.scrollLeft = maxLeft > 2 ? Math.round(maxLeft / 2) : 0;
+    destaraSyncPdfDocScroll();
+  }
   const _destaraZoomScrollOldRenderAllPdfPages = renderAllPdfPages;
   renderAllPdfPages = async function(){
     const scroller = destaraPdfDocScroller();
-    const keepLeft = scroller ? scroller.scrollLeft : 0;
     const keepTop = scroller ? scroller.scrollTop : 0;
     await _destaraZoomScrollOldRenderAllPdfPages();
     requestAnimationFrame(() => {
-      const s = destaraPdfDocScroller();
-      if (!s) return;
-      s.scrollLeft = Math.min(keepLeft, Math.max(0, s.scrollWidth - s.clientWidth));
-      s.scrollTop = Math.min(keepTop, Math.max(0, s.scrollHeight - s.clientHeight));
-      destaraSyncPdfDocScroll();
+      requestAnimationFrame(() => {
+        const s = destaraPdfDocScroller();
+        if (!s) return;
+        destaraCenterPdfDocScroll();
+        s.scrollTop = Math.min(keepTop, Math.max(0, s.scrollHeight - s.clientHeight));
+      });
     });
   };
-  window.addEventListener('resize', () => requestAnimationFrame(destaraSyncPdfDocScroll));
+  const _destaraCenterOldUpdatePdfStylePanelState = updatePdfStylePanelState;
+  updatePdfStylePanelState = function(){
+    const result = _destaraCenterOldUpdatePdfStylePanelState.apply(this, arguments);
+    setTimeout(destaraCenterPdfDocScroll, 80);
+    return result;
+  };
+  let _destaraCenterResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(_destaraCenterResizeTimer);
+    _destaraCenterResizeTimer = setTimeout(destaraCenterPdfDocScroll, 80);
+  });
 
   pdfTogglePan = function(){
     if(!ensurePdfOpen()) return;
