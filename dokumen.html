@@ -1565,16 +1565,134 @@ input.selected-object-disabled{
 }
 </style>
 
+
+
+<style id="destara-native-pdf-reader-v6">
+/* V6: Reader Native di dalam aplikasi. Seleksi teks memakai viewer PDF bawaan browser, bukan canvas editor. */
+.pdf-native-reader{
+  display:none;
+  flex:1 1 auto;
+  min-height:0;
+  height:100%;
+  padding:0 10px 12px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.app.pdf-native-mode #pdfPane .pdf-editor-layout{display:none!important}
+.app.pdf-native-mode #pdfNativeReader{display:flex!important;flex-direction:column!important}
+.pdf-native-toolbar{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:0 8px 10px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel);
+  box-shadow:var(--soft);
+  backdrop-filter:blur(12px);
+}
+.pdf-native-toolbar .native-note{
+  flex:1 1 260px;
+  min-width:220px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+}
+.pdf-native-frame-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.pdf-native-frame{
+  width:100%;
+  height:100%;
+  min-height:360px;
+  display:block;
+  border:0;
+  background:#fff;
+}
+.pdf-tool.native-reader-primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 8px 20px rgba(41,87,255,.18)!important;
+}
+[data-theme=dark] .pdf-native-toolbar{background:rgba(15,23,42,.84);border-color:var(--line)}
+[data-theme=dark] .pdf-native-frame-wrap{background:#111827;box-shadow:0 24px 70px rgba(0,0,0,.52)}
+@media(max-width:760px){
+  .pdf-native-reader{padding:0 6px 10px}
+  .pdf-native-toolbar{margin-left:0;margin-right:0}
+  .pdf-native-toolbar .pdf-tool{flex:1 1 140px;justify-content:center}
+}
+</style>
+
+
+<style id="destara-native-reader-v7-visible-fix">
+/* V7: tombol Reader Native dibuat statis dan dipaksa terlihat, bukan hanya injeksi runtime. */
+.native-reader-quick{
+  color:#fff!important;
+  background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
+  border-color:transparent!important;
+}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > .pdf-tool.native-reader-hard{
+  position:relative!important;
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 13px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  border:1px solid rgba(41,87,255,.34)!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,var(--primary),var(--primary2))!important;
+  color:#fff!important;
+  font-weight:900!important;
+  box-shadow:0 9px 22px rgba(41,87,255,.18)!important;
+  transform:none!important;
+}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard:hover,
+#pdfPane .pdf-toolbar-local.pdf-toolbar-grouped > .pdf-tool.native-reader-hard:hover{
+  color:#fff!important;
+  transform:translateY(-1px)!important;
+  box-shadow:0 12px 30px rgba(41,87,255,.24)!important;
+}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard::after{display:none!important;content:none!important}
+#pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard span{
+  max-width:150px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+@media(max-width:900px){
+  #pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard{margin-left:138px!important}
+}
+@media(max-width:760px){
+  #pdfPane .pdf-toolbar-grouped > .pdf-tool.native-reader-hard{margin-left:130px!important}
+}
+</style>
 </head>
 <body>
 <div class="app" id="appRoot" data-theme="light">
-  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
+  <header class="topbar"><div class="brand"><div class="brand-logo">D</div><div class="brand-title">Destara File Pro</div></div><div class="quickbar"><button class="qbtn primary" data-action="open"><i data-lucide="folder-open"></i><span>Buka</span></button><button class="qbtn" data-action="mergePdfFiles"><i data-lucide="combine"></i><span>Gabung</span></button><button class="qbtn" data-action="openPdfOrganizer"><i data-lucide="grip"></i><span>Atur Halaman</span></button><button class="qbtn" data-action="pdfShowPremiumDashboard"><i data-lucide="sparkles"></i><span>Premium</span></button><button class="qbtn native-reader-quick" data-action="pdfOpenNativeReader" title="Buka mode Reader Native untuk copy/select teks PDF"><i data-lucide="file-search"></i><span>Reader Native</span></button><button class="qbtn" data-action="save"><i data-lucide="save"></i><span>Simpan</span></button><button class="qbtn" data-action="saveAs"><i data-lucide="save-all"></i><span>Save As</span></button><button class="qbtn icon-only" title="Undo" data-action="undo"><i data-lucide="undo-2"></i></button><button class="qbtn icon-only" title="Redo" data-action="redo"><i data-lucide="redo-2"></i></button><button class="qbtn danger" data-action="clear"><i data-lucide="eraser"></i><span>Bersihkan</span></button><button class="qbtn icon-only" title="Print / PDF" data-action="print"><i data-lucide="printer"></i></button><button class="qbtn icon-only" title="Tema terang/gelap" data-action="toggleTheme"><i data-lucide="moon"></i></button><button class="qbtn" title="Fullscreen" data-action="fullscreen"><i data-lucide="maximize-2"></i><span>Fullscreen</span></button><div class="file-pill"><i data-lucide="file"></i><span id="fileName">Belum ada file</span></div></div></header>
   <div class="docbar" id="docTabs"></div><nav class="tabs" id="tabs"></nav><section class="ribbon" id="ribbon"></section>
   <main class="workspace" id="workspace">
     <section class="empty-state" id="emptyState"><div class="empty-card"><div class="empty-icon"><i data-lucide="files"></i></div><h1>Editor file web</h1><p>Tarik PDF, Word, Excel, gambar, PowerPoint, HTML, TXT, atau CSV ke sini. Fitur paling lengkap tetap untuk PDF, sementara file lain bisa dibuka untuk preview, edit ringan, dan export sesuai dukungan browser.</p><button class="qbtn primary" data-action="open"><i data-lucide="upload"></i><span>Pilih File</span></button><div class="file-types"><span class="chip">PDF Pro</span><span class="chip">Word/DOCX</span><span class="chip">Excel/CSV</span><span class="chip">Gambar</span><span class="chip">PPTX/HTML/TXT</span></div></div></section>
     <section class="workspace-pane" id="docPane"><div class="modebar" id="docModeBar"><button class="mode-btn active" data-action="docPreview"><i data-lucide="eye"></i>Preview Asli</button><button class="mode-btn" data-action="docEdit"><i data-lucide="pencil"></i>Edit Cepat</button><select class="mode-select" data-action="pageSizeSelect" id="paperSizeSelect" title="Ukuran kertas"><option value="A4">A4</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Folio">Folio/F4</option><option value="A5">A5</option></select><select class="mode-select" data-action="pageOrientationSelect" id="paperOrientationSelect" title="Orientasi"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select><select class="mode-select" data-action="marginSelect" id="marginSelect" title="Margin"><option value="72">Margin normal</option><option value="36">Margin kecil</option><option value="96">Margin lebar</option></select><div class="doc-note" id="docNote"><i data-lucide="info"></i><span>Preview Word menjaga pemisah halaman. Edit Cepat untuk mengetik.</span></div></div><div class="doc-preview-inner" id="docPreviewWrap"><div id="docPreview"></div></div><div class="page-stack hidden" id="docEditWrap"><div class="doc-page" id="docEditor" contenteditable="true" spellcheck="true"></div></div></section>
     <section class="workspace-pane" id="pdfPane"><div class="pdf-toolbar-local pdf-toolbar-grouped">
   <button class="pdf-tool pdf-panel-switch" data-action="togglePdfStylePanel" id="pdfStylePanelToggle" title="Sembunyikan / tampilkan panel Warna & Gaya"><i data-lucide="panel-left-close"></i><span id="pdfStylePanelToggleText">Hide Panel</span></button>
+  <button class="pdf-tool native-reader-hard" data-action="pdfOpenNativeReader" id="pdfNativeReaderHardBtn" title="Reader Native: seleksi/copy teks memakai viewer PDF bawaan browser"><i data-lucide="file-search"></i><span>Reader Native</span></button>
   <details class="pdf-menu"><summary><i data-lucide="mouse-pointer-2"></i><span>Alat</span></summary><div class="pdf-menu-body wide"><div class="pdf-menu-title">Pilih & Tulis</div>
     <button class="pdf-tool active" data-pdf-tool="select"><i data-lucide="mouse-pointer-2"></i><span>Pilih/Geser</span></button>
     <button class="pdf-tool" data-action="pdfTogglePan"><i data-lucide="hand"></i><span>Pan Scroll</span></button>
@@ -5429,6 +5547,171 @@ input.selected-object-disabled{
       scroller._pdfPanBound=true;
     }
     toast(state.pdfPanEnabled?'Pan scroll aktif. Drag area dokumen untuk menggeser tampilan.':'Pan scroll dimatikan.', 'good');
+  };
+
+
+  /* ===== V6 Reader Native: seleksi teks langsung memakai viewer PDF bawaan browser ===== */
+  function destaraV6SetupNativeReader(){
+    if (document.getElementById('pdfNativeReader')) return;
+    const layout = document.getElementById('pdfEditorLayout');
+    if (!pdfPane || !layout) return;
+    const reader = document.createElement('div');
+    reader.id = 'pdfNativeReader';
+    reader.className = 'pdf-native-reader';
+    reader.innerHTML = `
+      <div class="pdf-native-toolbar">
+        <button class="pdf-tool native-reader-primary" data-action="pdfCloseNativeReader" title="Kembali ke editor PDF"><i data-lucide="pen-tool"></i><span>Kembali Edit</span></button>
+        <button class="pdf-tool" data-action="pdfOpenNativeNewTab" title="Buka PDF di tab viewer browser"><i data-lucide="external-link"></i><span>Buka Tab</span></button>
+        <button class="pdf-tool" data-action="pdfDownloadNativeOriginal" title="Download PDF aktif"><i data-lucide="download"></i><span>Download PDF</span></button>
+        <div class="native-note"><strong>Reader Native aktif.</strong> Blok teks langsung di PDF lalu tekan Ctrl+C. Ini memakai viewer PDF bawaan browser seperti Edge/Chrome, jadi lebih stabil daripada seleksi di canvas editor.</div>
+      </div>
+      <div class="pdf-native-frame-wrap"><iframe id="pdfNativeFrame" class="pdf-native-frame" title="Reader native PDF" loading="lazy"></iframe></div>`;
+    pdfPane.insertBefore(reader, layout);
+    refreshIcons();
+  }
+
+  function destaraV6MakeNativeUrl(){
+    if (!state.pdfBytes) return '';
+    if (state.pdfNativeUrl) {
+      try { URL.revokeObjectURL(state.pdfNativeUrl); } catch (err) {}
+      state.pdfNativeUrl = '';
+    }
+    const bytes = state.pdfBytes.slice ? state.pdfBytes.slice(0) : state.pdfBytes;
+    state.pdfNativeUrl = URL.createObjectURL(new Blob([bytes], {type:'application/pdf'}));
+    return state.pdfNativeUrl;
+  }
+
+  function destaraV6CurrentNativeUrl(){
+    return state.pdfNativeUrl || destaraV6MakeNativeUrl();
+  }
+
+  function pdfOpenNativeReader(){
+    if (!ensurePdfOpen()) return;
+    destaraV6SetupNativeReader();
+    const frame = document.getElementById('pdfNativeFrame');
+    const url = destaraV6MakeNativeUrl();
+    if (!url) return toast('PDF belum siap dibuka di Reader Native.', 'warn');
+    if (frame) frame.src = url + '#toolbar=1&navpanes=0&view=FitH';
+    state.pdfNativeMode = true;
+    appRoot.classList.add('pdf-native-mode');
+    status('Reader Native aktif - seleksi teks langsung di viewer browser.');
+    toast('Reader Native aktif. Blok teks langsung di PDF lalu Ctrl+C.', 'good');
+    refreshIcons();
+  }
+
+  function pdfCloseNativeReader(){
+    state.pdfNativeMode = false;
+    appRoot.classList.remove('pdf-native-mode');
+    status('Kembali ke editor PDF.');
+    toast('Kembali ke mode edit PDF.', 'good');
+  }
+
+  function pdfOpenNativeNewTab(){
+    if (!ensurePdfOpen()) return;
+    const url = destaraV6CurrentNativeUrl();
+    if (!url) return toast('PDF belum siap dibuka.', 'warn');
+    window.open(url + '#toolbar=1&navpanes=0&view=FitH', '_blank', 'noopener');
+  }
+
+  function pdfDownloadNativeOriginal(){
+    if (!ensurePdfOpen()) return;
+    const bytes = state.pdfBytes.slice ? state.pdfBytes.slice(0) : state.pdfBytes;
+    downloadBlob(new Blob([bytes], {type:'application/pdf'}), state.fileName && state.fileName.toLowerCase().endsWith('.pdf') ? state.fileName : baseName(state.fileName || 'dokumen') + '.pdf');
+  }
+
+  function destaraV6InjectNativeButtons(){
+    const alatBody = pdfPane && pdfPane.querySelector('.pdf-menu .pdf-menu-body.wide');
+    if (alatBody && !alatBody.querySelector('[data-action="pdfOpenNativeReader"]')) {
+      const title = document.createElement('div');
+      title.className = 'pdf-menu-title';
+      title.textContent = 'Baca & Copy';
+      const btn = document.createElement('button');
+      btn.className = 'pdf-tool native-reader-primary';
+      btn.dataset.action = 'pdfOpenNativeReader';
+      btn.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      alatBody.insertBefore(btn, alatBody.firstChild);
+      alatBody.insertBefore(title, btn);
+    }
+    const topbar = pdfPane && pdfPane.querySelector('.pdf-toolbar-local.pdf-toolbar-grouped');
+    if (topbar && !topbar.querySelector('[data-action="pdfOpenNativeReader"]')) {
+      const topBtn = document.createElement('button');
+      topBtn.className = 'pdf-tool native-reader-primary';
+      topBtn.dataset.action = 'pdfOpenNativeReader';
+      topBtn.title = 'Mode baca/select PDF native';
+      topBtn.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      const after = topbar.querySelector('#pdfStylePanelToggle');
+      if (after && after.nextSibling) topbar.insertBefore(topBtn, after.nextSibling);
+      else topbar.insertBefore(topBtn, topbar.firstChild);
+    }
+    refreshIcons();
+  }
+
+  const _destaraV6OldInit = init;
+  init = function(){
+    _destaraV6OldInit();
+    destaraV6SetupNativeReader();
+    destaraV6InjectNativeButtons();
+    updateToolAvailability();
+  };
+
+  const _destaraV6OldRunAction = runAction;
+  runAction = async function(action, sourceEl){
+    if (action === 'pdfOpenNativeReader') return pdfOpenNativeReader();
+    if (action === 'pdfCloseNativeReader') return pdfCloseNativeReader();
+    if (action === 'pdfOpenNativeNewTab') return pdfOpenNativeNewTab();
+    if (action === 'pdfDownloadNativeOriginal') return pdfDownloadNativeOriginal();
+    return _destaraV6OldRunAction(action, sourceEl);
+  };
+
+  const _destaraV6OldLoadPdf = loadPdf;
+  loadPdf = async function(buffer){
+    appRoot.classList.remove('pdf-native-mode');
+    state.pdfNativeMode = false;
+    const result = await _destaraV6OldLoadPdf(buffer);
+    destaraV6MakeNativeUrl();
+    destaraV6SetupNativeReader();
+    destaraV6InjectNativeButtons();
+    return result;
+  };
+
+  const _destaraV6OldSetMode = setMode;
+  setMode = function(mode){
+    _destaraV6OldSetMode(mode);
+    if (mode !== 'pdf') {
+      state.pdfNativeMode = false;
+      appRoot.classList.remove('pdf-native-mode');
+    }
+  };
+
+  // V7 hard fallback: klik Reader Native ditangkap langsung agar tidak bergantung pada injeksi tombol.
+  document.addEventListener('click', function(e){
+    const btn = e.target && e.target.closest && e.target.closest('[data-action="pdfOpenNativeReader"], #pdfNativeReaderHardBtn, .native-reader-quick');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    pdfOpenNativeReader();
+  }, true);
+
+  // Pastikan tombol statis tetap ada walau patch lain merender ulang toolbar.
+  function destaraV7EnsureVisibleNativeButtons(){
+    const topbar = pdfPane && pdfPane.querySelector('.pdf-toolbar-local.pdf-toolbar-grouped');
+    if (topbar && !topbar.querySelector('#pdfNativeReaderHardBtn')) {
+      const b = document.createElement('button');
+      b.className = 'pdf-tool native-reader-hard';
+      b.id = 'pdfNativeReaderHardBtn';
+      b.dataset.action = 'pdfOpenNativeReader';
+      b.title = 'Reader Native: seleksi/copy teks memakai viewer PDF bawaan browser';
+      b.innerHTML = '<i data-lucide="file-search"></i><span>Reader Native</span>';
+      const panelBtn = topbar.querySelector('#pdfStylePanelToggle');
+      if (panelBtn && panelBtn.nextSibling) topbar.insertBefore(b, panelBtn.nextSibling);
+      else topbar.insertBefore(b, topbar.firstChild);
+      refreshIcons();
+    }
+  }
+  const _destaraV7OldInjectNativeButtons = destaraV6InjectNativeButtons;
+  destaraV6InjectNativeButtons = function(){
+    _destaraV7OldInjectNativeButtons();
+    destaraV7EnsureVisibleNativeButtons();
   };
 
 
